@@ -2,13 +2,43 @@ version: "2"
 services:
   requisition-ui:
     image: openlmis/dev-ui:latest
-    ports:
-      - "9000:9000"
-      - "9876:9876"
     working_dir: /app
     volumes:
       - '.:/app'
+    ports:
+      - "9000:9000"
+      - "9876:9876"
     env_file: .env
+    volumes_from:
+      - auth-ui
+      - referencedata-ui
+      - ui-components
+      - ui-layout
+    depends_on:
+      - auth-ui
+      - referencedata-ui
+      - ui-components
+      - ui-layout
+  auth-ui:
+    image: openlmis/auth-ui
+    volumes:
+      - '/openlmis-auth-ui'
+  fulfillment-ui:
+    image: openlmis/fulfillment-ui
+    volumes:
+      - '/openlmis-fulfillment-ui'
+  referencedata-ui:
+    image: openlmis/referencedata-ui
+    volumes: 
+      - '/openlmis-referencedata-ui'
+  ui-components:
+    image: openlmis/ui-components
+    volumes:
+      - '/openlmis-ui-components'
+  ui-layout:
+    image: openlmis/ui-layout
+    volumes:
+      - '/openlmis-ui-layout'
   image:
     build: .
     image: openlmis/requisition-ui
