@@ -32,11 +32,11 @@
 
 	ConvertToOrderController.$inject = [
         '$stateParams', 'requisitionService', 'notificationService',
-        'confirmService', 'loadingModalService', 'requisitions'
+        'confirmService', 'loadingModalService', 'requisitions', '$state'
     ];
 
 	function ConvertToOrderController($stateParams, requisitionService, notificationService,
-                                confirmService, loadingModalService, requisitions) {
+                                confirmService, loadingModalService, requisitions, $state) {
 
 	    var vm = this;
 
