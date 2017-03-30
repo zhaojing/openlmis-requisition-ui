@@ -51,7 +51,7 @@ describe('RequisitionApprovalListController', function () {
             ];
 
             vm = $controller('RequisitionApprovalListController', {
-                requisitions: items
+                requisitions: requisitionList
             });
         });
     });
