@@ -31,14 +31,15 @@
     RequisitionViewController.$inject = [
         '$state', 'requisition', 'requisitionValidator', 'authorizationService',
         'loadingModalService', 'notificationService', 'confirmService', 'REQUISITION_RIGHTS',
-        'FULFILLMENT_RIGHTS', 'convertToOrderModalService', 'offlineService',
-        'requisitionUrlFactory', '$filter', '$scope', '$timeout', 'RequisitionWatcher'
+        'FULFILLMENT_RIGHTS', 'convertToOrderModalService', 'offlineService', '$window',
+        'requisitionUrlFactory', '$filter', '$scope', '$timeout', 'RequisitionWatcher', 'accessTokenFactory'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator, authorizationService,
                              loadingModalService, notificationService, confirmService,
-                             REQUISITION_RIGHTS, FULFILLMENT_RIGHTS , convertToOrderModalService, offlineService,
-                             requisitionUrlFactory, $filter, $scope, $timeout, RequisitionWatcher) {
+                             REQUISITION_RIGHTS, FULFILLMENT_RIGHTS , convertToOrderModalService,
+                             offlineService, $window, requisitionUrlFactory, $filter, $scope,
+                             $timeout, RequisitionWatcher, accessTokenFactory) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition);
@@ -72,6 +73,7 @@
         // Functions
 
         vm.syncRnr = syncRnr;
+        vm.syncRnrAndPrint = syncRnrAndPrint;
         vm.submitRnr = submitRnr;
         vm.authorizeRnr = authorizeRnr;
         vm.removeRnr = removeRnr;
@@ -104,15 +106,42 @@
          * indicates a version conflict.
          */
         function syncRnr() {
-            watcher.makeSilent();
             var loadingPromise = loadingModalService.open();
-            vm.requisition.$modified = false;
-            save().then(function() {
+            saveRnr(function() {
                 loadingPromise.then(function() {
                     notificationService.success('msg.requisitionSynced');
                 });
                 reloadState();
-            }, function(response) {
+            })
+        }
+
+         /**
+         * @ngdoc method
+         * @methodOf requisition-view.controller:RequisitionViewController
+         * @name syncRnrAndPrint
+         *
+         * @description
+         * Responsible for syncing requisition with the server. If the requisition fails to sync,
+         * an error notification will be displayed. Otherwise, a success notification will be shown
+         * and the requisition will be printed.
+         * If the error status is 409 (conflict), the requisition will be reloaded, since this
+         * indicates a version conflict.
+         */
+        function syncRnrAndPrint() {
+            var loadingPromise = loadingModalService.open();
+            saveRnr(function() {
+                loadingPromise.then(function() {
+                    notificationService.success('msg.requisitionSynced');
+                });
+                $window.open(accessTokenFactory.addAccessToken(vm.getPrintUrl()), '_blank');
+                reloadState();
+            })
+        }
+
+        function saveRnr(successCallback) {
+            watcher.makeSilent();
+            vm.requisition.$modified = false;
+            save().then(successCallback, function(response) {
                 handleSaveError(response.status);
             });
         }

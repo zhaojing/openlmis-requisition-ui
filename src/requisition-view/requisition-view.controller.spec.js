@@ -18,7 +18,8 @@ describe('RequisitionViewController', function() {
 
     var $scope, $q, $state, notificationService, confirmService, vm, requisition,
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
-        fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy, REQUISITION_RIGHTS;
+        fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
+        REQUISITION_RIGHTS, accessTokenFactorySpy;
 
     beforeEach(function() {
         module('requisition-view');
@@ -28,6 +29,7 @@ describe('RequisitionViewController', function() {
             confirmSpy = jasmine.createSpyObj('confirmService', ['confirm']);
 
             authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight']);
+            accessTokenFactorySpy = jasmine.createSpyObj('accessTokenFactory', ['hasRight']);
 
             requisitionValidatorMock = jasmine.createSpyObj('requisitionValidator', [
                 'areLineItemsValid',
@@ -42,6 +44,10 @@ describe('RequisitionViewController', function() {
 
             $provide.service('authorizationService', function() {
                 return authorizationServiceSpy;
+            });
+
+            $provide.service('accessTokenFactory', function() {
+                return accessTokenFactorySpy;
             });
 
             $provide.factory('requisitionUrlFactory', function() {
