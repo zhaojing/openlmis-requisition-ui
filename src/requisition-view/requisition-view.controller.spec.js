@@ -19,7 +19,7 @@ describe('RequisitionViewController', function() {
     var $scope, $q, $state, notificationService, confirmService, vm, requisition,
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
-        REQUISITION_RIGHTS, accessTokenFactorySpy;
+        REQUISITION_RIGHTS, accessTokenFactorySpy, $window;
 
     beforeEach(function() {
         module('requisition-view');
@@ -29,7 +29,7 @@ describe('RequisitionViewController', function() {
             confirmSpy = jasmine.createSpyObj('confirmService', ['confirm']);
 
             authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight']);
-            accessTokenFactorySpy = jasmine.createSpyObj('accessTokenFactory', ['hasRight']);
+            accessTokenFactorySpy = jasmine.createSpyObj('accessTokenFactory', ['addAccessToken']);
 
             requisitionValidatorMock = jasmine.createSpyObj('requisitionValidator', [
                 'areLineItemsValid',
@@ -60,11 +60,12 @@ describe('RequisitionViewController', function() {
         });
 
         inject(function(_$rootScope_, $controller, _$q_, _$state_, _notificationService_,
-                        _confirmService_, _loadingModalService_, _REQUISITION_RIGHTS_) {
+                        _confirmService_, _loadingModalService_, _REQUISITION_RIGHTS_, _$window_) {
 
             $scope = _$rootScope_.$new();
             $state = _$state_;
             $q = _$q_;
+            $window = _$window_
             notificationService = _notificationService_;
             confirmService = _confirmService_;
             loadingModalService = _loadingModalService_;
@@ -382,6 +383,32 @@ describe('RequisitionViewController', function() {
 
             expect($state.reload).toHaveBeenCalled();
             expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_APPROVE, {programCode: requisition.program.code});
+        });
+    });
+
+    describe('syncAndPrint', function() {
+
+        beforeEach(function() {
+            accessTokenFactorySpy.addAccessToken.andReturn('token');
+            spyOn($window, 'open');
+        });
+
+        it('should open window with report when sync succeeded', function() {
+            requisition.$save.andReturn($q.when(true));
+
+            vm.syncRnrAndPrint();
+            $scope.$apply();
+
+            expect($window.open).toHaveBeenCalledWith('token', '_blank');
+        });
+
+        it('should not open window with report when sync failed', function() {
+            requisition.$save.andReturn($q.reject());
+
+            vm.syncRnrAndPrint();
+            $scope.$apply();
+
+            expect($window.open).not.toHaveBeenCalled();
         });
     });
 });
