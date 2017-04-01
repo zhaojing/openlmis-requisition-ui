@@ -45,7 +45,7 @@
          * @name RequisitionWatcher
          *
          * @description
-         * Creates requisition watcher for all changes in requisition object.
+         * Creates requisition watcher for changes in requisition line items and comments.
          *
          * @param  {Scope}              scope       scope that requisition is in
          * @param  {Object}             requisition requisition to set watcher on
@@ -55,15 +55,20 @@
             var watcher = this,
                 storage = localStorageFactory('requisitions');
 
+            addWatcher(scope, requisition, 'requisitionLineItems', 'msg.requisitionSaved', watcher, storage);
+            addWatcher(scope, requisition, 'draftStatusMessage', 'msg.requisitionCommentSaved', watcher, storage);
+        }
+
+        function addWatcher(scope, requisition, valueToWatch, message, watcher, storage) {
             scope.$watch(function() {
-                return requisition.requisitionLineItems;
+                return requisition[valueToWatch];
             }, function(oldValue, newValue) {
                 if (oldValue !== newValue) {
                     if(watcher.isLoud) {
                         $timeout.cancel(watcher.notificationTimeout);
                         watcher.notificationTimeout = $timeout(function() {
                             if (watcher.isLoud) {
-                                notificationService.success('msg.requisitionSaved');
+                                notificationService.success(message);
                                 watcher.notificationTimeout = undefined;
                             }
                         }, 3000);
@@ -74,7 +79,7 @@
                         requisition.$modified = true;
                         storage.put(requisition);
                         watcher.syncTimeout = undefined;
-                    }, 500)
+                    }, 500);
                 }
             }, true);
         }
