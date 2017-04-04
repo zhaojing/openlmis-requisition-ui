@@ -1,4 +1,5 @@
 {
     "msg.requisitionSaved": "Requisition has been saved!",
-    "msg.requisitionCommentSaved": "Requisition comment has been saved!"
+    "msg.requisitionCommentSaved": "Requisition comment has been saved!",
+    "msg.syncing": "Syncing with server ..."
 }

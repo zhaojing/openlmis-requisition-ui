@@ -32,14 +32,15 @@
         '$state', 'requisition', 'requisitionValidator', 'authorizationService',
         'loadingModalService', 'notificationService', 'confirmService', 'REQUISITION_RIGHTS',
         'FULFILLMENT_RIGHTS', 'convertToOrderModalService', 'offlineService', '$window',
-        'requisitionUrlFactory', '$filter', '$scope', '$timeout', 'RequisitionWatcher', 'accessTokenFactory'
+        'requisitionUrlFactory', '$filter', '$scope', '$timeout', 'RequisitionWatcher', 'accessTokenFactory',
+        'messageService'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator, authorizationService,
                              loadingModalService, notificationService, confirmService,
                              REQUISITION_RIGHTS, FULFILLMENT_RIGHTS , convertToOrderModalService,
                              offlineService, $window, requisitionUrlFactory, $filter, $scope,
-                             $timeout, RequisitionWatcher, accessTokenFactory) {
+                             $timeout, RequisitionWatcher, accessTokenFactory, messageService) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition);
@@ -132,7 +133,7 @@
         function syncRnrAndPrint() {
             if (displaySync()) {
                 var popup = $window.open('', '_blank');
-                popup.document.write('syncing with server ...');
+                popup.document.write(messageService.get('msg.syncing'));
                 var loadingPromise = loadingModalService.open();
                 saveRnr(function() {
                     loadingPromise.then(function() {

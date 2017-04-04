@@ -26,6 +26,7 @@
     angular.module('requisition-view', [
         'ngBootbox',
         'openlmis-templates',
+        'openlmis-i18n',
         'requisition',
         'requisition-summary',
         'requisition-validation',
