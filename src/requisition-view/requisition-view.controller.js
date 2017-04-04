@@ -133,7 +133,7 @@
         function syncRnrAndPrint() {
             if (displaySync()) {
                 var popup = $window.open('', '_blank');
-                popup.document.write(messageService.get('msg.syncing'));
+                popup.document.write(messageService.get('msg.requisitionSyncing'));
                 var loadingPromise = loadingModalService.open();
                 saveRnr(function() {
                     loadingPromise.then(function() {
