@@ -128,14 +128,18 @@
          * indicates a version conflict.
          */
         function syncRnrAndPrint() {
-            var loadingPromise = loadingModalService.open();
-            saveRnr(function() {
-                loadingPromise.then(function() {
-                    notificationService.success('msg.requisitionSynced');
-                });
+            if (displaySync()) {
+                var loadingPromise = loadingModalService.open();
+                saveRnr(function() {
+                    loadingPromise.then(function() {
+                        notificationService.success('msg.requisitionSynced');
+                    });
+                    $window.open(accessTokenFactory.addAccessToken(vm.getPrintUrl()), '_blank');
+                    reloadState();
+                })
+            } else {
                 $window.open(accessTokenFactory.addAccessToken(vm.getPrintUrl()), '_blank');
-                reloadState();
-            })
+            }
         }
 
         function saveRnr(successCallback) {

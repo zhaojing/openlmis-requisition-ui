@@ -391,6 +391,8 @@ describe('RequisitionViewController', function() {
         beforeEach(function() {
             accessTokenFactorySpy.addAccessToken.andReturn('token');
             spyOn($window, 'open');
+            authorizationServiceSpy.hasRight.andReturn(true);
+            vm.requisition.$isInitiated.andReturn(true);
         });
 
         it('should open window with report when sync succeeded', function() {
@@ -410,5 +412,14 @@ describe('RequisitionViewController', function() {
 
             expect($window.open).not.toHaveBeenCalled();
         });
+
+        it('should open window with report when has no right for sync', function() {
+            authorizationServiceSpy.hasRight.andReturn(false);
+
+            vm.syncRnrAndPrint();
+
+            expect($window.open).toHaveBeenCalledWith('token', '_blank');
+        });
+
     });
 });
