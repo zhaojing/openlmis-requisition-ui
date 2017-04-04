@@ -124,11 +124,11 @@
          * @return {Promise} requisition promise
          */
         function authorize() {
-            var requisition = this;
+            var availableOffline = this.$availableOffline;
             return handlePromise(resource.authorize({
                 id: this.id
             }, {}).$promise, function(authorized) {
-                saveToStorage(authorized, requisition.$availableOffline);
+                saveToStorage(authorized, availableOffline);
             });
         }
 
@@ -378,6 +378,7 @@
         function saveToStorage(requisition, shouldSave) {
             if (shouldSave) {
                 requisition.$modified = false;
+                requisition.$availableOffline = true;
                 offlineRequisitions.put(requisition);
             }
         }

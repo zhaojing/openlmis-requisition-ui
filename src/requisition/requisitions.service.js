@@ -280,7 +280,13 @@
          * @param {Array} requisitions Array of requisitions to convert
          */
         function convertToOrder(requisitions) {
-            return resource.convertToOrder(requisitions).$promise;
+            var promise = resource.convertToOrder(requisitions).$promise;
+            promise.then(function(response) {
+                angular.forEach(requisitions, function(requisition) {
+                    offlineRequisitions.removeBy('id', requisition.requisition.id);
+                });
+            });
+            return promise;
         }
 
         function getRequisition(id) {
