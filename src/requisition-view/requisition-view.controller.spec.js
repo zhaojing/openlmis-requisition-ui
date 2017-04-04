@@ -389,8 +389,7 @@ describe('RequisitionViewController', function() {
     describe('syncAndPrint', function() {
 
         beforeEach(function() {
-            accessTokenFactorySpy.addAccessToken.andReturn('token');
-            spyOn($window, 'open');
+            spyOn($window, 'open').andCallThrough();
             authorizationServiceSpy.hasRight.andReturn(true);
             vm.requisition.$isInitiated.andReturn(true);
         });
@@ -401,19 +400,33 @@ describe('RequisitionViewController', function() {
             vm.syncRnrAndPrint();
             $scope.$apply();
 
-            expect($window.open).toHaveBeenCalledWith('token', '_blank');
+            expect(accessTokenFactorySpy.addAccessToken)
+                .toHaveBeenCalledWith('http://some.url/api/requisitions/1/print');
         });
 
-        it('should not open window with report when sync failed', function() {
+        it('should not open report when sync failed', function() {
             requisition.$save.andReturn($q.reject());
 
             vm.syncRnrAndPrint();
             $scope.$apply();
 
-            expect($window.open).not.toHaveBeenCalled();
+            expect($window.open).toHaveBeenCalledWith('', '_blank');
+            expect(accessTokenFactorySpy.addAccessToken).not.toHaveBeenCalled();
+        });
+
+        it('should display error message when sync failed', function() {
+            requisition.$save.andReturn($q.reject({status: 400}));
+            var notificationServiceSpy = jasmine.createSpy();
+            spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
+
+            vm.syncRnrAndPrint();
+            $scope.$apply();
+
+            expect(notificationServiceSpy).toHaveBeenCalledWith('msg.failedToSyncRequisition');
         });
 
         it('should open window with report when has no right for sync', function() {
+            accessTokenFactorySpy.addAccessToken.andReturn('token');
             authorizationServiceSpy.hasRight.andReturn(false);
 
             vm.syncRnrAndPrint();

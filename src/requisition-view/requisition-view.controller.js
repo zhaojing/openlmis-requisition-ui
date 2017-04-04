@@ -112,6 +112,8 @@
                     notificationService.success('msg.requisitionSynced');
                 });
                 reloadState();
+            }, function(response) {
+                handleSaveError(response.status);
             })
         }
 
@@ -129,25 +131,28 @@
          */
         function syncRnrAndPrint() {
             if (displaySync()) {
+                var popup = $window.open('', '_blank');
+                popup.document.write('syncing with server ...');
                 var loadingPromise = loadingModalService.open();
                 saveRnr(function() {
                     loadingPromise.then(function() {
                         notificationService.success('msg.requisitionSynced');
                     });
-                    $window.open(accessTokenFactory.addAccessToken(vm.getPrintUrl()), '_blank');
+                    popup.location.href = accessTokenFactory.addAccessToken(vm.getPrintUrl());
                     reloadState();
+                }, function(response) {
+                  handleSaveError(response.status);
+                  popup.close();
                 })
             } else {
                 $window.open(accessTokenFactory.addAccessToken(vm.getPrintUrl()), '_blank');
             }
         }
 
-        function saveRnr(successCallback) {
+        function saveRnr(successCallback, failCallback) {
             watcher.makeSilent();
             vm.requisition.$modified = false;
-            save().then(successCallback, function(response) {
-                handleSaveError(response.status);
-            });
+            save().then(successCallback, failCallback);
         }
 
         /**
