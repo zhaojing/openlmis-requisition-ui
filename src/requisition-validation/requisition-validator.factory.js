@@ -105,7 +105,7 @@
 
 
             angular.forEach(columns, function(column) {
-                valid = validator.validateLineItemField(lineItem, column, columns, requisition) && valid;
+                valid = validator.validateLineItemField(lineItem, column, requisition) && valid;
             });
             return valid;
         }
@@ -124,7 +124,7 @@
          * @param  {Object}  columns  the list of columns used for validating the line item
          * @return {Boolean}          true of the line item field is valid, false otherwise
          */
-        function validateLineItemField(lineItem, column, columns, requisition) {
+        function validateLineItemField(lineItem, column, requisition) {
             var name = column.name,
                 error;
 

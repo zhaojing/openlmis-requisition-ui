@@ -146,7 +146,7 @@ describe('requisitionValidator', function() {
             expect(result).toBe(true);
             columns.forEach(function(column) {
                 expect(validator.validateLineItemField)
-                    .toHaveBeenCalledWith(lineItem, column, columns, requisition);
+                    .toHaveBeenCalledWith(lineItem, column, requisition);
             });
         });
 
@@ -160,7 +160,7 @@ describe('requisitionValidator', function() {
             expect(result).toBe(false);
             columns.forEach(function(column) {
                 expect(validator.validateLineItemField)
-                    .toHaveBeenCalledWith(lineItem, column, columns, requisition);
+                    .toHaveBeenCalledWith(lineItem, column, requisition);
             });
         })
 
@@ -179,7 +179,7 @@ describe('requisitionValidator', function() {
         it('should return true if field is valid', function() {
             column.name = TEMPLATE_COLUMNS.BEGINNING_BALANCE;
 
-            var result = validator.validateLineItemField(lineItem, column, columns, requisition);
+            var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(result).toBe(true);
         })
@@ -187,7 +187,7 @@ describe('requisitionValidator', function() {
         it('should return true if column is Total Losses and Adjustments', function() {
             column.name = TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS;
 
-            var result = validator.validateLineItemField(lineItem, column, columns);
+            var result = validator.validateLineItemField(lineItem, column);
 
             expect(result).toBe(true);
         });
@@ -197,7 +197,7 @@ describe('requisitionValidator', function() {
             column.$required = true;
             column.name = 'requiredButNotSet';
 
-            var result = validator.validateLineItemField(lineItem, column, columns, requisition);
+            var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(result).toBe(false);
         });
@@ -208,7 +208,7 @@ describe('requisitionValidator', function() {
             column.name = 'requiredButNotSet';
             column.$display = false;
 
-            var result = validator.validateLineItemField(lineItem, column, columns, requisition);
+            var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(result).toBe(true);
         });
@@ -220,7 +220,7 @@ describe('requisitionValidator', function() {
             column.source = COLUMN_SOURCES.CALCULATED;
             validationFactory.stockOnHand.andReturn('negative');
 
-            var result = validator.validateLineItemField(lineItem, column, columns, requisition);
+            var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(result).toBe(false);
             expect(lineItem.$errors[TEMPLATE_COLUMNS.STOCK_ON_HAND]).toBe('negative');
@@ -242,7 +242,7 @@ describe('requisitionValidator', function() {
             };
             requisition.template.columnsMap = columns;
 
-            var result = validator.validateLineItemField(lineItem, column, columns, requisition);
+            var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(result).toBe(false);
         });
@@ -255,7 +255,7 @@ describe('requisitionValidator', function() {
                 source: COLUMN_SOURCES.CALCULATED
             });
 
-            var result = validator.validateLineItemField(lineItem, column, columns, requisition);
+            var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(result).toBe(true);
         });
@@ -265,7 +265,7 @@ describe('requisitionValidator', function() {
             column.name = TEMPLATE_COLUMNS.STOCK_ON_HAND;
             column.$type = COLUMN_TYPES.NUMERIC;
 
-            var result = validator.validateLineItemField(lineItem, column, columns, requisition);
+            var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(lineItem.$errors[column.name]).toBe('error.numberTooLarge');
             expect(result).toBe(false);
@@ -276,7 +276,7 @@ describe('requisitionValidator', function() {
             column.name = TEMPLATE_COLUMNS.STOCK_ON_HAND;
             column.$type = COLUMN_TYPES.NUMERIC;
 
-            var result = validator.validateLineItemField(lineItem, column, columns, requisition);
+            var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(result).toBe(true);
         });
