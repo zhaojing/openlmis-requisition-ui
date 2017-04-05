@@ -28,9 +28,9 @@
         .module('requisition-losses-and-adjustments')
         .controller('LossesAndAdjustmentsController', lossesAndAdjustmentsController);
 
-    lossesAndAdjustmentsController.$inject = ['$scope', '$filter', 'calculationFactory'];
+    lossesAndAdjustmentsController.$inject = ['$scope', '$filter', 'calculationFactory', 'requisitionValidator'];
 
-    function lossesAndAdjustmentsController($scope, $filter, calculationFactory) {
+    function lossesAndAdjustmentsController($scope, $filter, calculationFactory, requisitionValidator) {
         var vm = this;
 
         /**
@@ -161,6 +161,13 @@
          */
         function recalculateTotal() {
             vm.lineItem.totalLossesAndAdjustments = vm.getTotal();
+            vm.lineItem.updateDependentFields(
+                vm.requisition.template.columnsMap.totalLossesAndAdjustments, vm.requisition);
+            requisitionValidator.validateLineItem(
+                vm.lineItem,
+                vm.requisition.template.columnsMap,
+                vm.requisition
+            );
         }
 
         /**

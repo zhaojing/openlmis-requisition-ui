@@ -45,9 +45,9 @@
         .module('requisition-losses-and-adjustments')
         .directive('lossesAndAdjustments', lossesAndAdjustments);
 
-    lossesAndAdjustments.$inject = ['$compile', '$templateRequest', 'messageService', 'requisitionValidator'];
+    lossesAndAdjustments.$inject = ['$compile', '$templateRequest', 'messageService'];
 
-    function lossesAndAdjustments($compile, $templateRequest, messageService, requisitionValidator) {
+    function lossesAndAdjustments($compile, $templateRequest, messageService) {
         var directive = {
             restrict: 'A',
             replace: true,
@@ -92,12 +92,6 @@
             }
 
             function hideModal() {
-                requisitionValidator.validateLineItem(
-                    scope.lineItem,
-                    scope.requisition.template.columnsMap,
-                    scope.requisition
-                );
-
                 dialog.modal('hide');
                 dialog = undefined;
             }

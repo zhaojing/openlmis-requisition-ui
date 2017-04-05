@@ -19,16 +19,33 @@ describe('LossesAndAdjustmentsController', function() {
 
     var rootScope, scope, $controller;
 
-    var requisition, adjustments, reasons;
+    var requisition, adjustments, reasons, requisitionValidatorMock;
 
     beforeEach(function() {
 
         module('requisition-losses-and-adjustments');
+        module(function($provide) {
+            requisitionValidatorMock = jasmine.createSpyObj('requisitionValidator', [
+                'validateLineItem'
+            ]);
+
+            $provide.factory('requisitionValidator', function() {
+                return requisitionValidatorMock;
+            });
+        });
 
         adjustments = jasmine.createSpyObj('stockAdjustments', ['push', 'indexOf', 'splice']);
         requisition = jasmine.createSpyObj('requisition', [
-            '$stockAdjustmentReasons', '$isAuthorized', '$isApproved', '$isInApproval', '$isReleased'
+            '$stockAdjustmentReasons', '$isAuthorized', '$isApproved', '$isInApproval', '$isReleased', 'template'
         ]);
+        requisition.template.columnsMap = {
+            totalConsumedQuantity: {
+              name: 'totalConsumedQuantity'
+            },
+            totalLossesAndAdjustments: {
+              name: 'totalLossesAndAdjustments'
+            }
+        };
         reasons = requisition.$stockAdjustmentReasons;
 
         inject(function($injector) {
@@ -39,13 +56,15 @@ describe('LossesAndAdjustmentsController', function() {
         scope = rootScope.$new();
         scope.requisition = requisition;
         scope.lineItem = {
-            stockAdjustments: adjustments
+            stockAdjustments: adjustments,
+            updateDependentFields: function () {}
         };
+
     });
 
     describe('initialization', function() {
 
-        beforeEach(inject(function($controller) {
+        beforeEach(inject(function() {
             rootScope.$apply();
         }));
 
@@ -227,6 +246,24 @@ describe('LossesAndAdjustmentsController', function() {
         it ('should recalculate total', function() {
             vm.recalculateTotal();
             expect(vm.lineItem.totalLossesAndAdjustments).toBe(345);
+        });
+
+        it ('should validate line item', function() {
+            scope.lineItem = {
+                totalConsumedQuantity: 10,
+                updateDependentFields: function () {}
+            };
+            spyOn(scope.lineItem, 'updateDependentFields');
+
+            initController();
+            rootScope.$apply();
+
+            vm.recalculateTotal();
+
+            expect(requisitionValidatorMock.validateLineItem)
+                .toHaveBeenCalledWith(scope.lineItem, requisition.template.columnsMap, requisition);
+            expect(scope.lineItem.updateDependentFields)
+                .toHaveBeenCalledWith(requisition.template.columnsMap.totalLossesAndAdjustments, requisition);
         });
     });
 
