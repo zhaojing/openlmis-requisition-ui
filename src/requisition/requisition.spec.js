@@ -81,11 +81,11 @@ describe('Requisition', function() {
     	$provide.service('RequisitionTemplate', function(){
     		return TemplateSpy;
     	});
-      $provide.factory('localStorageFactory', function() {
-          return function() {
-              return offlineRequisitions;
-          };
-      });
+        $provide.factory('localStorageFactory', function() {
+            return function() {
+                return offlineRequisitions;
+            };
+        });
     }));
 
     beforeEach(module(function($provide){
@@ -111,7 +111,12 @@ describe('Requisition', function() {
         requisition = new Requisition(sourceRequisition, {});
     }));
 
-    it('should submit requisition', function() {
+    it('should submit requisition that is available offline', function() {
+        var storedRequisition;
+        offlineRequisitions.put.andCallFake(function(argument) {
+            storedRequisition = argument;
+        });
+
         expect(requisition.$isSubmitted()).toBe(false);
 
         requisition.status = REQUISITION_STATUS.SUBMITTED;
@@ -119,15 +124,25 @@ describe('Requisition', function() {
         httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
         .respond(200, requisition);
 
+        requisition.$availableOffline = true;
         requisition.$submit();
 
         httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isSubmitted()).toBe(true);
+        expect(offlineRequisitions.put).toHaveBeenCalled();
+        expect(storedRequisition.$modified).toBe(false);
+        expect(storedRequisition.$availableOffline).toBe(true);
+        expect(storedRequisition.id).toEqual(requisition.id);
     });
 
-    it('should authorize requisition', function() {
+    it('should authorize requisition that is available offline', function() {
+        var storedRequisition;
+        offlineRequisitions.put.andCallFake(function(argument) {
+            storedRequisition = argument;
+        });
+
         expect(requisition.$isAuthorized()).toBe(false);
 
         requisition.status = REQUISITION_STATUS.AUTHORIZED;
@@ -135,15 +150,25 @@ describe('Requisition', function() {
         httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
         .respond(200, requisition);
 
+        requisition.$availableOffline = true;
         requisition.$authorize();
 
         httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isAuthorized()).toBe(true);
+        expect(offlineRequisitions.put).toHaveBeenCalled();
+        expect(storedRequisition.$modified).toBe(false);
+        expect(storedRequisition.$availableOffline).toBe(true);
+        expect(storedRequisition.id).toEqual(requisition.id);
     });
 
-    it('should approve requisition', function() {
+    it('should approve requisition that is available offline', function() {
+        var storedRequisition;
+        offlineRequisitions.put.andCallFake(function(argument) {
+            storedRequisition = argument;
+        });
+
         expect(requisition.$isApproved()).toBe(false);
 
         requisition.status = REQUISITION_STATUS.APPROVED;
@@ -151,12 +176,86 @@ describe('Requisition', function() {
         httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/approve'))
         .respond(200, requisition);
 
+        requisition.$availableOffline = true;
         requisition.$approve();
 
         httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isApproved()).toBe(true);
+        expect(offlineRequisitions.put).toHaveBeenCalled();
+        expect(storedRequisition.$modified).toBe(false);
+        expect(storedRequisition.$availableOffline).toBe(true);
+        expect(storedRequisition.id).toEqual(requisition.id);
+    });
+
+    it('should submit requisition that is no available offline', function() {
+        var storedRequisition;
+        offlineRequisitions.put.andCallFake(function(argument) {
+            storedRequisition = argument;
+        });
+
+        expect(requisition.$isSubmitted()).toBe(false);
+
+        requisition.status = REQUISITION_STATUS.SUBMITTED;
+
+        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
+        .respond(200, requisition);
+
+        requisition.$availableOffline = false;
+        requisition.$submit();
+
+        httpBackend.flush();
+        $rootScope.$apply();
+
+        expect(requisition.$isSubmitted()).toBe(true);
+        expect(offlineRequisitions.put).not.toHaveBeenCalled();
+    });
+
+    it('should authorize requisition that is no available offline', function() {
+        var storedRequisition;
+        offlineRequisitions.put.andCallFake(function(argument) {
+            storedRequisition = argument;
+        });
+
+        expect(requisition.$isAuthorized()).toBe(false);
+
+        requisition.status = REQUISITION_STATUS.AUTHORIZED;
+
+        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
+        .respond(200, requisition);
+
+        requisition.$availableOffline = false;
+        requisition.$authorize();
+
+        httpBackend.flush();
+        $rootScope.$apply();
+
+        expect(requisition.$isAuthorized()).toBe(true);
+        expect(offlineRequisitions.put).not.toHaveBeenCalled();
+    });
+
+    it('should approve requisition that is no available offline', function() {
+        var storedRequisition;
+        offlineRequisitions.put.andCallFake(function(argument) {
+            storedRequisition = argument;
+        });
+
+        expect(requisition.$isApproved()).toBe(false);
+
+        requisition.status = REQUISITION_STATUS.APPROVED;
+
+        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/approve'))
+        .respond(200, requisition);
+
+        requisition.$availableOffline = false;
+        requisition.$approve();
+
+        httpBackend.flush();
+        $rootScope.$apply();
+
+        expect(requisition.$isApproved()).toBe(true);
+        expect(offlineRequisitions.put).not.toHaveBeenCalled();
     });
 
     it('should reject requisition', function() {

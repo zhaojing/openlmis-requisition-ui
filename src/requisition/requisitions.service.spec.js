@@ -103,7 +103,7 @@ describe('requisitionService', function() {
                 return confirmServiceMock;
             });
 
-            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy']);
+            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
             onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
             templateOffline = jasmine.createSpyObj('templates', ['put']);
             approvedProducts = jasmine.createSpyObj('approvedProducts', ['put']);
@@ -158,7 +158,6 @@ describe('requisitionService', function() {
         $rootScope.$apply();
 
         expect(data.id).toBe(requisition.id);
-
     });
 
     it('should initiate requisition', function() {
@@ -225,6 +224,7 @@ describe('requisitionService', function() {
         $rootScope.$apply();
 
         expect(callback).toHaveBeenCalled();
+        expect(requisitionsStorage.removeBy).toHaveBeenCalledWith('id', '1');
     });
 
     it('should search requisitions with all params', function() {
