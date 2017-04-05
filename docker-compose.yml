@@ -41,4 +41,4 @@ services:
       - '/openlmis-ui-layout'
   image:
     build: .
-    image: openlmis/requisition-ui:4.0.1-SNAPSHOT
+    image: openlmis/requisition-ui
