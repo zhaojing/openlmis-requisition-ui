@@ -189,7 +189,7 @@ describe('Requisition', function() {
         expect(storedRequisition.id).toEqual(requisition.id);
     });
 
-    it('should submit requisition that is no available offline', function() {
+    it('should submit requisition that is not available offline', function() {
         var storedRequisition;
         offlineRequisitions.put.andCallFake(function(argument) {
             storedRequisition = argument;
@@ -212,7 +212,7 @@ describe('Requisition', function() {
         expect(offlineRequisitions.put).not.toHaveBeenCalled();
     });
 
-    it('should authorize requisition that is no available offline', function() {
+    it('should authorize requisition that is not available offline', function() {
         var storedRequisition;
         offlineRequisitions.put.andCallFake(function(argument) {
             storedRequisition = argument;
@@ -235,7 +235,7 @@ describe('Requisition', function() {
         expect(offlineRequisitions.put).not.toHaveBeenCalled();
     });
 
-    it('should approve requisition that is no available offline', function() {
+    it('should approve requisition that is not available offline', function() {
         var storedRequisition;
         offlineRequisitions.put.andCallFake(function(argument) {
             storedRequisition = argument;
