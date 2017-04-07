@@ -218,7 +218,7 @@
                                     notificationService.success('msg.requisitionAuthorized');
                                 });
                                 if(hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_APPROVE)) reloadState();
-                                else $state.go('openlmis.requisitions.initRnr');
+                                else $state.go('requisitions.initRnr');
                             }, failWithMessage('msg.failedToAuthorizeRequisition'));
                         }, function(response) {
                           handleSaveError(response.status);
@@ -252,7 +252,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('msg.requisitionDeleted');
                     });
-                    $state.go('openlmis.requisitions.initRnr');
+                    $state.go('requisitions.initRnr');
                 }, failWithMessage('failedToDeleteRequisition'));
             }, function() {
                 watcher.makeLoud();
@@ -280,7 +280,7 @@
                             loadingPromise.then(function() {
                                 notificationService.success('msg.requisitionApproved');
                             });
-                            $state.go('openlmis.requisitions.approvalList');
+                            $state.go('requisitions.approvalList');
                         }, failWithMessage('msg.failedToApproveRequisition'));
                         }, function(response) {
                           handleSaveError(response.status);
@@ -311,7 +311,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('msg.requisitionRejected');
                     });
-                    $state.go('openlmis.requisitions.approvalList');
+                    $state.go('requisitions.approvalList');
                 }, failWithMessage('msg.failedToRejectRequisition'));
             }, function() {
                 watcher.makeLoud();
@@ -336,7 +336,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('msg.requisitionSkipped');
                     });
-                    $state.go('openlmis.requisitions.initRnr');
+                    $state.go('requisitions.initRnr');
                 }, failWithMessage('msg.failedToSkipRequisition'));
             }, function() {
                 watcher.makeLoud();

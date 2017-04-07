@@ -25,7 +25,7 @@
 
 	function routes($stateProvider, REQUISITION_RIGHTS) {
 
-		$stateProvider.state('openlmis.requisitions.approvalList', {
+		$stateProvider.state('requisitions.approvalList', {
 			showInNavigation: true,
 			label: 'link.requisition.approve',
 			url: '/approvalList?page&size',

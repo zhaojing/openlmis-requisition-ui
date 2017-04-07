@@ -25,7 +25,7 @@
 
     function routes($stateProvider) {
 
-        $stateProvider.state('openlmis.requisitions.requisition.nonFullSupply', {
+        $stateProvider.state('requisitions.requisition.nonFullSupply', {
             url: '/nonFullSupply?page&size',
             templateUrl: 'requisition-non-full-supply/non-full-supply.html',
             controller: 'NonFullSupplyController',

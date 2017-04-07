@@ -234,7 +234,7 @@
                             selectedPeriod.id,
                             vm.emergency)
                         .then(function (data) {
-                            $state.go('openlmis.requisitions.requisition.fullSupply', {
+                            $state.go('requisitions.requisition.fullSupply', {
                                 rnr: data.id
                             });
                         }, handleError('error.requisition.couldNotInitiate'));
@@ -243,7 +243,7 @@
                     }
                 }, handleError('error.requisition.noPermissionToInitiate'));
             } else {
-                $state.go('openlmis.requisitions.requisition.fullSupply', {
+                $state.go('requisitions.requisition.fullSupply', {
                     rnr: selectedPeriod.rnrId
                 });
             }

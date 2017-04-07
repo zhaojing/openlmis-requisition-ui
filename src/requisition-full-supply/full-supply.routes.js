@@ -24,7 +24,7 @@
     routes.$inject = ['$stateProvider'];
 
     function routes($stateProvider) {
-        $stateProvider.state('openlmis.requisitions.requisition.fullSupply', {
+        $stateProvider.state('requisitions.requisition.fullSupply', {
             url: '/fullSupply?page&size',
             templateUrl: 'requisition-full-supply/full-supply.html',
             controller: 'FullSupplyController',

@@ -195,7 +195,7 @@
          * @param {String} requisitionId Requisition UUID
          */
         function openRnr(requisitionId) {
-            $state.go('openlmis.requisitions.requisition.fullSupply', {
+            $state.go('requisitions.requisition.fullSupply', {
                 rnr: requisitionId
             });
         }
@@ -234,7 +234,7 @@
             stateParams.initiatedDateTo = vm.endDate ? vm.endDate.toISOString() : null;
             stateParams.offline = vm.offline;
 
-            $state.go('openlmis.requisitions.search', stateParams, {
+            $state.go('requisitions.search', stateParams, {
                 reload: true
             });
         }

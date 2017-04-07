@@ -25,7 +25,7 @@
 
     function routes($stateProvider, REQUISITION_RIGHTS, FULFILLMENT_RIGHTS) {
 
-        $stateProvider.state('openlmis.requisitions.requisition', {
+        $stateProvider.state('requisitions.requisition', {
             url: '^/requisition/:rnr',
             controller: 'RequisitionViewController',
             controllerAs: 'vm',
@@ -43,7 +43,7 @@
                         deferred.resolve(response);
                     }, function() {
                         deferred.reject();
-                        $state.go('openlmis.404');
+                        $state.go('404');
                     });
 
                     return deferred.promise;

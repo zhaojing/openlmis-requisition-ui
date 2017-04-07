@@ -160,7 +160,7 @@ describe('RequisitionViewController', function() {
         $scope.$apply();
 
         expect(notificationServiceSpy).toHaveBeenCalledWith('msg.requisitionSkipped');
-        expect(stateGoSpy).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+        expect(stateGoSpy).toHaveBeenCalledWith('requisitions.initRnr');
     });
 
     it('should display error message when skip requisition failed', function() {
@@ -370,7 +370,7 @@ describe('RequisitionViewController', function() {
             vm.authorizeRnr();
             $scope.$apply();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+            expect($state.go).toHaveBeenCalledWith('requisitions.initRnr');
             expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_APPROVE, {programCode: requisition.program.code});
         });
 
