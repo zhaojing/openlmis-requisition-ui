@@ -313,7 +313,7 @@ describe('ConvertToOrderController', function(){
 
             vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.convertToOrder', {
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.convertToOrder', {
                 filterBy: 'filterBy',
                 filterValue: 'filterValue',
                 sortBy: 'sortBy',

@@ -23,7 +23,7 @@
 
     function routes($stateProvider, REQUISITION_RIGHTS) {
 
-        $stateProvider.state('requisitions', {
+        $stateProvider.state('openlmis.requisitions', {
             abstract: true,
             showInNavigation: true,
             priority: 2,

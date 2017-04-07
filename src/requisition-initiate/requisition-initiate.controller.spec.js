@@ -72,7 +72,7 @@ describe("RequisitionInitiateController", function(){
 
         vm.initRnr(selectedPeriod);
 
-        expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {rnr: 1});
+        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
     });
 
     it("Should change page to requisition full supply for newly initialized requisition in selected period", function() {
@@ -85,7 +85,7 @@ describe("RequisitionInitiateController", function(){
         vm.initRnr(selectedPeriod);
         rootScope.$apply();
 
-        expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {rnr: 1});
+        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
         expect(userRightFactoryMock.checkRightForCurrentUser).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_CREATE, programs[0].id, facility.id);
     });
 

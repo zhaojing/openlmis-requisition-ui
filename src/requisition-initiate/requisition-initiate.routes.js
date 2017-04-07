@@ -25,7 +25,7 @@
 
     function routes($stateProvider, REQUISITION_RIGHTS) {
 
-        $stateProvider.state('requisitions.initRnr', {
+        $stateProvider.state('openlmis.requisitions.initRnr', {
             url: '/initiate',
             showInNavigation: true,
             priority: 11,
