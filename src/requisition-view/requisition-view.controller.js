@@ -45,10 +45,6 @@
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition);
 
-        $timeout(function() {
-            watcher.makeLoud();
-        }, 3000);
-
         /**
          * @ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
@@ -82,7 +78,6 @@
         vm.approveRnr = approveRnr;
         vm.rejectRnr = rejectRnr;
         vm.skipRnr = skipRnr;
-        vm.periodDisplayName = periodDisplayName;
         vm.displaySubmit = displaySubmit;
         vm.displayAuthorize = displayAuthorize;
         vm.displayDelete = displayDelete;
@@ -151,7 +146,6 @@
         }
 
         function saveRnr(successCallback, failCallback) {
-            watcher.makeSilent();
             vm.requisition.$modified = false;
             save().then(successCallback, failCallback);
         }
@@ -168,7 +162,6 @@
          * Otherwise, a success notification modal will be shown.
          */
         function submitRnr() {
-            watcher.makeSilent();
             confirmService.confirm('msg.question.confirmation.submit', 'button.submit').then(function() {
                 if (requisitionValidator.validateRequisition(requisition)) {
                     var loadingPromise = loadingModalService.open();
@@ -189,8 +182,6 @@
                 } else {
                     failWithMessage('error.rnr.validation')();
                 }
-            }, function() {
-                watcher.makeLoud();
             });
         }
 
@@ -207,7 +198,6 @@
          * Otherwise, a success notification modal will be shown.
          */
         function authorizeRnr() {
-            watcher.makeSilent();
             confirmService.confirm('msg.question.confirmation.authorize', 'button.authorize').then(function() {
                 if(requisitionValidator.validateRequisition(requisition)) {
                     var loadingPromise = loadingModalService.open();
@@ -229,8 +219,6 @@
                 } else {
                     failWithMessage('error.rnr.validation');
                 }
-            }, function() {
-                watcher.makeLoud();
             });
         }
 
@@ -245,7 +233,6 @@
          * Otherwise, a success notification modal will be shown.
          */
         function removeRnr() {
-            watcher.makeSilent();
             confirmService.confirmDestroy('msg.question.confirmation.deletion', 'button.delete').then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$remove().then(function(response) {
@@ -254,8 +241,6 @@
                     });
                     $state.go('requisitions.initRnr');
                 }, failWithMessage('failedToDeleteRequisition'));
-            }, function() {
-                watcher.makeLoud();
             });
         }
 
@@ -271,7 +256,6 @@
          * Otherwise, a success notification modal will be shown.
          */
         function approveRnr() {
-            watcher.makeSilent();
             confirmService.confirm('msg.question.confirmation.approve', 'button.approve').then(function() {
                 if(requisitionValidator.validateRequisition(requisition)) {
                     var loadingPromise = loadingModalService.open();
@@ -288,8 +272,6 @@
                 } else {
                     failWithMessage('error.rnr.validation');
                 }
-            }, function() {
-                watcher.makeLoud();
             });
         }
 
@@ -304,7 +286,6 @@
          * Otherwise, a success notification modal will be shown.
          */
         function rejectRnr() {
-            watcher.makeSilent();
             confirmService.confirmDestroy('msg.question.confirmation.reject', 'button.rnr.reject').then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$reject().then(function(response) {
@@ -313,8 +294,6 @@
                     });
                     $state.go('requisitions.approvalList');
                 }, failWithMessage('msg.failedToRejectRequisition'));
-            }, function() {
-                watcher.makeLoud();
             });
         }
 
@@ -329,7 +308,6 @@
          * Otherwise, a success notification modal will be shown.
          */
         function skipRnr() {
-            watcher.makeSilent();
             confirmService.confirm('msg.question.confirmation.skip', 'button.skipRequisition').then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$skip().then(function(response) {
@@ -338,24 +316,7 @@
                     });
                     $state.go('requisitions.initRnr');
                 }, failWithMessage('msg.failedToSkipRequisition'));
-            }, function() {
-                watcher.makeLoud();
             });
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name periodDisplayName
-         *
-         * @description
-         * Creates human readable duration of reporting period.
-         *
-         * @return {String} Reporting period
-         */
-        function periodDisplayName() {
-            //TODO: This is a temporary solution.
-            return vm.requisition.processingPeriod.startDate.slice(0,3).join('/') + ' - ' + vm.requisition.processingPeriod.endDate.slice(0,3).join('/');
         }
 
         /**
@@ -579,7 +540,6 @@
             return function() {
                 notificationService.error(message);
                 loadingModalService.close();
-                watcher.makeLoud();
             };
         }
 

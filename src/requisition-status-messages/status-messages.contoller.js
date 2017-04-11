@@ -55,6 +55,17 @@
          */
         vm.isTextAreaVisible = false;
 
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-status-messages.controller:StatusMessagesController
+         * @name scope
+         * @type {Scope}
+         *
+         * @description
+         * Holds controller scope.
+         */
+        vm.scope = $scope;
+
         // Functions
 
         vm.displayRequisitionHistory = displayRequisitionHistory;
@@ -125,7 +136,5 @@
         function displayEditComment() {
             return !displayAddComment() && !vm.requisition.$isApproved() && !vm.requisition.$isReleased();
         }
-
     }
-
 })();

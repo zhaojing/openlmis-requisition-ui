@@ -29,13 +29,9 @@
         .module('requisition-view')
         .factory('RequisitionWatcher', factory);
 
-    factory.$inject = ['$rootScope', '$timeout', 'notificationService', 'localStorageFactory'];
+    factory.$inject = ['$timeout', 'localStorageFactory'];
 
-    function factory($rootScope, $timeout, notificationService, localStorageFactory) {
-
-        RequisitionWatcher.prototype.makeSilent = makeSilent;
-        RequisitionWatcher.prototype.makeLoud = makeLoud;
-
+    function factory($timeout, localStorageFactory) {
 
         return RequisitionWatcher;
 
@@ -55,25 +51,15 @@
             var watcher = this,
                 storage = localStorageFactory('requisitions');
 
-            addWatcher(scope, requisition, 'requisitionLineItems', 'msg.requisitionSaved', watcher, storage);
-            addWatcher(scope, requisition, 'draftStatusMessage', 'msg.requisitionCommentSaved', watcher, storage);
+            addWatcher(scope, requisition, 'requisitionLineItems', watcher, storage);
+            addWatcher(scope, requisition, 'draftStatusMessage', watcher, storage);
         }
 
-        function addWatcher(scope, requisition, valueToWatch, message, watcher, storage) {
+        function addWatcher(scope, requisition, valueToWatch, watcher, storage) {
             scope.$watch(function() {
                 return requisition[valueToWatch];
             }, function(oldValue, newValue) {
                 if (oldValue !== newValue) {
-                    if(watcher.isLoud) {
-                        $timeout.cancel(watcher.notificationTimeout);
-                        watcher.notificationTimeout = $timeout(function() {
-                            if (watcher.isLoud) {
-                                notificationService.success(message);
-                                watcher.notificationTimeout = undefined;
-                            }
-                        }, 3000);
-                    }
-
                     $timeout.cancel(watcher.syncTimeout);
                     watcher.syncTimeout = $timeout(function() {
                         requisition.$modified = true;
@@ -82,34 +68,6 @@
                     }, 500);
                 }
             }, true);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.RequisitionWatcher
-         * @name makeSilent
-         *
-         * @description
-         * Makes the watcher silent - no notification will be displayed after this method has been
-         * called.
-         */
-        function makeSilent() {
-            var watcher = this;
-            $timeout.cancel(watcher.notificationTimeout);
-            watcher.isLoud = false;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.RequisitionWatcher
-         * @name makeLoud
-         *
-         * @description
-         * Makes the watcher loud - notification will be shown once in a while when editing the
-         * watched requisition.
-         */
-        function makeLoud() {
-            this.isLoud = true;
         }
     }
 

@@ -24,6 +24,7 @@
      * Responsible for managing requisition full supply screen.
      */
     angular.module('requisition-full-supply', [
+        'openlmis-form',
         'openlmis-pagination',
         'requisition',
         'requisition-product-grid',

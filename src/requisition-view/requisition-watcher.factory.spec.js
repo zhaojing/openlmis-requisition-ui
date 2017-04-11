@@ -13,10 +13,9 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 describe('RequisitionWatcher', function() {
 
-    var RequisitionWatcher, requisitionsStorage, notificationService, scope, watcher, $timeout;
+    var RequisitionWatcher, requisitionsStorage, scope, watcher, $timeout, $rootScope;
 
     beforeEach(function() {
         module('requisition-view', function($provide) {
@@ -29,12 +28,9 @@ describe('RequisitionWatcher', function() {
 
         inject(function($injector) {
             RequisitionWatcher = $injector.get('RequisitionWatcher');
-            notificationService = $injector.get('notificationService');
             $rootScope = $injector.get('$rootScope');
             $timeout = $injector.get('$timeout');
         });
-
-        spyOn(notificationService, 'success');
 
         scope = $rootScope.$new();
         scope.requisition = {
@@ -50,44 +46,7 @@ describe('RequisitionWatcher', function() {
         scope.$digest();
     });
 
-    describe('init', function() {
-
-        it('should expose makeLoud method', function() {
-            expect(angular.isFunction(watcher.makeLoud)).toBe(true);
-        });
-
-        it('should expose makeSilent method', function() {
-            expect(angular.isFunction(watcher.makeLoud)).toBe(true);
-        });
-    });
-
     describe('line items watcher', function() {
-
-        it('should not send notifications after watcher starts', function() {
-            scope.requisition.requisitionLineItems[0].value = 2;
-            scope.$digest();
-            $timeout.flush();
-
-            expect(notificationService.success).not.toHaveBeenCalled();
-        });
-
-        it('should not send notifications after silencing', function() {
-            watcher.makeSilent();
-            scope.requisition.requisitionLineItems[0].value = 2;
-            scope.$digest();
-            $timeout.flush();
-
-            expect(notificationService.success).not.toHaveBeenCalled();
-        });
-
-        it('should send notifications after making watcher loud', function() {
-            watcher.makeLoud();
-            scope.requisition.requisitionLineItems[0].value = 2;
-            scope.$digest();
-            $timeout.flush();
-
-            expect(notificationService.success).toHaveBeenCalledWith('msg.requisitionSaved');
-        });
 
         it('should save requisition after changes', function() {
             scope.requisition.requisitionLineItems[0].value = 2;
@@ -105,46 +64,11 @@ describe('RequisitionWatcher', function() {
 
             expect(requisitionsStorage.put).not.toHaveBeenCalled();
             expect(scope.requisition.$modified).toBe(undefined);
-        });
-
-        it('should not send notifications if value has not changed', function() {
-            watcher.makeLoud();
-            scope.requisition.requisitionLineItems[0].value = 1;
-            scope.$digest();
-            $timeout.flush();
-
-            expect(notificationService.success).not.toHaveBeenCalled();
         });
     });
 
     describe('comment watcher', function() {
 
-        it('should not send notifications after watcher starts', function() {
-            scope.requisition.draftStatusMessage = 'newMessage';
-            scope.$digest();
-            $timeout.flush();
-
-            expect(notificationService.success).not.toHaveBeenCalled();
-        });
-
-        it('should not send notifications after silencing', function() {
-            watcher.makeSilent();
-            scope.requisition.draftStatusMessage = 'newMessage';
-            scope.$digest();
-            $timeout.flush();
-
-            expect(notificationService.success).not.toHaveBeenCalled();
-        });
-
-        it('should send notifications after making watcher loud', function() {
-            watcher.makeLoud();
-            scope.requisition.draftStatusMessage = 'newMessage';
-            scope.$digest();
-            $timeout.flush();
-
-            expect(notificationService.success).toHaveBeenCalledWith('msg.requisitionCommentSaved');
-        });
-
         it('should save requisition after changes', function() {
             scope.requisition.draftStatusMessage = 'newMessage';
             scope.$digest();
@@ -161,15 +85,6 @@ describe('RequisitionWatcher', function() {
 
             expect(requisitionsStorage.put).not.toHaveBeenCalled();
             expect(scope.requisition.$modified).toBe(undefined);
-        });
-
-        it('should not send notifications if value has not changed', function() {
-            watcher.makeLoud();
-            scope.requisition.draftStatusMessage = 'message';
-            scope.$digest();
-            $timeout.flush();
-
-            expect(notificationService.success).not.toHaveBeenCalled();
         });
     });
 });
