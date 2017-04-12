@@ -98,8 +98,7 @@ describe('FullSupplyController', function() {
             stateParams: stateParams,
             requisition: requisition,
             requisitionValidator: requisitionValidator,
-            paginatedListFactory: paginatedListFactory,
-            $scope: $rootScope.$new()
+            paginatedListFactory: paginatedListFactory
         });
         vm.items = lineItems;
     }));

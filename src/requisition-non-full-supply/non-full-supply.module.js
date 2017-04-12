@@ -25,6 +25,7 @@
      */
     angular.module('requisition-non-full-supply', [
         'ngBootbox',
+        'openlmis-form',
         'openlmis-pagination',
         'openlmis-templates',
         'openlmis-urls',
