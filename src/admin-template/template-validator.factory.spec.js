@@ -309,7 +309,7 @@ describe('templateValidator', function() {
             });
 
             it('should validate if column is not displayed when has USER_INPUT source', function() {
-                const result = templateValidator.getColumnError(template.columnsMap.stockOnHand);
+                var result = templateValidator.getColumnError(template.columnsMap.stockOnHand);
 
                 expect(result)
                     .toEqual('msg.template.column.shouldBeDisplayedmsg.template.column.isUserInput');
