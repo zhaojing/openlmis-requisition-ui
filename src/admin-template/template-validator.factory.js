@@ -38,7 +38,6 @@
 
         var columnValidations = {
                 averageConsumption: validateAverageConsumption,
-                adjustedConsumption: validateAdjustedConsumption,
                 requestedQuantity: validateRequestedQuantity,
                 requestedQuantityExplanation: validateRequestedQuantityExplanation,
                 totalStockoutDays: validateTotalStockoutDays
@@ -135,16 +134,6 @@
             }
         }
 
-        function validateAdjustedConsumption(column, template) {
-            var pColumn = template.columnsMap[TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION];
-            if (!column.isDisplayed && pColumn.isDisplayed) {
-
-                return messageService.get('error.shouldBeDisplayedIfOtherIsCalculated', {
-                    column: pColumn.label
-                });
-            }
-        }
-
         function validateRequestedQuantity(column, template) {
             var wColumn = template.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION];
 
@@ -187,13 +176,20 @@
         }
 
         function validateTotalStockoutDays(column, template) {
-            var nColumn = template.columnsMap.adjustedConsumption;
-            if (!column.isDisplayed && nColumn.isDisplayed &&
-                nColumn.source === COLUMN_SOURCES.CALCULATED) {
+            if (!column.isDisplayed) {
+                var nColumn = template.columnsMap.adjustedConsumption;
+                if (nColumn.isDisplayed && nColumn.source === COLUMN_SOURCES.CALCULATED) {
+                    return messageService.get('error.shouldBeDisplayedIfOtherIsCalculated', {
+                        column: nColumn.label
+                    });
+                }
 
-                return messageService.get('error.shouldBeDisplayedIfOtherIsCalculated', {
-                    column: nColumn.label
-                });
+                var pColumn = template.columnsMap.averageConsumption;
+                if (pColumn.isDisplayed && pColumn.source === COLUMN_SOURCES.CALCULATED) {
+                    return messageService.get('error.shouldBeDisplayedIfOtherIsCalculated', {
+                        column: pColumn.label
+                    });
+                }
             }
         }
 

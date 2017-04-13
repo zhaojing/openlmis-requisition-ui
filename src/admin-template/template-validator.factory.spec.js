@@ -309,7 +309,7 @@ describe('templateValidator', function() {
             });
 
             it('should validate if column is not displayed when has USER_INPUT source', function() {
-                result = templateValidator.getColumnError(template.columnsMap.stockOnHand);
+                const result = templateValidator.getColumnError(template.columnsMap.stockOnHand);
 
                 expect(result)
                     .toEqual('msg.template.column.shouldBeDisplayedmsg.template.column.isUserInput');
@@ -319,7 +319,7 @@ describe('templateValidator', function() {
 
         describe('for total stockout days', function() {
 
-            var messageService, nColumn;
+            var messageService, nColumn, pColumn;
 
             beforeEach(function() {
                 inject(function($injector) {
@@ -340,55 +340,15 @@ describe('templateValidator', function() {
 
                 template.columnsMap.adjustedConsumption = nColumn;
 
-                spyOn(messageService, 'get').andCallThrough();
-
-                messageService.get.andCallFake(function(message, params) {
-                    if (message === 'error.shouldBeDisplayedIfOtherIsCalculated' && params &&
-                        params.column === nColumn.label) {
-
-                        return message + ' ' + params.column;
-                    }
-                });
-            });
-
-            it('should return undefined if column is valid', function() {
-                var result = templateValidator.getColumnError(column, template);
-
-                expect(result).toBe(undefined);
-            });
-
-            it('should return error if the column is hidden and adjusted consumption is visible and calculated', function() {
-                column.isDisplayed = false;
-
-                var result = templateValidator.getColumnError(column, template);
-
-                expect(result).toBe('error.shouldBeDisplayedIfOtherIsCalculated ' + nColumn.label);
-            });
-
-            it('should return undefined if the column is hidden and adjusted consumption is hidden and calculated', function() {
-                column.isDisplayed = false;
-                nColumn.isDisplayed = false;
-
-                var result = templateValidator.getColumnError(column, template);
-
-                expect(result).toBeUndefined();
-            });
-
-        });
-
-        describe('for adjusted consumption', function() {
-
-            var messageService, pColumn;
-
-            beforeEach(function() {
-                inject(function($injector) {
-                    messageService = $injector.get('messageService');
-                });
-
-                column.name = TEMPLATE_COLUMNS.ADJUSTED_CONSUMPTION;
                 pColumn = {
                     label: 'Average Consumption',
-                    isDisplayed: true
+                    isDisplayed: true,
+                    source: COLUMN_SOURCES.CALCULATED,
+                    columnDefinition: {
+                        sources: [
+                            COLUMN_SOURCES.CALCULATED
+                        ]
+                    }
                 };
 
                 template.columnsMap.averageConsumption = pColumn;
@@ -397,35 +357,40 @@ describe('templateValidator', function() {
 
                 messageService.get.andCallFake(function(message, params) {
                     if (message === 'error.shouldBeDisplayedIfOtherIsCalculated' && params &&
-                        params.column === pColumn.label) {
+                        (params.column === nColumn.label || params.column === pColumn.label)) {
 
                         return message + ' ' + params.column;
                     }
                 });
             });
 
-            it('should return undefined if column is visible and average consumption is visible', function() {
+            it('should return undefined if column is visible and consumptions are visible', function() {
                 var result = templateValidator.getColumnError(column, template);
 
                 expect(result).toBe(undefined);
             });
 
-            it('should return undefined if column is hidden and average consumption is hidden', function() {
+            it('should return error if the column is hidden and adjusted consumption is visible', function() {
+                column.isDisplayed = false;
+                pColumn.isDisplayed = false;
+
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe(undefined);
+                expect(result).toBe('error.shouldBeDisplayedIfOtherIsCalculated ' + nColumn.label);
             });
 
             it('should return error if the column is hidden and average consumption is visible', function() {
                 column.isDisplayed = false;
+                nColumn.isDisplayed = false;
 
                 var result = templateValidator.getColumnError(column, template);
 
                 expect(result).toBe('error.shouldBeDisplayedIfOtherIsCalculated ' + pColumn.label);
             });
 
-            it('should return undefined if the column is hidden and average consumption is hidden', function() {
+            it('should return undefined if the column is hidden and consumptions are hidden', function() {
                 column.isDisplayed = false;
+                nColumn.isDisplayed = false;
                 pColumn.isDisplayed = false;
 
                 var result = templateValidator.getColumnError(column, template);

@@ -93,7 +93,8 @@
                 TEMPLATE_COLUMNS.TOTAL_STOCKOUT_DAYS
             ],
             averageConsumption: [
-                TEMPLATE_COLUMNS.ADJUSTED_CONSUMPTION
+                TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY,
+                TEMPLATE_COLUMNS.TOTAL_STOCKOUT_DAYS
             ],
             requestedQuantityExplanation: [
                 TEMPLATE_COLUMNS.REQUESTED_QUANTITY
