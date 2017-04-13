@@ -159,7 +159,7 @@ describe('RequisitionViewController', function() {
         loadingDeferred.resolve();
         $scope.$apply();
 
-        expect(notificationServiceSpy).toHaveBeenCalledWith('msg.requisitionSkipped');
+        expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.skip.success');
         expect(stateGoSpy).toHaveBeenCalledWith('requisitions.initRnr');
     });
 
@@ -173,7 +173,7 @@ describe('RequisitionViewController', function() {
         deferred.reject();
         $scope.$apply();
 
-        expect(notificationServiceSpy).toHaveBeenCalledWith('msg.failedToSkipRequisition');
+        expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.skip.failure');
     });
 
     it('getPrintUrl should prepare URL correctly', function() {
@@ -255,11 +255,11 @@ describe('RequisitionViewController', function() {
     describe('Sync error handling', function() {
 
         it('should reload requisition when conflict response received', function() {
-            verifyReloadOnErrorAndNotificationSent(409, 'msg.requisitionVersionError')
+            verifyReloadOnErrorAndNotificationSent(409, 'requisitionView.versionMismatch')
         });
 
         it('should reload requisition when forbidden response received', function() {
-            verifyReloadOnErrorAndNotificationSent(403, 'msg.requisitionUpdateForbidden')
+            verifyReloadOnErrorAndNotificationSent(403, 'requisitionView.updateForbidden')
         });
 
         it('should not reload requisition when bad request response received', function() {
@@ -300,7 +300,7 @@ describe('RequisitionViewController', function() {
             deferred.reject(conflictResponse);
             $scope.$apply();
 
-            expect(notificationServiceSpy).toHaveBeenCalledWith('msg.failedToSyncRequisition');
+            expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.sync.failure');
             expect(stateSpy).not.toHaveBeenCalled();
         }
     });
@@ -422,7 +422,7 @@ describe('RequisitionViewController', function() {
             vm.syncRnrAndPrint();
             $scope.$apply();
 
-            expect(notificationServiceSpy).toHaveBeenCalledWith('msg.failedToSyncRequisition');
+            expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.sync.failure');
         });
 
         it('should open window with report when has no right for sync', function() {

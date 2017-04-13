@@ -1,0 +1,9 @@
+{
+    "requisitionStatusMessages.addComment.label": "Add comment",
+    "requisitionStatusMessages.addComment.message": "Add a comment about the changes you have made",
+    "requisitionStatusMessages.comments": "Comments",
+    "requisitionStatusMessages.noCommentsAdded": "No comments added",
+    "requisitionStatusMessages.removeComment": "Remove comment",
+    "requisitionStatusMessages.requisitionHistory": "Requisition history",
+    "requisitionStatusMessages.viewHistory": "View history"
+}

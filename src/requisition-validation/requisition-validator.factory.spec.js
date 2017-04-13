@@ -267,7 +267,7 @@ describe('requisitionValidator', function() {
 
             var result = validator.validateLineItemField(lineItem, column, requisition);
 
-            expect(lineItem.$errors[column.name]).toBe('error.numberTooLarge');
+            expect(lineItem.$errors[column.name]).toBe('requisitionValidation.numberTooLarge');
             expect(result).toBe(false);
         });
 

@@ -26,7 +26,7 @@
 
 		$stateProvider.state('administration.programs', {
 			showInNavigation: true,
-			label: 'label.programs',
+			label: 'adminTemplateList.programs',
 			url: '/templateList',
 			controller: 'ProgramAdministrationListController',
 			templateUrl: 'admin-template-list/program-administration-list.html',

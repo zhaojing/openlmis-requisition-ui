@@ -1,12 +1,12 @@
 <div class="requisition-template-admin">
     <div class="page">
-        <h2>{{'configure.rnr.header' | message}}</h2>
+        <h2>{{'adminTemplate.configureRnrTemplate' | message}}</h2>
         <aside>
             <dl>
-                <dt>{{'program.header' | message}}</dt>
+                <dt>{{'adminTemplate.program' | message}}</dt>
                 <dd>
                     {{vm.program.name}}
-                    <a ng-click="vm.goToTemplateList()">{{'template.change' | message}}</a>
+                    <a ng-click="vm.goToTemplateList()">{{'adminTemplate.change' | message}}</a>
                 </dd>
             </dl>
         </aside>
@@ -15,20 +15,16 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>{{'template.header.display' | message}}</th>
+                        <th>{{'adminTemplate.display' | message}}</th>
                         <th></th>
-    					<th>{{'template.header.label' | message}}</th>
-                        <th>{{'label.definition' | message}}</th>
-    					<th>{{'template.header.source' | message}}</th>
+                        <th>{{'adminTemplate.label' | message}}</th>
+                        <th>{{'adminTemplate.definition' | message}}</th>
+                        <th>{{'adminTemplate.source' | message}}</th>
                         <th></th>
                     </tr>
                 </thead>
-                <tbody dnd-list="vm.template.columnsMap"
-                        dnd-drop="vm.dropCallback(event, index, item)">
-                    <tr ng-repeat="column in vm.template.columnsMap | orderObjectBy:'displayOrder'"
-                        dnd-draggable="column"
-                        dnd-disable-if="!column.columnDefinition.canChangeOrder"
-                        dnd-effect-allowed="move">
+                <tbody dnd-list="vm.template.columnsMap" dnd-drop="vm.dropCallback(event, index, item)">
+                    <tr ng-repeat="column in vm.template.columnsMap | orderObjectBy:'displayOrder'" dnd-draggable="column" dnd-disable-if="!column.columnDefinition.canChangeOrder" dnd-effect-allowed="move">
                         <dnd-nodrag>
                             <td ng-class="{'dnd-handle': column.columnDefinition.canChangeOrder}">
                                 <i ng-if="!column.columnDefinition.canChangeOrder" class="lock"/>
@@ -46,9 +42,7 @@
                                 <input disable-drag type="text" ng-model="column.label" class="form-control"></input>
                             </td>
                             <td>
-                                <input characters-left max-length="vm.maxColumnDescriptionLength" input-auto-resize
-                                    disable-drag ng-model="column.definition" class="form-control" type="text">
-                                </input>
+                                <input characters-left max-length="vm.maxColumnDescriptionLength" input-auto-resize disable-drag ng-model="column.definition" class="form-control" type="text"></input>
                             </td>
                             <td>
                                 <div ng-if="!vm.canChangeSource(column.columnDefinition)">{{vm.sourceDisplayName(column.source)}}</div>
@@ -58,7 +52,7 @@
                             </td>
                             <td>
                                 <div ng-if="vm.isAverageConsumption(column)">
-                                    <label for="numberOfPeriods">{{'msg.template.numberOfPeriodsToAverage' | message}}</label>
+                                    <label for="numberOfPeriods">{{'adminTemplate.numberOfPeriodsToAverage' | message}}</label>
                                     <input disable-drag positive-integer type="text" id="numberOfPeriods" ng-model="vm.template.numberOfPeriodsToAverage" class="form-control"/>
                                 </div>
                                 <div ng-if="column.columnDefinition.options.length > 0">
@@ -69,7 +63,13 @@
                         </dnd-nodrag>
                     </tr>
                     <tr class="dndPlaceholder">
-                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -77,6 +77,6 @@
     </div>
 </div>
 <div class="openlmis-toolbar">
-    <input type="button" ng-click="vm.saveTemplate()" class="primary" ng-disabled="!vm.isTemplateValid(vm.template)" value="{{'button.save' | message}}"/>
+    <input type="button" ng-click="vm.saveTemplate()" class="primary" ng-disabled="!vm.isTemplateValid(vm.template)" value="{{'adminTemplate.save' | message}}"/>
     <input type="button" ng-click="vm.goToTemplateList()" value="{{'button.cancel' | message}}">
 </div>

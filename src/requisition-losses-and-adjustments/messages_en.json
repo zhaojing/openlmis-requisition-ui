@@ -1,0 +1,11 @@
+{
+    "requisitionLossesAndAdjustments.add": "Add",
+    "requisitionLossesAndAdjustments.addNewLossOrAdjustment": "Add new loss or adjustment",
+    "requisitionLossesAndAdjustments.close": "Close",
+    "requisitionLossesAndAdjustments.lossesAndAdjustments": "Losses and adjustments",
+    "requisitionLossesAndAdjustments.noLossesOrAdjustments": "There are no losses or adjustments",
+    "requisitionLossesAndAdjustments.quantity": "Quantity",
+    "requisitionLossesAndAdjustments.reason": "Reason",
+    "requisitionLossesAndAdjustments.remove": "Remove",
+    "requisitionLossesAndAdjustments.total": "Total"
+}

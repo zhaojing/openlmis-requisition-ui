@@ -5,23 +5,23 @@
 
     <ul>
         <li>
-            <strong>{{'label.facility'|message}}</strong>
+            <strong>{{'requisitionView.facility'|message}}</strong>
             {{vm.requisition.facility.code}} - {{vm.requisition.facility.name}}
         </li>
         <li>
-            <strong>{{'label.facility.operatedBy' | message}}</strong>
+            <strong>{{'requisitionView.operatedBy' | message}}</strong>
             {{vm.requisition.facility.operator.name}}
         </li>
         <li>
-            <strong>{{'label.region' | message}}</strong>
+            <strong>{{'requisitionView.region' | message}}</strong>
             {{vm.requisition.facility.geographicZone.name}}
         </li>
         <li ng-if="requisition.facility.geographicZone.parent.name">
-            <strong>{{'label.province' | message}}</strong>
+            <strong>{{'requisitionView.province' | message}}</strong>
             {{vm.requisition.facility.geographicZone.parent.name}}
         </li>
         <li>
-            <strong>{{'label.reportingPeriod' | message}}</strong>
+            <strong>{{'requisitionView.reportingPeriod' | message}}</strong>
             {{vm.requisition.processingPeriod | period}}
         </li>
     </ul>

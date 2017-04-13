@@ -149,7 +149,7 @@
             }
 
             if (column.$type === COLUMN_TYPES.NUMERIC && lineItem[name] > MAX_INTEGER_VALUE) {
-                error = error || messageService.get('error.numberTooLarge');
+                error = error || messageService.get('requisitionValidation.numberTooLarge');
             }
 
             return !(lineItem.$errors[name] = error);
@@ -208,13 +208,13 @@
 
         function nonEmpty(value) {
             if (value === null || value === undefined || value === '') {
-                return messageService.get('error.required');
+                return messageService.get('requisitionValidation.required');
             }
         }
 
         function validateCalculation(calculation, lineItem, name) {
             if (lineItem[name] !== calculation(lineItem)) {
-                return messageService.get('error.wrongCalculation');
+                return messageService.get('requisitionValidation.calculationMismatch');
             }
         }
 

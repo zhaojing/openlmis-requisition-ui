@@ -1,30 +1,30 @@
 <div class="page">
-    <h2>{{'label.approve.requisitions' | message}}</h2>
+    <h2>{{'requisitionApproval.approveRequisitions' | message}}</h2>
     <div class="openlmis-table-container">
         <table>
             <caption ng-if="!vm.requisitions.length">
-                {{'message.no.rnr.pending.approval' | message}}
+                {{'requisitionApproval.noRnrPendingForApproval' | message}}
             </caption>
             <thead>
                 <tr>
-                    <th>{{'program.header' | message}}</th>
-                    <th>{{'label.facility' | message}}</th>
-                    <th>{{'label.period' | message}}</th>
-                    <th>{{'label.startDate' | message}}</th>
-                    <th>{{'label.endDate' | message}}</th>
-                    <th>{{'label.date.submitted' | message}}</th>
-                    <th>{{'label.emergency' | message}}</th>
-                    <th class="col-sticky">{{'label.actions' | message}}</th>
+                    <th>{{'requisitionApproval.program' | message}}</th>
+                    <th>{{'requisitionApproval.facility' | message}}</th>
+                    <th>{{'requisitionApproval.period' | message}}</th>
+                    <th>{{'requisitionApproval.startDate' | message}}</th>
+                    <th>{{'requisitionApproval.endDate' | message}}</th>
+                    <th>{{'requisitionApproval.date.submitted' | message}}</th>
+                    <th>{{'requisitionApproval.emergency' | message}}</th>
+                    <th class="col-sticky">{{'requisitionApproval.actions' | message}}</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="requisition in vm.requisitions">
-                    <td>{{requisition.program.name}}</th>
-                    <td>{{requisition.facility.code}} - {{requisition.facility.name}}</th>
-                    <td>{{requisition.processingPeriod.name}}</th>
-                    <td>{{requisition.processingPeriod.startDate | openlmisDate}}</th>
-                    <td>{{requisition.processingPeriod.endDate | openlmisDate}}</th>
-                    <td>{{requisition.statusChanges.SUBMITTED.changeDate | openlmisDate}}</th>
+                    <td>{{requisition.program.name}}</td>
+                    <td>{{requisition.facility.code}} - {{requisition.facility.name}}</td>
+                    <td>{{requisition.processingPeriod.name}}</td>
+                    <td>{{requisition.processingPeriod.startDate | openlmisDate}}</td>
+                    <td>{{requisition.processingPeriod.endDate | openlmisDate}}</td>
+                    <td>{{requisition.statusChanges.SUBMITTED.changeDate | openlmisDate}}</td>
                     <td class="col-emergency">
                         <span ng-if="requisition.emergency" class="icon-ok"></span>
                     </td>

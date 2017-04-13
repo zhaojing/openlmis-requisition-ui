@@ -96,24 +96,24 @@
         }
 
         function validateLabel(label) {
-            if (isEmpty(label)) return messageService.get('error.columnLabelEmpty');
-            if (label.length < 2) return messageService.get('error.columnLabelToShort');
-            if (!ALPHA_NUMERIC_REGEX.test(label)) return messageService.get('error.columnLabelNotAllowedCharacters');
+            if (isEmpty(label)) return messageService.get('adminTemplate.columnLabelEmpty');
+            if (label.length < 2) return messageService.get('adminTemplate.columnLabelToShort');
+            if (!ALPHA_NUMERIC_REGEX.test(label)) return messageService.get('adminTemplate.columnLabelNotAllowedCharacters');
         }
 
         function validateDefinition(definition) {
             if (definition && definition.length > MAX_COLUMN_DESCRIPTION_LENGTH) {
-                return messageService.get('error.columnDescriptionTooLong');
+                return messageService.get('adminTemplate.columnDescriptionTooLong');
             }
         }
 
         function validateSource(source) {
-            if (isEmpty(source)) return messageService.get('msg.template.column.sourceEmpty');
+            if (isEmpty(source)) return messageService.get('adminTemplate.emptyColumnSource');
         }
 
         function validateOption(column) {
             if (column.isDisplayed && column.columnDefinition.options.length && !column.option) {
-                return messageService.get('msg.template.column.optionEmpty');
+                return messageService.get('adminTemplate.emptyColumnOption');
             }
         }
 
@@ -127,10 +127,10 @@
         function validateAverageConsumption(column, template) {
             var periodsToAverage = template.numberOfPeriodsToAverage;
             if (isEmpty(periodsToAverage)) {
-                return messageService.get('msg.template.emptyNumberOfPeriods');
+                return messageService.get('adminTemplate.emptyNumberOfPeriods');
             }
             if (periodsToAverage < 2) {
-                return messageService.get('msg.template.invalidNumberOfPeriods');
+                return messageService.get('adminTemplate.invalidNumberOfPeriods');
             }
         }
 
@@ -138,7 +138,7 @@
             var wColumn = template.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION];
 
             if (column.isDisplayed && !wColumn.isDisplayed) {
-                return messageService.get('error.columnDisplayMismatch') + wColumn.label;
+                return messageService.get('adminTemplate.columnDisplayMismatch') + wColumn.label;
             }
         }
 
@@ -146,7 +146,7 @@
             var jColumn = template.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY];
 
             if (column.isDisplayed && !jColumn.isDisplayed) {
-                return messageService.get('error.columnDisplayMismatch') + jColumn.label;
+                return messageService.get('adminTemplate.columnDisplayMismatch') + jColumn.label;
             }
         }
 
@@ -163,7 +163,7 @@
 
             if(dependencies.length > 0) {
                 dependencies = dependencies.substring(0, dependencies.length - 1); // remove last comma
-                return messageService.get('msg.template.column.calculatedError') + dependencies;
+                return messageService.get('adminTemplate.calculatedError') + dependencies;
             }
 
             return message;
@@ -171,7 +171,7 @@
 
         function validateUserInput(column) {
             if (!column.isDisplayed && column.source === COLUMN_SOURCES.USER_INPUT && column.columnDefinition.sources.length > 1) {
-                return messageService.get('msg.template.column.shouldBeDisplayed') + messageService.get('msg.template.column.isUserInput');
+                return messageService.get('adminTemplate.shouldBeDisplayed') + messageService.get('adminTemplate.isUserInput');
             }
         }
 
@@ -179,14 +179,14 @@
             if (!column.isDisplayed) {
                 var nColumn = template.columnsMap.adjustedConsumption;
                 if (nColumn.isDisplayed && nColumn.source === COLUMN_SOURCES.CALCULATED) {
-                    return messageService.get('error.shouldBeDisplayedIfOtherIsCalculated', {
+                    return messageService.get('adminTemplate.shouldBeDisplayedIfOtherIsCalculated', {
                         column: nColumn.label
                     });
                 }
 
                 var pColumn = template.columnsMap.averageConsumption;
                 if (pColumn.isDisplayed && pColumn.source === COLUMN_SOURCES.CALCULATED) {
-                    return messageService.get('error.shouldBeDisplayedIfOtherIsCalculated', {
+                    return messageService.get('adminTemplate.shouldBeDisplayedIfOtherIsCalculated', {
                         column: pColumn.label
                     });
                 }

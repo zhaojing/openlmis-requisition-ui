@@ -29,7 +29,7 @@
             url: '/initiate',
             showInNavigation: true,
             priority: 11,
-            label: 'link.requisitions.create.authorize',
+            label: 'requisitionInitiate.createAuthorize',
             controller: 'RequisitionInitiateController',
             controllerAs: 'vm',
             templateUrl: 'requisition-initiate/requisition-initiate.html',

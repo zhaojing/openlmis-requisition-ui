@@ -1,0 +1,9 @@
+{
+    "requisitionNonFullSupply.addProduct": "Add product",
+    "requisitionNonFullSupply.category": "Category",
+    "requisitionNonFullSupply.product": "Product",
+    "requisitionNonFullSupply.quantity": "Quantity",
+    "requisitionNonFullSupply.explanation": "Explanation",
+    "requisitionNonFullSupply.cancel": "Cancel",
+    "requisitionNonFullSupply.noProducts": "No non-full supply items have been added."
+}

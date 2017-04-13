@@ -26,7 +26,7 @@
 		$stateProvider.state('requisitions.search', {
 			showInNavigation: true,
 			isOffline: true,
-			label: 'link.requisition.view',
+			label: 'requisitionSearch.view',
 			url: '/view?program&facility&initiatedDateFrom&initiatedDateTo&page&size&offline',
 			controller: 'RequisitionSearchController',
 			templateUrl: 'requisition-search/requisition-search.html',

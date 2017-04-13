@@ -1,73 +1,73 @@
 <div class="page">
-    <h2>{{'label.initiate.requisition' | message}}</h2>
+    <h2>{{'requisitionInitiate.initiateReportAndRequisition' | message}}</h2>
     <div ng-if="vm.error" class="alert is-error" ng-show="vm.error">{{vm.error}}</div>
     <section class="openlmis-table-container">
         <form ng-submit="vm.loadPeriods()">
             <fieldset class="form-group">
-                <legend>{{'label.requisition.facilityType' | message}}</legend>
+                <legend>{{'requisitionInitiate.facilityType' | message}}</legend>
                 <label class="radio">
                     <input type="radio" ng-model="vm.isSupervised" ng-value="false"
                            ng-change="vm.updateFacilityType(vm.isSupervised)"/>
-                    {{'label.myFacility' | message}}
+                    {{'requisitionInitiate.myFacility' | message}}
                 </label>
                 <label class="radio">
                     <input type="radio" ng-model="vm.isSupervised" ng-value="true"
                            ng-change="vm.updateFacilityType(vm.isSupervised)"
                            ng-disabled="vm.supervisedFacilitiesDisabled"/>
-                    {{'label.supervised.Facility' | message}}
+                    {{'requisitionInitiate.supervisedFacility' | message}}
                 </label>
             </fieldset>
             <fieldset ng-show="!vm.isSupervised">
-                <label for="facilityName">{{'label.requisition.facilityName' | message}}</label>
+                <label for="facilityName">{{'requisitionInitiate.facility' | message}}</label>
                 <select id="facilityName" ng-model="vm.selectedFacilityId"
                         ng-options="facility.id as facility.name for facility in vm.facilities"
-                        placeholder="label.select.facility" required>
+                        placeholder="requisitionInitiate.selectFacility" required>
                 </select>
-                <label for="programListMyFacility">{{'label.program' | message}}</label>
+                <label for="programListMyFacility">{{'requisitionInitiate.program' | message}}</label>
                 <select id="programListMyFacility" ng-model="vm.selectedProgramId"
                         ng-options="program.id as program.name for program in vm.programs"
-                        placeholder="{{'label.select.program' | message}}" required>
+                        placeholder="{{'requisitionInitiate.selectProgram' | message}}" required>
                 </select>
             </fieldset>
             <fieldset ng-show="vm.isSupervised">
-                <label for="programListSupervisedFacility">{{'label.program' | message}}</label>
+                <label for="programListSupervisedFacility">{{'requisitionInitiate.program' | message}}</label>
                 <select id="programListSupervisedFacility" ng-model="vm.selectedProgramId"
                         ng-options="program.id as program.name for program in vm.programs"
                         ng-change="vm.loadFacilitiesForProgram(vm.selectedProgramId)"
-                        placeholder="{{'label.select.program' | message}}" required>
+                        placeholder="{{'requisitionInitiate.selectProgram' | message}}" required>
                 </select>
                 <label for="supervisedFacilityName">
-                    {{'label.requisition.facilityName' | message}}
+                    {{'requisitionInitiate.facility' | message}}
                 </label>
                 <select id="supervisedFacilityName" ng-model="vm.selectedFacilityId"
                         ng-options="facility.id as facility.name for facility in vm.facilities | unique:'id'"
-                        placeholder="{{'label.select.facility' | message}}" required>
+                        placeholder="{{'requisitionInitiate.selectFacility' | message}}" required>
                 </select>
             </fieldset>
             <fieldset class="form-group">
-                <legend>{{'label.requisition.type' | message}}</legend>
+                <legend>{{'requisitionInitiate.type' | message}}</legend>
                 <label class="radio">
                     <input type="radio" ng-model="vm.emergency" ng-value="false"/>
-                    {{'msg.regular' | message}}
+                    {{'requisitionInitiate.regular' | message}}
                 </label>
                 <label class="radio">
                     <input type="radio" ng-model="vm.emergency" ng-value="true"/>
-                    {{'label.emergency' | message}}
+                    {{'requisitionInitiate.emergency' | message}}
                 </label>
             </fieldset>
-            <input type="submit" value="{{'button.search'|message}}"/>
+            <input type="submit" value="{{'requisitionInitiate.search'|message}}"/>
         </form>
         <table>
             <caption ng-if="!vm.periodGridData.length">
-                {{'msg.no.period.available' | message}}
+                {{'requisitionInitiate.selectRequiredFields' | message}}
             </caption>
             <thead>
                 <tr>
-                    <th>{{'label.periods' | message}}</th>
-                    <th>{{'period.header.startDate' | message}}</th>
-                    <th>{{'period.header.endDate' | message}}</th>
-                    <th>{{'label.rnr.status' | message}}</th>
-                    <th class="col-sticky">{{'label.actions' | message}}</th>
+                    <th>{{'requisitionInitiate.periods' | message}}</th>
+                    <th>{{'requisitionInitiate.startDate' | message}}</th>
+                    <th>{{'requisitionInitiate.endDate' | message}}</th>
+                    <th>{{'requisitionInitiate.rnrStatus' | message}}</th>
+                    <th class="col-sticky">{{'requisitionInitiate.actions' | message}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,7 +78,7 @@
                     <td>{{period.rnrStatus}}</td>
                     <td>
                         <input id="proceedButton" type="button" ng-click="vm.initRnr(period)"
-                               value="{{'button.proceed'| message}}" class="primary"
+                               value="{{'requisitionInitiate.proceed'| message}}" class="primary"
                                ng-if="period.activeForRnr"/>
                     </td>
                 </tr>

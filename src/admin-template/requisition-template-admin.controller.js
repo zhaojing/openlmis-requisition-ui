@@ -24,7 +24,9 @@
      * @description
      * Controller for template view page.
      */
-    angular.module('admin-template').controller('RequisitionTemplateAdminController', RequisitionTemplateAdminController);
+    angular
+        .module('admin-template')
+        .controller('RequisitionTemplateAdminController', RequisitionTemplateAdminController);
 
     RequisitionTemplateAdminController.$inject = [
         '$state', 'template', 'program', '$q', 'notificationService', 'messageService',
@@ -104,10 +106,10 @@
          */
         function saveTemplate() {
             vm.template.$save().then(function() {
-                notificationService.success('template.save.success');
+                notificationService.success('adminTemplate.templateSave.success');
                 goToTemplateList();
             }, function() {
-                notificationService.error('template.save.failed');
+                notificationService.error('adminTemplate.templateSave.failure');
             });
         }
 
@@ -126,7 +128,7 @@
          */
         function dropCallback(event, index, item) {
             if(!vm.template.$moveColumn(item, index)) {
-                notificationService.error('msg.template.column.dropError');
+                notificationService.error('adminTemplate.canNotDropColumn');
             }
             return false; // disable default drop functionality
         }

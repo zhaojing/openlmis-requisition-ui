@@ -63,7 +63,7 @@
             $templateRequest('requisition-non-full-supply/add-product-modal.html')
                 .then(function(template) {
                     $ngBootbox.customDialog({
-                        title: messageService.get('label.rnr.add.non.full.supply'),
+                        title: messageService.get('requisitionNonFullSupply.addProduct'),
                         message: $compile(angular.element(template))(scope),
                         className: 'add-product-modal'
                     });

@@ -96,7 +96,7 @@ describe('periodFactory', function() {
                 name: periodOne.name,
                 startDate: periodOne.startDate,
                 endDate: periodOne.endDate,
-                rnrStatus: 'msg.rnr.not.started',
+                rnrStatus: 'requisitionInitiate.notYetStarted',
                 activeForRnr: true,
                 rnrId: null
             });

@@ -1,8 +1,8 @@
 <div class="openlmis-table-container">
-	<h4 ng-show="vm.areSkipControlsVisible()">{{'requisition.lineItem.skip' | message}}</h4>
+	<h4 ng-show="vm.areSkipControlsVisible()">{{'requisitionFullSupply.skip' | message}}</h4>
 	<ul ng-show="vm.areSkipControlsVisible()">
-		<li><a ng-click="vm.skipAll()">{{'requisition.lineItem.skip.all' | message}}</a></li>
-		<li><a ng-click="vm.unskipAll()">{{'requisition.lineItem.skip.none' | message}}</a></li>
+		<li><a ng-click="vm.skipAll()">{{'requisitionFullSupply.all' | message}}</a></li>
+		<li><a ng-click="vm.unskipAll()">{{'requisitionFullSupply.none' | message}}</a></li>
 	</ul>
 	<saving-indicator class="requisition-indicator" object="vm.requisition.requisitionLineItems"/>
 	<table>

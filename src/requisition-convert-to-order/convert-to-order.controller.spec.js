@@ -126,7 +126,8 @@ describe('ConvertToOrderController', function(){
         it('should show error if no requisition is selected', function() {
             vm.convertToOrder();
 
-            expect(notificationService.error).toHaveBeenCalledWith('msg.select.at.least.one.rnr');
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.selectAtLeastOneRnr');
         });
 
         it('should not call requisitionService if no requisition is selected', function() {
@@ -143,7 +144,8 @@ describe('ConvertToOrderController', function(){
 
             vm.convertToOrder();
 
-            expect(notificationService.error).toHaveBeenCalledWith('msg.noSupplyingDepotSelected');
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.noSupplyingDepotSelected');
         });
 
         it('should not call requisitionService if requisition does not have facility selected', function() {
@@ -167,7 +169,7 @@ describe('ConvertToOrderController', function(){
             $rootScope.$apply();
 
             expect(confirmService.confirm)
-                .toHaveBeenCalledWith('msg.question.confirmation.convertToOrder');
+                .toHaveBeenCalledWith('requisitionConvertToOrder.convertToOrder.confirm');
         });
 
         it('should bring up loading modal if confirmation passed', function() {
@@ -207,7 +209,8 @@ describe('ConvertToOrderController', function(){
             loadingDeferred.resolve();
             $rootScope.$apply();
 
-            expect(notificationService.success).toHaveBeenCalledWith('msg.rnr.converted.to.order');
+            expect(notificationService.success)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.convertToOrder.success');
         });
 
         it('should show error if convert failed', function() {
@@ -219,7 +222,8 @@ describe('ConvertToOrderController', function(){
             convertDeferred.reject();
             $rootScope.$apply();
 
-            expect(notificationService.error).toHaveBeenCalledWith('msg.error.occurred');
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.errorOccurred');
         });
 
         it('should close loading modal if convert failed', function() {
@@ -245,7 +249,8 @@ describe('ConvertToOrderController', function(){
         vm.convertToOrder();
 
         expect(requisitionService.convertToOrder).not.toHaveBeenCalled();
-        expect(notificationService.error).toHaveBeenCalledWith('msg.noSupplyingDepotSelected');
+        expect(notificationService.error)
+            .toHaveBeenCalledWith('requisitionConvertToOrder.noSupplyingDepotSelected');
     });
 
     it('should show error when trying to convert to order with no requisition selected', function() {
@@ -255,7 +260,8 @@ describe('ConvertToOrderController', function(){
         vm.convertToOrder();
 
         expect(requisitionService.convertToOrder).not.toHaveBeenCalled();
-        expect(notificationService.error).toHaveBeenCalledWith('msg.select.at.least.one.rnr');
+        expect(notificationService.error)
+            .toHaveBeenCalledWith('requisitionConvertToOrder.selectAtLeastOneRnr');
     });
 
     it('should select all requisitions', function() {

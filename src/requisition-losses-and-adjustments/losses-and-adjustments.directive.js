@@ -81,7 +81,7 @@
                             dialog = undefined;
                         }
                         dialog = bootbox.dialog({
-                            title: messageService.get('label.losses.adjustments'),
+                            title: messageService.get('requisitionLossesAndAdjustments.lossesAndAdjustments'),
                             message: $compile(modal)(scope),
                             backdrop: true,
                             onEscape: true,

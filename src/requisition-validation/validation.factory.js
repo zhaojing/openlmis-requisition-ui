@@ -53,7 +53,7 @@
          */
         function validateStockOnHand(lineItem) {
             if (lineItem.stockOnHand < 0) {
-                return messageService.get('error.negative');
+                return messageService.get('requisitionValidation.canNotBeNegative');
             }
         }
 
@@ -70,7 +70,7 @@
          */
         function validateTotalConsumedQuantity(lineItem) {
             if (lineItem.totalConsumedQuantity < 0) {
-                return messageService.get('error.negative');
+                return messageService.get('requisitionValidation.canNotBeNegative');
             }
         }
 
@@ -96,7 +96,7 @@
                     !(requestedQuantity === null || requestedQuantity === undefined) &&
                     !requestedQuantityExplanation) {
 
-                return messageService.get('error.required');
+                return messageService.get('requisitionValidation.required');
             }
             return;
         }
@@ -118,7 +118,7 @@
                 requestedQuantity = lineItem.requestedQuantity;
 
             if (!isDisplayed(calculatedOrderQuantityColumn) && (requestedQuantity === null || requestedQuantity === undefined)) {
-                return messageService.get('error.required');
+                return messageService.get('requisitionValidation.required');
             }
             return;
         }
@@ -141,7 +141,7 @@
                 nonStockoutDays = totalDays - totalStockoutDays;
 
             if (nonStockoutDays < 0) {
-                return messageService.get('error.valueExceedPeriodDuration');
+                return messageService.get('requisitionValidation.valueExceedPeriodDuration');
             }
         }
 

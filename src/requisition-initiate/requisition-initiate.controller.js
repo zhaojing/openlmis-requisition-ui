@@ -153,7 +153,7 @@
                 vm.selectedProgramId = undefined;
 
                 if (vm.programs.length <= 0) {
-                    vm.error = messageService.get('msg.no.program.available');
+                    vm.error = messageService.get('requisitionInitiate.noProgramsForFacility');
                 } else if (vm.programs.length === 1) {
                     vm.selectedProgramId = vm.programs[0].id;
                 }
@@ -172,7 +172,9 @@
          * @return {String} localized message
          */
         function programOptionMessage() {
-            return vm.programs === undefined || _.isEmpty(vm.programs) ? messageService.get('label.none.assigned') : messageService.get('label.select.program');
+            return vm.programs === undefined || _.isEmpty(vm.programs) ?
+                messageService.get('requisitionInitiate.noneAssigned') :
+                messageService.get('requisitionInitiate.selectProgram');
         }
 
         /**
@@ -197,12 +199,12 @@
                     period.rnrStatus == REQUISITION_STATUS.IN_APPROVAL ||
                     period.rnrStatus == REQUISITION_STATUS.APPROVED ||
                     period.rnrStatus == REQUISITION_STATUS.RELEASED)) {
-                        period.rnrStatus = messageService.get('msg.rnr.not.started');
+                        period.rnrStatus = messageService.get('requisitionInitiate.notYetStarted');
                     }
                 });
                 loadingModalService.close();
             }).catch(function() {
-                notificationService.error('msg.error.occurred');
+                notificationService.error('requisitionInitiate.errorOccurred');
                 loadingModalService.close();
             });
         }
@@ -226,7 +228,7 @@
         function initRnr(selectedPeriod) {
             vm.error = '';
             loadingModalService.open();
-            if (!selectedPeriod.rnrId || selectedPeriod.rnrStatus == messageService.get('msg.rnr.not.started')) {
+            if (!selectedPeriod.rnrId || selectedPeriod.rnrStatus == messageService.get('requisitionInitiate.notYetStarted')) {
                 userRightFactory.checkRightForCurrentUser(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.selectedProgramId, vm.selectedFacilityId).then(function(response) {
                     if(response) {
                         requisitionService.initiate(vm.selectedFacilityId,
@@ -237,11 +239,11 @@
                             $state.go('requisitions.requisition.fullSupply', {
                                 rnr: data.id
                             });
-                        }, handleError('error.requisition.couldNotInitiate'));
+                        }, handleError('requisitionInitiate.couldNotInitiateRequisition'));
                     } else {
-                        handleError('error.requisition.noPermissionToInitiate')();
+                        handleError('requisitionInitiate.noPermissionToInitiateRequisition')();
                     }
-                }, handleError('error.requisition.noPermissionToInitiate'));
+                }, handleError('requisitionInitiate.noPermissionToInitiateRequisition'));
             } else {
                 $state.go('requisitions.requisition.fullSupply', {
                     rnr: selectedPeriod.rnrId
@@ -283,18 +285,18 @@
                         }
 
                         if (vm.facilities.length <= 0) {
-                            vm.error = messageService.get('msg.no.facility.available');
+                            vm.error = messageService.get('requisitionInitiate.noFacilitiesForProgram');
                         } else {
                             vm.error = '';
                         }
                     })
                     .catch(function (error) {
-                        notificationService.error('msg.error.occurred');
+                        notificationService.error('requisitionInitiate.errorOccurred');
                         loadingModalService.close();
                     })
                     .finally(loadingModalService.close());
                 } else {
-                    notificationService.error('error.noActionRight');
+                    notificationService.error('requisitionInitiate.noRightToPerformThisAction');
                 }
             } else {
                 vm.facilities = [];

@@ -211,7 +211,7 @@
          * @param {Resource} requisition Requisition to remove
          */
         function removeOfflineRequisition(requisition) {
-            confirmService.confirmDestroy('msg.removeOfflineRequisitionQuestion').then(function() {
+            confirmService.confirmDestroy('requisitionSearch.removeOfflineRequisition.confirm').then(function() {
                 offlineRequisitions.removeBy('id', requisition.id);
                 requisition.$availableOffline = false;
             });

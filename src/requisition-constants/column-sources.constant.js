@@ -36,9 +36,9 @@
             REFERENCE_DATA: 'REFERENCE_DATA'
         },
         labels = {
-            USER_INPUT: 'label.column.source.user.input',
-            CALCULATED: 'label.column.source.calculated',
-            REFERENCE_DATA: 'label.column.source.reference.data'
+            USER_INPUT: 'requisitionConstants.userInput',
+            CALCULATED: 'requisitionConstants.calculated',
+            REFERENCE_DATA: 'requisitionConstants.referenceData'
         };
 
         Source.getLabel = getLabel;

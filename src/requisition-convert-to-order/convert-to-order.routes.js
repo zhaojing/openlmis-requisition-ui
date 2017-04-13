@@ -27,7 +27,7 @@
 
         $stateProvider.state('requisitions.convertToOrder', {
             showInNavigation: true,
-            label: 'link.requisitions.convertToOrder',
+            label: 'requisitionConvertToOrder.convertToOrder',
             url: '/convertToOrder?filterBy&filterValue&sortBy&descending&page&size',
             controller: 'ConvertToOrderController',
             controllerAs: 'vm',

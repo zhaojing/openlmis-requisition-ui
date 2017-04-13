@@ -1,10 +1,10 @@
 <div class="non-full-supply openlmis-table-container">
 	<button class="primary" ng-show="vm.displayAddProductButton" ng-click="vm.addProduct()" >
-		{{'button.add' | message}}
+		{{'requisitionNonFullSupply.addProduct' | message}}
 	</button>
 	<saving-indicator class="requisition-indicator" object="vm.requisition.requisitionLineItems"/>
 	<table>
-		<caption ng-if="!vm.items.length">{{'requisition.nonFullSupply.empty' | message}}</caption>
+		<caption ng-if="!vm.items.length">{{'requisitionNonFullSupply.noProducts' | message}}</caption>
 		<thead>
 			<tr>
 				<th class="col-{{column.name}}" ng-repeat="column in vm.columns | orderBy : 'displayOrder'" ng-class="{'col-sticky': !column.$canChangeOrder}" popover="{{column.definition}}">{{column.label}}</th>

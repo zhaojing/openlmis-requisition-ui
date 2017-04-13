@@ -60,7 +60,7 @@
             $templateRequest('requisition-status-messages/status-messages-history.html')
             .then(function(template) {
                 $ngBootbox.customDialog({
-                    title: messageService.get('label.requisitionHistory'),
+                    title: messageService.get('requisitionStatusMessages.requisitionHistory'),
                     message: $compile(angular.element(template))(scope),
                     className: 'status-messages-history',
                     onEscape: true,

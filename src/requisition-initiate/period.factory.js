@@ -101,7 +101,7 @@
                 name: period.name,
                 startDate: period.startDate,
                 endDate: period.endDate,
-                rnrStatus: (requisition ? requisition.status : (id === 0 ? messageService.get("msg.rnr.not.started") : messageService.get("msg.rnr.previous.pending"))),
+                rnrStatus: (requisition ? requisition.status : (id === 0 ? messageService.get("requisitionInitiate.notYetStarted") : messageService.get("requisitionInitiate.previousPending"))),
                 activeForRnr: (id === 0 ? true : false),
                 rnrId: (requisition ? requisition.id : null)
             };

@@ -1,0 +1,14 @@
+{
+    "requisitionApproval.actions": "Actions",
+    "requisitionApproval.approve": "Approve",
+    "requisitionApproval.approveRequisitions": "Approve requisitions",
+    "requisitionApproval.dateSubmitted": "Date submitted",
+    "requisitionApproval.emergency": "Emergency",
+    "requisitionApproval.endDate": "End date",
+    "requisitionApproval.facility": "Facility",
+    "requisitionApproval.noRnrPendingForApproval": "No R&Rs pending for approval",
+    "requisitionApproval.period": "Period",
+    "requisitionApproval.program": "Program",
+    "requisitionApproval.startDate": "Start date",
+    "requisitionApproval.viewRequisition": "View requisition"
+}

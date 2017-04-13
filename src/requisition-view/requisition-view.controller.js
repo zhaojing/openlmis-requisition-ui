@@ -65,7 +65,9 @@
         * @description
         * Holds message key to display, depending on the requisition type (regular/emergency).
         */
-        vm.requisitionType = vm.requisition.emergency ? 'label.emergency' : 'msg.regular';
+        vm.requisitionType = vm.requisition.emergency ?
+            'requisitionView.emergency' :
+            'requisitionView.regular';
 
         // Functions
 
@@ -105,7 +107,7 @@
             var loadingPromise = loadingModalService.open();
             saveRnr(function() {
                 loadingPromise.then(function() {
-                    notificationService.success('msg.requisitionSynced');
+                    notificationService.success('requisitionView.sync.success');
                 });
                 reloadState();
             }, function(response) {
@@ -128,11 +130,11 @@
         function syncRnrAndPrint() {
             if (displaySync()) {
                 var popup = $window.open('', '_blank');
-                popup.document.write(messageService.get('msg.requisitionSyncing'));
+                popup.document.write(messageService.get('requisitionView.sync.pending'));
                 var loadingPromise = loadingModalService.open();
                 saveRnr(function() {
                     loadingPromise.then(function() {
-                        notificationService.success('msg.requisitionSynced');
+                        notificationService.success('requisitionView.sync.success');
                     });
                     popup.location.href = accessTokenFactory.addAccessToken(vm.getPrintUrl());
                     reloadState();
@@ -162,25 +164,25 @@
          * Otherwise, a success notification modal will be shown.
          */
         function submitRnr() {
-            confirmService.confirm('msg.question.confirmation.submit', 'button.submit').then(function() {
+            confirmService.confirm('requisitionView.submit.confirm', 'requisitionView.submit.label').then(function() {
                 if (requisitionValidator.validateRequisition(requisition)) {
                     var loadingPromise = loadingModalService.open();
                     if (!requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
                         vm.requisition.$save().then(function () {
                             vm.requisition.$submit().then(function (response) {
                                 loadingPromise.then(function () {
-                                    notificationService.success('msg.requisitionSubmitted');
+                                    notificationService.success('requisitionView.submit.success');
                                 });
                                 reloadState();
-                            }, failWithMessage('msg.failedToSubmitRequisition'));
+                            }, failWithMessage('requisitionView.submit.failure'));
                         }, function(response) {
                           handleSaveError(response.status);
                         });
                     } else {
-                        failWithMessage('error.rnr.validation.submit.allLineItemsSkipped')();
+                        failWithMessage('requisitionView.allLineItemsSkipped')();
                     }
                 } else {
-                    failWithMessage('error.rnr.validation')();
+                    failWithMessage('requisitionView.rnrHasErrors')();
                 }
             });
         }
@@ -198,26 +200,29 @@
          * Otherwise, a success notification modal will be shown.
          */
         function authorizeRnr() {
-            confirmService.confirm('msg.question.confirmation.authorize', 'button.authorize').then(function() {
+            confirmService.confirm(
+                'requisitionView.authorize.confirm',
+                'requisitionView.authorize.label'
+            ).then(function() {
                 if(requisitionValidator.validateRequisition(requisition)) {
                     var loadingPromise = loadingModalService.open();
                     if(!requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
                         vm.requisition.$save().then(function() {
                             vm.requisition.$authorize().then(function(response) {
                                 loadingPromise.then(function() {
-                                    notificationService.success('msg.requisitionAuthorized');
+                                    notificationService.success('requisitionView.authorize.success');
                                 });
                                 if(hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_APPROVE)) reloadState();
                                 else $state.go('requisitions.initRnr');
-                            }, failWithMessage('msg.failedToAuthorizeRequisition'));
+                            }, failWithMessage('requisitionView.authorize.failure'));
                         }, function(response) {
                           handleSaveError(response.status);
                         });
                     } else {
-                        failWithMessage('error.rnr.validation.authorize.allLineItemsSkipped');
+                        failWithMessage('requisitionView.allLineItemsSkipped');
                     }
                 } else {
-                    failWithMessage('error.rnr.validation');
+                    failWithMessage('requisitionView.rnrHasErrors');
                 }
             });
         }
@@ -233,14 +238,17 @@
          * Otherwise, a success notification modal will be shown.
          */
         function removeRnr() {
-            confirmService.confirmDestroy('msg.question.confirmation.deletion', 'button.delete').then(function() {
+            confirmService.confirmDestroy(
+                'requisitionView.delete.confirm',
+                'requisitionView.delete.label'
+            ).then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$remove().then(function(response) {
                     loadingPromise.then(function() {
-                        notificationService.success('msg.requisitionDeleted');
+                        notificationService.success('requisitionView.delete.success');
                     });
                     $state.go('requisitions.initRnr');
-                }, failWithMessage('failedToDeleteRequisition'));
+                }, failWithMessage('requisitionView.delete.failure'));
             });
         }
 
@@ -256,21 +264,24 @@
          * Otherwise, a success notification modal will be shown.
          */
         function approveRnr() {
-            confirmService.confirm('msg.question.confirmation.approve', 'button.approve').then(function() {
+            confirmService.confirm(
+                'requisitionView.approve.confirm',
+                'requisitionView.approve.label'
+            ).then(function() {
                 if(requisitionValidator.validateRequisition(requisition)) {
                     var loadingPromise = loadingModalService.open();
                     vm.requisition.$save().then(function() {
                         vm.requisition.$approve().then(function(response) {
                             loadingPromise.then(function() {
-                                notificationService.success('msg.requisitionApproved');
+                                notificationService.success('requisitionView.approve.success');
                             });
                             $state.go('requisitions.approvalList');
-                        }, failWithMessage('msg.failedToApproveRequisition'));
+                        }, failWithMessage('requisitionView.approve.failure'));
                         }, function(response) {
                           handleSaveError(response.status);
                         });
                 } else {
-                    failWithMessage('error.rnr.validation');
+                    failWithMessage('requisitionView.rnrHasErrors');
                 }
             });
         }
@@ -286,14 +297,17 @@
          * Otherwise, a success notification modal will be shown.
          */
         function rejectRnr() {
-            confirmService.confirmDestroy('msg.question.confirmation.reject', 'button.rnr.reject').then(function() {
+            confirmService.confirmDestroy(
+                'requisitionView.reject.confirm',
+                'requisitionView.reject.label'
+            ).then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$reject().then(function(response) {
                     loadingPromise.then(function() {
-                        notificationService.success('msg.requisitionRejected');
+                        notificationService.success('requisitionView.reject.success');
                     });
                     $state.go('requisitions.approvalList');
-                }, failWithMessage('msg.failedToRejectRequisition'));
+                }, failWithMessage('requisitionView.reject.failure'));
             });
         }
 
@@ -308,14 +322,17 @@
          * Otherwise, a success notification modal will be shown.
          */
         function skipRnr() {
-            confirmService.confirm('msg.question.confirmation.skip', 'button.skipRequisition').then(function() {
+            confirmService.confirm(
+                'requisitionView.skip.confirm',
+                'requisitionView.skip.label'
+            ).then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$skip().then(function(response) {
                     loadingPromise.then(function() {
-                        notificationService.success('msg.requisitionSkipped');
+                        notificationService.success('requisitionView.skip.success');
                     });
                     $state.go('requisitions.initRnr');
-                }, failWithMessage('msg.failedToSkipRequisition'));
+                }, failWithMessage('requisitionView.skip.failure'));
             });
         }
 
@@ -521,14 +538,14 @@
         function handleSaveError(status) {
             if (status === 409) {
                 // in case of conflict, use the server version
-                notificationService.error('msg.requisitionVersionError');
+                notificationService.error('requisitionView.versionMismatch');
                 reloadState();
             } else if (status === 403) {
                 // 403 means user lost rights or requisition changed status
-                notificationService.error('msg.requisitionUpdateForbidden');
+                notificationService.error('requisitionView.updateForbidden');
                 reloadState();
             } else {
-                failWithMessage('msg.failedToSyncRequisition')();
+                failWithMessage('requisitionView.sync.failure')();
             }
         }
 

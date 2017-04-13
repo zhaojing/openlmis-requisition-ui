@@ -1,12 +1,12 @@
 <div class="convert-to-order-list">
 	<div class="page">
-		<h2>{{'label.requisition.convertOrder' | message}}</h2>
+		<h2>{{'requisitionConvertToOrder.convertRequisitionsToOrder' | message}}</h2>
 		<section class="openlmis-table-container">
 			<form ng-submit="vm.search()">
-				<label for="searchFor">{{'label.search' | message}}</label>
+				<label for="searchFor">{{'requisitionConvertToOrder.search' | message}}</label>
 				<input id="searchFor" type="text" ng-model="vm.filterValue"
 					   maxlength="50"/>
-				<input type="submit" value="{{'button.search' | message}}"/>
+				<input type="submit" value="{{'requisitionConvertToOrder.search' | message}}"/>
 			</form>
 			<table>
 				<caption ng-if="vm.infoMessage">{{vm.infoMessage | message}}</caption>
@@ -16,15 +16,15 @@
 							<input type="checkbox" ng-model="vm.selectAll"
 								   ng-change="vm.toggleSelectAll(vm.selectAll)">
 						</th>
-						<th>{{'program.header' | message}}</th>
-						<th>{{'label.facility' | message}}</th>
-						<th>{{'option.value.facility.district' | message}}</th>
-						<th>{{'label.period' | message}}</th>
-						<th>{{'label.startDate' | message}}</th>
-						<th>{{'label.endDate' | message}}</th>
-						<th>{{'label.date.approved' | message}}</th>
-						<th class="col-sticky">{{'label.supplyingDepot' | message}}</th>
-						<th>{{'label.emergency' | message}}</th>
+						<th>{{'requisitionConvertToOrder.program' | message}}</th>
+						<th>{{'requisitionConvertToOrder.facility' | message}}</th>
+						<th>{{'requisitionConvertToOrder.districtName' | message}}</th>
+						<th>{{'requisitionConvertToOrder.period' | message}}</th>
+						<th>{{'requisitionConvertToOrder.startDate' | message}}</th>
+						<th>{{'requisitionConvertToOrder.endDate' | message}}</th>
+						<th>{{'requisitionConvertToOrder.dateApproved' | message}}</th>
+						<th class="col-sticky">{{'requisitionConvertToOrder.supplyingDepot' | message}}</th>
+						<th>{{'requisitionConvertToOrder.emergency' | message}}</th>
 					</tr>
 				</thead>
 				<tbody>

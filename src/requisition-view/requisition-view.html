@@ -1,7 +1,7 @@
 <article class="page requisition-view">
     <header>
-      <h2>{{'label.requisition' | message}} {{vm.requisition.program.name}} ({{vm.requisition.facility.type.name}})</h2>
-        <button ng-if="!vm.isOffline()" ng-click="vm.syncRnrAndPrint()" class="primary">{{'button.print' | message}}</button>
+      <h2>{{'requisitionView.reportAndRequisitionFor' | message}} {{vm.requisition.program.name}} ({{vm.requisition.facility.type.name}})</h2>
+        <button ng-if="!vm.isOffline()" ng-click="vm.syncRnrAndPrint()" class="primary">{{'requisitionView.print' | message}}</button>
     </header>
     <ng-include src="'requisition-view/header.html'"></ng-include>
     <status-messages requisition="vm.requisition"></status-messages>
@@ -10,13 +10,13 @@
           <li ui-sref-active="active" role="presentation"
               ng-class="{'is-invalid': !vm.isFullSupplyTabValid()}">
                   <a ui-sref="requisitions.requisition.fullSupply">
-                      {{'label.full.supply.products' | message}}
+                      {{'requisitionView.fullSupplyProducts' | message}}
                   </a>
           </li>
           <li ui-sref-active="active" ng-if="vm.requisition.program.showNonFullSupplyTab"
               role="presentation" ng-class="{'is-invalid': !vm.isNonFullSupplyTabValid()}">
                   <a ui-sref="requisitions.requisition.nonFullSupply">
-                      {{'label.non.full.supply.products' | message}}
+                      {{'requisitionView.nonFullSupplyProducts' | message}}
                   </a>
           </li>
       </ul>

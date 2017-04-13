@@ -113,16 +113,16 @@
         vm.filters = [
             {
                 value: 'all',
-                name: 'option.value.all'
+                name: 'requisitionConvertToOrder.all'
             }, {
                 value: 'programName',
-                name: 'option.value.program'
+                name: 'requisitionConvertToOrder.program'
             }, {
                 value: 'facilityCode',
-                name: 'option.value.facility.code'
+                name: 'requisitionConvertToOrder.facilityCode'
             }, {
                 value: 'facilityName',
-                name: 'option.value.facility.name'
+                name: 'requisitionConvertToOrder.facilityName'
             }
         ];
 
@@ -226,25 +226,25 @@
                 angular.forEach(requisitions, function(item) {
                     if (!item.requisition.supplyingFacility) {
                         missedDepots = true;
-                        notificationService.error('msg.noSupplyingDepotSelected');
+                        notificationService.error('requisitionConvertToOrder.noSupplyingDepotSelected');
                     }
                 });
                 if (!missedDepots) {
-                    confirmService.confirm('msg.question.confirmation.convertToOrder').then(function() {
+                    confirmService.confirm('requisitionConvertToOrder.convertToOrder.confirm').then(function() {
                         var loadingPromise = loadingModalService.open();
                         requisitionService.convertToOrder(requisitions).then(function() {
                             loadingPromise.then(function() {
-                                notificationService.success('msg.rnr.converted.to.order');
+                                notificationService.success('requisitionConvertToOrder.convertToOrder.success');
                             });
                             $state.reload();
                         }, function() {
                             loadingModalService.close();
-                            notificationService.error('msg.error.occurred');
+                            notificationService.error('requisitionConvertToOrder.errorOccurred');
                         });
                     });
                 }
             } else {
-                notificationService.error('msg.select.at.least.one.rnr');
+                notificationService.error('requisitionConvertToOrder.selectAtLeastOneRnr');
             }
         }
 
@@ -260,9 +260,9 @@
          */
         function getInfoMessage() {
             if (vm.nothingToConvert) {
-                return 'message.no.requisitions.for.conversion';
+                return 'requisitionConvertToOrder.noRequisitionToConvert';
             } else if (!vm.requisitions.length) {
-                return 'message.no.search.results';
+                return 'requisitionConvertToOrder.noSearchResults';
             }
             return undefined;
         }

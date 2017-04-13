@@ -27,7 +27,7 @@
             abstract: true,
             showInNavigation: true,
             priority: 2,
-            label: 'link.requisitions',
+            label: 'requisition.requisitions',
             url: '/requisitions',
             template: '<div ui-view></div>'
         });
