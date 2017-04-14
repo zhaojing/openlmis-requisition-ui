@@ -292,9 +292,8 @@
                     })
                     .catch(function (error) {
                         notificationService.error('requisitionInitiate.errorOccurred');
-                        loadingModalService.close();
                     })
-                    .finally(loadingModalService.close());
+                    .finally(loadingModalService.close);
                 } else {
                     notificationService.error('requisitionInitiate.noRightToPerformThisAction');
                 }
