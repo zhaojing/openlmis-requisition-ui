@@ -227,8 +227,8 @@
          */
         function initRnr(selectedPeriod) {
             vm.error = '';
-            loadingModalService.open();
             if (!selectedPeriod.rnrId || selectedPeriod.rnrStatus == messageService.get('requisitionInitiate.notYetStarted')) {
+                loadingModalService.open();
                 userRightFactory.checkRightForCurrentUser(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.selectedProgramId, vm.selectedFacilityId).then(function(response) {
                     if(response) {
                         requisitionService.initiate(vm.selectedFacilityId,
