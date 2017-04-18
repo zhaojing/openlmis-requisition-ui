@@ -274,7 +274,7 @@
         function getOrderQuantity(lineItem, requisition) {
             var orderQuantity = null;
 
-            if (requisition.$isAuthorized()) {
+            if (requisition.$isAfterAuthorize()) {
                 orderQuantity = lineItem[K];
             } else {
                 var jColumn = requisition.template.getColumn(J),

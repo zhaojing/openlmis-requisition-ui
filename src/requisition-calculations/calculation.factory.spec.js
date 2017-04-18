@@ -35,7 +35,7 @@ describe('calculationFactory', function() {
             stockOnHand: 5
         };
 
-        requisitionMock = jasmine.createSpyObj('requisition', ['$isAuthorized']);
+        requisitionMock = jasmine.createSpyObj('requisition', ['$isAfterAuthorize']);
         templateMock = jasmine.createSpyObj('template', ['getColumn']);
         requisitionMock.template = templateMock;
     });
@@ -82,7 +82,7 @@ describe('calculationFactory', function() {
         });
 
         it('should return zero if approved quantity is zero', function() {
-            requisitionMock.$isAuthorized.andReturn(true);
+            requisitionMock.$isAfterAuthorize.andReturn(true);
 
             lineItem.approvedQuantity = 0;
 
@@ -90,7 +90,7 @@ describe('calculationFactory', function() {
         });
 
         it('should return zero if requested quantity is zero', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = 0;
 
@@ -98,7 +98,7 @@ describe('calculationFactory', function() {
         });
 
         it('should not round packs to ship if threshold is not exceeded', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = 15;
             lineItem.orderable.netContent = 10;
@@ -108,7 +108,7 @@ describe('calculationFactory', function() {
         });
 
         it ('should round packs to ship if threshold is exceeded', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = 15;
             lineItem.orderable.netContent = 10;
@@ -118,7 +118,7 @@ describe('calculationFactory', function() {
         });
 
         it ('should return zero if round to zero is set', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = 1;
             lineItem.orderable.netContent = 10;
@@ -129,7 +129,7 @@ describe('calculationFactory', function() {
         });
 
         it ('should return one if round to zero is not set', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = 1;
             lineItem.orderable.netContent = 10;
@@ -152,7 +152,7 @@ describe('calculationFactory', function() {
         });
 
         it ('should calculate total cost', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.pricePerPack = 30.20;
             lineItem.requestedQuantity = 15;
@@ -163,7 +163,7 @@ describe('calculationFactory', function() {
         });
 
         it ('should calculate zero total cost if price per pack value missing', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.pricePerPack = undefined;
             lineItem.requestedQuantity = 15;
@@ -174,7 +174,7 @@ describe('calculationFactory', function() {
         });
 
         it ('should use ordered quantity when requested quantity is no present', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             requestedQuantityColumn.$display = false;
             lineItem.stockOnHand = 10;
@@ -189,7 +189,7 @@ describe('calculationFactory', function() {
         });
 
         it ('should use ordered quantity when requested quantity is empty', function() {
-            requisitionMock.$isAuthorized.andReturn(false);
+            requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = null;
             lineItem.stockOnHand = 10;
