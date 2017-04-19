@@ -21,12 +21,12 @@
         .module('requisition-initiate')
         .config(routes);
 
-    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS', 'REQUISITION_STATUS'];
 
-    function routes($stateProvider, REQUISITION_RIGHTS) {
+    function routes($stateProvider, REQUISITION_RIGHTS, REQUISITION_STATUS) {
 
         $stateProvider.state('requisitions.initRnr', {
-            url: '/initiate',
+            url: '/initiate?supervised&program&facility&emergency',
             showInNavigation: true,
             priority: 11,
             label: 'requisitionInitiate.createAuthorize',
@@ -50,9 +50,43 @@
                 },
                 homePrograms: function (programService, user) {
                     return programService.getUserPrograms(user.user_id, true);
+                },
+                periods: function(periodFactory, $stateParams, $q, messageService) {
+                    if ($stateParams.program && $stateParams.facility) {
+                        var deferred = $q.defer(),
+                            emergency = $stateParams.emergency === 'true';
+
+                        periodFactory.get(
+                            $stateParams.program,
+                            $stateParams.facility,
+                            emergency
+                        ).then(function(periods) {
+                            periods.forEach(setStatus(emergency));
+                            deferred.resolve(periods);
+                        }, deferred.reject);
+
+                        return deferred.promise;
+                    }
+                    return undefined;
+
+                    function setStatus(emergency) {
+                        return function(period) {
+                            if (isNotStarted(period, emergency)) {
+                                period.rnrStatus = messageService.get('requisitionInitiate.notYetStarted');
+                            }
+                        };
+                    }
                 }
             }
         });
+
+        function isNotStarted(period, emergency) {
+            return emergency &&
+                (period.rnrStatus == REQUISITION_STATUS.AUTHORIZED ||
+                period.rnrStatus == REQUISITION_STATUS.IN_APPROVAL ||
+                period.rnrStatus == REQUISITION_STATUS.APPROVED ||
+                period.rnrStatus == REQUISITION_STATUS.RELEASED);
+        }
     }
 
 })();

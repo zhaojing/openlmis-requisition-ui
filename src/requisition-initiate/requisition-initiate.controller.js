@@ -34,16 +34,24 @@
         'messageService', 'facility', 'user', 'supervisedPrograms', 'homePrograms', 'periodFactory',
         'requisitionService', '$state', 'dateUtils', 'REQUISITION_STATUS', 'loadingModalService',
         'notificationService', 'authorizationService', '$q', 'REQUISITION_RIGHTS',
-        'facilityService', 'userRightFactory'
+        'facilityService', 'userRightFactory', '$stateParams', 'periods', '$filter'
     ];
 
     function RequisitionInitiateController(messageService, facility, user, supervisedPrograms,
                                      homePrograms, periodFactory, requisitionService, $state,
                                      dateUtils, REQUISITION_STATUS, loadingModalService,
                                      notificationService, authorizationService, $q,
-                                     REQUISITION_RIGHTS, facilityService, userRightFactory) {
+                                     REQUISITION_RIGHTS, facilityService, userRightFactory,
+                                     $stateParams, periods, $filter) {
 
         var vm = this;
+
+        vm.$onInit = onInit;
+        vm.loadPeriods = loadPeriods;
+        vm.programOptionMessage = programOptionMessage;
+        vm.initRnr = initRnr;
+        vm.updateFacilityType = updateFacilityType;
+        vm.loadFacilitiesForProgram = loadFacilitiesForProgram;
 
         /**
          * @ngdoc property
@@ -54,7 +62,7 @@
          * @description
          * Holds a boolean indicating if the currently selected requisition type is standard or emergency
          */
-        vm.emergency = false;
+        vm.emergency = undefined;
 
         /**
          * @ngdoc property
@@ -100,21 +108,8 @@
          *  false - my facility
          *  true - supervised facility
          */
-        vm.isSupervised = false;
+        vm.isSupervised = undefined;
 
-        // Functions
-
-        vm.loadPeriods = loadPeriods;
-
-        vm.programOptionMessage = programOptionMessage;
-
-        vm.initRnr = initRnr;
-
-        vm.updateFacilityType = updateFacilityType;
-
-        vm.loadFacilitiesForProgram = loadFacilitiesForProgram;
-
-        vm.updateFacilityType(vm.isSupervised);
 
         /**
          * @ngdoc method
@@ -190,22 +185,13 @@
          * status.
          */
         function loadPeriods() {
-            loadingModalService.open();
-            periodFactory.get(vm.selectedProgramId, vm.selectedFacilityId, vm.emergency).then
-            (function(data) {
-                vm.periodGridData = data;
-                vm.periodGridData.forEach(function (period) {
-                    if (vm.emergency && (period.rnrStatus == REQUISITION_STATUS.AUTHORIZED ||
-                    period.rnrStatus == REQUISITION_STATUS.IN_APPROVAL ||
-                    period.rnrStatus == REQUISITION_STATUS.APPROVED ||
-                    period.rnrStatus == REQUISITION_STATUS.RELEASED)) {
-                        period.rnrStatus = messageService.get('requisitionInitiate.notYetStarted');
-                    }
-                });
-                loadingModalService.close();
-            }).catch(function() {
-                notificationService.error('requisitionInitiate.errorOccurred');
-                loadingModalService.close();
+            $state.go('requisitions.initRnr', {
+                supervised: vm.isSupervised,
+                program: vm.selectedProgramId,
+                facility: vm.selectedFacilityId,
+                emergency: vm.emergency
+            }, {
+                reload: true
             });
         }
 
@@ -307,6 +293,29 @@
                 loadingModalService.close();
                 notificationService.error(message);
             };
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-initiate.controller:RequisitionInitiateController
+         * @name $onInit
+         *
+         * @description
+         * Initialization method of the RequisitionInitiateController controller.
+         */
+        function onInit() {
+            vm.emergency = $stateParams.emergency === 'true';
+            vm.periods = periods;
+
+            vm.isSupervised = $stateParams.supervised === 'true';
+            updateFacilityType(vm.isSupervised);
+
+            vm.selectedProgramId = $stateParams.program;
+
+            if (vm.isSupervised) {
+                loadFacilitiesForProgram(vm.selectedProgramId);
+                vm.selectedFacilityId = $stateParams.facility;
+            }
         }
     }
 })();
