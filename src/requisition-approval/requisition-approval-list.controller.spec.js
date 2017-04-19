@@ -16,49 +16,119 @@
 describe('RequisitionApprovalListController', function () {
 
     //injects
-    var vm, $state;
+    var vm, $state, $stateParams;
 
     //variables
-    var requisitionList;
+    var requisitions, programs;
 
     beforeEach(function() {
         module('requisition-approval');
 
-        inject(function ($controller, _$state_) {
+        inject(function ($controller, _$state_, _$stateParams_) {
 
             $state = _$state_;
-            requisitionList = [
+            $stateParams = _$stateParams_;
+
+            programs = [
+                {
+                    id: '1',
+                    code: 'PRG001',
+                    name: 'Family Planning'
+                },
+                {
+                    id: '2',
+                    code: 'PRG002',
+                    name: 'Essential Meds'
+                }
+            ];
+
+            requisitions = [
                 {
                     id: 1,
                     facility: {
                         name: 'first facility',
                         code: 'first code'
                     },
-                    program: {
-                        name: 'first program'
-                    }
+                    program: programs[0]
+
                 },
                 {
                     id: 2,
                     facility: {
                         name: 'second facility',
-                        code: 'second code',
+                        code: 'second code'
                     },
-                    program: {
-                        name: 'second program'
-                    }
+                    program: programs[1]
+
                 }
             ];
 
+            spyOn($state, 'go');
+
             vm = $controller('RequisitionApprovalListController', {
-                requisitions: requisitionList
+                requisitions: requisitions,
+                programs: programs
             });
         });
     });
 
-    it('should call state go when opening requisition', function () {
-        spyOn($state, 'go');
-        vm.openRnr(requisitionList[0].id);
-        expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {rnr: requisitionList[0].id});
+    describe('$onInit', function() {
+
+        it('should expose requisitions', function() {
+            vm.$onInit();
+            expect(vm.requisitions).toBe(requisitions);
+        });
+
+        it('should expose programs', function() {
+            vm.$onInit();
+            expect(vm.programs).toBe(programs);
+        });
+
+        it('should set selectedProgram if program ID was passed the URL', function() {
+            $stateParams.program = '1';
+
+            vm.$onInit();
+
+            expect(vm.selectedProgram).toBe(programs[0]);
+        });
+
+        it('should not set selectedProgram if program ID was passed the URL', function() {
+            $stateParams.program = undefined;
+
+            vm.$onInit();
+
+            expect(vm.selectedProgram).toBe(undefined);
+        });
+
+    });
+
+    describe ('search', function() {
+
+        it('should set program', function() {
+            vm.selectedProgram = programs[0];
+
+            vm.search();
+
+            expect($state.go).toHaveBeenCalledWith('requisitions.approvalList', {
+                program: vm.selectedProgram.id
+            }, {reload: true});
+        });
+
+
+        it('should reload state', function() {
+            vm.search();
+
+            expect($state.go).toHaveBeenCalled();
+        });
+    });
+
+
+    describe ('openRnr', function() {
+
+        it('should go to fullSupply state', function () {
+            vm.openRnr(requisitions[0].id);
+
+            expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {rnr: requisitions[0].id});
+        });
     });
 });

@@ -9,6 +9,8 @@
     "requisitionApproval.noRnrPendingForApproval": "No R&Rs pending for approval",
     "requisitionApproval.period": "Period",
     "requisitionApproval.program": "Program",
+    "requisitionApproval.search": "Search",
+    "requisitionApproval.selectProgram": "Select program",
     "requisitionApproval.startDate": "Start date",
     "requisitionApproval.viewRequisition": "View requisition"
 }

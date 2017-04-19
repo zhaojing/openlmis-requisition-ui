@@ -29,12 +29,16 @@
 		.module('requisition-approval')
 		.controller('RequisitionApprovalListController', controller);
 
-	controller.$inject = ['$controller', '$state', 'requisitions', 'messageService'];
+	controller.$inject = [
+		'$controller', '$state', 'requisitions', 'messageService', '$stateParams', '$filter', 'programs'
+	];
 
-	function controller($controller, $state, requisitions, messageService) {
+	function controller($controller, $state, requisitions, messageService, $stateParams, $filter, programs) {
 
 		var vm = this;
 
+        vm.$onInit = onInit;
+        vm.search = search;
 		vm.openRnr = openRnr;
 
 		/**
@@ -46,7 +50,67 @@
          * @description
          * Holds requisition that will be displayed on screen.
          */
-		vm.requisitions = requisitions;
+		vm.requisitions = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name programs
+         * @type {Array}
+         *
+         * @description
+         * list of programs to which user has access based on his role/permissions.
+         */
+        vm.programs = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name selectedProgram
+         * @type {Object}
+         *
+         * @description
+         * The program selected by the user.
+         */
+        vm.selectedProgram = undefined;
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-approval.controller:RequisitionApprovalListController
+         * @name $onInit
+         *
+         * @description
+         * Initialization method called after the controller has been created. Responsible for
+         * setting data to be available on the view.
+         */
+        function onInit() {
+            vm.requisitions = requisitions;
+            vm.programs = programs;
+
+            if ($stateParams.program) {
+                vm.selectedProgram = $filter('filter')(vm.programs, {
+                    id: $stateParams.program
+                })[0];
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-approval.controller:RequisitionApprovalListController
+         * @name search
+         *
+         * @description
+         * Searches requisitions by criteria selected in form.
+         */
+        function search() {
+            var stateParams = angular.copy($stateParams);
+
+            stateParams.program = vm.selectedProgram ? vm.selectedProgram.id : null;
+
+            $state.go('requisitions.approvalList', stateParams, {
+                reload: true
+            });
+        }
 
         /**
          * @ngdoc method
