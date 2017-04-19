@@ -31,6 +31,7 @@
             controller: 'NonFullSupplyController',
             controllerAs: 'vm',
             isOffline: true,
+            nonTrackable: true,
             resolve: {
                 lineItems: function(paginationService, requisition, $stateParams, $filter, requisitionValidator) {
 					return paginationService.registerList(requisitionValidator.isLineItemValid, $stateParams, function() {

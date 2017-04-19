@@ -33,14 +33,15 @@
         'loadingModalService', 'notificationService', 'confirmService', 'REQUISITION_RIGHTS',
         'FULFILLMENT_RIGHTS', 'convertToOrderModalService', 'offlineService', '$window',
         'requisitionUrlFactory', '$filter', '$scope', '$timeout', 'RequisitionWatcher', 'accessTokenFactory',
-        'messageService'
+        'messageService', 'stateTrackerService'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator, authorizationService,
                              loadingModalService, notificationService, confirmService,
                              REQUISITION_RIGHTS, FULFILLMENT_RIGHTS , convertToOrderModalService,
                              offlineService, $window, requisitionUrlFactory, $filter, $scope,
-                             $timeout, RequisitionWatcher, accessTokenFactory, messageService) {
+                             $timeout, RequisitionWatcher, accessTokenFactory, messageService,
+                             stateTrackerService) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition);
@@ -173,7 +174,7 @@
                                 loadingPromise.then(function () {
                                     notificationService.success('requisitionView.submit.success');
                                 });
-                                reloadState();
+                                stateTrackerService.goToPreviousState();
                             }, failWithMessage('requisitionView.submit.failure'));
                         }, function(response) {
                           handleSaveError(response.status);
@@ -212,8 +213,7 @@
                                 loadingPromise.then(function() {
                                     notificationService.success('requisitionView.authorize.success');
                                 });
-                                if(hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_APPROVE)) reloadState();
-                                else $state.go('requisitions.initRnr');
+                                stateTrackerService.goToPreviousState();
                             }, failWithMessage('requisitionView.authorize.failure'));
                         }, function(response) {
                           handleSaveError(response.status);
@@ -247,7 +247,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.delete.success');
                     });
-                    $state.go('requisitions.initRnr');
+                    stateTrackerService.goToPreviousState();
                 }, failWithMessage('requisitionView.delete.failure'));
             });
         }
@@ -275,7 +275,7 @@
                             loadingPromise.then(function() {
                                 notificationService.success('requisitionView.approve.success');
                             });
-                            $state.go('requisitions.approvalList');
+                            stateTrackerService.goToPreviousState();
                         }, failWithMessage('requisitionView.approve.failure'));
                         }, function(response) {
                           handleSaveError(response.status);
@@ -306,7 +306,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.reject.success');
                     });
-                    $state.go('requisitions.approvalList');
+                    stateTrackerService.goToPreviousState();
                 }, failWithMessage('requisitionView.reject.failure'));
             });
         }
@@ -331,7 +331,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.skip.success');
                     });
-                    $state.go('requisitions.initRnr');
+                    stateTrackerService.goToPreviousState();
                 }, failWithMessage('requisitionView.skip.failure'));
             });
         }

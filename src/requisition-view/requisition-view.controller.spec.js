@@ -19,7 +19,7 @@ describe('RequisitionViewController', function() {
     var $scope, $q, $state, notificationService, confirmService, vm, requisition,
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
-        REQUISITION_RIGHTS, accessTokenFactorySpy, $window;
+        REQUISITION_RIGHTS, accessTokenFactorySpy, $window, stateTrackerService;
 
     beforeEach(function() {
         module('requisition-view');
@@ -59,17 +59,16 @@ describe('RequisitionViewController', function() {
             });
         });
 
-        inject(function(_$rootScope_, $controller, _$q_, _$state_, _notificationService_,
-                        _confirmService_, _loadingModalService_, _REQUISITION_RIGHTS_, _$window_) {
-
-            $scope = _$rootScope_.$new();
-            $state = _$state_;
-            $q = _$q_;
-            $window = _$window_
-            notificationService = _notificationService_;
-            confirmService = _confirmService_;
-            loadingModalService = _loadingModalService_;
-            REQUISITION_RIGHTS = _REQUISITION_RIGHTS_;
+        inject(function($injector) {
+            $scope = $injector.get('$rootScope').$new();
+            $state = $injector.get('$state');
+            $q = $injector.get('$q');
+            $window = $injector.get('$window');
+            notificationService = $injector.get('notificationService');
+            confirmService = $injector.get('confirmService');
+            loadingModalService = $injector.get('loadingModalService');
+            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+            stateTrackerService = $injector.get('stateTrackerService');
 
             confirmService.confirm.andCallFake(function() {
                 return $q.when(true);
@@ -89,8 +88,12 @@ describe('RequisitionViewController', function() {
             requisition.$skip.andReturn(deferred.promise);
             requisition.$save.andReturn(deferred.promise);
             requisition.$authorize.andReturn(deferred.promise);
+            spyOn(stateTrackerService, 'goToPreviousState');
 
-            vm = $controller('RequisitionViewController', {$scope: $scope, requisition: requisition});
+            vm = $injector.get('$controller')('RequisitionViewController', {
+                $scope: $scope,
+                requisition: requisition
+            });
         });
 
         requisitionUrlFactoryMock.andCallFake(function(url) {
@@ -160,7 +163,7 @@ describe('RequisitionViewController', function() {
         $scope.$apply();
 
         expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.skip.success');
-        expect(stateGoSpy).toHaveBeenCalledWith('requisitions.initRnr');
+        expect(stateTrackerService.goToPreviousState).toHaveBeenCalled();
     });
 
     it('should display error message when skip requisition failed', function() {
@@ -363,26 +366,14 @@ describe('RequisitionViewController', function() {
             requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
         });
 
-        it('should redirect to init rnr page when user has no approve right', function() {
+        it('should redirect to previous state', function() {
             authorizationServiceSpy.hasRight.andReturn(false);
             spyOn($state, 'go');
 
             vm.authorizeRnr();
             $scope.$apply();
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.initRnr');
-            expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_APPROVE, {programCode: requisition.program.code});
-        });
-
-        it('should redirect to init rnr page when user has no approve right', function() {
-            authorizationServiceSpy.hasRight.andReturn(true);
-            spyOn($state, 'reload');
-
-            vm.authorizeRnr();
-            $scope.$apply();
-
-            expect($state.reload).toHaveBeenCalled();
-            expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_APPROVE, {programCode: requisition.program.code});
+            expect(stateTrackerService.goToPreviousState).toHaveBeenCalled();
         });
     });
 
