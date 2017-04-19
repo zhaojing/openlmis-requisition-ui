@@ -21,9 +21,9 @@
         .module('requisition-initiate')
         .config(routes);
 
-    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS', 'REQUISITION_STATUS'];
+    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
-    function routes($stateProvider, REQUISITION_RIGHTS, REQUISITION_STATUS) {
+    function routes($stateProvider, REQUISITION_RIGHTS) {
 
         $stateProvider.state('openlmis.requisitions.initRnr', {
             url: '/initiate?supervised&program&facility&emergency',
@@ -51,42 +51,18 @@
                 homePrograms: function (programService, user) {
                     return programService.getUserPrograms(user.user_id, true);
                 },
-                periods: function(periodFactory, $stateParams, $q, messageService) {
+                periods: function(periodFactory, $stateParams) {
                     if ($stateParams.program && $stateParams.facility) {
-                        var deferred = $q.defer(),
-                            emergency = $stateParams.emergency === 'true';
-
-                        periodFactory.get(
+                        return periodFactory.get(
                             $stateParams.program,
                             $stateParams.facility,
-                            emergency
-                        ).then(function(periods) {
-                            periods.forEach(setStatus(emergency));
-                            deferred.resolve(periods);
-                        }, deferred.reject);
-
-                        return deferred.promise;
+                            $stateParams.emergency === 'true'
+                        );
                     }
                     return undefined;
-
-                    function setStatus(emergency) {
-                        return function(period) {
-                            if (isNotStarted(period, emergency)) {
-                                period.rnrStatus = messageService.get('requisitionInitiate.notYetStarted');
-                            }
-                        };
-                    }
                 }
             }
         });
-
-        function isNotStarted(period, emergency) {
-            return emergency &&
-                (period.rnrStatus == REQUISITION_STATUS.AUTHORIZED ||
-                period.rnrStatus == REQUISITION_STATUS.IN_APPROVAL ||
-                period.rnrStatus == REQUISITION_STATUS.APPROVED ||
-                period.rnrStatus == REQUISITION_STATUS.RELEASED);
-        }
     }
 
 })();

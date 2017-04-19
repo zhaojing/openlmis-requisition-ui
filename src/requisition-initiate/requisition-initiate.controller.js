@@ -31,18 +31,17 @@
         .controller('RequisitionInitiateController', RequisitionInitiateController);
 
     RequisitionInitiateController.$inject = [
-        'messageService', 'facility', 'user', 'supervisedPrograms', 'homePrograms', 'periodFactory',
+        'messageService', 'facility', 'user', 'supervisedPrograms', 'homePrograms',
         'requisitionService', '$state', 'dateUtils', 'REQUISITION_STATUS', 'loadingModalService',
         'notificationService', 'authorizationService', '$q', 'REQUISITION_RIGHTS',
-        'facilityService', 'userRightFactory', '$stateParams', 'periods', '$filter'
+        'facilityService', 'userRightFactory', '$stateParams', 'periods'
     ];
 
     function RequisitionInitiateController(messageService, facility, user, supervisedPrograms,
-                                     homePrograms, periodFactory, requisitionService, $state,
-                                     dateUtils, REQUISITION_STATUS, loadingModalService,
-                                     notificationService, authorizationService, $q,
-                                     REQUISITION_RIGHTS, facilityService, userRightFactory,
-                                     $stateParams, periods, $filter) {
+                                     homePrograms, requisitionService, $state, dateUtils,
+                                     REQUISITION_STATUS, loadingModalService, notificationService,
+                                     authorizationService, $q, REQUISITION_RIGHTS, facilityService,
+                                     userRightFactory, $stateParams, periods) {
 
         var vm = this;
 
@@ -110,6 +109,39 @@
          */
         vm.isSupervised = undefined;
 
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-initiate.controller:RequisitionInitiateController
+         * @name periods
+         * @type {List}
+         *
+         * @description
+         * The list of all periods displayed in the table.
+         */
+        vm.periods = undefined;
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-initiate.controller:RequisitionInitiateController
+         * @name $onInit
+         *
+         * @description
+         * Initialization method of the RequisitionInitiateController controller.
+         */
+        function onInit() {
+            vm.emergency = $stateParams.emergency === 'true';
+            vm.periods = periods;
+
+            vm.isSupervised = $stateParams.supervised === 'true';
+            updateFacilityType(vm.isSupervised);
+
+            vm.selectedProgramId = $stateParams.program;
+
+            if (vm.isSupervised) {
+                loadFacilitiesForProgram(vm.selectedProgramId);
+                vm.selectedFacilityId = $stateParams.facility;
+            }
+        }
 
         /**
          * @ngdoc method
@@ -293,29 +325,6 @@
                 loadingModalService.close();
                 notificationService.error(message);
             };
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-initiate.controller:RequisitionInitiateController
-         * @name $onInit
-         *
-         * @description
-         * Initialization method of the RequisitionInitiateController controller.
-         */
-        function onInit() {
-            vm.emergency = $stateParams.emergency === 'true';
-            vm.periods = periods;
-
-            vm.isSupervised = $stateParams.supervised === 'true';
-            updateFacilityType(vm.isSupervised);
-
-            vm.selectedProgramId = $stateParams.program;
-
-            if (vm.isSupervised) {
-                loadFacilitiesForProgram(vm.selectedProgramId);
-                vm.selectedFacilityId = $stateParams.facility;
-            }
         }
     }
 })();

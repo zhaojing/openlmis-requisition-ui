@@ -15,16 +15,15 @@
 
 describe("RequisitionInitiateController", function(){
 
-    var $q, programs, $rootScope, requisitionService, authorizationService, facilityService,
-        periodFactory, $state, period, facility, REQUISITION_RIGHTS, userRightFactoryMock, hasRight,
-        loadingModalService, periods, $stateParams;
+    var $q, programs, $rootScope, requisitionService, authorizationService, facilityService, $state,
+        period, facility, REQUISITION_RIGHTS, userRightFactoryMock, hasRight, loadingModalService,
+        periods, $stateParams;
 
     beforeEach(function() {
         module('requisition-initiate');
 
         inject(function($injector) {
             $rootScope = $injector.get('$rootScope');
-            periodFactory = $injector.get('periodFactory');
             $state = $injector.get('$state');
             requisitionService = $injector.get('requisitionService');
             authorizationService = $injector.get('authorizationService');
@@ -49,7 +48,6 @@ describe("RequisitionInitiateController", function(){
                 facility: facility.id
             };
 
-            spyOn(periodFactory, 'get').andReturn($q.when(period));
             userRightFactoryMock = jasmine.createSpyObj('userRightFactory',  ['checkRightForCurrentUser']);
             userRightFactoryMock.checkRightForCurrentUser.andCallFake(function() {
                 return $q.when(hasRight);
@@ -60,7 +58,6 @@ describe("RequisitionInitiateController", function(){
                 user: user,
                 supervisedPrograms: programs,
                 homePrograms: programs,
-                periodFactory: periodFactory,
                 requisitionService: requisitionService,
                 userRightFactory: userRightFactoryMock,
                 periods: periods,
