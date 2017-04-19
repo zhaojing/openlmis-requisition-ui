@@ -185,7 +185,7 @@
          * status.
          */
         function loadPeriods() {
-            $state.go('requisitions.initRnr', {
+            $state.go('openlmis.requisitions.initRnr', {
                 supervised: vm.isSupervised,
                 program: vm.selectedProgramId,
                 facility: vm.selectedFacilityId,
@@ -222,7 +222,7 @@
                             selectedPeriod.id,
                             vm.emergency)
                         .then(function (data) {
-                            $state.go('requisitions.requisition.fullSupply', {
+                            $state.go('openlmis.requisitions.requisition.fullSupply', {
                                 rnr: data.id
                             });
                         }, handleError('requisitionInitiate.couldNotInitiateRequisition'));
@@ -231,7 +231,7 @@
                     }
                 }, handleError('requisitionInitiate.noPermissionToInitiateRequisition'));
             } else {
-                $state.go('requisitions.requisition.fullSupply', {
+                $state.go('openlmis.requisitions.requisition.fullSupply', {
                     rnr: selectedPeriod.rnrId
                 });
             }

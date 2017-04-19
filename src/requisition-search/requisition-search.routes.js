@@ -23,7 +23,7 @@
 
 	function routes($stateProvider, REQUISITION_RIGHTS) {
 
-		$stateProvider.state('requisitions.search', {
+		$stateProvider.state('openlmis.requisitions.search', {
 			showInNavigation: true,
 			isOffline: true,
 			label: 'requisitionSearch.view',

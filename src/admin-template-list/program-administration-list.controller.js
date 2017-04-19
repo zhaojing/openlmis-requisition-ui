@@ -59,7 +59,7 @@
          * @param {String} templateId Template UUID
          */
         function goToTemplate(templateId) {
-            $state.go('administration.template', {
+            $state.go('openlmis.administration.template', {
                 template: templateId
             });
         }

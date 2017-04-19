@@ -9,13 +9,13 @@
       <ul>
           <li ui-sref-active="active" role="presentation"
               ng-class="{'is-invalid': !vm.isFullSupplyTabValid()}">
-                  <a ui-sref="requisitions.requisition.fullSupply">
+                  <a ui-sref="openlmis.requisitions.requisition.fullSupply">
                       {{'requisitionView.fullSupplyProducts' | message}}
                   </a>
           </li>
           <li ui-sref-active="active" ng-if="vm.requisition.program.showNonFullSupplyTab"
               role="presentation" ng-class="{'is-invalid': !vm.isNonFullSupplyTabValid()}">
-                  <a ui-sref="requisitions.requisition.nonFullSupply">
+                  <a ui-sref="openlmis.requisitions.requisition.nonFullSupply">
                       {{'requisitionView.nonFullSupplyProducts' | message}}
                   </a>
           </li>

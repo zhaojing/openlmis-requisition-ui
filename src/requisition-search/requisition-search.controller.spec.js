@@ -196,7 +196,7 @@ describe('RequisitionSearchController', function() {
 
             vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.search', {
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.search', {
                 program: vm.selectedProgram.id,
                 facility: null,
                 initiatedDateFrom: null,
@@ -213,7 +213,7 @@ describe('RequisitionSearchController', function() {
 
             vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.search', {
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.search', {
                 program: null,
                 facility: vm.selectedFacility.id,
                 initiatedDateFrom: null,
@@ -227,7 +227,7 @@ describe('RequisitionSearchController', function() {
 
             vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.search', {
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.search', {
                 program: null,
                 facility: null,
                 initiatedDateFrom: '2017-01-31T23:00:00.000Z',
@@ -241,7 +241,7 @@ describe('RequisitionSearchController', function() {
 
             vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.search', {
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.search', {
                 program: null,
                 facility: null,
                 initiatedDateFrom: null,
@@ -277,7 +277,7 @@ describe('RequisitionSearchController', function() {
 
             vm.openRnr('requisition-id');
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
                 rnr: 'requisition-id'
             });
         });

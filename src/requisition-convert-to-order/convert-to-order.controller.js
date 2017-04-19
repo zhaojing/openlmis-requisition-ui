@@ -322,7 +322,7 @@
 			stateParams.sortBy = vm.sortBy;
 			stateParams.descending = vm.descending;
 
-			$state.go('requisitions.convertToOrder', stateParams, {
+			$state.go('openlmis.requisitions.convertToOrder', stateParams, {
 				reload: true
 			});
 		}

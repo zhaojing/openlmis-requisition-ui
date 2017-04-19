@@ -59,6 +59,6 @@ describe('RequisitionApprovalListController', function () {
     it('should call state go when opening requisition', function () {
         spyOn($state, 'go');
         vm.openRnr(requisitionList[0].id);
-        expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {rnr: requisitionList[0].id});
+        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: requisitionList[0].id});
     });
 });
