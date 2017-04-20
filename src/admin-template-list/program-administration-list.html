@@ -1,31 +1,28 @@
-<div class="program-template-list">
-    <div class="page">
-        <h2>{{'adminTemplateList.programs' | message}}</h2>
-        <div class="openlmis-table-container">
-            <table class="openlmis-table" ng-if="vm.programs.length">
-                <thead>
-                    <tr>
-                        <th>{{'adminTemplateList.program' | message}}</th>
-                        <th>{{'adminTemplateList.requisitionTemplate' | message}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="program in vm.programs">
-                        <td>{{program.name}}</td>
-                        <td>
-                            <div ng-if="program.$template">
-                                <i class="fa fa-check"></i>
-                                {{'adminTemplateList.configured' | message}}
-                                <a ng-if="vm.canConfigureTemplates()" ng-click="vm.goToTemplate(program.$template.id)">
-                                    ({{'adminTemplateList.edit' | message}})
-                                </a>
-                            </div>
-                            <div ng-if="!program.$template">
-                                <div>{{'adminTemplateList.create' | message}}</div>
-                            </div>
-                        </td>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<h2>{{'adminTemplateList.programs' | message}}</h2>
+<div class="openlmis-table-container">
+    <table class="openlmis-table" ng-if="vm.programs.length">
+        <thead>
+            <tr>
+                <th>{{'adminTemplateList.program' | message}}</th>
+                <th>{{'adminTemplateList.requisitionTemplate' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="program in vm.programs">
+                <td>{{program.name}}</td>
+                <td>
+                    <div ng-if="program.$template">
+                        <i class="fa fa-check"></i>
+                        {{'adminTemplateList.configured' | message}}
+                        <a ng-if="vm.canConfigureTemplates()" ui-sref=".configureTemplate({template: program.$template.id})">
+                            ({{'adminTemplateList.edit' | message}})
+                        </a>
+                    </div>
+                    <div ng-if="!program.$template">
+                        <div>{{'adminTemplateList.create' | message}}</div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

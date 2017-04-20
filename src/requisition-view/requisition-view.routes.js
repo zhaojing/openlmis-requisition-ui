@@ -26,6 +26,7 @@
     function routes($stateProvider, REQUISITION_RIGHTS, FULFILLMENT_RIGHTS) {
 
         $stateProvider.state('openlmis.requisitions.requisition', {
+            label: 'requisitionView.viewRequisition',
             url: '^/requisition/:rnr',
             controller: 'RequisitionViewController',
             controllerAs: 'vm',

@@ -34,6 +34,8 @@
     function controller($state, programList, authorizationService, REQUISITION_RIGHTS) {
         var vm = this;
 
+        vm.canConfigureTemplates = canConfigureTemplates;
+
         /**
          * @ngdoc property
          * @name programs
@@ -44,25 +46,6 @@
          * Holds list of all programs with templates.
          */
         vm.programs = programList;
-
-        vm.goToTemplate = goToTemplate;
-        vm.canConfigureTemplates = canConfigureTemplates;
-
-        /**
-         * @ngdoc method
-         * @methodOf admin-template-list.controller:ProgramAdministrationListController
-         * @name goToTemplate
-         *
-         * @description
-         * Redirects user to template view page.
-         *
-         * @param {String} templateId Template UUID
-         */
-        function goToTemplate(templateId) {
-            $state.go('openlmis.administration.template', {
-                template: templateId
-            });
-        }
 
         /**
          * @ngdoc method
