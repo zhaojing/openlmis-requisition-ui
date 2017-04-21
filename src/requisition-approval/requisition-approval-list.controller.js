@@ -59,7 +59,7 @@
          * @type {Array}
          *
          * @description
-         * list of programs to which user has access based on his role/permissions.
+         * List of programs to which user has access based on his role/permissions.
          */
         vm.programs = undefined;
 

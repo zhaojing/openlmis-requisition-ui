@@ -57,9 +57,7 @@
                         	deferred.resolve(results[0]);
                         }
                         deferred.resolve($filter('unique')(results[0].concat(results[1]), 'id'));
-					}, function() {
-						deferred.reject();
-					});
+					}, deferred.reject);
 
                     return deferred.promise;
                 },
