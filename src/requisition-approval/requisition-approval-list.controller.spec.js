@@ -67,7 +67,8 @@ describe('RequisitionApprovalListController', function () {
 
             vm = $controller('RequisitionApprovalListController', {
                 requisitions: requisitions,
-                programs: programs
+                programs: programs,
+                selectedProgram: programs[0]
             });
         });
     });
@@ -84,20 +85,9 @@ describe('RequisitionApprovalListController', function () {
             expect(vm.programs).toBe(programs);
         });
 
-        it('should set selectedProgram if program ID was passed the URL', function() {
-            $stateParams.program = '1';
-
+        it('should expose selected program', function() {
             vm.$onInit();
-
             expect(vm.selectedProgram).toBe(programs[0]);
-        });
-
-        it('should not set selectedProgram if program ID was passed the URL', function() {
-            $stateParams.program = undefined;
-
-            vm.$onInit();
-
-            expect(vm.selectedProgram).toBe(undefined);
         });
 
     });

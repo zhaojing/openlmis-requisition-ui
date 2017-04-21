@@ -30,10 +30,10 @@
 		.controller('RequisitionApprovalListController', controller);
 
 	controller.$inject = [
-		'$controller', '$state', 'requisitions', 'messageService', '$stateParams', '$filter', 'programs'
+		'$controller', '$state', 'requisitions', 'messageService', '$stateParams', '$filter', 'programs', 'selectedProgram'
 	];
 
-	function controller($controller, $state, requisitions, messageService, $stateParams, $filter, programs) {
+	function controller($controller, $state, requisitions, messageService, $stateParams, $filter, programs, selectedProgram) {
 
 		var vm = this;
 
@@ -86,12 +86,7 @@
         function onInit() {
             vm.requisitions = requisitions;
             vm.programs = programs;
-
-            if ($stateParams.program) {
-                vm.selectedProgram = $filter('filter')(vm.programs, {
-                    id: $stateParams.program
-                })[0];
-            }
+            vm.selectedProgram = selectedProgram;
         }
 
         /**
@@ -107,7 +102,7 @@
 
             stateParams.program = vm.selectedProgram ? vm.selectedProgram.id : null;
 
-            $state.go('requisitions.approvalList', stateParams, {
+            $state.go('openlmis.requisitions.approvalList', stateParams, {
                 reload: true
             });
         }

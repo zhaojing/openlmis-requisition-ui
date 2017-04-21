@@ -62,7 +62,14 @@
 					});
 
                     return deferred.promise;
-                }
+                },
+				selectedProgram: function($stateParams, $filter, programs) {
+                    if ($stateParams.program) {
+                        return $filter('filter')(programs, {
+                            id: $stateParams.program
+                        })[0];
+                    }
+				}
 			}
 		});
 	}
