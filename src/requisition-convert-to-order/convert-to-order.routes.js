@@ -25,9 +25,9 @@
 
     function routes($stateProvider, FULFILLMENT_RIGHTS) {
 
-        $stateProvider.state('requisitions.convertToOrder', {
+        $stateProvider.state('openlmis.requisitions.convertToOrder', {
             showInNavigation: true,
-            label: 'requisitionConvertToOrder.convertToOrder',
+            label: 'requisitionConvertToOrder.convertToOrder.label',
             url: '/convertToOrder?filterBy&filterValue&sortBy&descending&page&size',
             controller: 'ConvertToOrderController',
             controllerAs: 'vm',

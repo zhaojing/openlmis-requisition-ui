@@ -15,27 +15,22 @@
 
 describe("RequisitionInitiateController", function(){
 
-    var $q, programs, rootScope, requisitionService, authorizationService, facilityService,
-        periodFactory, $state, period, facility, REQUISITION_RIGHTS, userRightFactoryMock, hasRight,
-        loadingModalService;
+    var $q, programs, $rootScope, requisitionService, authorizationService, facilityService, $state,
+        period, facility, REQUISITION_RIGHTS, userRightFactoryMock, hasRight, loadingModalService,
+        periods, $stateParams;
 
     beforeEach(function() {
-
         module('requisition-initiate');
 
-        inject(function (_$q_, $rootScope, $controller, _periodFactory_,
-            _$state_, _requisitionService_, _authorizationService_, _facilityService_,
-            _REQUISITION_RIGHTS_, _loadingModalService_) {
-
-            rootScope = $rootScope;
-            periodFactory =_periodFactory_;
-            $state = _$state_;
-            requisitionService = _requisitionService_;
-            authorizationService = _authorizationService_;
-            facilityService = _facilityService_;
-            $q = _$q_;
-            REQUISITION_RIGHTS = _REQUISITION_RIGHTS_;
-            loadingModalService = _loadingModalService_;
+        inject(function($injector) {
+            $rootScope = $injector.get('$rootScope');
+            $state = $injector.get('$state');
+            requisitionService = $injector.get('requisitionService');
+            authorizationService = $injector.get('authorizationService');
+            facilityService = $injector.get('facilityService');
+            $q = $injector.get('$q');
+            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+            loadingModalService = $injector.get('loadingModalService');
 
             user = {"user_id": "user_id"};
             right = {"id": "right_id"};
@@ -48,19 +43,32 @@ describe("RequisitionInitiateController", function(){
                 "code": "CODE",
                 "supportedPrograms": programs
             };
+            periods = [];
+            $stateParams = {
+                facility: facility.id
+            };
 
-            spyOn(periodFactory, 'get').andReturn($q.when(period));
             userRightFactoryMock = jasmine.createSpyObj('userRightFactory',  ['checkRightForCurrentUser']);
             userRightFactoryMock.checkRightForCurrentUser.andCallFake(function() {
                 return $q.when(hasRight);
             });
 
-            vm = $controller('RequisitionInitiateController', {facility: facility, user: user, supervisedPrograms: programs,
-                homePrograms: programs, periodFactory: periodFactory, requisitionService: requisitionService, userRightFactory: userRightFactoryMock});
+            vm = $injector.get('$controller')('RequisitionInitiateController', {
+                facility: facility,
+                user: user,
+                supervisedPrograms: programs,
+                homePrograms: programs,
+                requisitionService: requisitionService,
+                userRightFactory: userRightFactoryMock,
+                periods: periods,
+                $stateParams: $stateParams
+            });
         });
     });
 
     it("should assign proper values when facility is assigned", function() {
+        vm.$onInit();
+
         expect(vm.selectedFacilityId).toEqual(facility.id);
         expect(vm.programs).toEqual(programs);
         expect(vm.selectedProgramId).toEqual(undefined);
@@ -72,31 +80,33 @@ describe("RequisitionInitiateController", function(){
 
         vm.initRnr(selectedPeriod);
 
-        expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {rnr: 1});
+        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
     });
 
     it("Should change page to requisition full supply for newly initialized requisition in selected period", function() {
         var selectedPeriod = {"id":1};
+        vm.$onInit();
         spyOn($state, 'go');
         spyOn(requisitionService, 'initiate').andReturn($q.when({"id": 1}));
         hasRight = true;
         vm.selectedProgramId = programs[0].id;
 
         vm.initRnr(selectedPeriod);
-        rootScope.$apply();
+        $rootScope.$apply();
 
-        expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {rnr: 1});
+        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
         expect(userRightFactoryMock.checkRightForCurrentUser).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_CREATE, programs[0].id, facility.id);
     });
 
     it("Should display error when user has no right to init requisition", function() {
         var selectedPeriod = {"id":1};
+        vm.$onInit();
         spyOn($state, 'go');
         hasRight = false;
         vm.selectedProgramId = programs[0].id;
 
         vm.initRnr(selectedPeriod);
-        rootScope.$apply();
+        $rootScope.$apply();
 
         expect($state.go).not.toHaveBeenCalled();
         expect(userRightFactoryMock.checkRightForCurrentUser).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_CREATE, programs[0].id, facility.id);
@@ -108,7 +118,7 @@ describe("RequisitionInitiateController", function(){
         spyOn($state, 'go');
 
         vm.initRnr(selectedPeriod);
-        rootScope.$apply();
+        $rootScope.$apply();
 
         expect($state.go).not.toHaveBeenCalled();
     });
@@ -123,14 +133,22 @@ describe("RequisitionInitiateController", function(){
     });
 
     it("Should reload periods with proper data", function() {
+        spyOn($state, 'go');
         vm.selectedProgramId = programs[0].id;
         vm.selectedFacilityId = facility.id;
 
+        vm.$onInit();
         vm.loadPeriods();
-        rootScope.$apply();
+        $rootScope.$apply();
 
-        expect(periodFactory.get).toHaveBeenCalled();
-        expect(vm.periodGridData).toEqual(period);
+        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.initRnr', {
+            supervised: false,
+            emergency: false,
+            program: vm.selectedProgramId,
+            facility: vm.selectedFacilityId
+        }, {
+            reload: true
+        });
     });
 
     it("should load proper data for supervised facility", function() {
@@ -153,6 +171,7 @@ describe("RequisitionInitiateController", function(){
         spyOn(facilityService, 'getUserSupervisedFacilities').andReturn([facility]);
         spyOn(authorizationService, 'getRightByName').andReturn(right);
 
+        vm.$onInit();
         vm.loadFacilitiesForProgram(vm.supervisedPrograms[0]);
 
         expect(vm.facilities).toEqual([facility]);

@@ -25,12 +25,13 @@
 
     function routes($stateProvider) {
 
-        $stateProvider.state('requisitions.requisition.nonFullSupply', {
+        $stateProvider.state('openlmis.requisitions.requisition.nonFullSupply', {
             url: '/nonFullSupply?page&size',
             templateUrl: 'requisition-non-full-supply/non-full-supply.html',
             controller: 'NonFullSupplyController',
             controllerAs: 'vm',
             isOffline: true,
+            nonTrackable: true,
             resolve: {
                 lineItems: function(paginationService, requisition, $stateParams, $filter, requisitionValidator) {
 					return paginationService.registerList(requisitionValidator.isLineItemValid, $stateParams, function() {

@@ -24,20 +24,25 @@
 
 	function routes($stateProvider, REQUISITION_RIGHTS) {
 
-		$stateProvider.state('administration.template', {
+		$stateProvider.state('openlmis.administration.programs.configureTemplate', {
+			label: 'adminTemplateList.configureTemplate',
 			url: '/template/:template',
-			controller: 'RequisitionTemplateAdminController',
-			templateUrl: 'admin-template/template.html',
-			controllerAs: 'vm',
 			accessRights: [
 				REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE
 			],
-			resolve: {
-				template: function ($stateParams, templateFactory) {
-					return templateFactory.get($stateParams.template);
-				},
-				program: function (template, programService) {
-					return programService.get(template.programId);
+			views: {
+				'@openlmis': {
+					controller: 'RequisitionTemplateAdminController',
+					templateUrl: 'admin-template/template.html',
+					controllerAs: 'vm',
+					resolve: {
+						template: function ($stateParams, templateFactory) {
+							return templateFactory.get($stateParams.template);
+						},
+						program: function (template, programService) {
+							return programService.get(template.programId);
+						}
+					},
 				}
 			}
 		});

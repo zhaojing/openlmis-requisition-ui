@@ -27,6 +27,7 @@
         'ngBootbox',
         'openlmis-templates',
         'openlmis-i18n',
+        'openlmis-state-tracker',
         'requisition',
         'requisition-summary',
         'requisition-validation',

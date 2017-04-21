@@ -24,7 +24,7 @@
 
 	function routes($stateProvider, REQUISITION_RIGHTS) {
 
-		$stateProvider.state('administration.programs', {
+		$stateProvider.state('openlmis.administration.programs', {
 			showInNavigation: true,
 			label: 'adminTemplateList.programs',
 			url: '/templateList',

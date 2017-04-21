@@ -62,7 +62,9 @@
             }));
 
             $q.all(promises).then(function(response) {
-                deferred.resolve(getPeriodGridLineItems(response[0], response[1].content, emergency));
+                var periods = getPeriodGridLineItems(response[0], response[1].content, emergency);
+                angular.forEach(periods, setStatus(emergency));
+                deferred.resolve(periods);
             }, function() {
                 deferred.reject();
             });
@@ -105,6 +107,22 @@
                 activeForRnr: (id === 0 ? true : false),
                 rnrId: (requisition ? requisition.id : null)
             };
+        }
+
+        function setStatus(emergency) {
+            return function(period) {
+                if (isNotStarted(period, emergency)) {
+                    period.rnrStatus = messageService.get('requisitionInitiate.notYetStarted');
+                }
+            };
+        }
+
+        function isNotStarted(period, emergency) {
+            return emergency &&
+                (period.rnrStatus == REQUISITION_STATUS.AUTHORIZED ||
+                period.rnrStatus == REQUISITION_STATUS.IN_APPROVAL ||
+                period.rnrStatus == REQUISITION_STATUS.APPROVED ||
+                period.rnrStatus == REQUISITION_STATUS.RELEASED);
         }
     }
 

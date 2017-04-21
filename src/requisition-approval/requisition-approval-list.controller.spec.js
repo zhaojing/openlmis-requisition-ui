@@ -109,7 +109,7 @@ describe('RequisitionApprovalListController', function () {
 
             vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.approvalList', {
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
                 program: vm.selectedProgram.id
             }, {reload: true});
         });
@@ -128,7 +128,7 @@ describe('RequisitionApprovalListController', function () {
         it('should go to fullSupply state', function () {
             vm.openRnr(requisitions[0].id);
 
-            expect($state.go).toHaveBeenCalledWith('requisitions.requisition.fullSupply', {rnr: requisitions[0].id});
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: requisitions[0].id});
         });
     });
 });

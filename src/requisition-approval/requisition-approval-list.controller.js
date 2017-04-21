@@ -121,7 +121,7 @@
          * Redirects to requisition page with given requisition UUID.
          */
 		function openRnr(requisitionId) {
-			$state.go('requisitions.requisition.fullSupply', {
+			$state.go('openlmis.requisitions.requisition.fullSupply', {
 				rnr: requisitionId
 			});
 		}

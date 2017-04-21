@@ -25,8 +25,8 @@
 
     function routes($stateProvider, REQUISITION_RIGHTS) {
 
-        $stateProvider.state('requisitions.initRnr', {
-            url: '/initiate',
+        $stateProvider.state('openlmis.requisitions.initRnr', {
+            url: '/initiate?supervised&program&facility&emergency',
             showInNavigation: true,
             priority: 11,
             label: 'requisitionInitiate.createAuthorize',
@@ -50,6 +50,16 @@
                 },
                 homePrograms: function (programService, user) {
                     return programService.getUserPrograms(user.user_id, true);
+                },
+                periods: function(periodFactory, $stateParams) {
+                    if ($stateParams.program && $stateParams.facility) {
+                        return periodFactory.get(
+                            $stateParams.program,
+                            $stateParams.facility,
+                            $stateParams.emergency === 'true'
+                        );
+                    }
+                    return undefined;
                 }
             }
         });

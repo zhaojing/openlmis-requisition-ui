@@ -31,19 +31,26 @@
         .controller('RequisitionInitiateController', RequisitionInitiateController);
 
     RequisitionInitiateController.$inject = [
-        'messageService', 'facility', 'user', 'supervisedPrograms', 'homePrograms', 'periodFactory',
+        'messageService', 'facility', 'user', 'supervisedPrograms', 'homePrograms',
         'requisitionService', '$state', 'dateUtils', 'REQUISITION_STATUS', 'loadingModalService',
         'notificationService', 'authorizationService', '$q', 'REQUISITION_RIGHTS',
-        'facilityService', 'userRightFactory'
+        'facilityService', 'userRightFactory', '$stateParams', 'periods'
     ];
 
     function RequisitionInitiateController(messageService, facility, user, supervisedPrograms,
-                                     homePrograms, periodFactory, requisitionService, $state,
-                                     dateUtils, REQUISITION_STATUS, loadingModalService,
-                                     notificationService, authorizationService, $q,
-                                     REQUISITION_RIGHTS, facilityService, userRightFactory) {
+                                     homePrograms, requisitionService, $state, dateUtils,
+                                     REQUISITION_STATUS, loadingModalService, notificationService,
+                                     authorizationService, $q, REQUISITION_RIGHTS, facilityService,
+                                     userRightFactory, $stateParams, periods) {
 
         var vm = this;
+
+        vm.$onInit = onInit;
+        vm.loadPeriods = loadPeriods;
+        vm.programOptionMessage = programOptionMessage;
+        vm.initRnr = initRnr;
+        vm.updateFacilityType = updateFacilityType;
+        vm.loadFacilitiesForProgram = loadFacilitiesForProgram;
 
         /**
          * @ngdoc property
@@ -54,7 +61,7 @@
          * @description
          * Holds a boolean indicating if the currently selected requisition type is standard or emergency
          */
-        vm.emergency = false;
+        vm.emergency = undefined;
 
         /**
          * @ngdoc property
@@ -100,21 +107,41 @@
          *  false - my facility
          *  true - supervised facility
          */
-        vm.isSupervised = false;
+        vm.isSupervised = undefined;
 
-        // Functions
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-initiate.controller:RequisitionInitiateController
+         * @name periods
+         * @type {List}
+         *
+         * @description
+         * The list of all periods displayed in the table.
+         */
+        vm.periods = undefined;
 
-        vm.loadPeriods = loadPeriods;
+        /**
+         * @ngdoc method
+         * @methodOf requisition-initiate.controller:RequisitionInitiateController
+         * @name $onInit
+         *
+         * @description
+         * Initialization method of the RequisitionInitiateController controller.
+         */
+        function onInit() {
+            vm.emergency = $stateParams.emergency === 'true';
+            vm.periods = periods;
 
-        vm.programOptionMessage = programOptionMessage;
+            vm.isSupervised = $stateParams.supervised === 'true';
+            updateFacilityType(vm.isSupervised);
 
-        vm.initRnr = initRnr;
+            vm.selectedProgramId = $stateParams.program;
 
-        vm.updateFacilityType = updateFacilityType;
-
-        vm.loadFacilitiesForProgram = loadFacilitiesForProgram;
-
-        vm.updateFacilityType(vm.isSupervised);
+            if (vm.isSupervised) {
+                loadFacilitiesForProgram(vm.selectedProgramId);
+                vm.selectedFacilityId = $stateParams.facility;
+            }
+        }
 
         /**
          * @ngdoc method
@@ -190,22 +217,13 @@
          * status.
          */
         function loadPeriods() {
-            loadingModalService.open();
-            periodFactory.get(vm.selectedProgramId, vm.selectedFacilityId, vm.emergency).then
-            (function(data) {
-                vm.periodGridData = data;
-                vm.periodGridData.forEach(function (period) {
-                    if (vm.emergency && (period.rnrStatus == REQUISITION_STATUS.AUTHORIZED ||
-                    period.rnrStatus == REQUISITION_STATUS.IN_APPROVAL ||
-                    period.rnrStatus == REQUISITION_STATUS.APPROVED ||
-                    period.rnrStatus == REQUISITION_STATUS.RELEASED)) {
-                        period.rnrStatus = messageService.get('requisitionInitiate.notYetStarted');
-                    }
-                });
-                loadingModalService.close();
-            }).catch(function() {
-                notificationService.error('requisitionInitiate.errorOccurred');
-                loadingModalService.close();
+            $state.go('openlmis.requisitions.initRnr', {
+                supervised: vm.isSupervised,
+                program: vm.selectedProgramId,
+                facility: vm.selectedFacilityId,
+                emergency: vm.emergency
+            }, {
+                reload: true
             });
         }
 
@@ -236,7 +254,7 @@
                             selectedPeriod.id,
                             vm.emergency)
                         .then(function (data) {
-                            $state.go('requisitions.requisition.fullSupply', {
+                            $state.go('openlmis.requisitions.requisition.fullSupply', {
                                 rnr: data.id
                             });
                         }, handleError('requisitionInitiate.couldNotInitiateRequisition'));
@@ -245,7 +263,7 @@
                     }
                 }, handleError('requisitionInitiate.noPermissionToInitiateRequisition'));
             } else {
-                $state.go('requisitions.requisition.fullSupply', {
+                $state.go('openlmis.requisitions.requisition.fullSupply', {
                     rnr: selectedPeriod.rnrId
                 });
             }
