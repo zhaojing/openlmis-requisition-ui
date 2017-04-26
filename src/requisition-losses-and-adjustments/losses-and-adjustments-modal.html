@@ -15,8 +15,7 @@
                     <input id="quantity"
                            class="form-control"
                            ng-model="vm.adjustment.quantity"
-                           required positive-integer
-                           type="number"/>
+                           required positive-integer/>
                 </div>
                 <button class="btn btn-primary" type="submit">
                     {{'requisitionLossesAndAdjustments.add' | message}}
@@ -41,8 +40,7 @@
                 ng-model="adjustment.quantity"
                 ng-change="vm.recalculateTotal()"
                 ng-if="!vm.isDisabled()"
-                required positive-integer
-                type="number"/>
+                required positive-integer/>
             <input type="button" class="danger"
                 ng-click="vm.removeAdjustment(adjustment)"
                 ng-if="!vm.isDisabled()"
