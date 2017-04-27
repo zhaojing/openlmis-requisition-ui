@@ -142,7 +142,7 @@
                 }, function(response) {
                   handleSaveError(response.status);
                   popup.close();
-              });
+                })
             } else {
                 $window.open(accessTokenFactory.addAccessToken(vm.getPrintUrl()), '_blank');
             }
@@ -174,10 +174,10 @@
                                 loadingPromise.then(function () {
                                     notificationService.success('requisitionView.submit.success');
                                 });
-                                stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
+                                stateTrackerService.goToPreviousState();
                             }, failWithMessage('requisitionView.submit.failure'));
                         }, function(response) {
-                            handleSaveError(response.status);
+                          handleSaveError(response.status);
                         });
                     } else {
                         failWithMessage('requisitionView.allLineItemsSkipped')();
@@ -213,10 +213,10 @@
                                 loadingPromise.then(function() {
                                     notificationService.success('requisitionView.authorize.success');
                                 });
-                                stateTrackerService.goToPreviousState('openlmis.requisitions.search');
+                                stateTrackerService.goToPreviousState();
                             }, failWithMessage('requisitionView.authorize.failure'));
                         }, function(response) {
-                            handleSaveError(response.status);
+                          handleSaveError(response.status);
                         });
                     } else {
                         failWithMessage('requisitionView.allLineItemsSkipped');
@@ -247,7 +247,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.delete.success');
                     });
-                    stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
+                    stateTrackerService.goToPreviousState();
                 }, failWithMessage('requisitionView.delete.failure'));
             });
         }
@@ -275,11 +275,11 @@
                             loadingPromise.then(function() {
                                 notificationService.success('requisitionView.approve.success');
                             });
-                            stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
+                            stateTrackerService.goToPreviousState();
                         }, failWithMessage('requisitionView.approve.failure'));
-                    }, function(response) {
-                        handleSaveError(response.status);
-                    });
+                        }, function(response) {
+                          handleSaveError(response.status);
+                        });
                 } else {
                     failWithMessage('requisitionView.rnrHasErrors');
                 }
@@ -306,7 +306,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.reject.success');
                     });
-                    stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
+                    stateTrackerService.goToPreviousState();
                 }, failWithMessage('requisitionView.reject.failure'));
             });
         }
@@ -331,7 +331,7 @@
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.skip.success');
                     });
-                    stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
+                    stateTrackerService.goToPreviousState();
                 }, failWithMessage('requisitionView.skip.failure'));
             });
         }
