@@ -163,7 +163,7 @@ describe('RequisitionViewController', function() {
         $scope.$apply();
 
         expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.skip.success');
-        expect(stateTrackerService.goToPreviousState).toHaveBeenCalled();
+        expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
     });
 
     it('should display error message when skip requisition failed', function() {
@@ -373,7 +373,7 @@ describe('RequisitionViewController', function() {
             vm.authorizeRnr();
             $scope.$apply();
 
-            expect(stateTrackerService.goToPreviousState).toHaveBeenCalled();
+            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
         });
     });
 

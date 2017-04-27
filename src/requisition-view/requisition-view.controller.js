@@ -113,7 +113,7 @@
                 reloadState();
             }, function(response) {
                 handleSaveError(response.status);
-            })
+            });
         }
 
          /**
@@ -213,7 +213,7 @@
                                 loadingPromise.then(function() {
                                     notificationService.success('requisitionView.authorize.success');
                                 });
-                                stateTrackerService.goToPreviousState('openlmis.requisitions.search');
+                                stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
                             }, failWithMessage('requisitionView.authorize.failure'));
                         }, function(response) {
                             handleSaveError(response.status);
