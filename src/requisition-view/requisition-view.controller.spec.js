@@ -26,7 +26,7 @@ describe('RequisitionViewController', function() {
 
         module(function($provide) {
 
-            confirmSpy = jasmine.createSpyObj('confirmService', ['confirm']);
+            confirmSpy = jasmine.createSpyObj('confirmService', ['confirm', 'confirmDestroy']);
 
             authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight']);
             accessTokenFactorySpy = jasmine.createSpyObj('accessTokenFactory', ['addAccessToken']);
@@ -76,7 +76,7 @@ describe('RequisitionViewController', function() {
 
             deferred = $q.defer();
             requisition = jasmine.createSpyObj('requisition',
-                ['$skip', '$isInitiated', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased', '$save', '$authorize']);
+                ['$skip', '$isInitiated', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased', '$save', '$authorize', '$submit', '$remove', '$approve', '$reject']);
             requisition.id = '1';
             requisition.program = {
                 id: '2',
@@ -377,6 +377,94 @@ describe('RequisitionViewController', function() {
         });
     });
 
+    describe('submitRnr', function() {
+
+        beforeEach(function() {
+            confirmSpy.confirm.andReturn($q.when(true));
+            requisition.$save.andReturn($q.when(true));
+            requisition.$submit.andReturn($q.when(true));
+
+            requisitionValidatorMock.validateRequisition.andReturn(true);
+            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
+        });
+
+        it('should redirect to previous state', function() {
+            authorizationServiceSpy.hasRight.andReturn(false);
+            spyOn($state, 'go');
+
+            vm.submitRnr();
+            $scope.$apply();
+
+            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+        });
+    });
+
+    describe('removeRnr', function() {
+
+        beforeEach(function() {
+            confirmSpy.confirmDestroy.andReturn($q.when(true));
+            requisition.$save.andReturn($q.when(true));
+            requisition.$remove.andReturn($q.when(true));
+
+            requisitionValidatorMock.validateRequisition.andReturn(true);
+            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
+        });
+
+        it('should redirect to previous state', function() {
+            authorizationServiceSpy.hasRight.andReturn(false);
+            spyOn($state, 'go');
+
+            vm.removeRnr();
+            $scope.$apply();
+
+            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+        });
+    });
+
+    describe('approveRnr', function() {
+
+        beforeEach(function() {
+            confirmSpy.confirmDestroy.andReturn($q.when(true));
+            requisition.$save.andReturn($q.when(true));
+            requisition.$approve.andReturn($q.when(true));
+
+            requisitionValidatorMock.validateRequisition.andReturn(true);
+            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
+        });
+
+        it('should redirect to previous state', function() {
+            authorizationServiceSpy.hasRight.andReturn(false);
+            spyOn($state, 'go');
+
+            vm.approveRnr();
+            $scope.$apply();
+
+            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.approvalList');
+        });
+    });
+
+    describe('rejectRnr', function() {
+
+        beforeEach(function() {
+            confirmSpy.confirmDestroy.andReturn($q.when(true));
+            requisition.$save.andReturn($q.when(true));
+            requisition.$reject.andReturn($q.when(true));
+
+            requisitionValidatorMock.validateRequisition.andReturn(true);
+            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
+        });
+
+        it('should redirect to previous state', function() {
+            authorizationServiceSpy.hasRight.andReturn(false);
+            spyOn($state, 'go');
+
+            vm.rejectRnr();
+            $scope.$apply();
+
+            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.approvalList');
+        });
+    });
+
     describe('syncAndPrint', function() {
 
         beforeEach(function() {
@@ -424,6 +512,5 @@ describe('RequisitionViewController', function() {
 
             expect($window.open).toHaveBeenCalledWith('token', '_blank');
         });
-
     });
 });
