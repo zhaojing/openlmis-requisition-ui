@@ -219,10 +219,10 @@
                             handleSaveError(response.status);
                         });
                     } else {
-                        failWithMessage('requisitionView.allLineItemsSkipped');
+                        failWithMessage('requisitionView.allLineItemsSkipped')();
                     }
                 } else {
-                    failWithMessage('requisitionView.rnrHasErrors');
+                    failWithMessage('requisitionView.rnrHasErrors')();
                 }
             });
         }
@@ -281,7 +281,7 @@
                         handleSaveError(response.status);
                     });
                 } else {
-                    failWithMessage('requisitionView.rnrHasErrors');
+                    failWithMessage('requisitionView.rnrHasErrors')();
                 }
             });
         }
