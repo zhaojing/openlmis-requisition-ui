@@ -28,9 +28,12 @@
         .module('requisition-losses-and-adjustments')
         .controller('LossesAndAdjustmentsController', lossesAndAdjustmentsController);
 
-    lossesAndAdjustmentsController.$inject = ['$scope', '$filter', 'calculationFactory', 'requisitionValidator'];
+    lossesAndAdjustmentsController.$inject = [
+        '$q', '$scope', '$filter', 'calculationFactory', 'requisitionValidator'
+    ];
 
-    function lossesAndAdjustmentsController($scope, $filter, calculationFactory, requisitionValidator) {
+    function lossesAndAdjustmentsController($q, $scope, $filter, calculationFactory,
+                                            requisitionValidator) {
         var vm = this;
 
         /**
@@ -91,15 +94,22 @@
          *
          * @description
          * Adds adjustment to line item.
+         *
+         * @return  {Promise}   the promise resolving to the added adjustment
          */
         function addAdjustment() {
-            vm.adjustments.push({
+            var adjustment = {
                 reasonId: vm.adjustment.reason.id,
                 quantity: vm.adjustment.quantity
-            });
+            };
+
+            vm.adjustments.push(adjustment);
+            vm.recalculateTotal();
+
             vm.adjustment.quantity = undefined;
             vm.adjustment.reason = undefined;
-            vm.recalculateTotal();
+
+            return $q.when(adjustment);
         }
 
         /**

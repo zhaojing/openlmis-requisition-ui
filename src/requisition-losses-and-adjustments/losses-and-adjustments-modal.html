@@ -1,5 +1,5 @@
 <div class="losses-and-adjustments-modal">
-    <form ng-if="!vm.isDisabled()" ng-submit="vm.addAdjustment()">
+    <form ng-if="!vm.isDisabled()" ng-submit="vm.addAdjustment()" reload-form>
         <fieldset>
             <legend >{{'requisitionLossesAndAdjustments.addNewLossOrAdjustment' | message}}</legend>
             <div class="form-inline">
@@ -8,6 +8,7 @@
                     <select id="reason"
                      ng-model="vm.adjustment.reason"
                      ng-options="reason as reason.name for reason in vm.reasons"
+                     required
                      ></select>
                 </div>
                 <div class="form-group">
