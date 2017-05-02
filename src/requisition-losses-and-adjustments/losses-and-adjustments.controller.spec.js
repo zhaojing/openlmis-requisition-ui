@@ -138,6 +138,21 @@ describe('LossesAndAdjustmentsController', function() {
             expect(vm.lineItem.totalLossesAndAdjustments).toBe(10);
         });
 
+        it('should return promise resolving to new adjustment', function() {
+            var result;
+
+            vm.addAdjustment().then(function(adjustment) {
+                result = adjustment;
+            });
+
+            rootScope.$apply();
+
+            expect(result).toEqual({
+                reasonId: adjustment.reason.id,
+                quantity: adjustment.quantity
+            });
+        });
+
     });
 
     describe('removeAdjustment', function() {
