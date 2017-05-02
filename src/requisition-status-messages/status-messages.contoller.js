@@ -28,9 +28,9 @@
         .module('requisition-status-messages')
         .controller('StatusMessagesController', controller);
 
-    controller.$inject = ['$scope', 'statusMessagesHistoryService'];
+    controller.$inject = ['$scope', 'statusMessagesHistoryService', 'MAX_COMMENT_LENGTH'];
 
-    function controller($scope, statusMessagesHistoryService) {
+    function controller($scope, statusMessagesHistoryService, MAX_COMMENT_LENGTH) {
         var vm = this;
 
         /**
@@ -54,6 +54,17 @@
          * Visibility of text area.
          */
         vm.isTextAreaVisible = false;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-status-messages.controller:StatusMessagesController
+         * @name maxCommentLength
+         * @type {Number}
+         *
+         * @description
+         * Maximum comment length.
+         */
+        vm.maxCommentLength = MAX_COMMENT_LENGTH;
 
         // Functions
 

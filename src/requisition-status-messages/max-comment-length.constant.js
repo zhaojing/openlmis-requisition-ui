@@ -18,16 +18,13 @@
     'use strict';
 
     /**
-     * @module requisition-validation
-     *
-     * @description
-     * Provides validation logic for requisition view screen.
-     */
-    angular.module('requisition-validation', [
-        'openlmis-i18n',
-        'requisition-calculations',
-        'requisition-template',
-        'requisition-status-messages'
-    ]);
-
+    * @ngdoc object
+    * @name requisition-status-messages.MAX_COMMENT_LENGTH
+    *
+    * @description
+    * This is constant for max comment length.
+    */
+    angular
+        .module('requisition-status-messages')
+        .constant('MAX_COMMENT_LENGTH', 255);
 })();

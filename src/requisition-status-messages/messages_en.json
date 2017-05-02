@@ -5,5 +5,6 @@
     "requisitionStatusMessages.noCommentsAdded": "No comments added",
     "requisitionStatusMessages.removeComment": "Remove comment",
     "requisitionStatusMessages.requisitionHistory": "Requisition history",
-    "requisitionStatusMessages.viewHistory": "View history"
+    "requisitionStatusMessages.viewHistory": "View history",
+    "requisitionStatusMessages.on": "on"
 }

@@ -13,7 +13,7 @@
             <div class="date">
                 {{vm.requisition.$statusMessages[0].authorFirstName}}
                 {{vm.requisition.$statusMessages[0].authorLastName}}
-                on
+                {{'requisitionStatusMessages.on' | message}}
                 {{vm.requisition.$statusMessages[0].createdDate | openlmisDate: 'longDate'}}
             </div>
         </header>
@@ -25,7 +25,8 @@
             <button class="close" ng-click="vm.removeComment()">{{'requisitionStatusMessages.removeComment' | message}}</button>
         </header>
         <div>
-            <textarea id="requisition-status-message-textarea" ng-model="vm.requisition.draftStatusMessage"></textarea>
+            <textarea characters-lefts="true" max-length="vm.maxCommentLength"
+                id="requisition-status-message-textarea" ng-model="vm.requisition.draftStatusMessage"></textarea>
             <saving-indicator object="vm.requisition.draftStatusMessage"/>
         </div>
     </article>
