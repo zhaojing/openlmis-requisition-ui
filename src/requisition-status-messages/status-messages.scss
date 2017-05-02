@@ -16,6 +16,10 @@
         white-space: pre-wrap;
     }
 
+    > .characters-left {
+        position: absolute;
+    }
+
     & + .status-message {
         margin-top: 1em;
     }
