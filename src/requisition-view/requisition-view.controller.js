@@ -58,17 +58,39 @@
         vm.requisition = requisition;
 
         /**
-        * @ngdoc property
-        * @propertyOf requisition-view.controller:RequisitionViewController
-        * @name requisitionType
-        * @type {String}
-        *
-        * @description
-        * Holds message key to display, depending on the requisition type (regular/emergency).
-        */
+         * @ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name requisitionType
+         * @type {String}
+         *
+         * @description
+         * Holds message key to display, depending on the requisition type (regular/emergency).
+         */
         vm.requisitionType = vm.requisition.emergency ?
             'requisitionView.emergency' :
             'requisitionView.regular';
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name invalidNonFullSupply
+         * @type {Boolean}
+         *
+         * @description
+         * False if non-full supply tab is valid, true otherwise.
+         */
+        vm.invalidNonFullSupply = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name invalidFullSupply
+         * @type {Boolean}
+         *
+         * @description
+         * False if full supply tab is valid, true otherwise.
+         */
+        vm.invalidFullSupply = undefined;
 
         // Functions
 
@@ -501,11 +523,15 @@
          */
         function isFullSupplyTabValid() {
             var fullSupplyItems = $filter('filter')(vm.requisition.requisitionLineItems, {
-                $program: {
-                    fullSupply: true
-                }
-            }, true);
-            return requisitionValidator.areLineItemsValid(fullSupplyItems);
+                    $program: {
+                        fullSupply: true
+                    }
+                }, true),
+                valid = requisitionValidator.areLineItemsValid(fullSupplyItems);
+
+            vm.invalidFullSupply = valid ? undefined : messageService.get('requisitionView.requisition.error');
+
+            return valid;
         }
 
         /**
@@ -521,11 +547,15 @@
          */
         function isNonFullSupplyTabValid() {
             var nonFullSupplyItems = $filter('filter')(vm.requisition.requisitionLineItems, {
-                $program: {
-                    fullSupply: false
-                }
-            }, true);
-            return requisitionValidator.areLineItemsValid(nonFullSupplyItems);
+                    $program: {
+                        fullSupply: false
+                    }
+                }, true),
+                valid = requisitionValidator.areLineItemsValid(nonFullSupplyItems);
+
+            vm.invalidNonFullSupply = valid ? undefined : messageService.get('requisitionView.requisition.error');
+
+            return valid;
         }
 
         function save() {

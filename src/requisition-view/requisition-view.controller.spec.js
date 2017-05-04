@@ -19,7 +19,7 @@ describe('RequisitionViewController', function() {
     var $scope, $q, $state, notificationService, confirmService, vm, requisition,
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
-        REQUISITION_RIGHTS, accessTokenFactorySpy, $window, stateTrackerService;
+        REQUISITION_RIGHTS, accessTokenFactorySpy, $window, stateTrackerService, messageService;
 
     beforeEach(function() {
         module('requisition-view');
@@ -69,6 +69,7 @@ describe('RequisitionViewController', function() {
             loadingModalService = $injector.get('loadingModalService');
             REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
             stateTrackerService = $injector.get('stateTrackerService');
+            messageService = $injector.get('messageService');
 
             confirmService.confirm.andCallFake(function() {
                 return $q.when(true);
@@ -310,6 +311,13 @@ describe('RequisitionViewController', function() {
 
     describe('isFullSupplyTabValid', function() {
 
+        var message;
+
+        beforeEach(function() {
+            message = 'some-message';
+            spyOn(messageService, 'get').andReturn(message);
+        });
+
         it('should return true if all line items are valid', function() {
             requisitionValidatorMock.areLineItemsValid.andCallFake(function(lineItems) {
                 return lineItems[0] === fullSupplyItems[0];
@@ -318,9 +326,10 @@ describe('RequisitionViewController', function() {
             expect(vm.isFullSupplyTabValid()).toBe(true);
             expect(requisitionValidatorMock.areLineItemsValid)
                 .toHaveBeenCalledWith([fullSupplyItems[0]]);
+            expect(vm.invalidFullSupply).toBe(undefined);
         });
 
-        it('should return true if all line items are valid', function() {
+        it('should return false if all line items are invalid', function() {
             requisitionValidatorMock.areLineItemsValid.andCallFake(function(lineItems) {
                 return lineItems[0] !== fullSupplyItems[0];
             });
@@ -328,11 +337,20 @@ describe('RequisitionViewController', function() {
             expect(vm.isFullSupplyTabValid()).toBe(false);
             expect(requisitionValidatorMock.areLineItemsValid)
                 .toHaveBeenCalledWith([fullSupplyItems[0]]);
+            expect(vm.invalidFullSupply).toBe(message);
+            expect(messageService.get).toHaveBeenCalledWith('requisitionView.requisition.error');
         });
 
     });
 
     describe('isNonFullSupplyTabValid', function() {
+
+        var message;
+
+        beforeEach(function() {
+            message = 'some-message';
+            spyOn(messageService, 'get').andReturn(message);
+        });
 
         it('should return true if all line items are valid', function() {
             requisitionValidatorMock.areLineItemsValid.andCallFake(function(lineItems) {
@@ -342,6 +360,7 @@ describe('RequisitionViewController', function() {
             expect(vm.isNonFullSupplyTabValid()).toBe(true);
             expect(requisitionValidatorMock.areLineItemsValid)
                 .toHaveBeenCalledWith([nonFullSupplyItems[0]]);
+            expect(vm.invalidNonFullSupply).toBe(undefined);
         });
 
         it('should return true if all line items are valid', function() {
@@ -352,6 +371,8 @@ describe('RequisitionViewController', function() {
             expect(vm.isNonFullSupplyTabValid()).toBe(false);
             expect(requisitionValidatorMock.areLineItemsValid)
                 .toHaveBeenCalledWith([nonFullSupplyItems[0]]);
+            expect(vm.invalidNonFullSupply).toBe(message);
+            expect(messageService.get).toHaveBeenCalledWith('requisitionView.requisition.error');
         });
     });
 

@@ -42,5 +42,6 @@
     "requisitionView.sync.success": "Requisition has been synchronized!",
     "requisitionView.updateForbidden": "This requisition has changed status or you lost the rights required for syncing it; the server version will be used.",
     "requisitionView.versionMismatch": "This requisition has a newer version on the server; the server version will be used, and you will need to remake your changes.",
-    "requisitionView.viewRequisition": "View requisition"
+    "requisitionView.viewRequisition": "View requisition",
+    "requisitionView.requisition.error": "R&R has errors, please correct them to proceed"
 }
