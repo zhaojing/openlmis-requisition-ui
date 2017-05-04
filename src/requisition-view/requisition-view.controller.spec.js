@@ -375,6 +375,26 @@ describe('RequisitionViewController', function() {
 
             expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
         });
+
+        it('should show notification if requisition has error', function() {
+            requisitionValidatorMock.validateRequisition.andReturn(false);
+            spyOn(notificationService, 'error');
+
+            vm.authorizeRnr();
+            $scope.$apply();
+
+            expect(notificationService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
+        });
+
+        it('should show notification if all line items are skipped', function() {
+            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(true);
+            spyOn(notificationService, 'error');
+
+            vm.authorizeRnr();
+            $scope.$apply();
+
+            expect(notificationService.error).toHaveBeenCalledWith('requisitionView.allLineItemsSkipped');
+        });
     });
 
     describe('submitRnr', function() {
@@ -440,6 +460,16 @@ describe('RequisitionViewController', function() {
             $scope.$apply();
 
             expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.approvalList');
+        });
+
+        it('should show notification if requisition has error', function() {
+            requisitionValidatorMock.validateRequisition.andReturn(false);
+            spyOn(notificationService, 'error');
+
+            vm.approveRnr();
+            $scope.$apply();
+
+            expect(notificationService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
         });
     });
 
