@@ -21,8 +21,8 @@
 				<th>{{'requisitionConvertToOrder.startDate' | message}}</th>
 				<th>{{'requisitionConvertToOrder.endDate' | message}}</th>
 				<th>{{'requisitionConvertToOrder.dateApproved' | message}}</th>
-				<th class="col-sticky">{{'requisitionConvertToOrder.supplyingDepot' | message}}</th>
 				<th>{{'requisitionConvertToOrder.emergency' | message}}</th>
+                <th class="col-sticky sticky-right">{{'requisitionConvertToOrder.supplyingDepot' | message}}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -38,16 +38,16 @@
 				<td>{{item.requisition.processingPeriod.startDate | openlmisDate}}</td>
 				<td>{{item.requisition.processingPeriod.endDate | openlmisDate}}</td>
 				<td>{{item.requisition.statusChanges.APPROVED.changeDate | openlmisDate}}</td>
-				<td>
+				<td class="col-emergency">
+					<i ng-class="{'icon-ok': item.requisition.emergency}"></i>
+				</td>
+                <td>
 					<select ng-model="item.requisition.supplyingFacility"
 							ng-options="depot.id as depot.name for depot in item.supplyingDepots">
 						<option ng-value="" ng-if="!item.requisition.supplyingFacility">
 							{{'label.select.none' | message}}
 						</option>
 					</select>
-				</td>
-				<td class="col-emergency">
-					<i ng-class="{'icon-ok': item.requisition.emergency}"></i>
 				</td>
 			</tr>
 		</tbody>
