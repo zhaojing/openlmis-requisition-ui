@@ -26,7 +26,7 @@
         $stateProvider.state('openlmis.requisitions', {
             abstract: true,
             showInNavigation: true,
-            priority: 2,
+            priority: 0,
             label: 'requisition.requisitions',
             url: '/requisitions',
             template: '<div ui-view></div>'
