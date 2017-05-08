@@ -36,11 +36,7 @@
             resolve: {
 				requisitions: function(paginationService, requisitionService, $stateParams) {
 					return paginationService.registerUrl($stateParams, function(stateParams) {
-						if (stateParams.program) {
-							stateParams.requisitionStatus = REQUISITION_STATUS.AUTHORIZED;
-                            return requisitionService.search(false, stateParams);
-                        }
-                        return undefined;
+						return requisitionService.forApproval(stateParams);
 					});
 				},
                 user: function(authorizationService) {

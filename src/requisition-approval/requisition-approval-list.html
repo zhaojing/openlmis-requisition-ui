@@ -4,8 +4,7 @@
         <label for=program>{{'requisitionApproval.program' | message}}</label>
         <select id="program" placeholder="{{'requisitionApproval.selectProgram' | message}}"
                 ng-model="vm.selectedProgram"
-                ng-options="program as program.name for program in vm.programs"
-                required>
+                ng-options="program as program.name for program in vm.programs">
         </select>
         <input class="btn btn-primary" type="submit" value="{{'requisitionApproval.search' | message}}"/>
     </form>
