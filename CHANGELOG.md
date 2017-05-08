@@ -1,0 +1,39 @@
+5.0.0 / 2017-05-08
+==================
+
+Compatibility breaking changes:
+
+* [OLMIS-2107](https://openlmis.atlassian.net/browse/OLMIS-2107): Add breadcrumbs to top of page navigation
+  * All states have been modified to be descendants of the main state.
+
+New functionality added in a backwards-compatible manner:
+
+* [OLMIS-2037](https://openlmis.atlassian.net/browse/OLMIS-2037): Focused auto-saving behavior notifications
+* [OLMIS-2164](https://openlmis.atlassian.net/browse/OLMIS-2164): Change screen after requisition action
+* [OLMIS-2165](https://openlmis.atlassian.net/browse/OLMIS-2165): Search screens to preserve search values in URL
+
+Bug fixes and performance improvements which are backwards-compatible:
+
+* [OLMIS-2158](https://openlmis.atlassian.net/browse/OLMIS-2158): Requisition print out not populating quantities nor display order
+* [OLMIS-2218](https://openlmis.atlassian.net/browse/OLMIS-2218): Requisition column Total Losses and Adjustments has no sanity validation
+* [OLMIS-2223](https://openlmis.atlassian.net/browse/OLMIS-2223): Offline requisition does not have a Remove button
+* [OLMIS-2268](https://openlmis.atlassian.net/browse/OLMIS-2268): Adjustment modal Quantity field becomes invalid immediately
+* [OLMIS-2276](https://openlmis.atlassian.net/browse/OLMIS-2276): Select drop down arrows and required fields missing
+* [OLMIS-2288](https://openlmis.atlassian.net/browse/OLMIS-2288): Can not initialize requisition for "My supervised facilities"
+* [OLMIS-2289](https://openlmis.atlassian.net/browse/OLMIS-2289): Incorrect values on the Approved/Released requisition view
+* [OLMIS-2302](https://openlmis.atlassian.net/browse/OLMIS-2302): Update Requisition template validations for Adjusted Consumption
+* [OLMIS-2305](https://openlmis.atlassian.net/browse/OLMIS-2305): Error message not displaying during authorization
+* [OLMIS-2310](https://openlmis.atlassian.net/browse/OLMIS-2310): Error icon does not have a message
+* [OLMIS-2408](https://openlmis.atlassian.net/browse/OLMIS-2408): SoH Incorrect and NaN Error
+* [OLMIS-2410](https://openlmis.atlassian.net/browse/OLMIS-2410): View Comments run off screen when comments are long
+* [OLMIS-2420](https://openlmis.atlassian.net/browse/OLMIS-2420): In_approval requisitions are not displayed on the Approve view
+
+Dev and tooling updates made in a backwards-compatible manner:
+
+* [OLMIS-1609](https://openlmis.atlassian.net/browse/OLMIS-1609): UI i18N message strings are not standardized
+* [OLMIS-1853](https://openlmis.atlassian.net/browse/OLMIS-1853): Separate push and pull Transifex tasks in build
+  * Migrated to dev-ui v3.
+* [OLMIS-2204](https://openlmis.atlassian.net/browse/OLMIS-2204): The administration menu item should always be the last menu item
+  * Priority of all main navigation states have been changed to 10.
+* [OLMIS-2406](https://openlmis.atlassian.net/browse/OLMIS-206): State tracker service does not work if there is no previous state stored
+  * Added support for state tracker.
