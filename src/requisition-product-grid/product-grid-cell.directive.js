@@ -68,8 +68,10 @@
             if(!isReadOnly()){
                 scope.$watch(function(){
                     return lineItem[column.name];
-                }, function(newValue){
-                    lineItem.updateDependentFields(column, requisition);
+                }, function(newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        lineItem.updateDependentFields(column, requisition);
+                    }
                 });
             }
 

@@ -1,3 +1,11 @@
+5.0.1 / Coming soon
+==================
+
+Bug fixes
+
+* [OLMIS-2329](https://openlmis.atlassian.net/browse/OLMIS-2329): Requisition calculated fields are calculated only for current page
+  * Dependant fields will now only be recalculated if the value actually changed(instead of every digest cycle)
+
 5.0.0 / 2017-05-08
 ==================
 
