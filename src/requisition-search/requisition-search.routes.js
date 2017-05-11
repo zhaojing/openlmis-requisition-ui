@@ -44,8 +44,7 @@
 					facilityFactory.getAllUserFacilities(user.user_id).then(function(response) {
 						deferred.resolve(response);
 					}).catch(function() {
-						alertService.error('error.noOfflineData');
-						deferred.reject();
+						deferred.resolve([]);
 					});
 
 		        	return deferred.promise;

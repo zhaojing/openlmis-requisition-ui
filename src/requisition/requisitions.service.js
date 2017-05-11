@@ -107,10 +107,11 @@
          * @return {Promise}    requisition promise
          */
         function get(id) {
-            var deferred = $q.defer();
+            var deferred = $q.defer(),
+                requisition;
 
             if (offlineService.isOffline()) {
-                var requisition = offlineRequisitions.getBy('id', id);
+                requisition = offlineRequisitions.getBy('id', id);
 
                 if(!requisition) {
                     error();
@@ -127,7 +128,7 @@
                     resolve(requisition, reasons, statusMessages);
                 }
             } else {
-                var requisition = offlineRequisitions.search({
+                requisition = offlineRequisitions.search({
                     id: id,
                     $modified: true
                 });

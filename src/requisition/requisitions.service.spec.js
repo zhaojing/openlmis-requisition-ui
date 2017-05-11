@@ -103,7 +103,8 @@ describe('requisitionService', function() {
                 return confirmServiceMock;
             });
 
-            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy', 'getAll']);
+            requisitionsStorage.getAll.andReturn([false]);
             onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
             templateOffline = jasmine.createSpyObj('templates', ['put']);
             approvedProducts = jasmine.createSpyObj('approvedProducts', ['put']);

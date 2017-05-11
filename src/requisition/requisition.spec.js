@@ -76,7 +76,8 @@ describe('Requisition', function() {
             return nonFullSupply ? nonFullSupplyColumns() : fullSupplyColumns();
         });
 
-        offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy']);
+        offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy', 'getAll']);
+        offlineRequisitions.getAll.andReturn([false]);
 
     	$provide.service('RequisitionTemplate', function(){
     		return TemplateSpy;

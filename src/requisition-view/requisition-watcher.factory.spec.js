@@ -19,7 +19,8 @@ describe('RequisitionWatcher', function() {
 
     beforeEach(function() {
         module('requisition-view', function($provide) {
-            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['put']);
+            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['put', 'getAll', 'clearAll']);
+            requisitionsStorage.getAll.andReturn(false);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andReturn(requisitionsStorage);
             $provide.service('localStorageFactory', function() {
                 return localStorageFactorySpy;
