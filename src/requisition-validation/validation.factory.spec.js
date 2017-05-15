@@ -41,7 +41,7 @@ describe('validationFactory', function() {
             template: jasmine.createSpyObj('template', ['getColumn'])
         };
 
-        lineItem = {};
+        lineItem = jasmine.createSpyObj('lineItem', ['isNonFullSupply']);
     });
 
     describe('stockOnHand', function() {
@@ -208,6 +208,22 @@ describe('validationFactory', function() {
         it('should return required if calculatedOrderQuantity column is not present and requestedQuantity is undefined', function() {
             lineItem.requestedQuantity = undefined;
             requisitionMock.template.getColumn.andReturn(undefined);
+
+            expect(validationFactory.requestedQuantity(lineItem, requisitionMock))
+                .toEqual('required');
+        });
+
+        it('should return true if line item is non full supply and requestedQuantity is null', function() {
+            lineItem.isNonFullSupply.andReturn(true);
+            lineItem.requestedQuantity = null;
+
+            expect(validationFactory.requestedQuantity(lineItem, requisitionMock))
+                .toEqual('required');
+        });
+
+        it('should return true if line item is non full supply and requestedQuantity is undefined', function() {
+            lineItem.isNonFullSupply.andReturn(true);
+            lineItem.requestedQuantity = undefined;
 
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock))
                 .toEqual('required');

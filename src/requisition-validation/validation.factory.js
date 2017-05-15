@@ -114,13 +114,11 @@
          * @return {String}             the error if field is invalid, undefined otherwise
          */
         function validateRequestedQuantity(lineItem, requisition) {
-            var calculatedOrderQuantityColumn = requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY),
-                requestedQuantity = lineItem.requestedQuantity;
+            var requestedQuantity = lineItem.requestedQuantity;
 
-            if (!isDisplayed(calculatedOrderQuantityColumn) && (requestedQuantity === null || requestedQuantity === undefined)) {
+            if (isRequestedQuantityRequired(lineItem, requisition) && !isFilled(requestedQuantity)) {
                 return messageService.get('requisitionValidation.required');
             }
-            return;
         }
 
         /**
@@ -147,6 +145,16 @@
 
         function isDisplayed(column) {
             return column && column.$display;
+        }
+
+        function isRequestedQuantityRequired(lineItem, requisition) {
+            return lineItem.isNonFullSupply() || !isDisplayed(
+                requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY)
+            );
+        }
+
+        function isFilled(value) {
+            return value !== null && value !== undefined;
         }
     }
 
