@@ -1,4 +1,5 @@
 {
+    "adminTemplate.additionalOptions": "Additional Options",
     "adminTemplate.calculatedError": "Cannot be CALCULATED together with: ",
     "adminTemplate.cancel": "Cancel",
     "adminTemplate.canNotDropColumn": "Cannot drop column here",
