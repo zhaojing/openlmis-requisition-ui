@@ -7,7 +7,7 @@
     "requisitionInitiate.errorOccurred": "Error occurred",
     "requisitionInitiate.facility": "Facility",
     "requisitionInitiate.facilityType": "Facility type",
-    "requisitionInitiate.initiateReportAndRequisition": "Initiate report and requisition",
+`    "requisitionInitiate.initiateReportAndRequisition": "Initiate Report and Requisition",
     "requisitionInitiate.myFacility": "My facility",
     "requisitionInitiate.noFacilitiesForProgram": "There are no facilities for program. Please contact the Admin.",
     "requisitionInitiate.noneAssigned": "None assigned",

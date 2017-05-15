@@ -1,8 +1,8 @@
 {
     "requisitionConvertToOrder.all": "All",
-    "requisitionConvertToOrder.convertRequisitionsToOrder": "Convert requisitions to order",
+    "requisitionConvertToOrder.convertRequisitionsToOrder": "Convert Requisitions to Order",
     "requisitionConvertToOrder.convertToOrder.confirm": "Are you sure you want to convert this R&R(s) to order(s)?",
-    "requisitionConvertToOrder.convertToOrder.label": "Convert to order",
+    "requisitionConvertToOrder.convertToOrder.label": "Convert to Order",
     "requisitionConvertToOrder.convertToOrder.success": "The requisition(s) have been successfully converted to an order(s)",
     "requisitionConvertToOrder.dateApproved": "Date approved",
     "requisitionConvertToOrder.districtName": "District name",
