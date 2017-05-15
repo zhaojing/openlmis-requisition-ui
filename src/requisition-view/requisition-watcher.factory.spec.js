@@ -19,9 +19,13 @@ describe('RequisitionWatcher', function() {
 
     beforeEach(function() {
         module('requisition-view', function($provide) {
-            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['put', 'getAll', 'clearAll']);
-            requisitionsStorage.getAll.andReturn(false);
-            var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andReturn(requisitionsStorage);
+            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['put']);
+            var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll', 'clearAll']);
+            offlineFlag.getAll.andReturn([false]);
+            var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(name) {
+                if(name === 'offlineFlag') return offlineFlag;
+                return requisitionsStorage;
+            });
             $provide.service('localStorageFactory', function() {
                 return localStorageFactorySpy;
             });

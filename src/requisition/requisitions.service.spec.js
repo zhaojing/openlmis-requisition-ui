@@ -103,12 +103,14 @@ describe('requisitionService', function() {
                 return confirmServiceMock;
             });
 
-            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy', 'getAll']);
-            requisitionsStorage.getAll.andReturn([false]);
+            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
+            offlineFlag.getAll.andReturn([false]);
             onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
             templateOffline = jasmine.createSpyObj('templates', ['put']);
             approvedProducts = jasmine.createSpyObj('approvedProducts', ['put']);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
+                if (resourceName === 'offlineFlag') return offlineFlag;
                 if (resourceName === 'template') return templateOffline;
                 if (resourceName === 'approvedProducts') return approvedProductsOffline;
                 if (resourceName === 'onlineOnly') return onlineOnlyRequisitions;

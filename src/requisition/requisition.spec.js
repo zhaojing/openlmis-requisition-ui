@@ -76,14 +76,16 @@ describe('Requisition', function() {
             return nonFullSupply ? nonFullSupplyColumns() : fullSupplyColumns();
         });
 
-        offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy', 'getAll']);
-        offlineRequisitions.getAll.andReturn([false]);
+        offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy']);
+        var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
+        offlineFlag.getAll.andReturn([false]);
 
     	$provide.service('RequisitionTemplate', function(){
     		return TemplateSpy;
     	});
         $provide.factory('localStorageFactory', function() {
-            return function() {
+            return function(name) {
+                if(name === 'offlineFlag') return offlineFlag;
                 return offlineRequisitions;
             };
         });
