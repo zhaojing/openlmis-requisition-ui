@@ -195,13 +195,28 @@ describe('calculationFactory', function() {
             lineItem.requestedQuantity = null;
             lineItem.stockOnHand = 10;
             lineItem.pricePerPack = 30.20;
-            lineItem.requestedQuantity = null;
             lineItem.maximumStockQuantity = 100;
 
             lineItem.orderable.netContent = 10;
             lineItem.orderable.packRoundingThreshold = 4;
 
             expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(9);
+        });
+
+        it('should use requested quantity even if it is empty for non full supply products', function() {
+            requisitionMock.$isAfterAuthorize.andReturn(false);
+            lineItem.isNonFullSupply.andReturn(true);
+
+            lineItem.requestedQuantity = null;
+            lineItem.stockOnHand = 10;
+            lineItem.pricePerPack = 30.20;
+            lineItem.requestedQuantity = null;
+            lineItem.maximumStockQuantity = 100;
+
+            lineItem.orderable.netContent = 10;
+            lineItem.orderable.packRoundingThreshold = 4;
+
+            expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(0);
         });
 
     });
