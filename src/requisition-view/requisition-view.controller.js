@@ -128,7 +128,7 @@
          */
         function syncRnr() {
             var loadingPromise = loadingModalService.open();
-            saveRnr(function() {
+            saveRnr().then(function() {
                 loadingPromise.then(function() {
                     notificationService.success('requisitionView.sync.success');
                 });
@@ -155,7 +155,7 @@
                 var popup = $window.open('', '_blank');
                 popup.document.write(messageService.get('requisitionView.sync.pending'));
                 var loadingPromise = loadingModalService.open();
-                saveRnr(function() {
+                saveRnr().then(function() {
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.sync.success');
                     });
@@ -170,9 +170,9 @@
             }
         }
 
-        function saveRnr(successCallback, failCallback) {
+        function saveRnr() {
             vm.requisition.$modified = false;
-            save().then(successCallback, failCallback);
+            return vm.requisition.$save();
         }
 
         /**
@@ -556,13 +556,6 @@
             vm.invalidNonFullSupply = valid ? undefined : messageService.get('requisitionView.requisition.error');
 
             return valid;
-        }
-
-        function save() {
-            loadingModalService.open();
-            var promise = vm.requisition.$save();
-            promise.finally(loadingModalService.close);
-            return promise;
         }
 
         function handleSaveError(status) {

@@ -309,6 +309,20 @@ describe('RequisitionViewController', function() {
         }
     });
 
+    describe('syncRnr', function() {
+
+        it('should open loading modal once', function() {
+            spyOn(loadingModalService, 'open');
+            requisition.$save.andReturn($q.when(true));
+
+            vm.syncRnr();
+            $scope.$apply();
+
+            expect(loadingModalService.open.calls.length).toEqual(1);
+        });
+
+    });
+
     describe('isFullSupplyTabValid', function() {
 
         var message;
@@ -562,6 +576,16 @@ describe('RequisitionViewController', function() {
             vm.syncRnrAndPrint();
 
             expect($window.open).toHaveBeenCalledWith('token', '_blank');
+        });
+
+        it('should open loading modal once', function() {
+            spyOn(loadingModalService, 'open');
+            requisition.$save.andReturn($q.when(true));
+
+            vm.syncRnrAndPrint();
+            $scope.$apply();
+
+            expect(loadingModalService.open.calls.length).toEqual(1);
         });
     });
 });
