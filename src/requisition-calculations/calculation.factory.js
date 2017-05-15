@@ -280,7 +280,7 @@
                 var jColumn = requisition.template.getColumn(J),
                     mColumn = requisition.template.getColumn(M);
 
-                if (jColumn && jColumn.$display && !(lineItem[J] === null || lineItem[J] === undefined)) {
+                if (shouldReturnRequestedQuantity(lineItem, jColumn)) {
                     orderQuantity = lineItem[J];
                 } else if (mColumn) {
                     orderQuantity = calculateOrderQuantity(lineItem, requisition);
@@ -344,6 +344,19 @@
                 return calculationFactory[column.name](lineItem, requisition);
             }
             return lineItem[column.name];
+        }
+
+        function shouldReturnRequestedQuantity(lineItem, jColumn) {
+            return lineItem.isNonFullSupply() || (isDisplayed(jColumn) && isFilled(lineItem[J]));
+        }
+
+        function isFilled(value) {
+            //We want to treat 0 as a valid value thus not using return value
+            return value !== null && value !== undefined;
+        }
+
+        function isDisplayed(column) {
+            return column && column.$display;
         }
     }
 })();

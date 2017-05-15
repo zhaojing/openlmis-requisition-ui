@@ -145,7 +145,7 @@ describe('RequisitionSummaryController', function() {
     });
 
     function createLineItem(pricePerPack, skipped, fullSupply, orderable, requestedQuantity) {
-        return {
+        var lineItem = {
             pricePerPack: pricePerPack,
             skipped: skipped,
             $program: {
@@ -154,6 +154,9 @@ describe('RequisitionSummaryController', function() {
             orderable: orderable,
             requestedQuantity: requestedQuantity
         };
+        lineItem.isNonFullSupply = jasmine.createSpy('isNonFullSupply');
+
+        return lineItem;
     }
 
 });

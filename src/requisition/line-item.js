@@ -36,6 +36,7 @@
         LineItem.prototype.updateFieldValue = updateFieldValue;
         LineItem.prototype.updateDependentFields = updateDependentFields;
         LineItem.prototype.canBeSkipped = canBeSkipped;
+        LineItem.prototype.isNonFullSupply = isNonFullSupply;
 
         return LineItem;
 
@@ -106,7 +107,7 @@
          * @name updateDependentFields
          *
          * @description
-         * This field kicks off updating each of a columns dependancies. The 
+         * This field kicks off updating each of a columns dependancies. The
          * actual work done by the updateDependentFieldsHelper function, this
          * function just starts the process.
          *
@@ -124,14 +125,14 @@
          *
          * @description
          * Recursively goes through a column's dependencies, updating their
-         * values. All columns are only updated once, because of the updated 
+         * values. All columns are only updated once, because of the updated
          * columns field that recursively tracks dependencies.
          *
          * @param {Object} lineItem Reference to the lineItem being updated
          * @param {Object} column Requisition template column
          * @param {Object} requisition Requisition to which line item belongs
          * @param {Array} updatedColums Arry of column names that have already been updated
-         * 
+         *
          */
         function updateDependentFieldsHelper(lineItem, column, requisition, updatedColumns){
 
@@ -184,6 +185,20 @@
                 }
             });
             return result;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.LineItem
+         * @name
+         *
+         * @description
+         * Determines whether line item is full or non full supply.
+         *
+         * @return  {Boolean}   true if line item is non full supply, false otherwise
+         */
+        function isNonFullSupply() {
+            return !this.$program.fullSupply;
         }
 
         function isInputDisplayedAndNotEmpty(column, lineItem) {

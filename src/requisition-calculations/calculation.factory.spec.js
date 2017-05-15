@@ -35,6 +35,7 @@ describe('calculationFactory', function() {
             stockOnHand: 5
         };
 
+        lineItem.isNonFullSupply = jasmine.createSpy('isNonFullSupply');
         requisitionMock = jasmine.createSpyObj('requisition', ['$isAfterAuthorize']);
         templateMock = jasmine.createSpyObj('template', ['getColumn']);
         requisitionMock.template = templateMock;
