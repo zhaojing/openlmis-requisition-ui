@@ -9,7 +9,7 @@
     "adminTemplate.columnLabelEmpty": "Column label cannot be empty!",
     "adminTemplate.columnLabelNotAllowedCharacters": "Columns label can only have alpha-numeric characters!",
     "adminTemplate.columnLabelToShort": "Column label must have at least 2 characters",
-    "adminTemplate.configureRnrTemplate": "Configure R&R template",
+    "adminTemplate.configureRnrTemplate": "Configure R&R Template",
     "adminTemplate.definition": "Definition",
     "adminTemplate.display": "Display",
     "adminTemplate.dropError": "Cannot drop column here",
