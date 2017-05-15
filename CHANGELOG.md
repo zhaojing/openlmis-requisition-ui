@@ -6,6 +6,7 @@ Bug fixes
 * [OLMIS-2329](https://openlmis.atlassian.net/browse/OLMIS-2329): Requisition calculated fields are calculated only for current page
   * Dependant fields will now only be recalculated if the value actually changed(instead of every digest cycle)
 * [OLMIS-2224](https://openlmis.atlassian.net/browse/OLMIS-2224): Requisition View screen is always available offline, even if no data is stored
+* Fixed a bug with non full supply screen displaying an error for valid product([OLMIS-2356](https://openlmis.atlassian.net/browse/OLMIS-2356)).
 
 5.0.0 / 2017-05-08
 ==================

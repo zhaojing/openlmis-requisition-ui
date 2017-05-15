@@ -121,7 +121,7 @@
                 lineItem.updateDependentFields(column, requisition);
                 return requisitionValidator.validateLineItem(
                     scope.lineItem,
-                    requisition.template.columnsMap,
+                    requisition.template.getColumns(!scope.lineItem.$program.fullSupply),
                     requisition
                 );
             }

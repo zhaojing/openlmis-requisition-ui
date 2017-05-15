@@ -14,7 +14,8 @@
  */
 describe('ProductGridCell', function() {
 
-    var $compile, scope, requisition, directiveElem, requisitionValidatorMock, authorizationServiceSpy, TEMPLATE_COLUMNS;
+    var $compile, scope, requisition, directiveElem, requisitionValidatorMock,
+        authorizationServiceSpy, TEMPLATE_COLUMNS, fullSupplyColumns, nonFullSupplyColumns;
 
     beforeEach(function() {
         module('requisition-product-grid', function($compileProvider) {
@@ -50,26 +51,41 @@ describe('ProductGridCell', function() {
             scope = $injector.get('$rootScope').$new();
             TEMPLATE_COLUMNS =  $injector.get('TEMPLATE_COLUMNS');
 
+            fullSupplyColumns = [{
+                type: $injector.get('COLUMN_TYPES').NUMERIC,
+                name: "beginningBalance",
+                source: $injector.get('COLUMN_SOURCES').USER_INPUT
+            }];
+
+            nonFullSupplyColumns = [{
+                name: 'col3'
+            }, {
+                name: 'col4'
+            }];
+
             requisition = jasmine.createSpyObj('requisition', [
                 '$getStockAdjustmentReasons', '$isApproved', '$isReleased', '$isAuthorized',
                 '$isInApproval'
             ]);
-            requisition.template = {};
-            requisition.template.columnsMap = { 'col1': 'val1' };
+            requisition.template = jasmine.createSpyObj('template', ['getColumns']);
+            requisition.template.getColumns.andCallFake(function(nonFullSupply) {
+                return nonFullSupply ? nonFullSupplyColumns : fullSupplyColumns;
+            });
             requisition.program = {
                 code: 'CODE'
             };
 
             scope.requisition = requisition;
 
-            scope.column = {
-                type: $injector.get('COLUMN_TYPES').NUMERIC,
-                name: "beginningBalance",
-                source: $injector.get('COLUMN_SOURCES').USER_INPUT
-            };
+            scope.column = fullSupplyColumns[0];
 
-            scope.lineItem = jasmine.createSpyObj('lineItem', ['getFieldValue',
-                'updateDependentFields'])
+            scope.lineItem = jasmine.createSpyObj('lineItem', [
+                'getFieldValue','updateDependentFields'
+            ]);
+
+            scope.lineItem.$program = {
+                fullSupply: true
+            };
 
             scope.lineItem.getFieldValue.andCallFake(function() {
                 return "readOnlyFieldValue";
@@ -177,7 +193,7 @@ describe('ProductGridCell', function() {
         expect(directiveElem.find("a").length).toEqual(1);
     });
 
-    it('should validate the entire line item after updating fields', function() {
+    it('should validate full supply line item columns after updating fields', function() {
         var element = getCompiledElement(),
             input = element.find('input'),
             inputScope = angular.element(angular.element(input)).scope(),
@@ -186,7 +202,23 @@ describe('ProductGridCell', function() {
         validate();
 
         expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalledWith(
-            scope.lineItem, requisition.template.columnsMap, requisition);
+            scope.lineItem, fullSupplyColumns, requisition);
+        expect(scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
+            scope.column, requisition);
+    });
+
+    it('should validate non full supply line item columns after updating fields', function() {
+        var element = getCompiledElement(),
+            input = element.find('input'),
+            inputScope = angular.element(angular.element(input)).scope(),
+            validate = inputScope.validate;
+
+        scope.lineItem.$program.fullSupply = false;
+
+        validate();
+
+        expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalledWith(
+            scope.lineItem, nonFullSupplyColumns, requisition);
         expect(scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
             scope.column, requisition);
     });
