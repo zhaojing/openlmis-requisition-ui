@@ -22,17 +22,22 @@ describe('RequisitionSummaryController', function() {
         module('requisition-summary');
 
         lineItems = [
-            createLineItem(10.30, false, true, {netContent: 2}, 10),
-            createLineItem(2.3, false, true, {netContent: 2}, 20),
-            createLineItem(4.2, false, false, {netContent: 1}, 3),
-            createLineItem(2.3, false, false, {netContent: 1}, 6)
+            createLineItem(false, true),
+            createLineItem(false, true),
+            createLineItem(false, false),
+            createLineItem(false, false)
         ];
 
         inject(function(_$filter_, _calculationFactory_, $controller) {
             $filter = _$filter_;
 
             calculationFactory = _calculationFactory_;
-            spyOn(calculationFactory, 'totalCost').andCallThrough();
+            spyOn(calculationFactory, 'totalCost').andCallFake(function(lineItem) {
+                if (lineItem === lineItems[0]) return 30.5;
+                if (lineItem === lineItems[1]) return 44;
+                if (lineItem === lineItems[2]) return 15;
+                if (lineItem === lineItems[3]) return 11.4;
+            });
 
             var requisitionMock = jasmine.createSpyObj('requisition', ['$isAfterAuthorize']);
             var templateMock = jasmine.createSpyObj('template', ['getColumn']);
@@ -144,17 +149,14 @@ describe('RequisitionSummaryController', function() {
 
     });
 
-    function createLineItem(pricePerPack, skipped, fullSupply, orderable, requestedQuantity) {
+    function createLineItem(skipped, fullSupply, requestedQuantity) {
         var lineItem = {
-            pricePerPack: pricePerPack,
             skipped: skipped,
             $program: {
                 fullSupply: fullSupply
             },
-            orderable: orderable,
             requestedQuantity: requestedQuantity
         };
-        lineItem.isNonFullSupply = jasmine.createSpy('isNonFullSupply');
 
         return lineItem;
     }
