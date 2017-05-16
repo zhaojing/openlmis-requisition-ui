@@ -93,7 +93,7 @@
                 requestedQuantity = lineItem.requestedQuantity;
 
             if (isDisplayed(requestedQuantityColumn) && isDisplayed(calculatedOrderQuantityColumn) &&
-                    !(requestedQuantity === null || requestedQuantity === undefined) &&
+                    isFilled(requestedQuantity) &&
                     !requestedQuantityExplanation) {
 
                 return messageService.get('requisitionValidation.required');
