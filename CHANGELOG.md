@@ -9,6 +9,7 @@ Bug fixes
 * [OLMIS-2525](https://openlmis.atlassian.net/browse/OLMIS-2525) - Errors will no longer appear in browser console when emptying requested quantity on one of the non full supply products.
 * [OLMIS-2466](https://openlmis.atlassian.net/browse/OLMIS-2466) - Requested quantity will now be properly validated for being required on the non full supply screen.
 * [OLMIS-2481](https://openlmis.atlassian.net/browse/OLMIS-2481) - Screen will no longer flash twice when syncing requisition.
+* [OLMIS-2445](https://openlmis.atlassian.net/browse/OLMIS-2445) - Button and title capitalization are consistent.
 
 5.0.0 / 2017-05-08
 ==================
