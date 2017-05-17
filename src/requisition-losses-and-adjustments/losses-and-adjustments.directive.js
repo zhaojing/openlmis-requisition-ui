@@ -89,9 +89,11 @@
             }
 
             function hideModal() {
-                dialog.modal('hide');
-                dialog.remove();
-                dialog = undefined;
+                if(dialog) {
+                    dialog.modal('hide');
+                    dialog.remove();
+                    dialog = undefined;
+                }
             }
         }
     }
