@@ -68,12 +68,18 @@
             vm.showModal = showModal;
             vm.hideModal = hideModal;
 
-            element.on('$destroy', hideModal);
+            element.on('$destroy', function() {
+                if (dialog) dialog.remove();
+                dialog = undefined;
+            });
 
             function showModal() {
                 $templateRequest('requisition-losses-and-adjustments/losses-and-adjustments-modal.html')
                     .then(function(modal){
-                        if (dialog) hideModal();
+                        if (dialog) {
+                            dialog.remove();
+                            dialog = undefined;
+                        }
 
                         vm.adjustment = {};
 
@@ -89,11 +95,8 @@
             }
 
             function hideModal() {
-                if(dialog) {
-                    dialog.modal('hide');
-                    dialog.remove();
-                    dialog = undefined;
-                }
+                dialog.modal('hide');
+                dialog = undefined;
             }
         }
     }
