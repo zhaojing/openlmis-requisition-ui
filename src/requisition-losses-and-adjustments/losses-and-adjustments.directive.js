@@ -95,8 +95,10 @@
             }
 
             function hideModal() {
-                dialog.modal('hide');
-                dialog = undefined;
+                if(dialog) {
+                    dialog.modal('hide');
+                    dialog = undefined;
+                }
             }
         }
     }
