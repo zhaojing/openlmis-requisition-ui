@@ -1,6 +1,10 @@
 5.0.1 / Coming soon
 ==================
 
+Improvements
+
+* [OLMIS-2483](https://openlmis.atlassian.net/browse/OLMIS-2483) - Added a warning when trying to add non full supply product if there are no products available.
+
 Bug fixes
 
 * [OLMIS-2329](https://openlmis.atlassian.net/browse/OLMIS-2329) - Dependant fields will now only be recalculated if the value actually changed(instead of every digest cycle)

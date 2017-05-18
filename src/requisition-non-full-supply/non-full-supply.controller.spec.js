@@ -16,7 +16,7 @@
 describe('NonFullSupplyController', function() {
 
     var vm, RequisitionCategory, addProductModalService, requisition, $q, requisitionValidator,
-        lineItems, $rootScope, $controller, LineItem, stateParams, $state;
+        lineItems, $rootScope, $controller, LineItem, stateParams, $state, alertService;
 
     beforeEach(function(){
         module('requisition-non-full-supply');
@@ -26,6 +26,7 @@ describe('NonFullSupplyController', function() {
             $rootScope = $injector.get('$rootScope');
             $q = $injector.get('$q');
             $state = $injector.get('$state');
+            alertService = $injector.get('alertService');
         });
 
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
@@ -164,6 +165,14 @@ describe('NonFullSupplyController', function() {
             requisition.program = {
                 id: 'program-id'
             };
+
+            requisition.availableNonFullSupplyProducts = [{
+                name: 'Column One',
+                $visible: true
+            }];
+
+            spyOn(alertService, 'warning');
+
             initController();
         });
 
@@ -189,6 +198,27 @@ describe('NonFullSupplyController', function() {
             expect(addProductModalService.show).toHaveBeenCalled();
             expect(requisition.requisitionLineItems.length).toBe(5);
             expect(requisition.requisitionLineItems.push).not.toHaveBeenCalled();
+        });
+
+        it('should not open add product modal if there are no products to add', function() {
+            requisition.availableNonFullSupplyProducts = [];
+
+            vm.addProduct();
+            $rootScope.$apply();
+
+            expect(addProductModalService.show).not.toHaveBeenCalled();
+        });
+
+        it('should not open add product modal if there are no products to add', function() {
+            requisition.availableNonFullSupplyProducts = [];
+
+            vm.addProduct();
+            $rootScope.$apply();
+
+            expect(alertService.warning).toHaveBeenCalledWith(
+                'requisitionNonFullSupply.noProductsToAdd.label',
+                'requisitionNonFullSupply.noProductsToAdd.message'
+            );
         });
 
     });

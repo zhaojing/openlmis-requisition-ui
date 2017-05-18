@@ -30,11 +30,12 @@
 
     nonFullSupplyController.$inject = [
         '$filter', 'addProductModalService', 'LineItem', 'requisitionValidator',
-        'requisition', 'columns', 'lineItems', '$state', '$stateParams'
+        'requisition', 'columns', 'lineItems', '$state', '$stateParams', 'alertService'
     ];
 
     function nonFullSupplyController($filter, addProductModalService, LineItem, requisitionValidator,
-                                    requisition, columns, lineItems, $state, $stateParams) {
+                                    requisition, columns, lineItems, $state, $stateParams,
+                                    alertService) {
 
         var vm = this;
 
@@ -142,15 +143,24 @@
          * Opens modal that lets the user add new product to the grid.
          */
         function addProduct() {
-            addProductModalService.show(
-                vm.requisition.availableNonFullSupplyProducts,
-                vm.requisition.program.id
-            ).then(function(lineItem) {
-                var newLineItem = new LineItem(lineItem, vm.requisition);
-                vm.requisition.requisitionLineItems.push(newLineItem);
-                vm.lineItems.push(newLineItem);
-                reload();
-            });
+            if ($filter('filter')(vm.requisition.availableNonFullSupplyProducts, {
+                $visible: true
+            }).length) {
+                addProductModalService.show(
+                    vm.requisition.availableNonFullSupplyProducts,
+                    vm.requisition.program.id
+                ).then(function(lineItem) {
+                    var newLineItem = new LineItem(lineItem, vm.requisition);
+                    vm.requisition.requisitionLineItems.push(newLineItem);
+                    vm.lineItems.push(newLineItem);
+                    reload();
+                });
+            } else {
+                alertService.warning(
+                    'requisitionNonFullSupply.noProductsToAdd.label',
+                    'requisitionNonFullSupply.noProductsToAdd.message'
+                );
+            }
         }
 
         /**
