@@ -40,7 +40,8 @@
                 averageConsumption: validateAverageConsumption,
                 requestedQuantity: validateRequestedQuantity,
                 requestedQuantityExplanation: validateRequestedQuantityExplanation,
-                totalStockoutDays: validateTotalStockoutDays
+                totalStockoutDays: validateTotalStockoutDays,
+                calculatedOrderQuantity: validateCalculatedOrderQuantity
             },
             validator = {
                 getColumnError: getColumnError,
@@ -190,6 +191,18 @@
                         column: pColumn.label
                     });
                 }
+            }
+        }
+
+        function validateCalculatedOrderQuantity(column, template) {
+            var requestedQuantityColumn = template.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY];
+
+            if (!column.isDisplayed && !requestedQuantityColumn.isDisplayed) {
+                return messageService.get('adminTemplate.shouldDisplayRequestedQuantity', {
+                    requestedQuantity: requestedQuantityColumn.label,
+                    requestedQuantityExplanation: template
+                        .columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION].label
+                });
             }
         }
 

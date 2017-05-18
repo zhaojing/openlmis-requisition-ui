@@ -391,6 +391,43 @@ describe('templateValidator', function() {
 
         });
 
+        describe('for calculated order quantity', function() {
+
+            beforeEach(function() {
+                template.columnsMap.requestedQuantity = {
+                    label: 'Requested Quantity',
+                    isDisplayed: false,
+                    source: COLUMN_SOURCES.USER_INPUT,
+                    columnDefinition: {
+                        sources: [
+                            COLUMN_SOURCES.USER_INPUT
+                        ]
+                    }
+                };
+                template.columnsMap.requestedQuantityExplanation = {
+                    label: 'Requested Quantity Explanation',
+                    isDisplayed: false,
+                    source: COLUMN_SOURCES.USER_INPUT,
+                    columnDefinition: {
+                        sources: [
+                            COLUMN_SOURCES.USER_INPUT
+                        ]
+                    }
+                };
+
+                column.name = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY;
+            });
+
+            it('should return error if both requested quantity and calculated order quantity are hidden', function() {
+                column.isDisplayed = false;
+
+                var result = templateValidator.getColumnError(column, template);
+
+                expect(result).toBe('adminTemplate.shouldDisplayRequestedQuantity');
+            });
+
+        });
+
     });
 
 });
