@@ -199,6 +199,7 @@
 
             if (!column.isDisplayed && !requestedQuantityColumn.isDisplayed) {
                 return messageService.get('adminTemplate.shouldDisplayRequestedQuantity', {
+                    calculatedOrderQuantity: column.label,
                     requestedQuantity: requestedQuantityColumn.label,
                     requestedQuantityExplanation: template
                         .columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION].label

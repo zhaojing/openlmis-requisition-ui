@@ -10,6 +10,7 @@ Bug fixes
 * [OLMIS-2466](https://openlmis.atlassian.net/browse/OLMIS-2466) - Requested quantity will now be properly validated for being required on the non full supply screen.
 * [OLMIS-2481](https://openlmis.atlassian.net/browse/OLMIS-2481) - Screen will no longer flash twice when syncing requisition.
 * [OLMIS-2445](https://openlmis.atlassian.net/browse/OLMIS-2445) - Button and title capitalization are consistent.
+* [OLMIS-2352](https://openlmis.atlassian.net/browse/OLMIS-2352) - Added missing validation for calculated order quantity column on the template administration screen.
 
 5.0.0 / 2017-05-08
 ==================

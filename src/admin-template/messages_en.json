@@ -33,5 +33,5 @@
     "adminTemplate.sourceEmpty": "Source cannot be empty!",
     "adminTemplate.templateSave.failure": "Template save failed!",
     "adminTemplate.templateSave.success": "Template saved successfully!",
-    "adminTemplate.shouldDisplayRequestedQuantity": "If Calculated Order Quantity is not displayed, then ${requestedQuantity} and ${requestedQuantityExplanation} should be displayed"
+    "adminTemplate.shouldDisplayRequestedQuantity": "If ${calculatedOrderQuantity} is not displayed, then ${requestedQuantity} and ${requestedQuantityExplanation} should be displayed"
 }
