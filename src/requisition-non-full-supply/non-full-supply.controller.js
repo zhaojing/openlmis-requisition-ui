@@ -140,7 +140,8 @@
          * @name addProduct
          *
          * @description
-         * Opens modal that lets the user add new product to the grid.
+         * Opens modal that lets the user add new product to the grid. If there are no products to
+         * be added an alert will be shown.
          */
         function addProduct() {
             if ($filter('filter')(vm.requisition.availableNonFullSupplyProducts, {
