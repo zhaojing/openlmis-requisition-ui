@@ -45,8 +45,7 @@
          * @name show
          *
          * @description
-         * Shows modal that allows to add line item to requisition. If there are no products to be
-         * added an alert will be shown.
+         * Shows modal that allows to add line item to requisition.
          *
          * @param {Array} categories Facility approved categories
          * @return {Promise} resolved with line item when product is added
