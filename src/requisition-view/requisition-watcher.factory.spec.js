@@ -20,7 +20,7 @@ describe('RequisitionWatcher', function() {
     beforeEach(function() {
         module('requisition-view', function($provide) {
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['put']);
-            var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll', 'clearAll']);
+            var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll', 'clearAll', 'put']);
             offlineFlag.getAll.andReturn([false]);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(name) {
                 if(name === 'offlineFlag') return offlineFlag;
