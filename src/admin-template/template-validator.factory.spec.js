@@ -420,6 +420,16 @@ describe('templateValidator', function() {
 
             it('should return error if both requested quantity and calculated order quantity are hidden', function() {
                 column.isDisplayed = false;
+                template.columnsMap.requestedQuantityExplanation.isDisplayed = true;
+
+                var result = templateValidator.getColumnError(column, template);
+
+                expect(result).toBe('adminTemplate.shouldDisplayRequestedQuantity');
+            });
+
+            it('should return error if both requested quantity explanation and calculated order quantity are hidden', function() {
+                column.isDisplayed = false;
+                template.columnsMap.requestedQuantity.isDisplayed = true;
 
                 var result = templateValidator.getColumnError(column, template);
 

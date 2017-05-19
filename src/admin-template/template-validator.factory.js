@@ -196,13 +196,15 @@
 
         function validateCalculatedOrderQuantity(column, template) {
             var requestedQuantityColumn = template.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY];
+            var requestedQuantityExplanationColumn =
+                template.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION];
 
-            if (!column.isDisplayed && !requestedQuantityColumn.isDisplayed) {
+            if (!column.isDisplayed && (!requestedQuantityColumn.isDisplayed ||
+                !requestedQuantityExplanationColumn.isDisplayed)) {
                 return messageService.get('adminTemplate.shouldDisplayRequestedQuantity', {
                     calculatedOrderQuantity: column.label,
                     requestedQuantity: requestedQuantityColumn.label,
-                    requestedQuantityExplanation: template
-                        .columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION].label
+                    requestedQuantityExplanation: requestedQuantityExplanationColumn.label
                 });
             }
         }
