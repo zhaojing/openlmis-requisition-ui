@@ -144,9 +144,7 @@
          * be added an alert will be shown.
          */
         function addProduct() {
-            if ($filter('filter')(vm.requisition.availableNonFullSupplyProducts, {
-                $visible: true
-            }).length) {
+            if (hasProductsToAdd(vm.requisition)) {
                 addProductModalService.show(
                     vm.requisition.availableNonFullSupplyProducts,
                     vm.requisition.program.id
@@ -206,6 +204,16 @@
 
         function reload() {
             vm.lineItems = filterRequisitionLineItems();
+        }
+
+        function hasProductsToAdd(requisition) {
+            var hasProducts = false;
+
+            angular.forEach(requisition.availableNonFullSupplyProducts, function(product) {
+                hasProducts = hasProducts || product.$visible || product.$visible === undefined;
+            });
+
+            return hasProducts;
         }
     }
 
