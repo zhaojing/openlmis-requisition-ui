@@ -200,6 +200,19 @@ describe('NonFullSupplyController', function() {
             expect(requisition.requisitionLineItems.push).not.toHaveBeenCalled();
         });
 
+        it('should open modal if $visible is undefined', function() {
+            addProductModalService.show.andReturn($q.when());
+
+            requisition.availableNonFullSupplyProducts = [{
+                $visible: undefined
+            }];
+
+            vm.addProduct();
+            $rootScope.$apply();
+
+            expect(addProductModalService.show).toHaveBeenCalled();
+        });
+
         it('should not open add product modal if there are no products to add', function() {
             requisition.availableNonFullSupplyProducts = [];
 
@@ -209,7 +222,18 @@ describe('NonFullSupplyController', function() {
             expect(addProductModalService.show).not.toHaveBeenCalled();
         });
 
-        it('should not open add product modal if there are no products to add', function() {
+        it('should not open add product modal if there are no additional products to add', function() {
+            requisition.availableNonFullSupplyProducts = [{
+                $visible: false
+            }];
+
+            vm.addProduct();
+            $rootScope.$apply();
+
+            expect(addProductModalService.show).not.toHaveBeenCalled();
+        });
+
+        it('should open alert if there are no products to add', function() {
             requisition.availableNonFullSupplyProducts = [];
 
             vm.addProduct();
