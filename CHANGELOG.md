@@ -3,18 +3,18 @@
 
 Improvements
 
-* [OLMIS-2483](https://openlmis.atlassian.net/browse/OLMIS-2483) - Added a warning when trying to add non full supply product if there are no products available.
+* [OLMIS-2483](https://openlmis.atlassian.net/browse/OLMIS-2483): Added a warning when trying to add non full supply product if there are no products available.
 
 Bug fixes
 
-* [OLMIS-2329](https://openlmis.atlassian.net/browse/OLMIS-2329) - Dependant fields will now only be recalculated if the value actually changed(instead of every digest cycle)
-* [OLMIS-2224](https://openlmis.atlassian.net/browse/OLMIS-2224) - Requisition View screen is always available offline, even if no data is stored
-* [OLMIS-2356](https://openlmis.atlassian.net/browse/OLMIS-2356) - Fixed a bug with non full supply screen displaying an error for valid product.
-* [OLMIS-2525](https://openlmis.atlassian.net/browse/OLMIS-2525) - Errors will no longer appear in browser console when emptying requested quantity on one of the non full supply products.
-* [OLMIS-2466](https://openlmis.atlassian.net/browse/OLMIS-2466) - Requested quantity will now be properly validated for being required on the non full supply screen.
-* [OLMIS-2481](https://openlmis.atlassian.net/browse/OLMIS-2481) - Screen will no longer flash twice when syncing requisition.
-* [OLMIS-2445](https://openlmis.atlassian.net/browse/OLMIS-2445) - Button and title capitalization are consistent.
-* [OLMIS-2352](https://openlmis.atlassian.net/browse/OLMIS-2352) - Added missing validation for calculated order quantity column on the template administration screen.
+* [OLMIS-2329](https://openlmis.atlassian.net/browse/OLMIS-2329): Dependant fields will now only be recalculated if the value actually changed(instead of every digest cycle)
+* [OLMIS-2224](https://openlmis.atlassian.net/browse/OLMIS-2224): Requisition View screen is always available offline, even if no data is stored
+* [OLMIS-2356](https://openlmis.atlassian.net/browse/OLMIS-2356): Fixed a bug with non full supply screen displaying an error for valid product.
+* [OLMIS-2525](https://openlmis.atlassian.net/browse/OLMIS-2525): Errors will no longer appear in browser console when emptying requested quantity on one of the non full supply products.
+* [OLMIS-2466](https://openlmis.atlassian.net/browse/OLMIS-2466): Requested quantity will now be properly validated for being required on the non full supply screen.
+* [OLMIS-2481](https://openlmis.atlassian.net/browse/OLMIS-2481): Screen will no longer flash twice when syncing requisition.
+* [OLMIS-2445](https://openlmis.atlassian.net/browse/OLMIS-2445): Button and title capitalization are consistent.
+* [OLMIS-2352](https://openlmis.atlassian.net/browse/OLMIS-2352): Added missing validation for calculated order quantity column on the template administration screen.
 
 5.0.0 / 2017-05-08
 ==================
