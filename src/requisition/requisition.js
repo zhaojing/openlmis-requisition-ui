@@ -81,7 +81,7 @@
         Requisition.prototype.$isInApproval = isInApproval;
         Requisition.prototype.$isReleased = isReleased;
         Requisition.prototype.$isAfterAuthorize = isAfterAuthorize;
-
+        Requisition.prototype.$getProducts = getProducts;
 
         return Requisition;
 
@@ -355,6 +355,26 @@
         function isAfterAuthorize() {
             return [REQUISITION_STATUS.AUTHORIZED, REQUISITION_STATUS.IN_APPROVAL,
                     REQUISITION_STATUS.APPROVED, REQUISITION_STATUS.RELEASED].indexOf(this.status) != -1;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name getProducts
+         *
+         * @description
+         * Returns a list of products.
+         *
+         * @param   {Boolean} nonFullSupply the flag defining wether full supply or non full supply
+         *                                  products should be returned
+         * @return  {List}                  the list of products
+         */
+        function getProducts(nonFullSupply) {
+            return $filter('filter')(this.requisitionLineItems, {
+                $program: {
+                    fullSupply: !nonFullSupply
+                }
+            });
         }
 
         function handlePromise(promise, success, failure) {

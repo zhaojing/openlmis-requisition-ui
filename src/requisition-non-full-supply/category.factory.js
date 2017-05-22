@@ -49,16 +49,24 @@
          * @param  {String} programId the ID of the program
          * @return {Array}            the list of categories with related products
          */
-        function groupProducts(products, programId) {
+        function groupProducts(requisition) {
             var categories = {};
-            angular.forEach(products, function(product) {
-                var category = getProgram(product, programId).orderableCategoryDisplayName;
+            angular.forEach(requisition.availableNonFullSupplyProducts, function(product) {
+                var category = getProgram(
+                    product,
+                    requisition.program.id
+                ).orderableCategoryDisplayName;
+
                 if (!categories[category]) {
                     categories[category] = [];
                 }
-                if (product.$visible === undefined) {
-                    product.$visible = true;
-                }
+
+                product.$visible = $filter('filter')(requisition.$getProducts(true), {
+                    orderable: {
+                        id: product.id
+                    }
+                }).length === 0;
+
                 categories[category].push(product);
             });
             return toList(categories);

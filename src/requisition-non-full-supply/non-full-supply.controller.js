@@ -146,8 +146,7 @@
         function addProduct() {
             if (hasProductsToAdd(vm.requisition)) {
                 addProductModalService.show(
-                    vm.requisition.availableNonFullSupplyProducts,
-                    vm.requisition.program.id
+                    vm.requisition
                 ).then(function(lineItem) {
                     var newLineItem = new LineItem(lineItem, vm.requisition);
                     vm.requisition.requisitionLineItems.push(newLineItem);
@@ -210,7 +209,12 @@
             var hasProducts = false;
 
             angular.forEach(requisition.availableNonFullSupplyProducts, function(product) {
-                hasProducts = hasProducts || product.$visible || product.$visible === undefined;
+                hasProducts = hasProducts || ((product.$visible || product.$visible === undefined)
+                && $filter('filter')(requisition.$getProducts(true), {
+                    orderable: {
+                        id: product.id
+                    }
+                }).length === 0);
             });
 
             return hasProducts;

@@ -47,17 +47,17 @@
          * @description
          * Shows modal that allows to add line item to requisition.
          *
-         * @param {Array} categories Facility approved categories
-         * @return {Promise} resolved with line item when product is added
+         * @param   {Object}    requisition the requisition to add a product for
+         * @return  {Promise}               resolved with line item when product is added
          */
-        function show(products, programId) {
+        function show(requisition) {
             var deferred = $q.defer(),
                 scope = $rootScope.$new();
 
             scope.vm = $controller('AddProductModalController', {
                 deferred: deferred,
-                categories: categoryFactory.groupProducts(products, programId),
-                programId: programId
+                categories: categoryFactory.groupProducts(requisition),
+                programId: requisition.program.id
             });
 
             $templateRequest('requisition-non-full-supply/add-product-modal.html')

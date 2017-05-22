@@ -16,7 +16,7 @@
 describe('addProductModalService', function() {
 
     var addProductModalService, $q, $ngBootbox, $rootScope, $compileMock, $controllerMock,
-        $templateRequestMock, compiledMock, template;
+        $templateRequestMock, compiledMock, template, categoryFactory, requisition;
 
     beforeEach(function() {
         module('requisition-non-full-supply', function($provide) {
@@ -42,7 +42,13 @@ describe('addProductModalService', function() {
             $q = $injector.get('$q');
             $ngBootbox = $injector.get('$ngBootbox');
             $rootScope = $injector.get('$rootScope');
+            categoryFactory = $injector.get('categoryFactory');
         });
+
+        requisition = jasmine.createSpyObj('requisition', ['$getProducts'])
+        requisition.program = {
+            id: 'some-program-id'
+        };
 
         template = 'template';
         compiledMock = jasmine.createSpy('compiled');
@@ -51,16 +57,17 @@ describe('addProductModalService', function() {
         $compileMock.andReturn(compiledMock);
 
         spyOn($ngBootbox, 'customDialog');
+        spyOn(categoryFactory, 'groupProducts');
     });
 
     it('show should should spawn new controller', function() {
-        addProductModalService.show();
+        addProductModalService.show(requisition);
 
         expect($controllerMock).toHaveBeenCalled();
     });
 
     it('show should request template', function() {
-        addProductModalService.show();
+        addProductModalService.show(requisition);
 
         expect($templateRequestMock).toHaveBeenCalled();
     });
@@ -69,7 +76,7 @@ describe('addProductModalService', function() {
         var scope = {};
         spyOn($rootScope, '$new').andReturn(scope);
 
-        addProductModalService.show();
+        addProductModalService.show(requisition);
         $rootScope.$apply();
 
         expect($compileMock).toHaveBeenCalledWith(angular.element(template));
@@ -77,7 +84,7 @@ describe('addProductModalService', function() {
     });
 
     it('show should open modal', function() {
-        addProductModalService.show();
+        addProductModalService.show(requisition);
         $rootScope.$apply();
 
         expect($ngBootbox.customDialog).toHaveBeenCalled();

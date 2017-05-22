@@ -32,7 +32,7 @@ describe('NonFullSupplyController', function() {
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
         addProductModalService = jasmine.createSpyObj('addProductModalService', ['show']);
 
-        requisition = jasmine.createSpyObj('requisition', ['$isApproved', '$isAuthorized', '$isInApproval', '$isReleased']);
+        requisition = jasmine.createSpyObj('requisition', ['$isApproved', '$isAuthorized', '$isInApproval', '$isReleased', '$getProducts']);
         requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns']);
         requisition.requisitionLineItems = [
             lineItemSpy(0, 'One', true),
@@ -47,6 +47,8 @@ describe('NonFullSupplyController', function() {
             page: 0,
             size: 10
         };
+
+        requisition.$getProducts.andReturn([]);
     });
 
     describe('initialization', function() {

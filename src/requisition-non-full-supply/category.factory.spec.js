@@ -24,7 +24,14 @@ describe('categoryFactory', function() {
             categoryFactory = $injector.get('categoryFactory');
         });
 
-        products = [{
+        requisition = jasmine.createSpyObj('requisition', ['$getProducts']);
+        requisition.$getProducts.andReturn([]);
+
+        requisition.program = {
+            id: '1'
+        };
+
+        requisition.availableNonFullSupplyProducts = [{
             $visible: true,
             programs: [{
                 programId: '1',
@@ -51,25 +58,26 @@ describe('categoryFactory', function() {
                 orderableCategoryDisplayName: 'Category Three'
             }]
         }];
+
     });
 
     it('should group products by categories', function() {
-        expect(categoryFactory.groupProducts(products, '1')).toEqual([{
+        expect(categoryFactory.groupProducts(requisition)).toEqual([{
             name: 'Category Two',
             products: [
-                products[0],
-                products[1]
+                requisition.availableNonFullSupplyProducts[0],
+                requisition.availableNonFullSupplyProducts[1]
             ]
         }, {
             name: 'Category One',
             products: [
-                products[2]
+                requisition.availableNonFullSupplyProducts[2]
             ]
         }]);
     });
 
     it('should make product visible if the visibility is not set', function() {
-        var result = categoryFactory.groupProducts(products, '1');
+        var result = categoryFactory.groupProducts(requisition);
 
         expect(result[0].products[1].$visible).toEqual(true);
     });
