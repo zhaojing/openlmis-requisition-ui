@@ -16,6 +16,7 @@ Bug fixes
 * [OLMIS-2445](https://openlmis.atlassian.net/browse/OLMIS-2445): Button and title capitalization are consistent.
 * [OLMIS-2352](https://openlmis.atlassian.net/browse/OLMIS-2352): Added missing validation for calculated order quantity column on the template administration screen.
 * [OLMIS-2453](https://openlmis.atlassian.net/browse/OLMIS-2453): Total losses and adjustments modal fields will now be cleared when closing/reopening the modal.
+* [OLMIS-2436](https://openlmis.atlassian.net/browse/OLMIS-2436): Aligned total cost and button.
 
 5.0.0 / 2017-05-08
 ==================
