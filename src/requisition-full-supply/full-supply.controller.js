@@ -170,7 +170,7 @@
         }
 
         function setSkipAll(value) {
-            angular.forEach(vm.items, function(lineItem) {
+            angular.forEach(vm.lineItems, function(lineItem) {
                 if (lineItem.canBeSkipped(vm.requisition)) {
                     lineItem.skipped = value;
                 }

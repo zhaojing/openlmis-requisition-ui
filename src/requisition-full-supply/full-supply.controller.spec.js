@@ -100,7 +100,10 @@ describe('FullSupplyController', function() {
             requisitionValidator: requisitionValidator,
             paginatedListFactory: paginatedListFactory
         });
-        vm.items = lineItems;
+        vm.items = [
+            lineItems[0],
+            lineItems[1]
+        ];
     }));
 
     it('should expose requisitionValidator.isLineItemValid method', function() {
