@@ -17,6 +17,8 @@ Bug fixes
 * [OLMIS-2352](https://openlmis.atlassian.net/browse/OLMIS-2352): Added missing validation for calculated order quantity column on the template administration screen.
 * [OLMIS-2453](https://openlmis.atlassian.net/browse/OLMIS-2453): Total losses and adjustments modal fields will now be cleared when closing/reopening the modal.
 * [OLMIS-2436](https://openlmis.atlassian.net/browse/OLMIS-2436): Aligned total cost and button.
+* [OLMIS-2522](https://openlmis.atlassian.net/browse/OLMIS-2522): Fixed select element placeholder on initialize/authorize screen.
+* [OLMIS-2439](https://openlmis.atlassian.net/browse/OLMIS-2439): Change skip all behavior to skip all line items, not only those visible on the current page.
 
 5.0.0 / 2017-05-08
 ==================
