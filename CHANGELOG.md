@@ -1,7 +1,14 @@
+5.0.2 / WIP
+===========
+
+Improvements:
+
+* [OLMIS-2444](https://openlmis.atlassian.net/browse/OLMIS-2444): Added new "success" button class.
+
 5.0.1 / 2017-05-26
 ==================
 
-Improvements
+Improvements:
 
 * [OLMIS-2483](https://openlmis.atlassian.net/browse/OLMIS-2483): Added a warning when trying to add non full supply product if there are no products available.
 
