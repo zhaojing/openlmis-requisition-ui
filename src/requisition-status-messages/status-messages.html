@@ -2,7 +2,7 @@
     <header>
         <h3>{{'requisitionStatusMessages.comments' | message}}</h3>
         <a ng-show="vm.requisition.$statusMessages.length > 0" ng-click="vm.displayRequisitionHistory()">{{'requisitionStatusMessages.viewHistory' | message}}</a>
-        <button class="primary" ng-click="vm.addComment()" ng-if="vm.displayAddComment()">{{'requisitionStatusMessages.addComment.label' | message}}</button>
+        <button class="success" ng-click="vm.addComment()" ng-if="vm.displayAddComment()">{{'requisitionStatusMessages.addComment.label' | message}}</button>
     </header>
     <div class="alert" ng-if="!vm.requisition.$statusMessages.length && vm.displayAddComment()">
         {{'requisitionStatusMessages.noCommentsAdded' | message}}
