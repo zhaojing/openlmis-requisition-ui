@@ -8,7 +8,7 @@
 	<table>
 		<thead>
 			<tr>
-				<th class="col-{{column.name}}" ng-repeat="column in vm.columns | orderBy : 'displayOrder'" ng-class="{'col-sticky': !column.$canChangeOrder}" popover="{{column.definition}}">{{column.label}}
+				<th class="col-{{column.name}}" ng-repeat="column in vm.columns | orderBy : 'displayOrder'" ng-class="{'col-sticky': !column.$canChangeOrder}" popover="{{column.definition}}" popover-hook="true">{{column.label}}
 				</th>
 			</tr>
 		</thead>

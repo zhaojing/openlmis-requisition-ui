@@ -4,6 +4,7 @@
 Improvements:
 
 * [OLMIS-2444](https://openlmis.atlassian.net/browse/OLMIS-2444): Added new "success" button class.
+* [OLMIS-2572](https://openlmis.atlassian.net/browse/OLMIS-2572): Column definition will now show when hovering over whole header instead of only the button.
 
 5.0.1 / 2017-05-26
 ==================
