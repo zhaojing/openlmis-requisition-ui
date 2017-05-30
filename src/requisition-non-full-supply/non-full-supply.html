@@ -7,7 +7,7 @@
 		<caption ng-if="!vm.items.length">{{'requisitionNonFullSupply.noProducts' | message}}</caption>
 		<thead>
 			<tr>
-				<th class="col-{{column.name}}" ng-repeat="column in vm.columns | orderBy : 'displayOrder'" ng-class="{'col-sticky': !column.$canChangeOrder}" popover="{{column.definition}}" popover-hook="true">{{column.label}}</th>
+				<th class="col-{{column.name}}" ng-repeat="column in vm.columns | orderBy : 'displayOrder'" ng-class="{'col-sticky': !column.$canChangeOrder}" popover="{{column.definition}}" popover-trigger-area="element">{{column.label}}</th>
 				<th class="col-sticky sticky-right" ng-if="vm.displayDeleteColumn()"></th>
 			</tr>
 		</thead>
