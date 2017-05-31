@@ -382,10 +382,23 @@
             if (offlineRequisitions.getBy('id', requisition.id)) {
                 requisition.$availableOffline = true;
             }
-            requisition.createdDate = dateUtils.toDate(requisition.createdDate);
-            requisition.processingPeriod.startDate = dateUtils.toDate(requisition.processingPeriod.startDate);
-            requisition.processingPeriod.endDate = dateUtils.toDate(requisition.processingPeriod.endDate);
-            requisition.processingPeriod.processingSchedule.modifiedDate = dateUtils.toDate(requisition.processingPeriod.processingSchedule.modifiedDate);
+            if (requisition.createdDate) {
+                requisition.createdDate = dateUtils.toDate(requisition.createdDate);
+            }
+
+            requisition.processingPeriod.startDate = dateUtils.toDate(
+                requisition.processingPeriod.startDate
+            );
+
+            requisition.processingPeriod.endDate = dateUtils.toDate(
+                requisition.processingPeriod.endDate
+            );
+
+            if (requisition.processingPeriod.processingSchedule) {
+                requisition.processingPeriod.processingSchedule.modifiedDate = dateUtils.toDate(
+                    requisition.processingPeriod.processingSchedule.modifiedDate
+                );
+            }
         }
     }
 })();
