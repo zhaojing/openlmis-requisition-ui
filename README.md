@@ -10,7 +10,7 @@ This repository is the UI for the [OpenLMIS Requisition Service.](https://github
 
  ```shell
 > git clone https://github.com/OpenLMIS/openlmis-requisition-ui.git
-> cd openlmis-requisition-refUI/
+> cd openlmis-requisition-ui/
  ```
 2. Create a .env file, which can be used to overwrite 'sensitive' settings from config.json
 ```shell
