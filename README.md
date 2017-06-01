@@ -9,7 +9,7 @@ This repository is the UI for the [OpenLMIS Requisition Service.](https://github
 1. Fork/clone this repository from GitHub.
 
  ```shell
-> git clone https://github.com/OpenLMIS/openlmis-requisition-refUI.git
+> git clone https://github.com/OpenLMIS/openlmis-requisition-ui.git
 > cd openlmis-requisition-refUI/
  ```
 2. Create a .env file, which can be used to overwrite 'sensitive' settings from config.json
