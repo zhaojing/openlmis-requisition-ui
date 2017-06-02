@@ -73,7 +73,7 @@
          * @return {Number}          the calculated Total Consumed Quantity value
          */
         function calculateTotalConsumedQuantity(lineItem, requisition) {
-            return lineItem[A] + lineItem[B] + lineItem[D] - lineItem[E];
+            return getItem(lineItem, A) + getItem(lineItem, B) + getItem(lineItem, D) - getItem(lineItem, E);
         }
 
         /**
@@ -88,7 +88,7 @@
          * @return {Number}          the calculated Stock On Hand value
          */
         function calculateStockOnHand(lineItem) {
-            return lineItem[A] + lineItem[B] - lineItem[C] + lineItem[D];
+            return getItem(lineItem, A) + getItem(lineItem, B) - getItem(lineItem, C) + getItem(lineItem, D);
         }
 
         /**
@@ -103,7 +103,7 @@
          * @return {Number}          the calculated Total value
          */
         function calculateTotal(lineItem) {
-            return lineItem[A] + lineItem[B];
+            return getItem(lineItem, A) + getItem(lineItem, B);
         }
 
         /**
@@ -309,6 +309,7 @@
 
             if (pColumn) {
                 pValue = getColumnValue(lineItem, requisition, pColumn);
+                pValue = pValue === undefined ? 0 : pValue
             }
 
             return hColumn && hColumn.option.optionName === 'default' ?
@@ -331,10 +332,14 @@
             var eColumn = requisition.template.getColumn(E),
                 hColumn = requisition.template.getColumn(H);
 
-            if (!eColumn || !hColumn) return null;
+            if (!eColumn || !hColumn) {
+                return null;
+            }
 
             var stockOnHand = getColumnValue(lineItem, requisition, eColumn),
                 maximumStockQuantity = getColumnValue(lineItem, requisition, hColumn);
+
+            stockOnHand = stockOnHand === undefined ? 0 : stockOnHand;
 
             return Math.max(maximumStockQuantity - stockOnHand, 0);
         }
@@ -344,6 +349,10 @@
                 return calculationFactory[column.name](lineItem, requisition);
             }
             return lineItem[column.name];
+        }
+
+        function getItem(lineItem, name) {
+            return lineItem[name] === undefined ? 0 : lineItem[name];
         }
 
         function shouldReturnRequestedQuantity(lineItem, jColumn) {
