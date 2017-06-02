@@ -316,6 +316,60 @@ describe('requisitionService', function() {
         expect(requisitionsStorage.search).toHaveBeenCalledWith(params, 'requisitionSearch');
     });
 
+    describe('transformRequisition', function() {
+
+        it('should not require createdDate to be set', function() {
+            var expected, data;
+
+            requisition.createdDate = null;
+
+            httpBackend.when(
+                'GET', requisitionUrlFactory('/api/requisitions/search?facility=' + facility.id)
+            ).respond(200, {
+                content: [
+                    requisition
+                ]
+            });
+
+            requisitionService.search(false, {
+                facility: facility.id
+            }).then(function(response) {
+                data = response;
+            });
+
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(data.content[0].createdDate).toEqual(null);
+        });
+
+        it('should not require processingSchedule to be set', function() {
+            var expected, data;
+
+            requisition.processingPeriod.processingSchedule = null;
+
+            httpBackend.when(
+                'GET', requisitionUrlFactory('/api/requisitions/search?facility=' + facility.id)
+            ).respond(200, {
+                content: [
+                    requisition
+                ]
+            });
+
+            requisitionService.search(false, {
+                facility: facility.id
+            }).then(function(response) {
+                data = response;
+            });
+
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(data.content[0].processingPeriod.processingSchedule).toEqual(null);
+        });
+
+    });
+
     function formatDatesInRequisition(requisition) {
         requisition.processingPeriod.processingSchedule.modifiedDate = dateUtils.toDate(requisition.processingPeriod.processingSchedule.modifiedDate);
         requisition.processingPeriod.endDate = dateUtils.toDate(requisition.processingPeriod.endDate);
