@@ -6,6 +6,11 @@ Improvements:
 * [OLMIS-2444](https://openlmis.atlassian.net/browse/OLMIS-2444): Added new "add" button class.
 * [OLMIS-2572](https://openlmis.atlassian.net/browse/OLMIS-2572): Column definition will now show when hovering over whole header instead of only the button.
 
+Bug fixes:
+
+* [OLMIS-2664](https://openlmis.atlassian.net/browse/OLMIS-2664): Requisition will now be saved
+before getting rejected to preserve the status message.
+
 5.0.1 / 2017-05-26
 ==================
 

@@ -510,13 +510,32 @@ describe('RequisitionViewController', function() {
 
     describe('rejectRnr', function() {
 
+        var confirmDeferred, saveDeferred;
+
         beforeEach(function() {
-            confirmSpy.confirmDestroy.andReturn($q.when(true));
-            requisition.$save.andReturn($q.when(true));
+            confirmDeferred = $q.defer();
+            saveDeferred = $q.defer();
+
+            confirmSpy.confirmDestroy.andReturn(confirmDeferred.promise);
+            requisition.$save.andReturn(saveDeferred.promise);
             requisition.$reject.andReturn($q.when(true));
 
             requisitionValidatorMock.validateRequisition.andReturn(true);
             requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
+        });
+
+        it('should save requisition before rejecting', function() {
+            vm.rejectRnr();
+            confirmDeferred.resolve();
+            $scope.$apply();
+
+            expect(requisition.$save).toHaveBeenCalled();
+            expect(requisition.$reject).not.toHaveBeenCalled();
+
+            saveDeferred.resolve();
+            $scope.$apply();
+
+            expect(requisition.$reject).toHaveBeenCalled();
         });
 
         it('should redirect to previous state', function() {
@@ -524,9 +543,12 @@ describe('RequisitionViewController', function() {
             spyOn($state, 'go');
 
             vm.rejectRnr();
+            confirmDeferred.resolve();
+            saveDeferred.resolve();
             $scope.$apply();
 
-            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.approvalList');
+            expect(stateTrackerService.goToPreviousState)
+                .toHaveBeenCalledWith('openlmis.requisitions.approvalList');
         });
     });
 
