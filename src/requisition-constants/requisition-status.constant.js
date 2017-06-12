@@ -38,7 +38,6 @@
             APPROVED: 'APPROVED',
             RELEASED: 'RELEASED',
             SKIPPED: 'SKIPPED',
-            REJECTED: 'REJECTED',
             $toList: toList,
             $getDisplayName: getDisplayName
         };
@@ -90,8 +89,6 @@
                 displayName = 'Released';
             } else if (status == this.SKIPPED) {
                 displayName = 'Skipped';
-            } else if (status == this.REJECTED) {
-                displayName = 'Rejected';
             }
             return displayName;
         }

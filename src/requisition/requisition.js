@@ -80,7 +80,6 @@
         Requisition.prototype.$isAuthorized = isAuthorized;
         Requisition.prototype.$isInApproval = isInApproval;
         Requisition.prototype.$isReleased = isReleased;
-        Requisition.prototype.$isRejected = isRejected;
         Requisition.prototype.$isAfterAuthorize = isAfterAuthorize;
         Requisition.prototype.$getProducts = getProducts;
 
@@ -340,21 +339,6 @@
          */
         function isReleased() {
             return this.status === REQUISITION_STATUS.RELEASED;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition.Requisition
-         * @name isRejected
-         *
-         * @description
-         * Responsible for checking if requisition is rejected.
-         * Returns true only if requisition status equals rejected.
-         *
-         * @return {Boolean} is requisition rejected
-         */
-        function isRejected() {
-            return this.status === REQUISITION_STATUS.REJECTED;
         }
 
        /**
