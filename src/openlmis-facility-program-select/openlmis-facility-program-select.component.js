@@ -12,31 +12,28 @@
  * the GNU Affero General Public License along with this program. If not, see
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
-
 (function() {
 
     'use strict';
 
     /**
-     * @module requisition-initiate
+     * @ngdoc service
+     * @name openlmis-facility-program-select.component:openlmisFacilityProgramSelect
      *
      * @description
-     * Responsible for initiate requisition screen.
+     *
      */
-    angular.module('requisition-initiate', [
-        'angular.filter',
-        'ngResource',
-        'requisition',
-        'requisition-constants',
-        'openlmis-i18n',
-        'openlmis-auth',
-        'openlmis-date',
-        'openlmis-facility-program-select',
-        'referencedata-facility',
-        'openlmis-form',
-        'openlmis-modal',
-        'referencedata-program',
-        'ui.router'
-    ]);
+    angular
+        .module('openlmis-facility-program-select')
+        .component('openlmisFacilityProgramSelect', {
+            bindings: {
+                isSupervised: '=',
+                program: '=',
+                facility: '='
+            },
+            controller: 'OpenlmisFacilityProgramSelectController',
+            controllerAs: 'vm',
+            templateUrl: 'openlmis-facility-program-select/openlmis-facility-program-select.html'
+		});
 
 })();

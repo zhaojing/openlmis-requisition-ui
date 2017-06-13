@@ -132,15 +132,18 @@
             vm.emergency = $stateParams.emergency === 'true';
             vm.periods = periods;
 
-            vm.isSupervised = $stateParams.supervised === 'true';
-            updateFacilityType(vm.isSupervised);
+            if ($stateParams.supervised) {
+                vm.isSupervised = $stateParams.supervised === 'true';
+            }
+            //updateFacilityType(vm.isSupervised);
 
             vm.selectedProgramId = $stateParams.program;
 
             if (vm.isSupervised) {
-                loadFacilitiesForProgram(vm.selectedProgramId);
+                //loadFacilitiesForProgram(vm.selectedProgramId);
                 vm.selectedFacilityId = $stateParams.facility;
             }
+            vm.user = user;
         }
 
         /**

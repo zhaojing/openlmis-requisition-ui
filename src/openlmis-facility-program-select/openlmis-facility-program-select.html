@@ -1,0 +1,62 @@
+<fieldset class="form-group">
+
+    <legend>{{'requisitionInitiate.facilityType' | message}}</legend>
+
+    <label class="radio">
+        <input type="radio"
+            ng-model="vm.isSupervised"
+            ng-disabled="!vm.hasHomeFacility && vm.hasHomeFacility !== undefined"
+            ng-value="false"
+            ng-change="vm.updateForm()"/>
+        {{'requisitionInitiate.myFacility' | message}}
+    </label>
+
+    <label class="radio">
+        <input type="radio"
+            ng-model="vm.isSupervised"
+            ng-value="true"
+            ng-change="vm.updateForm()"/>
+        {{'requisitionInitiate.supervisedFacility' | message}}
+    </label>
+
+</fieldset>
+<fieldset ng-show="!vm.isSupervised && vm.isSupervised !== undefined">
+
+    <label for="facilityName">{{'requisitionInitiate.facility' | message}}</label>
+    <select id="facilityName"
+        ng-model="vm.facility"
+        ng-options="facility.id as facility.name for facility in vm.facilities"
+        placeholder="{{'requisitionInitiate.selectFacility' | message}}"
+        disabled
+        required></select>
+
+    <label for="programListMyFacility">{{'requisitionInitiate.program' | message}}</label>
+    <select id="programListMyFacility"
+        ng-model="vm.program"
+        ng-options="program.id as program.name for program in vm.homePrograms"
+        placeholder="{{'requisitionInitiate.selectProgram' | message}}"
+        required></select>
+
+</fieldset>
+<fieldset ng-show="vm.isSupervised">
+
+    <label for="programListSupervisedFacility">{{'requisitionInitiate.program' | message}}</label>
+    <select id="programListSupervisedFacility"
+        ng-model="vm.program"
+        ng-options="program.id as program.name for program in vm.supervisedPrograms"
+        ng-change="vm.updateForm()"
+        placeholder="{{'requisitionInitiate.selectProgram' | message}}"
+        required></select>
+
+    <label for="supervisedFacilityName">{{'requisitionInitiate.facility' | message}}</label>
+    <select id="supervisedFacilityName"
+        ng-model="vm.facility"
+        ng-options="facility.id as facility.name for facility in vm.facilities | unique:'id'"
+        placeholder="{{'requisitionInitiate.selectFacility' | message}}"
+        required></select>
+
+</fieldset>
+
+supervised: {{vm.isSupervised}}<br />
+program: {{vm.program}}<br />
+facility: {{vm.facility}}<br />
