@@ -8,6 +8,7 @@ Improvements:
 
 Bug fixes:
 
+* [OLMIS-2638](https://openlmis.atlassian.net/browse/OLMIS-2638): Updated read-only check to make sure user right and requisition status match
 * [OLMIS-2664](https://openlmis.atlassian.net/browse/OLMIS-2664): Requisition will now be saved
 before getting rejected to preserve the status message.
 
