@@ -15,7 +15,9 @@
 describe('ProductGridCell', function() {
 
     var $compile, scope, requisition, directiveElem, requisitionValidatorMock,
-        authorizationServiceSpy, TEMPLATE_COLUMNS, fullSupplyColumns, nonFullSupplyColumns;
+        authorizationServiceSpy, TEMPLATE_COLUMNS, fullSupplyColumns, nonFullSupplyColumns,
+        REQUISITION_RIGHTS, userAlwaysHasRight, userHasSubmitRight, userHasAuthorizedRight,
+        userHasApprovedRight;
 
     beforeEach(function() {
         module('requisition-product-grid', function($compileProvider) {
@@ -39,17 +41,36 @@ describe('ProductGridCell', function() {
             });
 
             authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight', 'isAuthenticated']);
-            authorizationServiceSpy.hasRight.andReturn(true);
-            authorizationServiceSpy.isAuthenticated.andReturn(true);
             $provide.service('authorizationService', function() {
                 return authorizationServiceSpy;
             });
+
+            userAlwaysHasRight = true;
+            authorizationServiceSpy.hasRight.andCallFake(function(right){
+                if(userAlwaysHasRight){
+                    return true;
+                }
+                if(userHasApprovedRight && right == REQUISITION_RIGHTS.REQUISITION_APPROVE) {
+                    return true;
+                }
+                if(userHasAuthorizedRight && right == REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
+                    return true;
+                }
+                if(userHasSubmitRight && right == REQUISITION_RIGHTS.REQUISITION_SUBMIT){
+                    return true;
+                }
+                return false;
+            });
+
+            authorizationServiceSpy.isAuthenticated.andReturn(true);
         });
 
         inject(function($injector) {
             $compile = $injector.get('$compile');
             scope = $injector.get('$rootScope').$new();
             TEMPLATE_COLUMNS =  $injector.get('TEMPLATE_COLUMNS');
+
+            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
 
             fullSupplyColumns = [{
                 type: $injector.get('COLUMN_TYPES').NUMERIC,
@@ -181,6 +202,47 @@ describe('ProductGridCell', function() {
         scope.requisition.$isAuthorized.andReturn(false);
         scope.requisition.$isInApproval.andReturn(false);
 
+        directiveElem = getCompiledElement();
+
+        expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
+        expect(directiveElem.find("input").length).toEqual(1);
+    });
+
+    it('makes an editable cell if initiated and user can submit', function(){
+        scope.requisition.$isInitiated.andReturn(true);
+        scope.requisition.$isApproved.andReturn(false);
+        scope.requisition.$isReleased.andReturn(false);
+        scope.requisition.$isAuthorized.andReturn(false);
+        scope.requisition.$isInApproval.andReturn(false);
+
+        userAlwaysHasRight = false;
+        directiveElem = getCompiledElement();
+
+        expect(directiveElem.html()).toContain("readOnlyFieldValue");
+        expect(directiveElem.find("input").length).toEqual(0);
+
+        userHasSubmitRight = true;
+        directiveElem = getCompiledElement();
+
+        expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
+        expect(directiveElem.find("input").length).toEqual(1);
+    });
+
+    it('makes an editable cell if submitted and user can approve', function(){
+        scope.requisition.$isInitiated.andReturn(false);
+        scope.requisition.$isSubmitted.andReturn(true);
+        scope.requisition.$isApproved.andReturn(false);
+        scope.requisition.$isReleased.andReturn(false);
+        scope.requisition.$isAuthorized.andReturn(false);
+        scope.requisition.$isInApproval.andReturn(false);
+
+        userAlwaysHasRight = false;
+        directiveElem = getCompiledElement();
+
+        expect(directiveElem.html()).toContain("readOnlyFieldValue");
+        expect(directiveElem.find("input").length).toEqual(0);
+
+        userHasAuthorizedRight = true;
         directiveElem = getCompiledElement();
 
         expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
