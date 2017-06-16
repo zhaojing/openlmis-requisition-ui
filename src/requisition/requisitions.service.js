@@ -379,9 +379,10 @@
         }
 
         function transformRequisition(requisition) {
-            if (offlineRequisitions.getBy('id', requisition.id)) {
-                requisition.$availableOffline = true;
+            if(requisition.modifiedDate) {
+                requisition.modifiedDate = dateUtils.toDate(requisition.modifiedDate);
             }
+
             if (requisition.createdDate) {
                 requisition.createdDate = dateUtils.toDate(requisition.createdDate);
             }
@@ -398,6 +399,25 @@
                 requisition.processingPeriod.processingSchedule.modifiedDate = dateUtils.toDate(
                     requisition.processingPeriod.processingSchedule.modifiedDate
                 );
+            }
+
+            transformRequisitionOffline(requisition);
+        }
+
+        function transformRequisitionOffline(requisition) {
+            var offlineRequisition = offlineRequisitions.getBy('id', requisition.id);
+            if (offlineRequisition) {
+                requisition.$availableOffline = true;
+            }
+            if(offlineRequisition && requisition.modifiedDate && requisition.modifiedDate.getTime) {
+                var offlineDate = dateUtils.toDate(offlineRequisition.modifiedDate);
+
+                if(offlineDate.getTime() !== requisition.modifiedDate.getTime()) {
+                    offlineRequisition.$outdated = true;
+                } else {
+                    delete offlineRequisition.$outdated;
+                }
+                offlineRequisitions.put(offlineRequisition);
             }
         }
     }

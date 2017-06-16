@@ -368,6 +368,42 @@ describe('requisitionService', function() {
             expect(data.content[0].processingPeriod.processingSchedule).toEqual(null);
         });
 
+        it('will mark the offline version of the requisition as $outdated, if modifiedDates do not match', function(){
+            var offlineRequisition = {
+                id: '1',
+                modifiedDate: [2016, 4, 30, 16, 21, 33]
+            };
+            requisitionsStorage.getBy.andReturn(offlineRequisition);
+
+            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+
+            httpBackend.when('GET',
+                requisitionUrlFactory('/api/requisitions/search')
+            ).respond(200, {
+                content: [
+                    requisition
+                ]
+            });
+
+            requisitionService.search();
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(requisitionsStorage.getBy).toHaveBeenCalled();
+            expect(offlineRequisition.$outdated).toBeUndefined();
+
+            requisition.modifiedDate = [2000, 9, 1, 1, 1, 1];
+
+            requisitionService.search();
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(offlineRequisition.$outdated).toBe(true);
+
+            // The offline requisition should have been updated twice (once as $outdated, and once not)
+            expect(requisitionsStorage.put.calls.length).toBe(2);
+        });
+
     });
 
     function formatDatesInRequisition(requisition) {
