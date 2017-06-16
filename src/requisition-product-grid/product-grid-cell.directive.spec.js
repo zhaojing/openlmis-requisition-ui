@@ -64,7 +64,12 @@ describe('ProductGridCell', function() {
             }];
 
             requisition = jasmine.createSpyObj('requisition', [
-                '$getStockAdjustmentReasons', '$isApproved', '$isReleased', '$isAuthorized',
+                '$getStockAdjustmentReasons',
+                '$isInitiated',
+                '$isSubmitted',
+                '$isApproved',
+                '$isReleased',
+                '$isAuthorized',
                 '$isInApproval'
             ]);
             requisition.template = jasmine.createSpyObj('template', ['getColumns']);
@@ -170,6 +175,7 @@ describe('ProductGridCell', function() {
     });
 
     it('should produce editable cell', function() {
+        scope.requisition.$isInitiated.andReturn(true);
         scope.requisition.$isApproved.andReturn(false);
         scope.requisition.$isReleased.andReturn(false);
         scope.requisition.$isAuthorized.andReturn(false);
@@ -194,6 +200,7 @@ describe('ProductGridCell', function() {
     });
 
     it('should validate full supply line item columns after updating fields', function() {
+        scope.requisition.$isInitiated.andReturn(true);
         var element = getCompiledElement(),
             input = element.find('input'),
             inputScope = angular.element(angular.element(input)).scope(),
@@ -208,6 +215,7 @@ describe('ProductGridCell', function() {
     });
 
     it('should validate non full supply line item columns after updating fields', function() {
+       scope.requisition.$isInitiated.andReturn(true);
         var element = getCompiledElement(),
             input = element.find('input'),
             inputScope = angular.element(angular.element(input)).scope(),
