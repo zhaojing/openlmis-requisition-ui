@@ -131,11 +131,11 @@
          */
         function updateRequisition() {
             if(offlineService.isOffline()) {
-                alertService.error('requisitionView.outdatedOfflineWarning');
+                alertService.error('requisitionView.updateOffline');
                 return;
             }
 
-            confirmService.confirm('requisitionView.outdatedUpdateWarning', 'requisitionView.update')
+            confirmService.confirm('requisitionView.updateWarning', 'requisitionView.update')
             .then(function(){
                 requisitionService.removeOfflineRequisition(requisition.id);
                 $state.reload();

@@ -43,5 +43,9 @@
     "requisitionView.updateForbidden": "This requisition has changed status or you lost the rights required for syncing it; the server version will be used.",
     "requisitionView.versionMismatch": "This requisition has a newer version on the server; the server version will be used, and you will need to remake your changes.",
     "requisitionView.viewRequisition": "View Requisition",
-    "requisitionView.requisition.error": "R&R has errors, please correct them to proceed"
+    "requisitionView.requisition.error": "R&R has errors, please correct them to proceed",
+    "requisitionView.outdated": "This is an outdated offline version.",
+    "requisitionView.update": "Update Requisition",
+    "requisitionView.updateWarning": "Updating this requisition will remove any changes that have been made to the offline requisition",
+    "requisitionView.updateOffline": "Can't update this requisition while offline"
 }
