@@ -610,4 +610,70 @@ describe('RequisitionViewController', function() {
             expect(loadingModalService.open.calls.length).toEqual(1);
         });
     });
+
+    describe('update requisition', function(){
+        var offlineService, isOffline,
+            alertService,
+            requisitionService;
+
+        beforeEach(inject(function(_offlineService_, _alertService_, _requisitionService_) {
+            isOffline = false;
+            offlineService = _offlineService_;
+            spyOn(offlineService, 'isOffline').andCallFake(function(){
+                return isOffline;
+            });
+
+            spyOn($state, 'reload');
+
+            alertService = _alertService_;
+            spyOn(alertService, 'error');
+
+            confirmSpy.confirm.andReturn($q.resolve());
+
+            requisitionService = _requisitionService_;
+            spyOn(requisitionService, 'removeOfflineRequisition');
+        }));
+
+        it('will confirm with the user before removing the requisition', function() {
+            confirmSpy.confirm.andReturn($q.reject());
+
+            vm.updateRequisition();
+            $scope.$apply();
+
+            expect(confirmSpy.confirm).toHaveBeenCalled();
+            expect(requisitionService.removeOfflineRequisition).not.toHaveBeenCalled();
+            expect($state.reload).not.toHaveBeenCalled();
+
+            confirmSpy.confirm.andReturn($q.resolve());
+
+            vm.updateRequisition();
+            $scope.$apply();
+
+            // Was called in both function calls
+            expect(confirmSpy.confirm.calls.length).toBe(2);
+
+            expect(requisitionService.removeOfflineRequisition).toHaveBeenCalled();
+            expect($state.reload).toHaveBeenCalled();
+
+        });
+
+        it('will not remove the requisition while offline', function(offlineService){
+            isOffline = true;
+
+            vm.updateRequisition();
+            $scope.$apply();
+
+            expect(alertService.error).toHaveBeenCalled();
+            expect(requisitionService.removeOfflineRequisition).not.toHaveBeenCalled();
+
+            isOffline = false;
+
+            vm.updateRequisition();
+            $scope.$apply();
+
+            expect(alertService.error.calls.length).toBe(1);
+            expect(requisitionService.removeOfflineRequisition).toHaveBeenCalled();
+        });
+
+    });
 });

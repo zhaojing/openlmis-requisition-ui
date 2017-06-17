@@ -90,7 +90,8 @@
             search: search,
             forApproval: forApproval,
             forConvert: forConvert,
-            convertToOrder: convertToOrder
+            convertToOrder: convertToOrder,
+            removeOfflineRequisition: removeOfflineRequisition
         };
 
         return service;
@@ -288,6 +289,20 @@
                 });
             });
             return promise;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionService
+         * @name removeOfflineRequisition
+         *
+         * @description
+         * Removes a specific requistion from the offline store.
+         *
+         * @param {String} requisitionId Id of requisition to remove
+         */
+        function removeOfflineRequisition(requisitionId) {
+            offlineRequisitions.removeBy('id', requisitionId);
         }
 
         function getRequisition(id) {
