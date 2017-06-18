@@ -282,53 +282,6 @@ describe('LossesAndAdjustmentsController', function() {
         });
     });
 
-    describe('isDisabled', function() {
-
-        beforeEach(function() {
-            initController();
-
-            requisition.$isApproved.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
-            requisition.$isInApproval.andReturn(false);
-            scope.lineItem.skipped = false;
-        });
-
-        it('should return false if requisition is not approved/authorize/in approval', function() {
-            expect(vm.isDisabled()).toBe(false);
-        });
-
-        it('should return true if requisition is approved', function() {
-            requisition.$isApproved.andReturn(true);
-
-            expect(vm.isDisabled()).toBe(true);
-        });
-
-        it('should return true if requisition is authorized', function() {
-            requisition.$isAuthorized.andReturn(true);
-
-            expect(vm.isDisabled()).toBe(true);
-        });
-
-        it('should return true if requisition is in approval', function() {
-            requisition.$isInApproval.andReturn(true);
-
-            expect(vm.isDisabled()).toBe(true);
-        });
-
-        it('should return true if requisition is released', function() {
-            requisition.$isReleased.andReturn(true);
-
-            expect(vm.isDisabled()).toBe(true);
-        });
-
-        it('should return true if line item is skipped', function() {
-            scope.lineItem.skipped = true;
-
-            expect(vm.isDisabled()).toBe(true);
-        });
-
-    });
-
     function initController() {
         vm = $controller('LossesAndAdjustmentsController', {
             $scope: scope

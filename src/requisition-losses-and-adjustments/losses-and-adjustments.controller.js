@@ -85,7 +85,6 @@
         vm.getReasonName = getReasonName;
         vm.getTotal = getTotal;
         vm.recalculateTotal = recalculateTotal;
-        vm.isDisabled = isDisabled;
 
         /**
          * @ngdoc method
@@ -178,25 +177,6 @@
                 vm.requisition.template.columnsMap,
                 vm.requisition
             );
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-losses-and-adjustments.controller:LossesAndAdjustmentsController
-         * @name isDisabled
-         *
-         * @description
-         * Checks whether the modal is in disabled state.
-         *
-         * @return {Boolean} true if requisition is authorize/approved/in approval/released or line item
-         *                   is skipped, false otherwise
-         */
-        function isDisabled() {
-            return vm.requisition.$isAuthorized() ||
-                vm.requisition.$isApproved() ||
-                vm.requisition.$isInApproval() ||
-                vm.requisition.$isReleased() ||
-                vm.lineItem.skipped;
         }
     }
 

@@ -26,6 +26,8 @@
      * Responsible for creating total losses and adjustments cell in product grid.
      * It opens modal that displays reasons upon clicking it.
      *
+     * If the input is disabled, then the modal will be in a readOnly state.
+     *
      * @example
      * This directive requires 'requisition' and 'line-item' attributes.
      * ```
@@ -71,6 +73,12 @@
             element.on('$destroy', function() {
                 if (dialog) dialog.remove();
                 dialog = undefined;
+            });
+
+            scope.$watch(function(){
+                return attr.hasOwnProperty('disabled');
+            }, function(disabled){
+                scope.isDisabled = disabled;
             });
 
             function showModal() {

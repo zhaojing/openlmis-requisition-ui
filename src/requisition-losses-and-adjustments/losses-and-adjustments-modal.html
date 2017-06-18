@@ -1,5 +1,5 @@
 <div class="losses-and-adjustments-modal">
-    <form ng-if="!vm.isDisabled()" ng-submit="vm.addAdjustment()" reload-form>
+    <form ng-if="!isDisabled" ng-submit="vm.addAdjustment()" reload-form>
         <fieldset>
             <legend >{{'requisitionLossesAndAdjustments.addNewLossOrAdjustment' | message}}</legend>
             <div class="form-inline">
@@ -33,16 +33,16 @@
             {{vm.getReasonName(adjustment.reasonId)}}
         </dt>
         <dd ng-repeat-end>
-            <div ng-if="vm.isDisabled()">{{adjustment.quantity}}</div>
+            <div ng-if="isDisabled">{{adjustment.quantity}}</div>
             <input id="adjustment-quantity-{{$index}}"
                 class="form-control"
                 ng-model="adjustment.quantity"
                 ng-change="vm.recalculateTotal()"
-                ng-if="!vm.isDisabled()"
+                ng-if="!isDisabled"
                 required positive-integer/>
             <input type="button" class="danger"
                 ng-click="vm.removeAdjustment(adjustment)"
-                ng-if="!vm.isDisabled()"
+                ng-if="!isDisabled"
                 value="{{'requisitionLossesAndAdjustments.remove' | message}}">
         </dd>
         <dt>{{'requisitionLossesAndAdjustments.total' | message}}</dt>
