@@ -77,6 +77,7 @@
          */
         function onInit() {
             vm.emergency = $stateParams.emergency === 'true';
+            vm.periods = periods;
         }
 
         /**
