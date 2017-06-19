@@ -125,8 +125,8 @@
                 loadingModalService.open();
                 userRightFactory.checkRightForCurrentUser(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.program.id, vm.facility.id).then(function(response) {
                     if(response) {
-                        requisitionService.initiate(vm.selectedFacilityId,
-                            vm.selectedProgramId,
+                        requisitionService.initiate(vm.facility.id,
+                            vm.program.id,
                             selectedPeriod.id,
                             vm.emergency)
                         .then(function (data) {
