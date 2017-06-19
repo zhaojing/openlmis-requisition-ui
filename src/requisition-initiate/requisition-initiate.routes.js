@@ -39,18 +39,6 @@
                 REQUISITION_RIGHTS.REQUISITION_AUTHORIZE
             ],
             resolve: {
-                facility: function(facilityFactory) {
-                    return facilityFactory.getUserHomeFacility();
-                },
-                user: function(authorizationService) {
-                    return authorizationService.getUser();
-                },
-                supervisedPrograms: function (programService, user) {
-                    return programService.getUserPrograms(user.user_id, false);
-                },
-                homePrograms: function (programService, user) {
-                    return programService.getUserPrograms(user.user_id, true);
-                },
                 periods: function(periodFactory, $stateParams) {
                     if ($stateParams.program && $stateParams.facility) {
                         return periodFactory.get(

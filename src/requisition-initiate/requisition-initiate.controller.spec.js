@@ -54,24 +54,12 @@ describe("RequisitionInitiateController", function(){
             });
 
             vm = $injector.get('$controller')('RequisitionInitiateController', {
-                facility: facility,
-                user: user,
-                supervisedPrograms: programs,
-                homePrograms: programs,
                 requisitionService: requisitionService,
                 userRightFactory: userRightFactoryMock,
                 periods: periods,
                 $stateParams: $stateParams
             });
         });
-    });
-
-    it("should assign proper values when facility is assigned", function() {
-        vm.$onInit();
-
-        expect(vm.selectedFacilityId).toEqual(facility.id);
-        expect(vm.programs).toEqual(programs);
-        expect(vm.selectedProgramId).toEqual(undefined);
     });
 
     it("Should change page to requisitions.requisition for with selected period with rnrId", function() {
@@ -89,7 +77,8 @@ describe("RequisitionInitiateController", function(){
         spyOn($state, 'go');
         spyOn(requisitionService, 'initiate').andReturn($q.when({"id": 1}));
         hasRight = true;
-        vm.selectedProgramId = programs[0].id;
+        vm.program = programs[0];
+        vm.facility = facility;
 
         vm.initRnr(selectedPeriod);
         $rootScope.$apply();
@@ -103,7 +92,8 @@ describe("RequisitionInitiateController", function(){
         vm.$onInit();
         spyOn($state, 'go');
         hasRight = false;
-        vm.selectedProgramId = programs[0].id;
+        vm.program = programs[0];
+        vm.facility = facility;
 
         vm.initRnr(selectedPeriod);
         $rootScope.$apply();
@@ -116,6 +106,8 @@ describe("RequisitionInitiateController", function(){
         var selectedPeriod = {};
         spyOn(requisitionService,'initiate').andReturn($q.reject({"id": 1}));
         spyOn($state, 'go');
+        vm.program = programs[0];
+        vm.facility = facility;
 
         vm.initRnr(selectedPeriod);
         $rootScope.$apply();
@@ -126,6 +118,8 @@ describe("RequisitionInitiateController", function(){
     it("Should open loading modal", function() {
         var selectedPeriod = {"id":1};
         spyOn(loadingModalService, 'open');
+        vm.program = programs[0];
+        vm.facility = facility;
 
         vm.initRnr(selectedPeriod);
 
@@ -134,8 +128,9 @@ describe("RequisitionInitiateController", function(){
 
     it("Should reload periods with proper data", function() {
         spyOn($state, 'go');
-        vm.selectedProgramId = programs[0].id;
-        vm.selectedFacilityId = facility.id;
+        vm.program = programs[0];
+        vm.facility = facility;
+        vm.isSupervised = false;
 
         vm.$onInit();
         vm.loadPeriods();
@@ -144,43 +139,11 @@ describe("RequisitionInitiateController", function(){
         expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.initRnr', {
             supervised: false,
             emergency: false,
-            program: vm.selectedProgramId,
-            facility: vm.selectedFacilityId
+            program: vm.program.id,
+            facility: vm.facility.id
         }, {
             reload: true
         });
-    });
-
-    it("should load proper data for supervised facility", function() {
-        vm.updateFacilityType(true);
-
-        expect(vm.facilities).toEqual([]);
-        expect(vm.programs).toEqual(vm.supervisedPrograms);
-        expect(vm.selectedFacilityId).toEqual(undefined);
-    });
-
-    it("should load proper data for home facility", function() {
-        vm.updateFacilityType(false);
-
-        expect(vm.facilities).toEqual([facility]);
-        expect(vm.programs).toEqual(vm.homePrograms);
-        expect(vm.selectedFacilityId).toEqual(facility.id);
-    });
-
-    it("should load list of facilities for selected program", function() {
-        spyOn(facilityService, 'getUserSupervisedFacilities').andReturn([facility]);
-        spyOn(authorizationService, 'getRightByName').andReturn(right);
-
-        vm.$onInit();
-        vm.loadFacilitiesForProgram(vm.supervisedPrograms[0]);
-
-        expect(vm.facilities).toEqual([facility]);
-    });
-
-    it("should return empty list of facilities for undefined program", function() {
-        vm.loadFacilitiesForProgram(undefined);
-
-        expect(vm.facilities).toEqual([]);
     });
 
 });

@@ -31,6 +31,7 @@
         'openlmis-i18n',
         'openlmis-auth',
         'openlmis-date',
+        'openlmis-facility-program-select',
         'referencedata-facility',
         'openlmis-form',
         'openlmis-modal',
