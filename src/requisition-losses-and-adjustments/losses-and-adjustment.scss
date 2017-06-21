@@ -14,8 +14,7 @@
         text-decoration: none;
     }
 
-    &.disabled {
-
+    &[disabled] {
         &::before {
             content: '\f08e';
         }

@@ -76,9 +76,13 @@
             });
 
             scope.$watch(function(){
-                return attr.hasOwnProperty('disabled');
+                return attr.disabled;
             }, function(disabled){
-                scope.isDisabled = disabled;
+                if(disabled) {
+                    scope.isDisabled = true;
+                } else {
+                    scope.isDisabled = false;
+                }
             });
 
             function showModal() {
