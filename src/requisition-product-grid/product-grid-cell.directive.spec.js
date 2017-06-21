@@ -87,6 +87,7 @@ describe('ProductGridCell', function() {
             requisition = jasmine.createSpyObj('requisition', [
                 '$getStockAdjustmentReasons',
                 '$isInitiated',
+                '$isRejected',
                 '$isSubmitted',
                 '$isApproved',
                 '$isReleased',
@@ -210,12 +211,36 @@ describe('ProductGridCell', function() {
 
     it('makes an editable cell if initiated and user can submit', function(){
         scope.requisition.$isInitiated.andReturn(true);
+        scope.requisition.$isRejected.andReturn(false);
         scope.requisition.$isApproved.andReturn(false);
         scope.requisition.$isReleased.andReturn(false);
         scope.requisition.$isAuthorized.andReturn(false);
         scope.requisition.$isInApproval.andReturn(false);
 
         userAlwaysHasRight = false;
+        userHasSubmitRight = false;
+        directiveElem = getCompiledElement();
+
+        expect(directiveElem.html()).toContain("readOnlyFieldValue");
+        expect(directiveElem.find("input").length).toEqual(0);
+
+        userHasSubmitRight = true;
+        directiveElem = getCompiledElement();
+
+        expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
+        expect(directiveElem.find("input").length).toEqual(1);
+    });
+
+    it('makes an editable cell if rejected and user can submit', function(){
+        scope.requisition.$isInitiated.andReturn(false);
+        scope.requisition.$isRejected.andReturn(true);
+        scope.requisition.$isApproved.andReturn(false);
+        scope.requisition.$isReleased.andReturn(false);
+        scope.requisition.$isAuthorized.andReturn(false);
+        scope.requisition.$isInApproval.andReturn(false);
+
+        userAlwaysHasRight = false;
+        userHasSubmitRight = false;
         directiveElem = getCompiledElement();
 
         expect(directiveElem.html()).toContain("readOnlyFieldValue");

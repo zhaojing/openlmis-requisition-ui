@@ -139,7 +139,7 @@
                     if (hasAuthorizeRightForProgram() && requisition.$isSubmitted()) {
                         return false;
                     }
-                    if(hasSubmitRightForProgram() && requisition.$isInitiated()){
+                    if (hasSubmitRightForProgram() && (requisition.$isInitiated() || requisition.$isRejected())) {
                         return false;
                     }
                 }
