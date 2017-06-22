@@ -1,16 +1,24 @@
-5.0.2 / WIP
+5.0.2 / 2017-06-22
 ===========
+
+New functionality added in a backwards-compatible manner:
+* [MW-244](https://openlmis.atlassian.net/browse/MW-244): Added support for requisition REJECTED status.
+* [MW-245](https://openlmis.atlassian.net/browse/MW-245): Added filter to convert to order page.
+* [MW-306](https://openlmis.atlassian.net/browse/MW-306): Allows UI to use more performant responses from Requisition Service.
 
 Improvements:
 
 * [OLMIS-2444](https://openlmis.atlassian.net/browse/OLMIS-2444): Added new "add" button class.
+* [OLMIS-2533](https://openlmis.atlassian.net/browse/OLMIS-2533): Allowed for smaller requests from UI to server.
 * [OLMIS-2572](https://openlmis.atlassian.net/browse/OLMIS-2572): Column definition will now show when hovering over whole header instead of only the button.
+* [OLMIS-2567](https://openlmis.atlassian.net/browse/OLMIS-2567): Implements openlmis-facility-program-select.
 
 Bug fixes:
 
 * [OLMIS-2638](https://openlmis.atlassian.net/browse/OLMIS-2638): Updated read-only check to make sure user right and requisition status match
 * [OLMIS-2664](https://openlmis.atlassian.net/browse/OLMIS-2664): Requisition will now be saved
 before getting rejected to preserve the status message.
+* [OLMIS-2704](https://openlmis.atlassian.net/browse/OLMIS-2704): Added warning if cached requistion is outdated.
 
 5.0.1 / 2017-05-26
 ==================
