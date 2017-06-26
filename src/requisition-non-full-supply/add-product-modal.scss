@@ -1,3 +1,13 @@
-.add-product-modal form {
-    max-width: none;
+.add-product-modal {
+    form {
+        max-width: none;
+    }
+
+    .modal-footer > * {
+        width: 100%
+    }
+
+    .modal-footer > * > button {
+        margin: 0;
+    }
 }

@@ -29,30 +29,17 @@
         .module('requisition-non-full-supply')
         .controller('AddProductModalController', controller);
 
-    controller.$inject = ['$ngBootbox', '$filter', 'deferred', 'categories', 'programId'];
+    controller.$inject = ['$filter', 'modalDeferred', 'categories', 'programId'];
 
-    function controller($ngBootbox, $filter, deferred, categories, programId) {
+    function controller($filter, modalDeferred, categories, programId) {
         var vm = this;
 
         vm.categoryVisible = categoryVisible;
         vm.productVisible = productVisible;
         vm.addProduct = addProduct;
-        vm.close = close;
+        vm.close = modalDeferred.reject;
 
         vm.categories = categories;
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:AddProductModalController
-         * @name close
-         *
-         * @description
-         * Closes add product modal and rejects modal promise.
-         */
-        function close() {
-            $ngBootbox.hideAll();
-            deferred.reject();
-        }
 
         /**
          * @ngdoc method
@@ -63,10 +50,9 @@
          * Resolves promise with line item created from parameters.
          */
         function addProduct() {
-            $ngBootbox.hideAll();
             vm.selectedProduct.$visible = false;
 
-            deferred.resolve({
+            modalDeferred.resolve({
                 requestedQuantity: vm.requestedQuantity,
                 requestedQuantityExplanation: vm.requestedQuantityExplanation,
                 pricePerPack: getProgram(vm.selectedProduct, programId).pricePerPack,

@@ -30,12 +30,11 @@
         .service('addProductModalService', service);
 
     service.$inject = [
-        '$q', '$rootScope', '$compile', '$templateRequest', '$ngBootbox', 'messageService',
-        '$controller', 'categoryFactory'
+        'categoryFactory', 'openlmisModalService'
     ];
 
-    function service($q, $rootScope, $compile, $templateRequest, $ngBootbox, messageService,
-                     $controller, categoryFactory) {
+    function service(categoryFactory, openlmisModalService) {
+        var dialog;
 
         this.show = show;
 
@@ -45,31 +44,34 @@
          * @name show
          *
          * @description
-         * Shows modal that allows to add line item to requisition.
+         * Opens a modal responsible for adding new non full supply available product.
          *
-         * @param   {Object}    requisition the requisition to add a product for
-         * @return  {Promise}               resolved with line item when product is added
+         * @param  {Object} requisition the requisition containing list of available products
+         * @return {Object}             the new product
          */
         function show(requisition) {
-            var deferred = $q.defer(),
-                scope = $rootScope.$new();
+            if (dialog) return dialog.promise;
 
-            scope.vm = $controller('AddProductModalController', {
-                deferred: deferred,
-                categories: categoryFactory.groupProducts(requisition),
-                programId: requisition.program.id
+            dialog = openlmisModalService.createDialog({
+                controller: 'AddProductModalController',
+                controllerAs: 'vm',
+                templateUrl: 'requisition-non-full-supply/add-product-modal.html',
+                show: true,
+                resolve: {
+                    categories: function() {
+                        return categoryFactory.groupProducts(requisition);
+                    },
+                    programId: function() {
+                        return requisition.program.id;
+                    }
+                }
             });
 
-            $templateRequest('requisition-non-full-supply/add-product-modal.html')
-                .then(function(template) {
-                    $ngBootbox.customDialog({
-                        title: messageService.get('requisitionNonFullSupply.addProduct'),
-                        message: $compile(angular.element(template))(scope),
-                        className: 'add-product-modal'
-                    });
-                });
+            dialog.promise.finally(function() {
+                dialog = undefined;
+            });
 
-            return deferred.promise;
+            return dialog.promise;
         }
     }
 
