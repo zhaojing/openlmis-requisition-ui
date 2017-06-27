@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc service
-     * @name admin-template.templateValidator
+     * @name admin-program-template.templateValidator
      *
      * @description
      * Provides methods for validating templates and columns.
      */
     angular
-        .module('admin-template')
+        .module('admin-program-template')
         .factory('templateValidator', factory);
 
     factory.$inject = [
@@ -52,7 +52,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.templateValidator
+         * @methodOf admin-program-template.templateValidator
          * @name isTemplateValid
          *
          * @description
@@ -74,7 +74,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.templateValidator
+         * @methodOf admin-program-template.templateValidator
          * @name getColumnError
          *
          * @description
@@ -97,24 +97,24 @@
         }
 
         function validateLabel(label) {
-            if (isEmpty(label)) return messageService.get('adminTemplate.columnLabelEmpty');
-            if (label.length < 2) return messageService.get('adminTemplate.columnLabelToShort');
-            if (!ALPHA_NUMERIC_REGEX.test(label)) return messageService.get('adminTemplate.columnLabelNotAllowedCharacters');
+            if (isEmpty(label)) return messageService.get('adminProgramTemplate.columnLabelEmpty');
+            if (label.length < 2) return messageService.get('adminProgramTemplate.columnLabelToShort');
+            if (!ALPHA_NUMERIC_REGEX.test(label)) return messageService.get('adminProgramTemplate.columnLabelNotAllowedCharacters');
         }
 
         function validateDefinition(definition) {
             if (definition && definition.length > MAX_COLUMN_DESCRIPTION_LENGTH) {
-                return messageService.get('adminTemplate.columnDescriptionTooLong');
+                return messageService.get('adminProgramTemplate.columnDescriptionTooLong');
             }
         }
 
         function validateSource(source) {
-            if (isEmpty(source)) return messageService.get('adminTemplate.emptyColumnSource');
+            if (isEmpty(source)) return messageService.get('adminProgramTemplate.emptyColumnSource');
         }
 
         function validateOption(column) {
             if (column.isDisplayed && column.columnDefinition.options.length && !column.option) {
-                return messageService.get('adminTemplate.emptyColumnOption');
+                return messageService.get('adminProgramTemplate.emptyColumnOption');
             }
         }
 
@@ -128,10 +128,10 @@
         function validateAverageConsumption(column, template) {
             var periodsToAverage = template.numberOfPeriodsToAverage;
             if (isEmpty(periodsToAverage)) {
-                return messageService.get('adminTemplate.emptyNumberOfPeriods');
+                return messageService.get('adminProgramTemplate.emptyNumberOfPeriods');
             }
             if (periodsToAverage < 2) {
-                return messageService.get('adminTemplate.invalidNumberOfPeriods');
+                return messageService.get('adminProgramTemplate.invalidNumberOfPeriods');
             }
         }
 
@@ -139,7 +139,7 @@
             var wColumn = template.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION];
 
             if (column.isDisplayed && !wColumn.isDisplayed) {
-                return messageService.get('adminTemplate.columnDisplayMismatch') + wColumn.label;
+                return messageService.get('adminProgramTemplate.columnDisplayMismatch') + wColumn.label;
             }
         }
 
@@ -147,7 +147,7 @@
             var jColumn = template.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY];
 
             if (column.isDisplayed && !jColumn.isDisplayed) {
-                return messageService.get('adminTemplate.columnDisplayMismatch') + jColumn.label;
+                return messageService.get('adminProgramTemplate.columnDisplayMismatch') + jColumn.label;
             }
         }
 
@@ -164,7 +164,7 @@
 
             if(dependencies.length > 0) {
                 dependencies = dependencies.substring(0, dependencies.length - 1); // remove last comma
-                return messageService.get('adminTemplate.calculatedError') + dependencies;
+                return messageService.get('adminProgramTemplate.calculatedError') + dependencies;
             }
 
             return message;
@@ -172,7 +172,7 @@
 
         function validateUserInput(column) {
             if (!column.isDisplayed && column.source === COLUMN_SOURCES.USER_INPUT && column.columnDefinition.sources.length > 1) {
-                return messageService.get('adminTemplate.shouldBeDisplayed') + messageService.get('adminTemplate.isUserInput');
+                return messageService.get('adminProgramTemplate.shouldBeDisplayed') + messageService.get('adminProgramTemplate.isUserInput');
             }
         }
 
@@ -180,14 +180,14 @@
             if (!column.isDisplayed) {
                 var nColumn = template.columnsMap.adjustedConsumption;
                 if (nColumn.isDisplayed && nColumn.source === COLUMN_SOURCES.CALCULATED) {
-                    return messageService.get('adminTemplate.shouldBeDisplayedIfOtherIsCalculated', {
+                    return messageService.get('adminProgramTemplate.shouldBeDisplayedIfOtherIsCalculated', {
                         column: nColumn.label
                     });
                 }
 
                 var pColumn = template.columnsMap.averageConsumption;
                 if (pColumn.isDisplayed && pColumn.source === COLUMN_SOURCES.CALCULATED) {
-                    return messageService.get('adminTemplate.shouldBeDisplayedIfOtherIsCalculated', {
+                    return messageService.get('adminProgramTemplate.shouldBeDisplayedIfOtherIsCalculated', {
                         column: pColumn.label
                     });
                 }
@@ -201,7 +201,7 @@
 
             if (!column.isDisplayed && (!requestedQuantityColumn.isDisplayed ||
                 !requestedQuantityExplanationColumn.isDisplayed)) {
-                return messageService.get('adminTemplate.shouldDisplayRequestedQuantity', {
+                return messageService.get('adminProgramTemplate.shouldDisplayRequestedQuantity', {
                     calculatedOrderQuantity: column.label,
                     requestedQuantity: requestedQuantityColumn.label,
                     requestedQuantityExplanation: requestedQuantityExplanationColumn.label

@@ -17,7 +17,7 @@ describe('templateValidator', function() {
     var templateValidator, template;
 
     beforeEach(function() {
-        module('admin-template');
+        module('admin-program-template');
 
         inject(function($injector) {
             templateValidator = $injector.get('templateValidator');
@@ -109,7 +109,7 @@ describe('templateValidator', function() {
 
             var result = templateValidator.getColumnError(column);
 
-            expect(result).toBe('adminTemplate.columnLabelEmpty');
+            expect(result).toBe('adminProgramTemplate.columnLabelEmpty');
         });
 
         it('should return error if label is empty', function() {
@@ -117,7 +117,7 @@ describe('templateValidator', function() {
 
             var result = templateValidator.getColumnError(column);
 
-            expect(result).toBe('adminTemplate.columnLabelEmpty');
+            expect(result).toBe('adminProgramTemplate.columnLabelEmpty');
         });
 
         it('should return error if label is too short', function() {
@@ -125,7 +125,7 @@ describe('templateValidator', function() {
 
             var result = templateValidator.getColumnError(column);
 
-            expect(result).toBe('adminTemplate.columnLabelToShort');
+            expect(result).toBe('adminProgramTemplate.columnLabelToShort');
         });
 
         it('should return error if label is not alphanumeric', function() {
@@ -133,7 +133,7 @@ describe('templateValidator', function() {
 
             var result = templateValidator.getColumnError(column);
 
-            expect(result).toBe('adminTemplate.columnLabelNotAllowedCharacters');
+            expect(result).toBe('adminProgramTemplate.columnLabelNotAllowedCharacters');
         });
 
         it('should return error if column definition is too long', function() {
@@ -143,7 +143,7 @@ describe('templateValidator', function() {
 
             var result = templateValidator.getColumnError(column);
 
-            expect(result).toBe('adminTemplate.columnDescriptionTooLong');
+            expect(result).toBe('adminProgramTemplate.columnDescriptionTooLong');
         });
 
         it('should return error if column source is not selected', function() {
@@ -151,7 +151,7 @@ describe('templateValidator', function() {
 
             var result = templateValidator.getColumnError(column);
 
-            expect(result).toBe('adminTemplate.emptyColumnSource');
+            expect(result).toBe('adminProgramTemplate.emptyColumnSource');
         });
 
         it('should return error if column is visible but option is not selected', function() {
@@ -159,7 +159,7 @@ describe('templateValidator', function() {
 
             var result = templateValidator.getColumnError(column);
 
-            expect(result).toBe('adminTemplate.emptyColumnOption');
+            expect(result).toBe('adminProgramTemplate.emptyColumnOption');
         });
 
         describe('for average consumption', function() {
@@ -173,7 +173,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.invalidNumberOfPeriods');
+                expect(result).toBe('adminProgramTemplate.invalidNumberOfPeriods');
             });
 
             it('should return error if number of periods is empty', function() {
@@ -181,7 +181,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.emptyNumberOfPeriods');
+                expect(result).toBe('adminProgramTemplate.emptyNumberOfPeriods');
             });
         });
 
@@ -211,7 +211,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.columnDisplayMismatchRequested Quantity Explanation');
+                expect(result).toBe('adminProgramTemplate.columnDisplayMismatchRequested Quantity Explanation');
             });
 
         });
@@ -242,7 +242,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.columnDisplayMismatchRequested Quantity');
+                expect(result).toBe('adminProgramTemplate.columnDisplayMismatchRequested Quantity');
             });
 
         });
@@ -279,7 +279,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.calculatedError Stock on Hand');
+                expect(result).toBe('adminProgramTemplate.calculatedError Stock on Hand');
             });
 
             it('should validate for circular dependencies and return error for multiple columns', function() {
@@ -287,7 +287,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.calculatedError Stock on Hand, Total');
+                expect(result).toBe('adminProgramTemplate.calculatedError Stock on Hand, Total');
             });
 
         });
@@ -312,7 +312,7 @@ describe('templateValidator', function() {
                 var result = templateValidator.getColumnError(template.columnsMap.stockOnHand);
 
                 expect(result)
-                    .toEqual('adminTemplate.shouldBeDisplayedadminTemplate.isUserInput');
+                    .toEqual('adminProgramTemplate.shouldBeDisplayedadminProgramTemplate.isUserInput');
             });
 
         });
@@ -356,7 +356,7 @@ describe('templateValidator', function() {
                 spyOn(messageService, 'get').andCallThrough();
 
                 messageService.get.andCallFake(function(message, params) {
-                    if (message === 'adminTemplate.shouldBeDisplayedIfOtherIsCalculated' && params &&
+                    if (message === 'adminProgramTemplate.shouldBeDisplayedIfOtherIsCalculated' && params &&
                         params.column === pColumn.label) {
 
                         return message + ' ' + params.column;
@@ -376,7 +376,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.shouldBeDisplayedIfOtherIsCalculated ' + pColumn.label);
+                expect(result).toBe('adminProgramTemplate.shouldBeDisplayedIfOtherIsCalculated ' + pColumn.label);
             });
 
             it('should return undefined if the column is hidden and consumptions are hidden', function() {
@@ -424,7 +424,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.shouldDisplayRequestedQuantity');
+                expect(result).toBe('adminProgramTemplate.shouldDisplayRequestedQuantity');
             });
 
             it('should return error if both requested quantity explanation and calculated order quantity are hidden', function() {
@@ -433,7 +433,7 @@ describe('templateValidator', function() {
 
                 var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminTemplate.shouldDisplayRequestedQuantity');
+                expect(result).toBe('adminProgramTemplate.shouldDisplayRequestedQuantity');
             });
 
         });

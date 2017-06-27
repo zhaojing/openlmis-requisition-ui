@@ -13,52 +13,35 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 (function() {
 
     'use strict';
 
     /**
      * @ngdoc controller
-     * @name admin-template-list.controller:ProgramAdministrationListController
+     * @name admin-program-list.controller:ProgramAdministrationListController
      *
      * @description
      * Controller for template list view page.
      */
     angular
-        .module('admin-template-list')
+        .module('admin-program-list')
         .controller('ProgramAdministrationListController', controller);
 
-    controller.$inject = ['$state', 'programList', 'authorizationService', 'REQUISITION_RIGHTS'];
+    controller.$inject = ['programList', 'authorizationService', 'REQUISITION_RIGHTS'];
 
-    function controller($state, programList, authorizationService, REQUISITION_RIGHTS) {
+    function controller(programList, authorizationService, REQUISITION_RIGHTS) {
         var vm = this;
-
-        vm.canConfigureTemplates = canConfigureTemplates;
 
         /**
          * @ngdoc property
          * @name programs
-         * @propertyOf admin-template-list.controller:ProgramAdministrationListController
+         * @propertyOf admin-program-list.controller:ProgramAdministrationListController
          * @type {Array}
          *
          * @description
          * Holds list of all programs with templates.
          */
         vm.programs = programList;
-
-        /**
-         * @ngdoc method
-         * @methodOf admin-template-list.controller:ProgramAdministrationListController
-         * @name canConfigureTemplates
-         *
-         * @description
-         * Checks if user has right to configure templates.
-         *
-         * @return {Boolean} true if user can configure templates, false otherwise
-         */
-        function canConfigureTemplates() {
-            return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE);
-        }
     }
 })();

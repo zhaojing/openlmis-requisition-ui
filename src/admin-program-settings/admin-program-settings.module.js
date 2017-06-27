@@ -18,14 +18,14 @@
     'use strict';
 
     /**
-     * @ngdoc object
-     * @name admin-template.ALPHA_NUMERIC_REGEX
+     * @module admin-program-settings
      *
      * @description
-     * This is constant for alpha numeric regex.
+     * Provides admin settings screen for programs.
      */
-    angular
-        .module('admin-template')
-        .constant('ALPHA_NUMERIC_REGEX', /^[a-zA-z0-9/]+[a-zA-Z0-9/ ]+$/);
-
+    angular.module('admin-program-settings', [
+        'openlmis-modal',
+        'openlmis-rights',
+        'ui.router'
+    ]);
 })();

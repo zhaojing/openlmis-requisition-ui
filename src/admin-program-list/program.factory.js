@@ -13,25 +13,24 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 (function(){
 
     'use strict';
 
     /**
      * @ngdoc service
-     * @name admin-template-list.programFactory
+     * @name admin-program-list.programFactory
      *
      * @description
      * Allows the user to retrieve programs with additional information.
      */
     angular
-        .module('admin-template-list')
+        .module('admin-program-list')
         .factory('programFactory', factory);
 
-    factory.$inject = ['openlmisUrlFactory', '$q', 'programService', 'templateFactory'];
+    factory.$inject = ['openlmisUrlFactory', '$q', 'programService', 'templateFactory', '$filter'];
 
-    function factory(openlmisUrlFactory, $q, programService, templateFactory){
+    function factory(openlmisUrlFactory, $q, programService, templateFactory, $filter) {
 
         return {
             getAllProgramsWithTemplates: getAllProgramsWithTemplates
@@ -39,7 +38,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-list.programFactory
+         * @methodOf admin-program-list.programFactory
          * @name getAllProgramsWithTemplates
          *
          * @description
@@ -50,23 +49,22 @@
         function getAllProgramsWithTemplates() {
             var deferred = $q.defer();
 
-            programService.getAll().then(function(programs) {
-                templateFactory.getAll().then(function(templates) {
-                    angular.forEach(programs, function(program, programIdx) {
-                        angular.forEach(templates, function(template, templateIdx) {
-                            if(program.id === template.programId) {
-                                program.$template = template;
-                            }
-                            if((programIdx === programs.length - 1) && (templateIdx === templates.length - 1))
-                                deferred.resolve(programs);
-                        });
+            $q.all([
+                programService.getAll(),
+                templateFactory.getAll()
+            ]).then(function(responses) {
+                var programs = responses[0],
+                    templates = responses[1];
+
+                    angular.forEach(programs, function(program) {
+                        var filtered = $filter('filter')(templates, {
+                            programId: program.id
+                        }, true);
+                        if (filtered && filtered.length > 0) program.$template = filtered[0];
                     });
-                }, function() {
-                    deferred.reject();
-                });
-            }, function() {
-                deferred.reject();
-            });
+
+                    deferred.resolve(programs);
+            }, deferred.reject);
 
             return deferred.promise;
         }

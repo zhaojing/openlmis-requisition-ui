@@ -21,12 +21,12 @@
     /**
      * @ngdoc directive
      * @restrict A
-     * @name admin-template.directive:disableDrag
+     * @name admin-program-template.directive:disableDrag
      *
      * @description
      * Disable drag action on html elements i.e. inputs.
      */
-    angular.module('admin-template').directive('disableDrag', disableDrag);
+    angular.module('admin-program-template').directive('disableDrag', disableDrag);
 
     function disableDrag() {
         var directive = {

@@ -19,12 +19,12 @@
 
     /**
      * @ngdoc service
-     * @name admin-template.templateFactory
+     * @name admin-program-template.templateFactory
      *
      * @description
      * Communicates with templateDataService.
      */
-    angular.module('admin-template').factory('templateFactory', templateFactory);
+    angular.module('admin-program-template').factory('templateFactory', templateFactory);
 
     templateFactory.$inject = ['$q', '$filter', 'requisitionTemplateService', 'RequisitionColumn', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'ALPHA_NUMERIC_REGEX'];
 
@@ -33,14 +33,15 @@
         var factory = {
             get: get,
             getAll: getAll,
-            getByProgram: getByProgram
+            getByProgram: getByProgram,
+            search: search
         };
 
         return factory;
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.templateFactory
+         * @methodOf admin-program-template.templateFactory
          * @name get
          *
          * @description
@@ -52,25 +53,33 @@
         function get(id) {
             var deferred = $q.defer();
             requisitionTemplateService.get(id).then(function(template) {
-                template.$save = save;
-                template.$moveColumn = moveColumn;
-                template.$findCircularCalculatedDependencies = findCircularCalculatedDependencies;
-
-                angular.forEach(template.columnsMap, function(column) {
-                    addDependentColumnValidation(column, template.columnsMap);
-                    fixColumnOptionModelReference(column);
-                });
-
-                deferred.resolve(template);
-            }, function() {
-                deferred.reject();
-            });
+                deferred.resolve(prepareTemplate(template));
+            }, deferred.reject);
             return deferred.promise;
         }
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.templateFactory
+         * @methodOf admin-program-template.templateFactory
+         * @name search
+         *
+         * @description
+         * Gets requisition template by program id and adds validation and column sorting methods.
+         *
+         * @param  {String}  id Template UUID
+         * @return {Promise}    Template
+         */
+        function search(programId) {
+            var deferred = $q.defer();
+            requisitionTemplateService.search(programId).then(function(template) {
+                deferred.resolve(prepareTemplate(template));
+            }, deferred.reject);
+            return deferred.promise;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-program-template.templateFactory
          * @name getAll
          *
          * @description
@@ -84,7 +93,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.templateFactory
+         * @methodOf admin-program-template.templateFactory
          * @name getByProgram
          *
          * @description
@@ -95,6 +104,19 @@
          */
         function getByProgram(programId) {
             return requisitionTemplateService.search(programId);
+        }
+
+        function prepareTemplate(template) {
+            template.$save = save;
+            template.$moveColumn = moveColumn;
+            template.$findCircularCalculatedDependencies = findCircularCalculatedDependencies;
+
+            angular.forEach(template.columnsMap, function(column) {
+                addDependentColumnValidation(column, template.columnsMap);
+                fixColumnOptionModelReference(column);
+            });
+
+            return template;
         }
 
         // Saves template
@@ -253,7 +275,7 @@
                 numberOfPeriods < 2;
         }
 
-        //this fixes setting initial value of the select on the admin-template screen
+        //this fixes setting initial value of the select on the admin-program-template screen
         function fixColumnOptionModelReference(column) {
             if (column.option ) {
                 column.option = $filter('filter')(column.columnDefinition.options, {

@@ -13,38 +13,22 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 (function() {
 
-	'use strict';
+    'use strict';
 
-	angular.module('admin-template').config(routes);
-
-	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
-
-	function routes($stateProvider, REQUISITION_RIGHTS) {
-
-		$stateProvider.state('openlmis.administration.programs.configureTemplate', {
-			label: 'adminTemplateList.configureTemplate',
-			url: '/template/:template',
-			accessRights: [
-				REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE
-			],
-			views: {
-				'@openlmis': {
-					controller: 'RequisitionTemplateAdminController',
-					templateUrl: 'admin-template/template.html',
-					controllerAs: 'vm',
-					resolve: {
-						template: function ($stateParams, templateFactory) {
-							return templateFactory.get($stateParams.template);
-						},
-						program: function (template, programService) {
-							return programService.get(template.programId);
-						}
-					},
-				}
-			}
-		});
-	}
+    /**
+     * @module admin-program-list
+     *
+     * @description
+     * Provides base admin-program state and factory/controller for retrieving
+     * list of programs from the OpenLMIS server.
+     */
+    angular.module('admin-program-list', [
+        'admin-program-template',
+        'openlmis-admin',
+        'referencedata-program',
+        'requisition',
+        'ui.router'
+    ]);
 })();

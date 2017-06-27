@@ -1,11 +1,11 @@
 <div class="requisition-template-admin">
-    <h2>{{'adminTemplate.configureRnrTemplate' | message}}</h2>
+    <h2>{{'adminProgramTemplate.configureRnrTemplate' | message}}</h2>
     <aside>
         <dl>
-            <dt>{{'adminTemplate.program' | message}}</dt>
+            <dt>{{'adminProgramTemplate.program' | message}}</dt>
             <dd>
                 {{vm.program.name}}
-                <a ng-click="vm.goToTemplateList()">{{'adminTemplate.change' | message}}</a>
+                <a ng-click="vm.goToTemplateList()">{{'adminProgramTemplate.change' | message}}</a>
             </dd>
         </dl>
     </aside>
@@ -14,12 +14,12 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th>{{'adminTemplate.display' | message}}</th>
+                    <th>{{'adminProgramTemplate.display' | message}}</th>
                     <th></th>
-                    <th>{{'adminTemplate.label' | message}}</th>
-                    <th>{{'adminTemplate.definition' | message}}</th>
-                    <th>{{'adminTemplate.source' | message}}</th>
-                    <th>{{'adminTemplate.additionalOptions' | message}}</th>
+                    <th>{{'adminProgramTemplate.label' | message}}</th>
+                    <th>{{'adminProgramTemplate.definition' | message}}</th>
+                    <th>{{'adminProgramTemplate.source' | message}}</th>
+                    <th>{{'adminProgramTemplate.additionalOptions' | message}}</th>
                 </tr>
             </thead>
             <tbody dnd-list="vm.template.columnsMap" dnd-drop="vm.dropCallback(event, index, item)">
@@ -51,7 +51,7 @@
                         </td>
                         <td>
                             <div ng-if="vm.isAverageConsumption(column)">
-                                <label for="numberOfPeriods">{{'adminTemplate.numberOfPeriodsToAverage' | message}}</label>
+                                <label for="numberOfPeriods">{{'adminProgramTemplate.numberOfPeriodsToAverage' | message}}</label>
                                 <input disable-drag positive-integer id="numberOfPeriods" ng-model="vm.template.numberOfPeriodsToAverage" class="form-control"/>
                             </div>
                             <div ng-if="column.columnDefinition.options.length > 0">
@@ -75,6 +75,6 @@
     </div>
 </div>
 <div class="openlmis-toolbar">
-    <input type="button" ng-click="vm.saveTemplate()" class="primary" ng-disabled="!vm.isTemplateValid(vm.template)" value="{{'adminTemplate.save' | message}}"/>
-    <input type="button" ng-click="vm.goToTemplateList()" value="{{'adminTemplate.cancel' | message}}">
+    <input type="button" ng-click="vm.saveTemplate()" class="primary" ng-disabled="!vm.isTemplateValid(vm.template)" value="{{'adminProgramTemplate.save' | message}}"/>
+    <input type="button" ng-click="vm.goToTemplateList()" value="{{'adminProgramTemplate.cancel' | message}}">
 </div>

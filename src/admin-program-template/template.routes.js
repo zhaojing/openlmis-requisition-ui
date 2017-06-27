@@ -15,21 +15,27 @@
 
 (function() {
 
-    'use strict';
+	'use strict';
 
-    /**
-     * @module admin-template-list
-     *
-     * @description
-     * Provides base admin-template state and factory/controller for retrieving
-     * list of templates from the OpenLMIS server.
-     */
-    angular.module('admin-template-list', [
-        'admin-template',
-        'openlmis-admin',
-        'referencedata-program',
-        'requisition',
-        'ui.router'
-    ]);
+	angular
+        .module('admin-program-template')
+        .config(routes);
 
+	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+
+	function routes($stateProvider, REQUISITION_RIGHTS) {
+		$stateProvider.state('openlmis.administration.programs.edit.template', {
+			label: 'adminProgramTemplate.template',
+			url: '/template',
+            templateUrl: 'admin-program-template/template.html',
+            controller: 'RequisitionTemplateAdminController',
+            controllerAs: 'vm',
+            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
+            resolve: {
+                template: function(program, templateFactory) {
+                    return templateFactory.search(program.id);
+                }
+            }
+		});
+	}
 })();

@@ -25,7 +25,7 @@ describe('RequisitionTemplateAdminController', function() {
     var q, state, notificationService, COLUMN_SOURCES, rootScope, MAX_COLUMN_DESCRIPTION_LENGTH;
 
     beforeEach(function() {
-        module('admin-template');
+        module('admin-program-template');
 
         template = jasmine.createSpyObj('template', ['$save', '$moveColumn', '$findCircularCalculatedDependencies']);
         template.id = '1';

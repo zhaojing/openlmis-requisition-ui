@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc controller
-     * @name admin-template.controller:RequisitionTemplateAdminController
+     * @name admin-program-template.controller:RequisitionTemplateAdminController
      *
      * @description
      * Controller for template view page.
      */
     angular
-        .module('admin-template')
+        .module('admin-program-template')
         .controller('RequisitionTemplateAdminController', RequisitionTemplateAdminController);
 
     RequisitionTemplateAdminController.$inject = [
@@ -42,7 +42,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-template.controller:RequisitionTemplateAdminController
+         * @propertyOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name maxColumnDescriptionLength
          * @type {Number}
          *
@@ -53,7 +53,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-template.controller:RequisitionTemplateAdminController
+         * @propertyOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name template
          * @type {Object}
          *
@@ -64,7 +64,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-template.controller:RequisitionTemplateAdminController
+         * @propertyOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name program
          * @type {Object}
          *
@@ -84,7 +84,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.controller:RequisitionTemplateAdminController
+         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name goToTemplateList
          *
          * @description
@@ -96,7 +96,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.controller:RequisitionTemplateAdminController
+         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name saveTemplate
          *
          * @description
@@ -106,16 +106,16 @@
          */
         function saveTemplate() {
             vm.template.$save().then(function() {
-                notificationService.success('adminTemplate.templateSave.success');
+                notificationService.success('adminProgramTemplate.templateSave.success');
                 goToTemplateList();
             }, function() {
-                notificationService.error('adminTemplate.templateSave.failure');
+                notificationService.error('adminProgramTemplate.templateSave.failure');
             });
         }
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.controller:RequisitionTemplateAdminController
+         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name dropCallback
          *
          * @description
@@ -128,14 +128,14 @@
          */
         function dropCallback(event, index, item) {
             if(!vm.template.$moveColumn(item, index)) {
-                notificationService.error('adminTemplate.canNotDropColumn');
+                notificationService.error('adminProgramTemplate.canNotDropColumn');
             }
             return false; // disable default drop functionality
         }
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.controller:RequisitionTemplateAdminController
+         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name canChangeSource
          *
          * @description
@@ -150,7 +150,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.controller:RequisitionTemplateAdminController
+         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name sourceDisplayName
          *
          * @description
@@ -165,7 +165,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template.controller:RequisitionTemplateAdminController
+         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
          * @name isAverageConsumption
          *
          * @description

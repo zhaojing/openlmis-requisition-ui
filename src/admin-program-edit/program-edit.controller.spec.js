@@ -13,30 +13,34 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
+describe('ProgramEditController', function() {
 
-(function() {
+    var vm, program;
 
-	'use strict';
+    beforeEach(function() {
+        module('admin-program-edit');
 
-	angular.module('admin-template-list').config(routes);
+        program = {
+            id: 'program-id-1',
+            name: 'program-1'
+        };
 
-	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+        inject(function($injector) {
+            vm = $injector.get('$controller')('ProgramEditController', {
+                program: program
+            });
+        });
+        vm.$onInit();
+    });
 
-	function routes($stateProvider, REQUISITION_RIGHTS) {
+    describe('init', function() {
 
-		$stateProvider.state('openlmis.administration.programs', {
-			showInNavigation: true,
-			label: 'adminTemplateList.programs',
-			url: '/templateList',
-			controller: 'ProgramAdministrationListController',
-			templateUrl: 'admin-template-list/program-administration-list.html',
-			controllerAs: 'vm',
-			accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
-			resolve: {
-				programList: function (programFactory) {
-					return programFactory.getAllProgramsWithTemplates();
-				}
-			}
-		});
-	}
-})();
+        it('should expose onInit method', function() {
+            expect(angular.isFunction(vm.$onInit)).toBe(true);
+        });
+
+        it('should expose program', function() {
+            expect(vm.program).toEqual(program);
+        });
+    });
+});

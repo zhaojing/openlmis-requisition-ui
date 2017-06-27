@@ -17,14 +17,20 @@
 
     'use strict';
 
-    /**
-    * @ngdoc object
-    * @name admin-template.MAX_COLUMN_DESCRIPTION_LENGTH
-    *
-    * @description
-    * This is constant for max column description length.
-    */
     angular
-        .module('admin-template')
-        .constant('MAX_COLUMN_DESCRIPTION_LENGTH', 140);
+        .module('admin-program-settings')
+        .config(routes);
+
+    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+
+    function routes($stateProvider, REQUISITION_RIGHTS) {
+        $stateProvider.state('openlmis.administration.programs.edit.settings', {
+            label: 'adminProgramSettings.settings',
+            url: '/settings',
+            templateUrl: 'admin-program-settings/program-settings.html',
+            controller: 'ProgramSettingsController',
+            controllerAs: 'vm',
+            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE]
+        });
+    }
 })();

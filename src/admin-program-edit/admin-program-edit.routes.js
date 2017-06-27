@@ -13,38 +13,35 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 (function() {
 
     'use strict';
 
-    /**
-     * @ngdoc filter
-     * @name admin-template.filter:orderObjectBy
-     *
-     * @description
-     * Orders object properties by given attribute.
-     *
-     * @param  {Object} value object to be sorted by given attribute
-     * @param  {String} key   object properties will be sorted using this key
-     * @return {Array}        sorted properties
-     */
-    angular.module('admin-template').filter('orderObjectBy', function(){
-        return function(input, attribute) {
-            if (!angular.isObject(input)) return input;
+    angular
+        .module('admin-program-edit')
+        .config(routes);
 
-            var columns = [];
+    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
-            for(var objectKey in input) {
-                columns.push(input[objectKey]);
+    function routes($stateProvider, REQUISITION_RIGHTS) {
+
+        $stateProvider.state('openlmis.administration.programs.edit', {
+            abstract: 'true',
+            label: 'adminProgramEdit.editProgram',
+            url: '/:id',
+            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
+            views: {
+                '@openlmis': {
+                    controller: 'ProgramEditController',
+                    templateUrl: 'admin-program-edit/program-edit.html',
+                    controllerAs: 'vm',
+                }
+            },
+            resolve: {
+                program: function(programService, $stateParams) {
+                    return programService.get($stateParams.id);
+                }
             }
-            return columns.sort(sort);
-
-            function sort(a, b) {
-                a = parseInt(a[attribute]);
-                b = parseInt(b[attribute]);
-                return a - b;
-            }
-        }
-    });
+        });
+    }
 })();

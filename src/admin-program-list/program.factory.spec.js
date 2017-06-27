@@ -18,8 +18,7 @@ describe('programFactory', function() {
     var $rootScope, programFactory, program1, program2, template, $q;
 
     beforeEach(function() {
-
-        module('admin-template-list', function($provide) {
+        module('admin-program-list', function($provide) {
             var templateFactorySpy = jasmine.createSpyObj('templateFactory', ['getAll']);
 
             templateFactorySpy.getAll.andCallFake(function() {
@@ -41,10 +40,10 @@ describe('programFactory', function() {
         	});
         });
 
-        inject(function(_$rootScope_, _programFactory_, _$q_) {
-            $rootScope = _$rootScope_;
-            programFactory = _programFactory_;
-            $q = _$q_;
+        inject(function($injector) {
+            $rootScope = $injector.get('$rootScope');
+            programFactory = $injector.get('programFactory');
+            $q = $injector.get('$q');
         });
 
         template = {
