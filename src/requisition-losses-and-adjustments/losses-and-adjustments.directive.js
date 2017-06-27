@@ -47,9 +47,10 @@
         .module('requisition-losses-and-adjustments')
         .directive('lossesAndAdjustments', lossesAndAdjustments);
 
-    lossesAndAdjustments.$inject = ['$compile', '$templateRequest', 'messageService'];
+    lossesAndAdjustments.$inject = [];
 
-    function lossesAndAdjustments($compile, $templateRequest, messageService) {
+    function lossesAndAdjustments() {
+
         var directive = {
             restrict: 'A',
             replace: true,
@@ -61,57 +62,15 @@
                 requisition: '='
             },
             link: link
-        }
+        };
         return directive;
 
         function link(scope, element, attr, vm) {
-            var dialog;
-
-            vm.showModal = showModal;
-            vm.hideModal = hideModal;
-
-            element.on('$destroy', function() {
-                if (dialog) dialog.remove();
-                dialog = undefined;
-            });
-
             scope.$watch(function(){
                 return attr.disabled;
-            }, function(disabled){
-                if(disabled) {
-                    scope.isDisabled = true;
-                } else {
-                    scope.isDisabled = false;
-                }
+            }, function(disabled) {
+                vm.isDisabled = !!disabled;
             });
-
-            function showModal() {
-                $templateRequest('requisition-losses-and-adjustments/losses-and-adjustments-modal.html')
-                    .then(function(modal){
-                        if (dialog) {
-                            dialog.remove();
-                            dialog = undefined;
-                        }
-
-                        vm.adjustment = {};
-
-                        dialog = bootbox.dialog({
-                            title: messageService.get('requisitionLossesAndAdjustments.lossesAndAdjustments'),
-                            message: $compile(modal)(scope),
-                            backdrop: true,
-                            onEscape: true,
-                            closeButton: true
-                        });
-                    }
-                );
-            }
-
-            function hideModal() {
-                if(dialog) {
-                    dialog.modal('hide');
-                    dialog = undefined;
-                }
-            }
         }
     }
 
