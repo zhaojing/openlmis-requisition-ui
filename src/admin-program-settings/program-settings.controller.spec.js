@@ -30,7 +30,7 @@ describe('ProgramSettingsController', function() {
                 return loadingModalService;
             });
 
-            programService = jasmine.createSpyObj('programService', ['save']);
+            programService = jasmine.createSpyObj('programService', ['update']);
             $provide.service('programService', function() {
                 return programService;
             });
