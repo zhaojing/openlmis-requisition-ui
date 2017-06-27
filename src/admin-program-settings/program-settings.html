@@ -17,17 +17,17 @@
     </fieldset>
     <fieldset>
         <label class="checkbox">
-           <input type="checkbox" ng-model="vm.program.displayNonFullSupply"/>
+           <input type="checkbox" ng-model="vm.program.showNonFullSupplyTab"/>
            {{'adminProgramSettings.displayNonFullSupply' | message}}
         </label>
-        <p class="param-info">{{'adminProgramSettings.displayNonFullSupplyDescription' | message}}</p>
+        <p class="input-description">{{'adminProgramSettings.displayNonFullSupplyDescription' | message}}</p>
     </fieldset>
     <fieldset>
         <label class="checkbox">
-           <input type="checkbox" ng-model="vm.program.aloowSkippingPeriods"/>
+           <input type="checkbox" ng-model="vm.program.periodsSkippable"/>
            {{'adminProgramSettings.allowSkippingPeriods' | message}}
         </label>
-        <p class="param-info">{{'adminProgramSettings.displayNonFullSupplyDescription' | message}}</p>
+        <p class="input-description">{{'adminProgramSettings.displayNonFullSupplyDescription' | message}}</p>
     </fieldset>
     <div class="button-group">
         <button class="primary" type="submit">{{'adminProgramSettings.save' | message}}</button>
