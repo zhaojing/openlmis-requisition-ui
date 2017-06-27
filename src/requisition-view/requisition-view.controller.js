@@ -29,19 +29,20 @@
         .controller('RequisitionViewController', RequisitionViewController);
 
     RequisitionViewController.$inject = [
-        '$state', 'requisition', 'requisitionValidator', 'authorizationService', 'requisitionService',
-        'loadingModalService', 'alertService', 'notificationService', 'confirmService', 'REQUISITION_RIGHTS',
-        'FULFILLMENT_RIGHTS', 'convertToOrderModalService', 'offlineService', '$window',
-        'requisitionUrlFactory', '$filter', '$scope', '$timeout', 'RequisitionWatcher', 'accessTokenFactory',
-        'messageService', 'stateTrackerService'
+        '$state', 'requisition', 'requisitionValidator', 'authorizationService',
+        'requisitionService', 'loadingModalService', 'alertService', 'notificationService',
+        'confirmService', 'REQUISITION_RIGHTS', 'FULFILLMENT_RIGHTS', 'offlineService', '$window',
+        'requisitionUrlFactory', '$filter', '$scope', '$timeout', 'RequisitionWatcher',
+        'accessTokenFactory', 'messageService', 'stateTrackerService'
     ];
 
-    function RequisitionViewController($state, requisition, requisitionValidator, authorizationService,
-                             requisitionService, loadingModalService, alertService, notificationService, confirmService,
-                             REQUISITION_RIGHTS, FULFILLMENT_RIGHTS , convertToOrderModalService,
-                             offlineService, $window, requisitionUrlFactory, $filter, $scope,
-                             $timeout, RequisitionWatcher, accessTokenFactory, messageService,
-                             stateTrackerService) {
+    function RequisitionViewController($state, requisition, requisitionValidator,
+                                       authorizationService, requisitionService,
+                                       loadingModalService, alertService, notificationService,
+                                       confirmService, REQUISITION_RIGHTS, FULFILLMENT_RIGHTS,
+                                       offlineService, $window, requisitionUrlFactory, $filter,
+                                       $scope, $timeout, RequisitionWatcher, accessTokenFactory,
+                                       messageService, stateTrackerService) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition);
@@ -99,7 +100,6 @@
         vm.submitRnr = submitRnr;
         vm.authorizeRnr = authorizeRnr;
         vm.removeRnr = removeRnr;
-        vm.convertRnr = convertRnr;
         vm.approveRnr = approveRnr;
         vm.rejectRnr = rejectRnr;
         vm.skipRnr = skipRnr;
@@ -122,12 +122,12 @@
          *
          * @description
          * After confirming with the user, the offline requisition is removed,
-         * and the state is reloaded. This will fetch a fresh version of the 
+         * and the state is reloaded. This will fetch a fresh version of the
          * requisition.
          *
          * If the browser is offline, an error will be thrown, and nothing will
          * change.
-         * 
+         *
          */
         function updateRequisition() {
             if(offlineService.isOffline()) {
@@ -512,18 +512,6 @@
                 return hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_APPROVE);
             }
             return false;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name convertRnr
-         *
-         * @description
-         * Displays convert to order modal.
-         */
-        function convertRnr() {
-            convertToOrderModalService.show(vm.requisition);
         }
 
         /**
