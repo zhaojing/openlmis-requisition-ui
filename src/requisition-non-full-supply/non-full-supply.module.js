@@ -24,7 +24,6 @@
      * Responsible for managing non full supply screen.
      */
     angular.module('requisition-non-full-supply', [
-        'ngBootbox',
         'openlmis-form',
         'openlmis-pagination',
         'openlmis-templates',
