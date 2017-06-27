@@ -1,14 +1,30 @@
-<div class="status-message-list">
-    <article class="status-message" ng-repeat="statusMessage in vm.requisition.$statusMessages">
-        <header>
-            <div class="status">{{statusMessage.status | requisitionStatus}}</div>
-            <div class="date">
-                {{statusMessage.authorFirstName}}
-                {{statusMessage.authorLastName}}
-                on
-                {{statusMessage.createdDate | openlmisDate: 'longDate'}}
+
+<div class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" role="button" class="close" aria-label="Close" ng-click="$hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4>{{'requisitionStatusMessages.requisitionHistory' | message}}</h4>
             </div>
-        </header>
-        <div class="content">{{statusMessage.body}}</div>
-    </article>
+            <div class="modal-body">
+                <div class="status-message-list">
+                    <article class="status-message"
+                        ng-repeat="statusMessage in vm.requisition.$statusMessages">
+                        <header>
+                            <div class="status">{{statusMessage.status | requisitionStatus}}</div>
+                            <div class="date">
+                                {{statusMessage.authorFirstName}}
+                                {{statusMessage.authorLastName}}
+                                on
+                                {{statusMessage.createdDate | openlmisDate: 'longDate'}}
+                            </div>
+                        </header>
+                        <div class="content">{{statusMessage.body}}</div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

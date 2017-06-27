@@ -14,7 +14,8 @@
  */
 
 (function(){
-    "use strict";
+
+    'use strict';
 
     /**
      * @ngdoc service
@@ -23,16 +24,15 @@
      * @description
      * Displays modal with status messages history.
      */
-
     angular
         .module('requisition-status-messages')
         .service('statusMessagesHistoryService', service);
 
-    service.$inject = ['$q', '$rootScope', '$ngBootbox', 'messageService', '$compile', '$templateRequest'];
+    service.$inject = [
+        'openlmisModalService'
+    ];
 
-    function service($q, $rootScope, $ngBootbox, messageService, $compile, $templateRequest) {
-
-        var deferred, vm;
+    function service(openlmisModalService) {
 
         this.show = show;
 
@@ -45,34 +45,15 @@
          * Shows modal with status messages history.
          *
          * @param  {Object}   requisition Requisition to get its history
-         * @return {Promises}             status messages for requisition and template for modal
          */
         function show(requisition) {
-            var scope = $rootScope.$new();
-
-            deferred = $q.defer();
-
-            scope.vm = {};
-            vm = scope.vm;
-
-            vm.requisition = requisition;
-
-            $templateRequest('requisition-status-messages/status-messages-history.html')
-            .then(function(template) {
-                $ngBootbox.customDialog({
-                    title: messageService.get('requisitionStatusMessages.requisitionHistory'),
-                    message: $compile(angular.element(template))(scope),
-                    className: 'status-messages-history',
-                    onEscape: true,
-                    backdrop: true
-                });
-            }, reject);
-
-            return deferred.promise;
-        }
-
-        function reject(deferred) {
-            deferred.reject();
+            openlmisModalService.createDialog({
+                template: 'requisition-status-messages/status-messages-history.html',
+                controllerAs: 'vm',
+                controller: function() {
+                    this.requisition = requisition;
+                }
+            });
         }
     }
 })();

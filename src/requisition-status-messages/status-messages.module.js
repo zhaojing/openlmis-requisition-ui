@@ -24,7 +24,6 @@
      * Provides status messages for the requisition view screen.
      */
     angular.module('requisition-status-messages', [
-        'ngBootbox',
         'openlmis-form',
         'openlmis-i18n',
         'requisition-constants'
