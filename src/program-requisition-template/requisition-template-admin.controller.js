@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc controller
-     * @name admin-program-template.controller:RequisitionTemplateAdminController
+     * @name program-requisition-template.controller:RequisitionTemplateAdminController
      *
      * @description
      * Controller for template view page.
      */
     angular
-        .module('admin-program-template')
+        .module('program-requisition-template')
         .controller('RequisitionTemplateAdminController', RequisitionTemplateAdminController);
 
     RequisitionTemplateAdminController.$inject = [
@@ -42,7 +42,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @propertyOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name maxColumnDescriptionLength
          * @type {Number}
          *
@@ -53,7 +53,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @propertyOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name template
          * @type {Object}
          *
@@ -64,7 +64,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @propertyOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name program
          * @type {Object}
          *
@@ -84,7 +84,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @methodOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name goToTemplateList
          *
          * @description
@@ -96,7 +96,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @methodOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name saveTemplate
          *
          * @description
@@ -115,7 +115,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @methodOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name dropCallback
          *
          * @description
@@ -135,7 +135,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @methodOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name canChangeSource
          *
          * @description
@@ -150,7 +150,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @methodOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name sourceDisplayName
          *
          * @description
@@ -165,7 +165,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.controller:RequisitionTemplateAdminController
+         * @methodOf program-requisition-template.controller:RequisitionTemplateAdminController
          * @name isAverageConsumption
          *
          * @description

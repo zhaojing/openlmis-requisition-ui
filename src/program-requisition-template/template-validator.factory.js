@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc service
-     * @name admin-program-template.templateValidator
+     * @name program-requisition-template.templateValidator
      *
      * @description
      * Provides methods for validating templates and columns.
      */
     angular
-        .module('admin-program-template')
+        .module('program-requisition-template')
         .factory('templateValidator', factory);
 
     factory.$inject = [
@@ -52,7 +52,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.templateValidator
+         * @methodOf program-requisition-template.templateValidator
          * @name isTemplateValid
          *
          * @description
@@ -74,7 +74,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.templateValidator
+         * @methodOf program-requisition-template.templateValidator
          * @name getColumnError
          *
          * @description

@@ -19,12 +19,12 @@
 
     /**
      * @ngdoc service
-     * @name admin-program-template.requisitionTemplateService
+     * @name program-requisition-template.requisitionTemplateService
      *
      * @description
      * Allows user to perform operations on requisition template resource.
      */
-    angular.module('admin-program-template').service('requisitionTemplateService', requisitionTemplateService);
+    angular.module('program-requisition-template').service('requisitionTemplateService', requisitionTemplateService);
 
     requisitionTemplateService.$inject = ['requisitionUrlFactory', '$resource'];
 
@@ -52,7 +52,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.requisitionTemplateService
+         * @methodOf program-requisition-template.requisitionTemplateService
          * @name get
          *
          * @description
@@ -67,7 +67,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.requisitionTemplateService
+         * @methodOf program-requisition-template.requisitionTemplateService
          * @name getAll
          *
          * @description
@@ -81,7 +81,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.requisitionTemplateService
+         * @methodOf program-requisition-template.requisitionTemplateService
          * @name search
          *
          * @description
@@ -96,7 +96,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.requisitionTemplateService
+         * @methodOf program-requisition-template.requisitionTemplateService
          * @name  save
          *
          * @description

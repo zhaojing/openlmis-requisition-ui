@@ -13,19 +13,38 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
+
 (function() {
 
     'use strict';
 
     /**
-     * @module admin-program-edit
+     * @ngdoc filter
+     * @name program-requisition-template.filter:orderObjectBy
      *
      * @description
-     * Provides admin edit screen for programs.
+     * Orders object properties by given attribute.
+     *
+     * @param  {Object} value object to be sorted by given attribute
+     * @param  {String} key   object properties will be sorted using this key
+     * @return {Array}        sorted properties
      */
-    angular.module('admin-program-edit', [
-        'referencedata-program',
-        'openlmis-rights',
-        'ui.router'
-    ]);
+    angular.module('program-requisition-template').filter('orderObjectBy', function(){
+        return function(input, attribute) {
+            if (!angular.isObject(input)) return input;
+
+            var columns = [];
+
+            for(var objectKey in input) {
+                columns.push(input[objectKey]);
+            }
+            return columns.sort(sort);
+
+            function sort(a, b) {
+                a = parseInt(a[attribute]);
+                b = parseInt(b[attribute]);
+                return a - b;
+            }
+        }
+    });
 })();

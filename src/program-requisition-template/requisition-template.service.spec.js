@@ -17,7 +17,7 @@ describe('requisitionTemplateService', function() {
 
     var rootScope, httpBackend, requisitionTemplateService, requisitionUrlFactory, template1, template2;
 
-    beforeEach(module('admin-program-template'));
+    beforeEach(module('program-requisition-template'));
 
     beforeEach(inject(function($httpBackend, $rootScope, _requisitionTemplateService_,
                                _requisitionUrlFactory_) {

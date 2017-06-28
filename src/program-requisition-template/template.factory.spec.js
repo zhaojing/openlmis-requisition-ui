@@ -17,7 +17,7 @@ describe('templateFactory', function() {
 
     var rootScope, TemplateFactory, template, q, dependencyTestColumns, MAX_COLUMN_DESCRIPTION_LENGTH;
 
-    beforeEach(module('admin-program-template'));
+    beforeEach(module('program-requisition-template'));
 
     beforeEach(module(function($provide){
         var requisitionTemplateServiceSpy = jasmine.createSpyObj('requisitionTemplateService', [

@@ -18,14 +18,18 @@
     'use strict';
 
     /**
-     * @module admin-program-settings
+     * @module program-requisition-template
      *
      * @description
-     * Provides admin settings screen for programs.
+     * Provides base program-requisition-template state and service/factory/controller for retrieving
+     * templates from the OpenLMIS server.
      */
-    angular.module('admin-program-settings', [
-        'openlmis-modal',
-        'openlmis-rights',
+    angular.module('program-requisition-template', [
+        'dndLists',
+        'openlmis-admin',
+        'referencedata-program',
+        'requisition',
         'ui.router'
     ]);
+
 })();

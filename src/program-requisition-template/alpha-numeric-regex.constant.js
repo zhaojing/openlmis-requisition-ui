@@ -17,20 +17,14 @@
 
     'use strict';
 
+    /**
+     * @ngdoc object
+     * @name program-requisition-template.ALPHA_NUMERIC_REGEX
+     *
+     * @description
+     * This is constant for alpha numeric regex.
+     */
     angular
-        .module('admin-program-settings')
-        .config(routes);
-
-    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
-
-    function routes($stateProvider, REQUISITION_RIGHTS) {
-        $stateProvider.state('openlmis.administration.programs.edit.settings', {
-            label: 'adminProgramSettings.settings',
-            url: '/settings',
-            templateUrl: 'admin-program-settings/program-settings.html',
-            controller: 'ProgramSettingsController',
-            controllerAs: 'vm',
-            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE]
-        });
-    }
+        .module('program-requisition-template')
+        .constant('ALPHA_NUMERIC_REGEX', /^[a-zA-z0-9/]+[a-zA-Z0-9/ ]+$/);
 })();

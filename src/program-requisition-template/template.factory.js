@@ -19,12 +19,12 @@
 
     /**
      * @ngdoc service
-     * @name admin-program-template.templateFactory
+     * @name program-requisition-template.templateFactory
      *
      * @description
      * Communicates with templateDataService.
      */
-    angular.module('admin-program-template').factory('templateFactory', templateFactory);
+    angular.module('program-requisition-template').factory('templateFactory', templateFactory);
 
     templateFactory.$inject = ['$q', '$filter', 'requisitionTemplateService', 'RequisitionColumn', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'ALPHA_NUMERIC_REGEX'];
 
@@ -41,7 +41,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.templateFactory
+         * @methodOf program-requisition-template.templateFactory
          * @name get
          *
          * @description
@@ -60,7 +60,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.templateFactory
+         * @methodOf program-requisition-template.templateFactory
          * @name search
          *
          * @description
@@ -79,7 +79,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.templateFactory
+         * @methodOf program-requisition-template.templateFactory
          * @name getAll
          *
          * @description
@@ -93,7 +93,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-program-template.templateFactory
+         * @methodOf program-requisition-template.templateFactory
          * @name getByProgram
          *
          * @description
@@ -275,7 +275,7 @@
                 numberOfPeriods < 2;
         }
 
-        //this fixes setting initial value of the select on the admin-program-template screen
+        //this fixes setting initial value of the select on the program-requisition-template screen
         function fixColumnOptionModelReference(column) {
             if (column.option ) {
                 column.option = $filter('filter')(column.columnDefinition.options, {

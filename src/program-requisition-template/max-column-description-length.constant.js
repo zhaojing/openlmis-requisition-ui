@@ -17,31 +17,14 @@
 
     'use strict';
 
+    /**
+    * @ngdoc object
+    * @name program-requisition-template.MAX_COLUMN_DESCRIPTION_LENGTH
+    *
+    * @description
+    * This is constant for max column description length.
+    */
     angular
-        .module('admin-program-edit')
-        .config(routes);
-
-    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
-
-    function routes($stateProvider, REQUISITION_RIGHTS) {
-
-        $stateProvider.state('openlmis.administration.programs.edit', {
-            abstract: 'true',
-            label: 'adminProgramEdit.editProgram',
-            url: '/:id',
-            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
-            views: {
-                '@openlmis': {
-                    controller: 'ProgramEditController',
-                    templateUrl: 'admin-program-edit/program-edit.html',
-                    controllerAs: 'vm',
-                }
-            },
-            resolve: {
-                program: function(programService, $stateParams) {
-                    return programService.get($stateParams.id);
-                }
-            }
-        });
-    }
+        .module('program-requisition-template')
+        .constant('MAX_COLUMN_DESCRIPTION_LENGTH', 140);
 })();

@@ -17,7 +17,7 @@ describe('templateValidator', function() {
     var templateValidator, template;
 
     beforeEach(function() {
-        module('admin-program-template');
+        module('program-requisition-template');
 
         inject(function($injector) {
             templateValidator = $injector.get('templateValidator');
