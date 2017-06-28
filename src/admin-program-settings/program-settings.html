@@ -1,0 +1,36 @@
+<form class="settingsForm" id="prograSettings" ng-submit="vm.saveProgram()">
+    <label>
+        <i ng-class="{'icon-ok': vm.program.active, 'icon-remove': !vm.program.active}"></i>
+        {{'adminProgramSettings.isProgramActive' | message}}
+    </label>
+    <fieldset>
+        <label for="name">{{'adminProgramSettings.programName' | message}}</label>
+        <input id="name" class="form-control" ng-model="vm.program.name" required/>
+    </fieldset>
+    <fieldset>
+        <label for="code">{{'adminProgramSettings.programCode' | message}}</label>
+        <input id="code" class="form-control" ng-model="vm.program.code" required disabled/>
+    </fieldset>
+    <fieldset>
+        <label for="description">{{'adminProgramSettings.description' | message}}</label>
+        <textarea id="description" ng-model="vm.program.description"></textarea>
+    </fieldset>
+    <fieldset>
+        <label class="checkbox">
+           <input type="checkbox" ng-model="vm.program.showNonFullSupplyTab"/>
+           {{'adminProgramSettings.displayNonFullSupply' | message}}
+        </label>
+        <p class="note">{{'adminProgramSettings.displayNonFullSupplyDescription' | message}}</p>
+    </fieldset>
+    <fieldset>
+        <label class="checkbox">
+           <input type="checkbox" ng-model="vm.program.periodsSkippable"/>
+           {{'adminProgramSettings.allowSkippingPeriods' | message}}
+        </label>
+        <p class="note">{{'adminProgramSettings.allowSkippingPeriodsDescription' | message}}</p>
+    </fieldset>
+    <div class="button-group">
+        <button class="primary" type="submit">{{'adminProgramSettings.save' | message}}</button>
+        <button ui-sref="openlmis.administration.programs">{{'adminProgramSettings.cancel' | message}}</button>
+    </div>
+</form>

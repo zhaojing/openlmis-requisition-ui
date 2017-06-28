@@ -1,0 +1,14 @@
+{
+    "adminProgramList.configured": "Configured",
+    "adminProgramList.configureTemplate": "Configure Template",
+    "adminProgramList.create": "Create",
+    "adminProgramList.edit": "Edit",
+    "adminProgramList.program": "Program",
+    "adminProgramList.programs": "Programs",
+    "adminProgramList.requisitionTemplate": "Requisition template",
+    "adminProgramList.edit": "Edit",
+    "adminProgramList.actions": "Actions",
+    "adminProgramList.programSettings": "Program Settings",
+    "adminProgramList.active": "Active",
+    "adminProgramList.notActive": "Not Active"
+}

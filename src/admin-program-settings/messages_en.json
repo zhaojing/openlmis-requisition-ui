@@ -1,0 +1,16 @@
+{
+    "adminProgramSettings.settings": "Settings",
+    "adminProgramSettings.isProgramActive": "Program is Active",
+    "adminProgramSettings.programName": "Program Name",
+    "adminProgramSettings.programCode": "Program Code",
+    "adminProgramSettings.description": "Description",
+    "adminProgramSettings.displayNonFullSupply": "Display Non Full Supply Tab",
+    "adminProgramSettings.displayNonFullSupplyDescription": "Enable the Non-Full Supply tab for this program's requisition form",
+    "adminProgramSettings.allowSkippingPeriods": "Allow Skipping Periods",
+    "adminProgramSettings.allowSkippingPeriodsDescription": "Enable Skipping Periods for this program's requisition form",
+    "adminProgramSettings.save": "Save",
+    "adminProgramSettings.cancel": "Cancel",
+    "adminProgramSettings.saveProgramSettingsConfirm": "Do you want to save changes to the Program Settings?",
+    "adminProgramSettings.programSettingsSavedSuccessfully": "Program Settings were saved successfully!",
+    "adminProgramSettings.programSettingsSaveFailed": "Program Settings save failed!"
+}

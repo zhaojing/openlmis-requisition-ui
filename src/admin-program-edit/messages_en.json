@@ -1,0 +1,6 @@
+{
+    "adminProgramEdit.editProgram": "Edit Program",
+    "adminProgramEdit.editProgramWithName": "Edit Program for ${program}",
+    "adminProgramEdit.programSettings": "Program Settings",
+    "adminProgramEdit.rnrTemplate": "R&R Template"
+}

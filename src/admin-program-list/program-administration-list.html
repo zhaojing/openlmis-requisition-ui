@@ -1,0 +1,30 @@
+<h2>{{'adminProgramList.programs' | message}}</h2>
+<div class="openlmis-table-container">
+    <table class="openlmis-table" ng-if="vm.programs.length">
+        <thead>
+            <tr>
+                <th>{{'adminProgramList.program' | message}}</th>
+                <th>{{'adminProgramList.programSettings' | message}}</th>
+                <th>{{'adminProgramList.requisitionTemplate' | message}}</th>
+                <th>{{'adminProgramList.actions' | message}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="program in vm.programs">
+                <td>{{program.name}}</td>
+                <td>{{program.active ? 'adminProgramList.active' : 'adminProgramList.notActive' | message}}</td>
+                <td>
+                    <div ng-if="program.$template">
+                        {{'adminProgramList.configured' | message}}
+                    </div>
+                    <div ng-if="!program.$template">
+                        <div>{{'adminProgramList.create' | message}}</div>
+                    </div>
+                </td>
+                <td>
+                    <button ui-sref="openlmis.administration.programs.edit.settings({id: program.id})">{{'adminProgramList.edit' | message}}</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
