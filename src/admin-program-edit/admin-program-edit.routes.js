@@ -27,7 +27,7 @@
 
         $stateProvider.state('openlmis.administration.programs.edit', {
             abstract: 'true',
-            label: 'adminProgramEdit.editProgram',
+            label: 'adminProgramEdit.editProgram.label',
             url: '/:id',
             accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
             views: {

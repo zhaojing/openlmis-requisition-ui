@@ -28,9 +28,9 @@
         .module('admin-program-edit')
         .controller('ProgramEditController', ProgramEditController);
 
-    ProgramEditController.$inject = ['$state', 'program'];
+    ProgramEditController.$inject = ['program'];
 
-    function ProgramEditController($state, program) {
+    function ProgramEditController(program) {
 
         var vm = this;
 

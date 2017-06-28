@@ -15,27 +15,27 @@
 
 (function() {
 
-	'use strict';
+    'use strict';
 
-	angular.module('admin-program-list').config(routes);
+    angular.module('admin-program-list').config(routes);
 
-	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
-	function routes($stateProvider, REQUISITION_RIGHTS) {
+    function routes($stateProvider, REQUISITION_RIGHTS) {
 
-		$stateProvider.state('openlmis.administration.programs', {
-			showInNavigation: true,
-			label: 'adminProgramList.programs',
-			url: '/programs',
-			controller: 'ProgramAdministrationListController',
-			templateUrl: 'admin-program-list/program-administration-list.html',
-			controllerAs: 'vm',
-			accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
-			resolve: {
-				programList: function(programService) {
-					return programService.getAllProgramsWithTemplates();
-				}
-			}
-		});
-	}
+        $stateProvider.state('openlmis.administration.programs', {
+            showInNavigation: true,
+            label: 'adminProgramList.programs',
+            url: '/programs',
+            controller: 'ProgramAdministrationListController',
+            templateUrl: 'admin-program-list/program-administration-list.html',
+            controllerAs: 'vm',
+            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
+            resolve: {
+                programList: function(programService) {
+                    return programService.getAllProgramsWithTemplates();
+                }
+            }
+        });
+    }
 })();

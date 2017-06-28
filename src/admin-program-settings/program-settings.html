@@ -1,33 +1,35 @@
 <form class="settingsForm" id="prograSettings" ng-submit="vm.saveProgram()">
-    <label>
-        <i ng-class="{'icon-ok': vm.program.active, 'icon-remove': !vm.program.active}"></i>
-        {{'adminProgramSettings.isProgramActive' | message}}
-    </label>
-    <fieldset>
+    <fieldset class="form-group">
+        <label>
+            <i ng-class="{'icon-ok': vm.program.active, 'icon-remove': !vm.program.active}"></i>
+            {{'adminProgramSettings.programIsActive' | message}}
+        </label>
+    </fieldset>
+    <fieldset class="form-group">
         <label for="name">{{'adminProgramSettings.programName' | message}}</label>
         <input id="name" class="form-control" ng-model="vm.program.name" required/>
     </fieldset>
-    <fieldset>
+    <fieldset class="form-group">
         <label for="code">{{'adminProgramSettings.programCode' | message}}</label>
         <input id="code" class="form-control" ng-model="vm.program.code" required disabled/>
     </fieldset>
-    <fieldset>
+    <fieldset class="form-group">
         <label for="description">{{'adminProgramSettings.description' | message}}</label>
         <textarea id="description" ng-model="vm.program.description"></textarea>
     </fieldset>
-    <fieldset>
+    <fieldset class="form-group">
         <label class="checkbox">
            <input type="checkbox" ng-model="vm.program.showNonFullSupplyTab"/>
-           {{'adminProgramSettings.displayNonFullSupply' | message}}
+           {{'adminProgramSettings.displayNonFullSupply.label' | message}}
         </label>
-        <p class="note">{{'adminProgramSettings.displayNonFullSupplyDescription' | message}}</p>
+        <p class="note">{{'adminProgramSettings.displayNonFullSupply.description' | message}}</p>
     </fieldset>
-    <fieldset>
+    <fieldset class="form-group">
         <label class="checkbox">
            <input type="checkbox" ng-model="vm.program.periodsSkippable"/>
-           {{'adminProgramSettings.allowSkippingPeriods' | message}}
+           {{'adminProgramSettings.allowSkippingPeriods.label' | message}}
         </label>
-        <p class="note">{{'adminProgramSettings.allowSkippingPeriodsDescription' | message}}</p>
+        <p class="note">{{'adminProgramSettings.allowSkippingPeriods.description' | message}}</p>
     </fieldset>
     <div class="button-group">
         <button class="primary" type="submit">{{'adminProgramSettings.save' | message}}</button>
