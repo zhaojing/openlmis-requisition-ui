@@ -2,7 +2,7 @@
     <fieldset class="form-group">
         <label>
             <i ng-class="{'icon-ok': vm.program.active, 'icon-remove': !vm.program.active}"></i>
-            {{'adminProgramSettings.programIsActive' | message}}
+            {{vm.program.active ? 'adminProgramSettings.programIsActive' : 'adminProgramSettings.programIsNotActive'| message}}
         </label>
     </fieldset>
     <fieldset class="form-group">

@@ -1,6 +1,7 @@
 {
     "adminProgramSettings.settings": "Settings",
     "adminProgramSettings.programIsActive": "Program is Active",
+    "adminProgramSettings.programIsNotActive": "Program is not Active",
     "adminProgramSettings.programName": "Program Name",
     "adminProgramSettings.programCode": "Program Code",
     "adminProgramSettings.description": "Description",
