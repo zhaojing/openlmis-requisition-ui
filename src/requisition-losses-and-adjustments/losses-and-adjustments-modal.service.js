@@ -43,7 +43,10 @@
          * @name open
          *
          * @description
-         * Open Total Losses and Adjustmnets modal.
+         * Open Total Losses and Adjustments modal.
+         *
+         * @param {Object}  lineItem    the line item for which manage losses and adjustments
+         * @param {Object}  requisition the requisition with the list of available reasons
          */
         function open(lineItem, requisition) {
             openlmisModalService.createDialog({

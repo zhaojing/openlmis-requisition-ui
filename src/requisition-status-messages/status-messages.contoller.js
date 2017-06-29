@@ -28,9 +28,9 @@
         .module('requisition-status-messages')
         .controller('StatusMessagesController', controller);
 
-    controller.$inject = ['$scope', 'statusMessagesHistoryService', 'MAX_COMMENT_LENGTH'];
+    controller.$inject = ['$scope', 'statusMessagesHistoryModalService', 'MAX_COMMENT_LENGTH'];
 
-    function controller($scope, statusMessagesHistoryService, MAX_COMMENT_LENGTH) {
+    function controller($scope, statusMessagesHistoryModalService, MAX_COMMENT_LENGTH) {
         var vm = this;
 
         /**
@@ -108,7 +108,7 @@
          * Responsible for displaying requisition status message history.
          */
         function displayRequisitionHistory() {
-            statusMessagesHistoryService.show(vm.requisition);
+            statusMessagesHistoryModalService.show(vm.requisition);
         }
 
         /**

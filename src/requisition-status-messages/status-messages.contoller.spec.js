@@ -19,7 +19,7 @@ describe('StatusMessagesController', function() {
 
     var rootScope, scope;
 
-    var requisition, statusMessagesHistoryServiceSpy;
+    var requisition, statusMessagesHistoryModalServiceSpy;
 
     beforeEach(function() {
 
@@ -27,9 +27,9 @@ describe('StatusMessagesController', function() {
 
         requisition = jasmine.createSpyObj('requisition', ['$statusMessages', '$isReleased', '$isApproved']);
 
-        inject(function($rootScope, statusMessagesHistoryService) {
+        inject(function($rootScope, statusMessagesHistoryModalService) {
             rootScope = $rootScope;
-            statusMessagesHistoryServiceSpy = statusMessagesHistoryService;
+            statusMessagesHistoryModalServiceSpy = statusMessagesHistoryModalService;
         });
 
         scope = rootScope.$new();
@@ -152,9 +152,9 @@ describe('StatusMessagesController', function() {
         }));
 
         it('should call statusMessageService', function() {
-            spyOn(statusMessagesHistoryServiceSpy, 'show');
+            spyOn(statusMessagesHistoryModalServiceSpy, 'show');
             vm.displayRequisitionHistory();
-            expect(statusMessagesHistoryServiceSpy.show).toHaveBeenCalled();
+            expect(statusMessagesHistoryModalServiceSpy.show).toHaveBeenCalled();
         });
     });
 

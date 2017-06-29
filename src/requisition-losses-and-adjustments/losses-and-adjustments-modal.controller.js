@@ -71,7 +71,7 @@
          * @ngdoc property
          * @propertyOf requisition-losses-and-adjustments.controller:LossesAndAdjustmentsModalController
          * @name adjustments
-         * @type {Object}
+         * @type {Array}
          *
          * @description
          * Line item adjustments that will be updated.
@@ -82,7 +82,7 @@
          * @ngdoc property
          * @propertyOf requisition-losses-and-adjustments.controller:LossesAndAdjustmentsModalController
          * @name reasons
-         * @type {Object}
+         * @type {Array}
          *
          * @description
          * Possible reasons that user can choose from.
@@ -132,6 +132,8 @@
          *
          * @description
          * Removes adjustment to line item.
+         *
+         * @param {Object}  adjustment  the adjustment to be removed
          */
         function removeAdjustment(adjustment) {
             var index = vm.adjustments.indexOf(adjustment);

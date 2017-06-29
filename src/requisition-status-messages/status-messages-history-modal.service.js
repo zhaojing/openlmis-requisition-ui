@@ -19,14 +19,14 @@
 
     /**
      * @ngdoc service
-     * @name requisition-status-messages.statusMessagesHistoryService
+     * @name requisition-status-messages.statusMessagesHistoryModalService
      *
      * @description
      * Displays modal with status messages history.
      */
     angular
         .module('requisition-status-messages')
-        .service('statusMessagesHistoryService', service);
+        .service('statusMessagesHistoryModalService', service);
 
     service.$inject = [
         'openlmisModalService'
@@ -38,7 +38,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-status-messages.statusMessagesHistoryService
+         * @methodOf requisition-status-messages.statusMessagesHistoryModalService
          * @name show
          *
          * @description
@@ -48,7 +48,7 @@
          */
         function show(requisition) {
             openlmisModalService.createDialog({
-                template: 'requisition-status-messages/status-messages-history.html',
+                template: 'requisition-status-messages/status-messages-history-modal.html',
                 controllerAs: 'vm',
                 controller: function() {
                     this.requisition = requisition;
