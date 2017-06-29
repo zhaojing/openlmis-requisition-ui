@@ -28,9 +28,9 @@
         .module('admin-program-list')
         .controller('ProgramAdministrationListController', controller);
 
-    controller.$inject = ['programList', 'authorizationService', 'REQUISITION_RIGHTS'];
+    controller.$inject = ['programList'];
 
-    function controller(programList, authorizationService, REQUISITION_RIGHTS) {
+    function controller(programList) {
         var vm = this;
 
         /**
