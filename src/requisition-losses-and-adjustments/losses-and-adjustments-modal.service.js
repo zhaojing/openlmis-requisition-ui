@@ -45,21 +45,21 @@
          * @description
          * Open Total Losses and Adjustments modal.
          *
-         * @param {Object}  lineItem    the line item for which manage losses and adjustments
-         * @param {Object}  requisition the requisition with the list of available reasons
+         * @param {Object}  reasons         the list of available reasons
+         * @param {Object}  adjustments     the list of adjustments to be updated
          */
-        function open(lineItem, requisition) {
+        function open(adjustments, reasons) {
             openlmisModalService.createDialog({
                 controller: 'LossesAndAdjustmentsModalController',
                 controllerAs: 'vm',
                 templateUrl: 'requisition-losses-and-adjustments/losses-and-adjustments-modal.html',
                 show: true,
                 resolve: {
-                    lineItem: function() {
-                        return lineItem;
+                    adjustments: function() {
+                        return adjustments;
                     },
-                    requisition: function() {
-                        return requisition;
+                    reasons: function() {
+                        return reasons;
                     }
                 }
             });

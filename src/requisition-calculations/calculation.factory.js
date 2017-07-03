@@ -112,16 +112,17 @@
          * @name totalLossesAndAdjustments
          *
          * @description
-         * Calculates the value of the Total Losses and Adjustments column based on the given line item and adjustment reasons.
+         * Calculates the value of the Total Losses and Adjustments column based on the
+         * given line item and adjustment reasons.
          *
-         * @param  {Object} lineItem               the line item to calculate the value from
-         * @param  {List}   stockAdjustmentReasons the list of stock adjustment reasons
-         * @return {Number}                        the calculated Total Losses and Adjustments value
+         * @param  {Object} adjustments     the list of adjustments to sum up
+         * @param  {List}   reasons         the list of stock adjustment reasons
+         * @return {Number}                 the calculated Total Losses and Adjustments value
          */
-        function calculateTotalLossesAndAdjustments(lineItem, stockAdjustmentReasons) {
+        function calculateTotalLossesAndAdjustments(adjustments, reasons) {
             var total = 0;
-            angular.forEach(lineItem.stockAdjustments, function(adjustment) {
-                var filteredReasons = $filter('filter')(stockAdjustmentReasons, {id: adjustment.reasonId}, true);
+            angular.forEach(adjustments, function(adjustment) {
+                var filteredReasons = $filter('filter')(reasons, {id: adjustment.reasonId}, true);
                 var reason = (filteredReasons) ? filteredReasons[0] : null;
                 if (!!reason) {
                     if (reason.additive === true) {

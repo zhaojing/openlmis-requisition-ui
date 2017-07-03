@@ -29,40 +29,18 @@ describe('LossesAndAdjustmentsModalController', function() {
         });
 
         adjustments = [];
-        requisition = jasmine.createSpyObj('requisition', [
-            '$stockAdjustmentReasons', '$isAuthorized', '$isApproved', '$isInApproval', '$isReleased', 'template'
-        ]);
-        requisition.template.columnsMap = {
-            totalConsumedQuantity: {
-              name: 'totalConsumedQuantity'
-            },
-            totalLossesAndAdjustments: {
-              name: 'totalLossesAndAdjustments'
-            }
-        };
-        reasons = requisition.$stockAdjustmentReasons;
-
-        lineItem = {
-            stockAdjustments: adjustments,
-            updateDependentFields: function () {}
-        };
+        reasons = [];
 
         modalDeferred = $q.defer();
 
         vm = $controller('LossesAndAdjustmentsModalController', {
-            lineItem: lineItem,
-            requisition: requisition,
+            adjustments: adjustments,
+            reasons: reasons,
             modalDeferred: modalDeferred
         });
     });
 
     describe('$onInit', function() {
-
-        it('should expose requisition', function() {
-            vm.$onInit();
-
-            expect(vm.requisition).toBe(requisition);
-        });
 
         it('should expose adjustments', function() {
             vm.$onInit();
@@ -116,12 +94,6 @@ describe('LossesAndAdjustmentsModalController', function() {
             expect(vm.adjustment.reason).toBeUndefined();
         });
 
-        it('should update total losses and adjustments', function() {
-            vm.addAdjustment();
-
-            expect(vm.lineItem.totalLossesAndAdjustments).toBe(10);
-        });
-
     });
 
     describe('removeAdjustment', function() {
@@ -141,8 +113,6 @@ describe('LossesAndAdjustmentsModalController', function() {
                 },
                 adjustment
             ];
-
-            spyOn(vm, 'recalculateTotal').andReturn();
         });
 
         it('should remove adjustment', function() {
@@ -152,12 +122,6 @@ describe('LossesAndAdjustmentsModalController', function() {
                 reasonId: 123,
                 quantity: 10
             }]);
-        });
-
-        it('should update total losses and adjustments', function() {
-            vm.removeAdjustment(adjustment);
-
-            expect(vm.recalculateTotal).toHaveBeenCalled();
         });
     });
 
@@ -191,45 +155,15 @@ describe('LossesAndAdjustmentsModalController', function() {
 
     it('getTotal should call calculationFactory', function() {
         vm.reasons = reasons;
-        vm.lineItem = lineItem;
+        vm.adjustments = adjustments;
+
         spyOn(calculationFactory, 'totalLossesAndAdjustments').andReturn();
 
         var result = vm.getTotal();
 
         expect(calculationFactory.totalLossesAndAdjustments).toHaveBeenCalledWith(
-            lineItem,
+            adjustments,
             reasons
         );
     });
-
-    describe('recalculateTotal', function() {
-
-        beforeEach(function() {
-            lineItem = {
-                totalConsumedQuantity: 10,
-                updateDependentFields: function () {}
-            };
-
-            vm.requisition = requisition;
-            vm.lineItem = lineItem;
-        });
-
-        it ('should recalculate total', function() {
-            spyOn(vm, 'getTotal').andReturn(345);
-
-            vm.recalculateTotal();
-
-            expect(vm.lineItem.totalLossesAndAdjustments).toBe(345);
-        });
-
-        it ('should validate line item', function() {
-            spyOn(requisitionValidator, 'validateLineItem').andReturn();
-
-            vm.recalculateTotal();
-
-            expect(requisitionValidator.validateLineItem)
-                .toHaveBeenCalledWith(lineItem, requisition.template.columnsMap, requisition);
-        });
-    });
-
 });

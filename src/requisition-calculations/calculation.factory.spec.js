@@ -222,7 +222,8 @@ describe('calculationFactory', function() {
     });
 
     describe('Calculate total losses and adjustments', function() {
-        var _additive__;
+        var _additive__, adjustments;
+
         beforeEach(module(function($provide) {
             var filter = function() {
                 return [{
@@ -236,12 +237,12 @@ describe('calculationFactory', function() {
         beforeEach(lineItemInject);
 
         it ('should return zero when calculating totalLossesAndAdjustments and no reason present', function() {
-            expect(calculationFactory.totalLossesAndAdjustments(lineItem, {})).toBe(0);
+            expect(calculationFactory.totalLossesAndAdjustments([], {})).toBe(0);
         });
 
         it ('should use positive values when calculating totalLossesAndAdjustments and additive parameter is true', function() {
             _additive_ = true;
-            lineItem.stockAdjustments = [
+            adjustments = [
                 {
                     quantity:10
                 },
@@ -249,12 +250,12 @@ describe('calculationFactory', function() {
                     quantity:1
                 }
             ];
-            expect(calculationFactory.totalLossesAndAdjustments(lineItem, {})).toBe(11);
+            expect(calculationFactory.totalLossesAndAdjustments(adjustments, {})).toBe(11);
         });
 
         it ('should use negative values when calculating totalLossesAndAdjustments and additive parameter is false', function() {
             _additive_ = false;
-            lineItem.stockAdjustments = [
+            adjustments = [
                 {
                     quantity:10
                 },
@@ -262,7 +263,7 @@ describe('calculationFactory', function() {
                     quantity:1
                 }
             ];
-            expect(calculationFactory.totalLossesAndAdjustments(lineItem, {})).toBe(-11);
+            expect(calculationFactory.totalLossesAndAdjustments(adjustments, {})).toBe(-11);
         });
     });
 

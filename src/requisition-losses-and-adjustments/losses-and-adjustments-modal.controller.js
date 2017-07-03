@@ -29,12 +29,12 @@
         .controller('LossesAndAdjustmentsModalController', lossesAndAdjustmentsController);
 
     lossesAndAdjustmentsController.$inject = [
-        '$filter', 'calculationFactory', 'requisitionValidator', 'lineItem', 'requisition',
+        '$filter', 'calculationFactory', 'requisitionValidator', 'reasons', 'adjustments',
         'modalDeferred'
     ];
 
     function lossesAndAdjustmentsController($filter, calculationFactory, requisitionValidator,
-                                            lineItem, requisition, modalDeferred) {
+                                            reasons, adjustments, modalDeferred) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -42,30 +42,7 @@
         vm.removeAdjustment = removeAdjustment;
         vm.getReasonName = getReasonName;
         vm.getTotal = getTotal;
-        vm.recalculateTotal = recalculateTotal;
         vm.hideModal = modalDeferred.reject;
-
-        /**
-         * @ngdoc property
-         * @propertyOf requisition-losses-and-adjustments.controller:LossesAndAdjustmentsModalController
-         * @name lineItem
-         * @type {Object}
-         *
-         * @description
-         * Reference to requisition line item that we are updating.
-         */
-        vm.lineItem = undefined;
-
-        /**
-         * @ngdoc property
-         * @propertyOf requisition-losses-and-adjustments.controller:LossesAndAdjustmentsModalController
-         * @name requisition
-         * @type {Object}
-         *
-         * @description
-         * Reference to requisition that we are updating.
-         */
-        vm.requisition = undefined;
 
         /**
          * @ngdoc property
@@ -98,10 +75,8 @@
          * Initialization method of the LossesAndAdjustmentsModalController.
          */
         function onInit() {
-            vm.lineItem = lineItem;
-            vm.requisition = requisition;
-            vm.adjustments = vm.lineItem.stockAdjustments;
-            vm.reasons = vm.requisition.$stockAdjustmentReasons;
+            vm.adjustments = adjustments;
+            vm.reasons = reasons;
         }
 
         /**
@@ -119,7 +94,6 @@
             };
 
             vm.adjustments.push(adjustment);
-            vm.recalculateTotal();
 
             vm.adjustment.quantity = undefined;
             vm.adjustment.reason = undefined;
@@ -138,7 +112,6 @@
         function removeAdjustment(adjustment) {
             var index = vm.adjustments.indexOf(adjustment);
             vm.adjustments.splice(index, 1);
-            vm.recalculateTotal();
         }
 
         /**
@@ -173,30 +146,7 @@
          * @return {Number} total value of losses and adjustments
          */
         function getTotal() {
-            return calculationFactory.totalLossesAndAdjustments(vm.lineItem, vm.reasons);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-losses-and-adjustments.controller:LossesAndAdjustmentsModalController
-         * @name recalculateTotal
-         *
-         * @description
-         * Recalculates total losses and adjustments for line item.
-         */
-        function recalculateTotal() {
-            vm.lineItem.totalLossesAndAdjustments = vm.getTotal();
-
-            vm.lineItem.updateDependentFields(
-                vm.requisition.template.columnsMap.totalLossesAndAdjustments,
-                vm.requisition
-            );
-
-            requisitionValidator.validateLineItem(
-                vm.lineItem,
-                vm.requisition.template.columnsMap,
-                vm.requisition
-            );
+            return calculationFactory.totalLossesAndAdjustments(vm.adjustments, vm.reasons);
         }
     }
 

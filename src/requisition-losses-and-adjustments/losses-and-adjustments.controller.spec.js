@@ -20,10 +20,11 @@ describe('LossesAndAdjustmentsController', function() {
     beforeEach(function() {
         module('requisition-losses-and-adjustments');
 
-        $scope = {};
-
         inject(function($injector) {
             lossesAndAdjustmentsModalService = $injector.get('lossesAndAdjustmentsModalService');
+
+            $scope = $injector.get('$rootScope').$new();
+
             vm = $injector.get('$controller')('LossesAndAdjustmentsController', {
                 $scope: $scope
             });
@@ -53,8 +54,8 @@ describe('LossesAndAdjustmentsController', function() {
         vm.showModal();
 
         expect(lossesAndAdjustmentsModalService.open).toHaveBeenCalledWith(
-            lineItem,
-            $scope.requisition
+            lineItem.stockAdjustments,
+            $scope.requisition.$stockAdjustmentReasons
         );
     });
 

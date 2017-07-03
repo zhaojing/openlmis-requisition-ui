@@ -29,10 +29,12 @@
         .controller('LossesAndAdjustmentsController', lossesAndAdjustmentsController);
 
     lossesAndAdjustmentsController.$inject = [
-        '$scope', 'lossesAndAdjustmentsModalService'
+        '$scope', 'lossesAndAdjustmentsModalService', 'requisitionValidator', 'calculationFactory'
     ];
 
-    function lossesAndAdjustmentsController($scope, lossesAndAdjustmentsModalService) {
+    function lossesAndAdjustmentsController($scope, lossesAndAdjustmentsModalService,
+                                            requisitionValidator, calculationFactory) {
+
         var vm = this;
 
         vm.$onInit = onInit;
@@ -59,6 +61,24 @@
          */
         function onInit() {
             vm.lineItem = $scope.lineItem;
+
+            $scope.$watchCollection('lineItem.stockAdjustments', function() {
+                vm.lineItem.totalLossesAndAdjustments = calculationFactory.totalLossesAndAdjustments(
+                    vm.lineItem.stockAdjustments,
+                    $scope.requisition.$stockAdjustmentReasons
+                );
+
+                vm.lineItem.updateDependentFields(
+                    $scope.requisition.template.columnsMap.totalLossesAndAdjustments,
+                    $scope.requisition
+                );
+
+                requisitionValidator.validateLineItem(
+                    vm.lineItem,
+                    $scope.requisition.template.columnsMap,
+                    $scope.requisition
+                );
+            });
         }
 
         /**
@@ -70,7 +90,10 @@
          * Opens Total Losses and Adjustments modal.
          */
         function showModal() {
-            lossesAndAdjustmentsModalService.open(vm.lineItem, $scope.requisition);
+            lossesAndAdjustmentsModalService.open(
+                vm.lineItem.stockAdjustments,
+                $scope.requisition.$stockAdjustmentReasons
+            );
         }
     }
 
