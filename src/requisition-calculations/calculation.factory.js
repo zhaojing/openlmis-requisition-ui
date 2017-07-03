@@ -115,8 +115,8 @@
          * Calculates the value of the Total Losses and Adjustments column based on the
          * given line item and adjustment reasons.
          *
-         * @param  {Object} adjustments     the list of adjustments to sum up
-         * @param  {List}   reasons         the list of stock adjustment reasons
+         * @param  {Array}  adjustments     the list of adjustments to sum up
+         * @param  {Array}  reasons         the list of stock adjustment reasons
          * @return {Number}                 the calculated Total Losses and Adjustments value
          */
         function calculateTotalLossesAndAdjustments(adjustments, reasons) {

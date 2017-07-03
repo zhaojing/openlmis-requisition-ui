@@ -45,8 +45,8 @@
          * @description
          * Open Total Losses and Adjustments modal.
          *
-         * @param {Object}  reasons         the list of available reasons
-         * @param {Object}  adjustments     the list of adjustments to be updated
+         * @param {Array}  reasons         the list of available reasons
+         * @param {Array}  adjustments     the list of adjustments to be updated
          */
         function open(adjustments, reasons) {
             openlmisModalService.createDialog({
