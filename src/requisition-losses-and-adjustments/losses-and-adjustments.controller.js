@@ -73,11 +73,11 @@
                     $scope.requisition
                 );
 
-                requisitionValidator.validateLineItem(
-                    vm.lineItem,
-                    $scope.requisition.template.columnsMap,
-                    $scope.requisition
-                );
+                // requisitionValidator.validateLineItem(
+                //     vm.lineItem,
+                //     $scope.requisition.template.columnsMap,
+                //     $scope.requisition
+                // );
             });
         }
 
