@@ -289,11 +289,10 @@ describe('ProductGridCell', function() {
     it('should validate full supply line item columns after updating fields', function() {
         scope.requisition.$isInitiated.andReturn(true);
         var element = getCompiledElement(),
-            input = element.find('input'),
-            inputScope = angular.element(angular.element(input)).scope(),
-            validate = inputScope.validate;
+            input = element.find('input');
 
-        validate();
+        input.controller('ngModel').$setViewValue("1000");
+        scope.$apply();
 
         expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalledWith(
             scope.lineItem, fullSupplyColumns, requisition);
@@ -304,13 +303,12 @@ describe('ProductGridCell', function() {
     it('should validate non full supply line item columns after updating fields', function() {
        scope.requisition.$isInitiated.andReturn(true);
         var element = getCompiledElement(),
-            input = element.find('input'),
-            inputScope = angular.element(angular.element(input)).scope(),
-            validate = inputScope.validate;
+            input = element.find('input');
 
         scope.lineItem.$program.fullSupply = false;
 
-        validate();
+        input.controller('ngModel').$setViewValue("1000");
+        scope.$apply();
 
         expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalledWith(
             scope.lineItem, nonFullSupplyColumns, requisition);
@@ -321,6 +319,7 @@ describe('ProductGridCell', function() {
     function getCompiledElement() {
         var rootElement = angular.element('<div><div product-grid-cell requisition="requisition" column="column" line-item="lineItem"></div></div>');
         var compiledElement = $compile(rootElement)(scope);
+        angular.element('body').append(compiledElement);
         scope.$digest();
         return compiledElement;
     }
