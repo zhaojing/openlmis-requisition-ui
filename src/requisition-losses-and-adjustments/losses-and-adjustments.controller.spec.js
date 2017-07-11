@@ -15,13 +15,13 @@
 
 describe('LossesAndAdjustmentsController', function() {
 
-    var vm, $scope, lossesAndAdjustmentsModalService, lineItem;
+    var vm, $scope, adjustmentsModalService, lineItem;
 
     beforeEach(function() {
         module('requisition-losses-and-adjustments');
 
         inject(function($injector) {
-            lossesAndAdjustmentsModalService = $injector.get('lossesAndAdjustmentsModalService');
+            adjustmentsModalService = $injector.get('adjustmentsModalService');
 
             $scope = $injector.get('$rootScope').$new();
 
@@ -43,8 +43,8 @@ describe('LossesAndAdjustmentsController', function() {
         expect(vm.lineItem).toEqual($scope.lineItem);
     });
 
-    it('showModal should call lossesAndAdjustmentsModalService', function() {
-        spyOn(lossesAndAdjustmentsModalService, 'open');
+    it('showModal should call adjustmentsModalService', function() {
+        spyOn(adjustmentsModalService, 'open');
 
         $scope.requisition = {
             id: 'requisition-id'
@@ -53,7 +53,7 @@ describe('LossesAndAdjustmentsController', function() {
 
         vm.showModal();
 
-        expect(lossesAndAdjustmentsModalService.open).toHaveBeenCalledWith(
+        expect(adjustmentsModalService.open).toHaveBeenCalledWith(
             lineItem.stockAdjustments,
             $scope.requisition.$stockAdjustmentReasons
         );

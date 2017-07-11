@@ -29,10 +29,10 @@
         .controller('LossesAndAdjustmentsController', lossesAndAdjustmentsController);
 
     lossesAndAdjustmentsController.$inject = [
-        '$scope', 'lossesAndAdjustmentsModalService', 'requisitionValidator', 'calculationFactory'
+        '$scope', 'adjustmentsModalService', 'requisitionValidator', 'calculationFactory'
     ];
 
-    function lossesAndAdjustmentsController($scope, lossesAndAdjustmentsModalService,
+    function lossesAndAdjustmentsController($scope, adjustmentsModalService,
                                             requisitionValidator, calculationFactory) {
 
         var vm = this;
@@ -90,10 +90,19 @@
          * Opens Total Losses and Adjustments modal.
          */
         function showModal() {
-            lossesAndAdjustmentsModalService.open(
-                vm.lineItem.stockAdjustments,
-                $scope.requisition.$stockAdjustmentReasons
-            );
+            adjustmentsModalService.open({
+                adjustments: vm.lineItem.stockAdjustments,
+                reasons: $scope.requisition.$stockAdjustmentReasons,
+                title: 'requisitionLossesAndAdjustments.lossesAndAdjustments',
+                totals: {
+                    'requisitionLossesAndAdjustments.total': function() {
+                        return calculationFactory.totalLossesAndAdjustments(
+                            vm.lineItem.stockAdjustments,
+                            $scope.requisition.$stockAdjustmentReasons
+                        );
+                    }
+                }
+            });
         }
     }
 
