@@ -1,6 +1,8 @@
 5.1.1 / Current Snapshot
 ===========
 
+* [OLMIS-2797:](https://openlmis.atlassian.net/browse/OLMIS-2797) Updated product-grid error messages to use openlmis-invalid.
+
 5.1.0 / 2017-06-22
 ===========
 
