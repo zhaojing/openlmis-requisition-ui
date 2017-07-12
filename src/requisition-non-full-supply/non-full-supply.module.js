@@ -24,8 +24,10 @@
      * Responsible for managing non full supply screen.
      */
     angular.module('requisition-non-full-supply', [
+        'openlmis-auth',
         'openlmis-form',
         'openlmis-pagination',
+        'openlmis-rights',
         'openlmis-templates',
         'openlmis-urls',
         'requisition',

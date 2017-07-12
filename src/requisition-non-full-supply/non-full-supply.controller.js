@@ -30,12 +30,13 @@
 
     nonFullSupplyController.$inject = [
         '$filter', 'addProductModalService', 'LineItem', 'requisitionValidator',
-        'requisition', 'columns', 'lineItems', '$state', '$stateParams', 'alertService'
+        'requisition', 'columns', 'lineItems', '$state', '$stateParams', 'alertService',
+        'authorizationService', 'REQUISITION_RIGHTS'
     ];
 
     function nonFullSupplyController($filter, addProductModalService, LineItem, requisitionValidator,
                                     requisition, columns, lineItems, $state, $stateParams,
-                                    alertService) {
+                                    alertService, authorizationService, REQUISITION_RIGHTS) {
 
         var vm = this;
 
@@ -93,15 +94,15 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
          * @name displayAddProductButton
          * @type {Boolean}
          *
          * @description
-         * Flag responsible for hiding/showing the Add Product button.
+         * Method responsible for hiding/showing the Add Product button based on the requisition status
+         * and user rights.
          */
-        vm.displayAddProductButton = !vm.requisition.$isApproved() && !vm.requisition.$isAuthorized() &&
-                                     !vm.requisition.$isInApproval() && !vm.requisition.$isReleased();
+        vm.displayAddProductButton = displayAddProductButton;
 
         /**
          * @ngdoc property
@@ -218,6 +219,19 @@
             });
 
             return hasProducts;
+        }
+
+        function displayAddProductButton() {
+            if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
+                return true;
+            } else if (vm.requisition.$isSubmitted()) {
+                // only authorizers should be able to edit submitted requisitions
+                return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
+                    programCode: vm.requisition.program.code
+                });
+            } else {
+                return false;
+            }
         }
     }
 

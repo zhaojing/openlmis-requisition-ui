@@ -16,7 +16,8 @@
 describe('NonFullSupplyController', function() {
 
     var vm, RequisitionCategory, addProductModalService, requisition, $q, requisitionValidator,
-        lineItems, $rootScope, $controller, LineItem, stateParams, $state, alertService;
+        lineItems, $rootScope, $controller, LineItem, stateParams, $state, alertService,
+        authorizationServiceSpy, REQUISITION_RIGHTS;
 
     beforeEach(function(){
         module('requisition-non-full-supply');
@@ -27,12 +28,15 @@ describe('NonFullSupplyController', function() {
             $q = $injector.get('$q');
             $state = $injector.get('$state');
             alertService = $injector.get('alertService');
+            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
         });
 
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
         addProductModalService = jasmine.createSpyObj('addProductModalService', ['show']);
 
-        requisition = jasmine.createSpyObj('requisition', ['$isApproved', '$isAuthorized', '$isInApproval', '$isReleased', '$getProducts']);
+        requisition = jasmine.createSpyObj('requisition', ['$isInitiated' , '$isRejected', '$isApproved',
+            '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased', '$isAfterAuthorize',
+            '$getProducts']);
         requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns']);
         requisition.requisitionLineItems = [
             lineItemSpy(0, 'One', true),
@@ -49,74 +53,118 @@ describe('NonFullSupplyController', function() {
         };
 
         requisition.$getProducts.andReturn([]);
+
+        requisition.program = {
+            code: 'P01'
+        };
+
+        authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight']);
     });
 
     describe('initialization', function() {
 
-        it('should bind requisitionValidator.isLineItemValid method to vm', function() {
-            requisition.$isApproved.andReturn(false);
+        beforeEach(function() {
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isRejected.andReturn(false);
+            requisition.$isSubmitted.andReturn(false);
             requisition.$isAuthorized.andReturn(false);
+            requisition.$isInApproval.andReturn(false);
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isAfterAuthorize.andReturn(false);
+        });
 
+
+        it('should bind requisitionValidator.isLineItemValid method to vm', function() {
             initController();
 
             expect(vm.isLineItemValid).toBe(requisitionValidator.isLineItemValid);
         });
 
         it('should bind requisition property to vm', function() {
-            requisition.$isApproved.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
-
             initController();
 
             expect(vm.requisition).toBe(requisition);
         });
 
-        it('should display add product button if requisition is not authorized or approved', function() {
-            requisition.$isApproved.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
+        it('should display add product button if requisition is initiated', function() {
+            requisition.$isInitiated.andReturn(true);
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(true);
+            expect(vm.displayAddProductButton()).toBe(true);
+        });
+
+        it('should display add product button if requisition is rejected', function() {
+            requisition.$isRejected.andReturn(true);
+
+            initController();
+
+            expect(vm.displayAddProductButton()).toBe(true);
+        });
+
+        it('should display add product button if requisition is submitted and user has authorize rights', function() {
+           requisition.$isSubmitted.andReturn(true);
+
+           authorizationServiceSpy.hasRight.andReturn(true);
+
+           initController();
+
+           expect(vm.displayAddProductButton()).toBe(true);
+           expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
+               REQUISITION_RIGHTS.REQUISITION_AUTHORIZE,
+               { programCode: requisition.program.code }
+           );
+        });
+
+        it('should not display add product button if requisition is submitted and user has no authorize rights', function() {
+             requisition.$isSubmitted.andReturn(true);
+
+             authorizationServiceSpy.hasRight.andReturn(false);
+
+             initController();
+
+             expect(vm.displayAddProductButton()).toBe(false);
+             expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
+                 REQUISITION_RIGHTS.REQUISITION_AUTHORIZE,
+                 { programCode: requisition.program.code }
+             );
         });
 
         it('should not display add product button if requisition is authorized', function() {
-            requisition.$isApproved.andReturn(false);
             requisition.$isAuthorized.andReturn(true);
+            requisition.$isAfterAuthorize.andReturn(true);
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.displayAddProductButton()).toBe(false);
         });
 
         it('should not display add product button if requisition is approved', function() {
             requisition.$isApproved.andReturn(true);
-            requisition.$isAuthorized.andReturn(false);
+            requisition.$isAfterAuthorize.andReturn(true);
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.displayAddProductButton()).toBe(false);
         });
 
         it('should not display add product button if requisition is in approval', function() {
-            requisition.$isApproved.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
-            requisition.$isReleased.andReturn(false);
             requisition.$isInApproval.andReturn(true);
+            requisition.$isAfterAuthorize.andReturn(true);
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.displayAddProductButton()).toBe(false);
         });
 
         it('should not display add product button if requisition is released', function() {
-            requisition.$isApproved.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
             requisition.$isReleased.andReturn(true);
+            requisition.$isAfterAuthorize.andReturn(true);
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.displayAddProductButton()).toBe(false);
         });
 
     });
@@ -278,7 +326,8 @@ describe('NonFullSupplyController', function() {
             LineItem: LineItem,
             requisition: requisition,
             addProductModalService: addProductModalService,
-            requisitionValidator: requisitionValidator
+            requisitionValidator: requisitionValidator,
+            authorizationService: authorizationServiceSpy,
         });
     }
 
