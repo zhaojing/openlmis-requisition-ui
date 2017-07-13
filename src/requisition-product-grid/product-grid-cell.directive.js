@@ -62,6 +62,7 @@
             scope.lineItem = lineItem;
             scope.column = column;
             scope.validate = validate;
+            scope.update = update;
             scope.isReadOnly = isReadOnly;
             scope.canNotSkip = canNotSkip;
 
@@ -83,6 +84,8 @@
             }, function(error){
                 scope.invalidMessage = error ? error : undefined;
             });
+
+            scope.$on('openlmisInvalid.update', validate);
 
             updateCellContents();
 
@@ -117,8 +120,15 @@
                 });
             }
 
-            function validate() {
+            function update() {
                 lineItem.updateDependentFields(column, requisition);
+
+                if(element.parents('[openlmis-invalid-hidden]').length == 0){
+                    validate();
+                }
+            }
+
+            function validate() {
                 return requisitionValidator.validateLineItem(
                     scope.lineItem,
                     requisition.template.getColumns(!scope.lineItem.$program.fullSupply),
