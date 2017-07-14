@@ -223,7 +223,11 @@
 
         function displayAddProductButton() {
             if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
-                return true;
+                // only people with create rights should be able to edit new/rejected
+                // requisitions
+                return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, {
+                   programCode: requisition.program.code
+                });
             } else if (vm.requisition.$isSubmitted()) {
                 // only authorizers should be able to edit submitted requisitions
                 return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
