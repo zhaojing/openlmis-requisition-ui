@@ -149,7 +149,7 @@
                     if (hasAuthorizeRightForProgram() && requisition.$isSubmitted()) {
                         return false;
                     }
-                    if (hasSubmitRightForProgram() && (requisition.$isInitiated() || requisition.$isRejected())) {
+                    if (hasCreateRightForProgram() && (requisition.$isInitiated() || requisition.$isRejected())) {
                         return false;
                     }
                 }
@@ -184,7 +184,7 @@
                 });
             }
 
-            function hasSubmitRightForProgram() {
+            function hasCreateRightForProgram() {
                 return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, {
                     programCode: requisition.program.code
                 });

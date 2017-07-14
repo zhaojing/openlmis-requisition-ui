@@ -16,7 +16,7 @@ describe('ProductGridCell', function() {
 
     var $compile, scope, requisition, directiveElem, requisitionValidatorMock,
         authorizationServiceSpy, TEMPLATE_COLUMNS, fullSupplyColumns, nonFullSupplyColumns,
-        REQUISITION_RIGHTS, userAlwaysHasRight, userHasSubmitRight, userHasAuthorizedRight,
+        REQUISITION_RIGHTS, userAlwaysHasRight, userHasCreateRight, userHasAuthorizedRight,
         userHasApprovedRight;
 
     beforeEach(function() {
@@ -56,7 +56,7 @@ describe('ProductGridCell', function() {
                 if(userHasAuthorizedRight && right == REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
                     return true;
                 }
-                if(userHasSubmitRight && right == REQUISITION_RIGHTS.REQUISITION_CREATE){
+                if(userHasCreateRight && right == REQUISITION_RIGHTS.REQUISITION_CREATE){
                     return true;
                 }
                 return false;
@@ -218,13 +218,13 @@ describe('ProductGridCell', function() {
         scope.requisition.$isInApproval.andReturn(false);
 
         userAlwaysHasRight = false;
-        userHasSubmitRight = false;
+        userHasCreateRight = false;
         directiveElem = getCompiledElement();
 
         expect(directiveElem.html()).toContain("readOnlyFieldValue");
         expect(directiveElem.find("input").length).toEqual(0);
 
-        userHasSubmitRight = true;
+        userHasCreateRight = true;
         directiveElem = getCompiledElement();
 
         expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
@@ -240,13 +240,13 @@ describe('ProductGridCell', function() {
         scope.requisition.$isInApproval.andReturn(false);
 
         userAlwaysHasRight = false;
-        userHasSubmitRight = false;
+        userHasCreateRight = false;
         directiveElem = getCompiledElement();
 
         expect(directiveElem.html()).toContain("readOnlyFieldValue");
         expect(directiveElem.find("input").length).toEqual(0);
 
-        userHasSubmitRight = true;
+        userHasCreateRight = true;
         directiveElem = getCompiledElement();
 
         expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
