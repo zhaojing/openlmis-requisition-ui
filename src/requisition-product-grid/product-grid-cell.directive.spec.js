@@ -56,7 +56,7 @@ describe('ProductGridCell', function() {
                 if(userHasAuthorizedRight && right == REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
                     return true;
                 }
-                if(userHasSubmitRight && right == REQUISITION_RIGHTS.REQUISITION_SUBMIT){
+                if(userHasSubmitRight && right == REQUISITION_RIGHTS.REQUISITION_CREATE){
                     return true;
                 }
                 return false;

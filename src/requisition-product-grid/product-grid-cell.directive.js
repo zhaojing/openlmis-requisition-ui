@@ -185,7 +185,7 @@
             }
 
             function hasSubmitRightForProgram() {
-                return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_SUBMIT, {
+                return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, {
                     programCode: requisition.program.code
                 });
             }
