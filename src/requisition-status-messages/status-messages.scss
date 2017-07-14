@@ -1,6 +1,8 @@
 .status-message {
+    @extend .clearfix;
 
     > header {
+        margin-bottom: 1em;
         > .status {
             @extend .title;
             font-weight: bold;
@@ -16,16 +18,16 @@
         white-space: pre-wrap;
     }
 
-    .characters-left {
-        position: absolute;
-    }
-
     & + .status-message {
         margin-top: 1em;
     }
 
-    textarea {
-        margin: 1em 0;
+    > .saving-indicator {
+        float: right;
+    }
+
+    > .characters-left {
+        float: left;
     }
 }
 
