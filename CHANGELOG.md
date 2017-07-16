@@ -3,6 +3,9 @@
 
 * [OLMIS-2797:](https://openlmis.atlassian.net/browse/OLMIS-2797) Updated product-grid error messages to use openlmis-invalid.
 
+Bug fixes:
+* [OLMIS-2800](https://openlmis.atlassian.net/browse/OLMIS-2800): Skip column will not be shown in submitted status when user has no authorize right.
+
 5.1.0 / 2017-06-22
 ===========
 
