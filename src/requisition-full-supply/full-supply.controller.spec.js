@@ -19,7 +19,7 @@ describe('FullSupplyController', function() {
     var vm;
 
     //mocks
-    var requisition, requisitionValidator, lineItems, paginatedListFactory, columns,
+    var requisition, requisitionValidator, lineItems, paginatedListFactory, columns, authorizationService, REQUISITION_RIGHTS,
         requisitionStatus, stateParams;
 
     beforeEach(module('requisition-full-supply'));
@@ -55,6 +55,10 @@ describe('FullSupplyController', function() {
         requisition.$isSubmitted.andReturn(false);
         requisition.$isRejected.andReturn(false);
 
+        requisition.program = {
+            code: 'program-code'
+        }
+
         columns = [{
             name: 'skipped'
         }];
@@ -78,7 +82,10 @@ describe('FullSupplyController', function() {
         }
     });
 
-    beforeEach(inject(function($controller) {
+    beforeEach(inject(function($controller, $injector) {
+        authorizationService = $injector.get('authorizationService');
+        REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+
         vm = $controller('FullSupplyController', {
             totalItems: 4,
             columns: columns,
@@ -123,17 +130,19 @@ describe('FullSupplyController', function() {
         expect(vm.areSkipControlsVisible()).toBe(false);
     });
 
-    it('should show skip controls if the requistions status is INITIATED', function(){
+    it('should show skip controls if the requisition status is INITIATED', function(){
         requisition.$isInitiated.andReturn(true);
         expect(vm.areSkipControlsVisible()).toBe(true);
     });
 
-    it('should show skip controls if the requistions status is SUBMITTED', function(){
+    it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function(){
         requisition.$isSubmitted.andReturn(true);
+        spyOn(authorizationService, 'hasRight').andReturn(true);
+
         expect(vm.areSkipControlsVisible()).toBe(true);
     });
 
-    it('should show skip controls if the requistions status is REJECTED', function(){
+    it('should show skip controls if the requisition status is REJECTED', function(){
         requisition.$isRejected.andReturn(true);
         expect(vm.areSkipControlsVisible()).toBe(true);
     });
@@ -151,5 +160,15 @@ describe('FullSupplyController', function() {
         columns[0].name = 'foo';
 
         expect(vm.areSkipControlsVisible()).toBe(false);
+    });
+
+    it('should not show skip controls if user does no authorize right and requisition is submitted', function() {
+        requisition.$isSubmitted.andReturn(true);
+        spyOn(authorizationService, 'hasRight').andReturn(false);
+
+        expect(vm.areSkipControlsVisible()).toBe(false);
+        expect(authorizationService.hasRight).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
+            programCode: requisition.program.code
+        });
     });
 });

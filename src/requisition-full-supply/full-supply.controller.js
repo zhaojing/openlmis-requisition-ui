@@ -28,9 +28,9 @@
         .module('requisition-full-supply')
         .controller('FullSupplyController', controller);
 
-    controller.$inject = ['$controller', 'requisitionValidator', 'TEMPLATE_COLUMNS', 'requisition', 'columns', 'lineItems'];
+    controller.$inject = ['$controller', 'requisitionValidator', 'TEMPLATE_COLUMNS', 'requisition', 'columns', 'lineItems', 'authorizationService', 'REQUISITION_RIGHTS'];
 
-    function controller($controller, requisitionValidator, TEMPLATE_COLUMNS, requisition, columns, lineItems) {
+    function controller($controller, requisitionValidator, TEMPLATE_COLUMNS, requisition, columns, lineItems, authorizationService, REQUISITION_RIGHTS) {
 
         var vm = this;
 
@@ -117,8 +117,9 @@
          * @description
          * Checks if the current requisition template has a skip column, and if the requisition state allows for skipping.
          */
-        function areSkipControlsVisible(){
-            if(!requisition.$isSubmitted() && !requisition.$isInitiated() && !requisition.$isRejected()){
+        function areSkipControlsVisible() {
+            if (!requisition.$isInitiated() && !requisition.$isRejected() &&
+                !(hasAuthorizeRightForProgram() && requisition.$isSubmitted())) {
                 return false;
             }
 
@@ -176,6 +177,12 @@
                 }
             });
             vm.skippedAll = value;
+        }
+
+        function hasAuthorizeRightForProgram() {
+            return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
+                programCode: requisition.program.code
+            });
         }
     }
 
