@@ -29,13 +29,16 @@
         .controller('LossesAndAdjustmentsController', lossesAndAdjustmentsController);
 
     lossesAndAdjustmentsController.$inject = [
-        '$scope', 'lossesAndAdjustmentsModalService', 'requisitionValidator', 'calculationFactory'
+        '$scope', '$filter', 'requisitionValidator', 'calculationFactory',
+        'adjustmentsModalService'
     ];
 
-    function lossesAndAdjustmentsController($scope, lossesAndAdjustmentsModalService,
-                                            requisitionValidator, calculationFactory) {
+    function lossesAndAdjustmentsController($scope, $filter,
+                                            requisitionValidator, calculationFactory,
+                                            adjustmentsModalService) {
 
-        var vm = this;
+        var vm = this,
+            reasons;
 
         vm.$onInit = onInit;
         vm.showModal = showModal;
@@ -79,6 +82,8 @@
                 //     $scope.requisition
                 // );
             });
+
+            reasons = $scope.requisition.$stockAdjustmentReasons;
         }
 
         /**
@@ -90,10 +95,51 @@
          * Opens Total Losses and Adjustments modal.
          */
         function showModal() {
-            lossesAndAdjustmentsModalService.open(
-                vm.lineItem.stockAdjustments,
-                $scope.requisition.$stockAdjustmentReasons
-            );
+            adjustmentsModalService.open({
+                reasons: reasons,
+                adjustments: getAdjustments(vm.lineItem.stockAdjustments),
+                title: 'requisitionLossesAndAdjustments.lossesAndAdjustments',
+                message: 'requisitionLossesAndAdjustments.addNewLossOrAdjustment',
+                summaries: {
+                    'requisitionLossesAndAdjustments.total': function(adjustments) {
+                        return calculationFactory.totalLossesAndAdjustments(
+                            getSimpleAdjustments(adjustments),
+                            $scope.requisition.$stockAdjustmentReasons
+                        );
+                    }
+                },
+                isDisabled: vm.isDisabled
+            }).then(function(adjustments) {
+                vm.lineItem.stockAdjustments = getSimpleAdjustments(adjustments);
+            });
+        }
+
+        function getAdjustments(simpleAdjustments) {
+            var adjustments = [];
+
+            angular.forEach(simpleAdjustments, function(simpleAdjustment) {
+                adjustments.push({
+                    quantity: simpleAdjustment.quantity,
+                    reason: $filter('filter')(reasons, {
+                        id: simpleAdjustment.reasonId
+                    })[0]
+                });
+            });
+
+            return adjustments;
+        }
+
+        function getSimpleAdjustments(adjustments) {
+            var simpleAdjustments = [];
+
+            angular.forEach(adjustments, function(adjustment) {
+                simpleAdjustments.push({
+                    reasonId: adjustment.reason.id,
+                    quantity: adjustment.quantity
+                });
+            });
+
+            return simpleAdjustments;
         }
     }
 

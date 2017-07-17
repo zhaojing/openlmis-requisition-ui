@@ -15,13 +15,14 @@
 
 describe('LossesAndAdjustmentsController', function() {
 
-    var vm, $scope, lossesAndAdjustmentsModalService, lineItem;
+    var vm, $scope, adjustmentsModalService, lineItem;
 
     beforeEach(function() {
         module('requisition-losses-and-adjustments');
 
         inject(function($injector) {
-            lossesAndAdjustmentsModalService = $injector.get('lossesAndAdjustmentsModalService');
+            adjustmentsModalService = $injector.get('adjustmentsModalService');
+            $q = $injector.get('$q');
 
             $scope = $injector.get('$rootScope').$new();
 
@@ -33,6 +34,11 @@ describe('LossesAndAdjustmentsController', function() {
         lineItem = {
             id: 'line-item-id'
         };
+
+        $scope.requisition = {
+            id: 'requisition-id',
+            $stockAdjustments: []
+        };
     });
 
     it('$onInit should expose lineItem', function() {
@@ -43,20 +49,14 @@ describe('LossesAndAdjustmentsController', function() {
         expect(vm.lineItem).toEqual($scope.lineItem);
     });
 
-    it('showModal should call lossesAndAdjustmentsModalService', function() {
-        spyOn(lossesAndAdjustmentsModalService, 'open');
+    it('showModal should call adjustmentsModalService', function() {
+        spyOn(adjustmentsModalService, 'open').andReturn($q.when());
 
-        $scope.requisition = {
-            id: 'requisition-id'
-        };
         vm.lineItem = lineItem;
 
         vm.showModal();
 
-        expect(lossesAndAdjustmentsModalService.open).toHaveBeenCalledWith(
-            lineItem.stockAdjustments,
-            $scope.requisition.$stockAdjustmentReasons
-        );
+        expect(adjustmentsModalService.open).toHaveBeenCalled();
     });
 
 });
