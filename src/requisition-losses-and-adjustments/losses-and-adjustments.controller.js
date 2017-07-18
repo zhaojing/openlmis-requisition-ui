@@ -95,21 +95,21 @@
          * Opens Total Losses and Adjustments modal.
          */
         function showModal() {
-            adjustmentsModalService.open({
-                reasons: reasons,
-                adjustments: getAdjustments(vm.lineItem.stockAdjustments),
-                title: 'requisitionLossesAndAdjustments.lossesAndAdjustments',
-                message: 'requisitionLossesAndAdjustments.addNewLossOrAdjustment',
-                summaries: {
+            adjustmentsModalService.open(
+                getAdjustments(vm.lineItem.stockAdjustments),
+                reasons,
+                'requisitionLossesAndAdjustments.lossesAndAdjustments',
+                'requisitionLossesAndAdjustments.addNewLossOrAdjustment',
+                vm.isDisabled,
+                {
                     'requisitionLossesAndAdjustments.total': function(adjustments) {
                         return calculationFactory.totalLossesAndAdjustments(
                             getSimpleAdjustments(adjustments),
                             $scope.requisition.$stockAdjustmentReasons
                         );
                     }
-                },
-                isDisabled: vm.isDisabled
-            }).then(function(adjustments) {
+                }
+            ).then(function(adjustments) {
                 vm.lineItem.stockAdjustments = getSimpleAdjustments(adjustments);
             });
         }
