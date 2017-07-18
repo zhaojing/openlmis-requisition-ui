@@ -24,8 +24,8 @@
             <label class="title" for="requisition-status-message-textarea">{{'requisitionStatusMessages.addComment.message' | message}}</label>
             <button class="close" ng-click="vm.removeComment()">{{'requisitionStatusMessages.removeComment' | message}}</button>
         </header>
+        <saving-indicator object="vm.requisition.draftStatusMessage"/>
         <textarea characters-left="true" ng-maxlength="vm.maxCommentLength"
             id="requisition-status-message-textarea" ng-model="vm.requisition.draftStatusMessage"></textarea>
-        <saving-indicator object="vm.requisition.draftStatusMessage"/>
     </article>
 </section>
