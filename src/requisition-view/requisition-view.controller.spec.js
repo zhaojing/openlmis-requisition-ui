@@ -16,7 +16,7 @@
 
 describe('RequisitionViewController', function() {
 
-    var $scope, $q, $state, notificationService, confirmService, vm, requisition,
+    var $scope, $q, $state, notificationService, alertService, confirmService, vm, requisition,
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
         REQUISITION_RIGHTS, accessTokenFactorySpy, $window, stateTrackerService, messageService;
@@ -65,6 +65,7 @@ describe('RequisitionViewController', function() {
             $q = $injector.get('$q');
             $window = $injector.get('$window');
             notificationService = $injector.get('notificationService');
+            alertService = $injector.get('alertService');
             confirmService = $injector.get('confirmService');
             loadingModalService = $injector.get('loadingModalService');
             REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
@@ -179,7 +180,7 @@ describe('RequisitionViewController', function() {
     it('should display error message when skip requisition failed', function() {
         var notificationServiceSpy = jasmine.createSpy();
 
-        spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
+        spyOn(alertService, 'error').andCallFake(notificationServiceSpy);
 
         vm.skipRnr();
 
@@ -327,7 +328,7 @@ describe('RequisitionViewController', function() {
                 stateSpy = jasmine.createSpy(),
                 conflictResponse = { status: responseStatus };
 
-            spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
+            spyOn(alertService, 'error').andCallFake(notificationServiceSpy);
             spyOn($state, 'reload').andCallFake(stateSpy);
 
             vm.syncRnr();
@@ -444,22 +445,22 @@ describe('RequisitionViewController', function() {
 
         it('should show notification if requisition has error', function() {
             requisitionValidatorMock.validateRequisition.andReturn(false);
-            spyOn(notificationService, 'error');
+            spyOn(alertService, 'error');
 
             vm.authorizeRnr();
             $scope.$apply();
 
-            expect(notificationService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
+            expect(alertService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
         });
 
         it('should show notification if all line items are skipped', function() {
             requisitionValidatorMock.areAllLineItemsSkipped.andReturn(true);
-            spyOn(notificationService, 'error');
+            spyOn(alertService, 'error');
 
             vm.authorizeRnr();
             $scope.$apply();
 
-            expect(notificationService.error).toHaveBeenCalledWith('requisitionView.allLineItemsSkipped');
+            expect(alertService.error).toHaveBeenCalledWith('requisitionView.allLineItemsSkipped');
         });
     });
 
@@ -530,12 +531,12 @@ describe('RequisitionViewController', function() {
 
         it('should show notification if requisition has error', function() {
             requisitionValidatorMock.validateRequisition.andReturn(false);
-            spyOn(notificationService, 'error');
+            spyOn(alertService, 'error');
 
             vm.approveRnr();
             $scope.$apply();
 
-            expect(notificationService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
+            expect(alertService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
         });
     });
 
@@ -614,7 +615,7 @@ describe('RequisitionViewController', function() {
         it('should display error message when sync failed', function() {
             requisition.$save.andReturn($q.reject({status: 400}));
             var notificationServiceSpy = jasmine.createSpy();
-            spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
+            spyOn(alertService, 'error').andCallFake(notificationServiceSpy);
 
             vm.syncRnrAndPrint();
             $scope.$apply();
@@ -644,10 +645,9 @@ describe('RequisitionViewController', function() {
 
     describe('update requisition', function(){
         var offlineService, isOffline,
-            alertService,
             requisitionService;
 
-        beforeEach(inject(function(_offlineService_, _alertService_, _requisitionService_) {
+        beforeEach(inject(function(_offlineService_, _requisitionService_) {
             isOffline = false;
             offlineService = _offlineService_;
             spyOn(offlineService, 'isOffline').andCallFake(function(){
@@ -656,7 +656,6 @@ describe('RequisitionViewController', function() {
 
             spyOn($state, 'reload');
 
-            alertService = _alertService_;
             spyOn(alertService, 'error');
 
             confirmSpy.confirm.andReturn($q.resolve());
