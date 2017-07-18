@@ -19,13 +19,18 @@ describe('RequisitionTemplateAdminController', function() {
     var vm;
 
     //mocks
-    var template, program;
+    var template, program, loadingModalService;
 
     //injects
     var q, state, notificationService, COLUMN_SOURCES, rootScope, MAX_COLUMN_DESCRIPTION_LENGTH;
 
     beforeEach(function() {
-        module('program-requisition-template');
+        module('program-requisition-template', function($provide) {
+            loadingModalService = jasmine.createSpyObj('loadingModalService', ['open', 'close']);
+            $provide.service('loadingModalService', function() {
+                return loadingModalService;
+            });
+        });
 
         template = jasmine.createSpyObj('template', ['$save', '$moveColumn', '$findCircularCalculatedDependencies']);
         template.id = '1';
@@ -97,6 +102,31 @@ describe('RequisitionTemplateAdminController', function() {
 
         expect(stateGoSpy).toHaveBeenCalled();
         expect(notificationServiceSpy).toHaveBeenCalled();
+    });
+
+    it('should open loading modal when save template', function() {
+        template.$save.andReturn(q.when(true));
+        vm.saveTemplate();
+
+        expect(loadingModalService.open).toHaveBeenCalled();
+    });
+
+    it('should close loading modal after save template if success', function() {
+        template.$save.andReturn(q.when(true));
+
+        vm.saveTemplate();
+        rootScope.$apply();
+
+        expect(loadingModalService.close).toHaveBeenCalled();
+    });
+
+    it('should close loading modal after save template if reject', function() {
+        template.$save.andReturn(q.reject());
+
+        vm.saveTemplate();
+        rootScope.$apply();
+
+        expect(loadingModalService.close).toHaveBeenCalled();
     });
 
     it('should call column drop method and display error notification when drop failed', function() {

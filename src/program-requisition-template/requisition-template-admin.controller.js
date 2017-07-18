@@ -30,13 +30,14 @@
 
     RequisitionTemplateAdminController.$inject = [
         '$state', 'template', 'program', '$q', 'notificationService', 'messageService',
-        'templateValidator', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS'
+        'templateValidator', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS',
+        'loadingModalService'
     ];
 
     function RequisitionTemplateAdminController($state, template, program, $q, notificationService,
                                                 messageService, templateValidator,
                                                 MAX_COLUMN_DESCRIPTION_LENGTH, COLUMN_SOURCES,
-                                                TEMPLATE_COLUMNS) {
+                                                TEMPLATE_COLUMNS, loadingModalService) {
 
         var vm = this;
 
@@ -105,12 +106,13 @@
          * list view page. If saving is unsuccessful error notification is displayed.
          */
         function saveTemplate() {
+            loadingModalService.open();
             vm.template.$save().then(function() {
                 notificationService.success('adminProgramTemplate.templateSave.success');
                 goToTemplateList();
             }, function() {
                 notificationService.error('adminProgramTemplate.templateSave.failure');
-            });
+            }).finally(loadingModalService.close);
         }
 
         /**
