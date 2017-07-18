@@ -162,7 +162,7 @@ describe('FullSupplyController', function() {
         expect(vm.areSkipControlsVisible()).toBe(false);
     });
 
-    it('should not show skip controls if user does no authorize right and requisition is submitted', function() {
+    it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
         requisition.$isSubmitted.andReturn(true);
         spyOn(authorizationService, 'hasRight').andReturn(false);
 
