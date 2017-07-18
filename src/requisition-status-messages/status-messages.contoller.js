@@ -122,7 +122,7 @@
          * Otherwise add button will be displayed.
          */
         function displayAddComment() {
-            return (vm.requisition.draftStatusMessage === null || !vm.requisition.draftStatusMessage.trim()) && !vm.isTextAreaVisible && !vm.requisition.$isApproved() && !vm.requisition.$isReleased();
+            return !vm.requisition.draftStatusMessage && !vm.isTextAreaVisible && !vm.requisition.$isApproved() && !vm.requisition.$isReleased();
         }
 
         /**

@@ -41,7 +41,7 @@
                             <input disable-drag type="text" ng-model="column.label" class="form-control"></input>
                         </td>
                         <td>
-                            <input characters-left max-length="vm.maxColumnDescriptionLength" disable-drag ng-model="column.definition" class="form-control" type="text"></input>
+                            <input characters-left maxlength="vm.maxColumnDescriptionLength" disable-drag ng-model="column.definition" class="form-control" type="text"></input>
                         </td>
                         <td>
                             <div ng-if="!vm.canChangeSource(column.columnDefinition)">{{vm.sourceDisplayName(column.source)}}</div>
