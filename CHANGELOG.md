@@ -5,6 +5,7 @@
 
 Bug fixes:
 * [OLMIS-2800](https://openlmis.atlassian.net/browse/OLMIS-2800): Skip column will not be shown in submitted status when user has no authorize right.
+* [OLMIS-2801](https://openlmis.atlassian.net/browse/OLMIS-2801): Disabled the 'Add Product' button in the non-full supply screen for users without rights to edit the requisition. Right checks for create/initialize permissions were also fixed.
 
 5.1.0 / 2017-06-22
 ===========
