@@ -159,12 +159,14 @@
             }
 
             function canNotSkip() {
-                return !lineItem.canBeSkipped(scope.requisition);
+                return !requisition.$isInitiated() && !requisition.$isRejected() &&
+                    !(hasAuthorizeRightForProgram() && requisition.$isSubmitted()) ||
+                    !lineItem.canBeSkipped(scope.requisition);
             }
 
             function isApprovalColumn() {
                 var approvalColumns = [TEMPLATE_COLUMNS.APPROVED_QUANTITY, TEMPLATE_COLUMNS.REMARKS];
-                
+
                 if(approvalColumns.indexOf(column.name) === -1){
                     return false;
                 } else {
