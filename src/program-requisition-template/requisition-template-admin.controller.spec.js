@@ -25,12 +25,7 @@ describe('RequisitionTemplateAdminController', function() {
     var q, state, notificationService, COLUMN_SOURCES, rootScope, MAX_COLUMN_DESCRIPTION_LENGTH;
 
     beforeEach(function() {
-        module('program-requisition-template', function($provide) {
-            loadingModalService = jasmine.createSpyObj('loadingModalService', ['open', 'close']);
-            $provide.service('loadingModalService', function() {
-                return loadingModalService;
-            });
-        });
+        module('program-requisition-template');
 
         template = jasmine.createSpyObj('template', ['$save', '$moveColumn', '$findCircularCalculatedDependencies']);
         template.id = '1';
@@ -64,18 +59,18 @@ describe('RequisitionTemplateAdminController', function() {
             name: 'program1'
         };
 
-        inject(function($controller, $q, $state, _notificationService_, _COLUMN_SOURCES_,
-                        messageService, $rootScope, _MAX_COLUMN_DESCRIPTION_LENGTH_) {
+        inject(function($injector) {
 
-            q = $q;
-            state = $state;
-            notificationService = _notificationService_;
-            COLUMN_SOURCES = _COLUMN_SOURCES_;
-            MAX_COLUMN_DESCRIPTION_LENGTH = _MAX_COLUMN_DESCRIPTION_LENGTH_;
-            message = messageService;
-            rootScope = $rootScope;
+            q = $injector.get('$q');
+            state = $injector.get('$state');
+            notificationService = $injector.get('notificationService');
+            COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
+            MAX_COLUMN_DESCRIPTION_LENGTH = $injector.get('MAX_COLUMN_DESCRIPTION_LENGTH');
+            loadingModalService = $injector.get('loadingModalService');
+            message = $injector.get('messageService');
+            rootScope = $injector.get('$rootScope');
 
-            vm = $controller('RequisitionTemplateAdminController', {
+            vm = $injector.get('$controller')('RequisitionTemplateAdminController', {
                 program: program,
                 template: template
             });
@@ -105,13 +100,16 @@ describe('RequisitionTemplateAdminController', function() {
     });
 
     it('should open loading modal when save template', function() {
+        spyOn(loadingModalService, 'open');
         template.$save.andReturn(q.when(true));
+
         vm.saveTemplate();
 
         expect(loadingModalService.open).toHaveBeenCalled();
     });
 
     it('should close loading modal after save template if success', function() {
+        spyOn(loadingModalService, 'close');
         template.$save.andReturn(q.when(true));
 
         vm.saveTemplate();
@@ -121,6 +119,7 @@ describe('RequisitionTemplateAdminController', function() {
     });
 
     it('should close loading modal after save template if reject', function() {
+        spyOn(loadingModalService, 'close');
         template.$save.andReturn(q.reject());
 
         vm.saveTemplate();
