@@ -99,7 +99,7 @@ describe('RequisitionTemplateAdminController', function() {
         expect(notificationServiceSpy).toHaveBeenCalled();
     });
 
-    it('should open loading modal when save template', function() {
+    it('should open loading modal when when saving template', function() {
         spyOn(loadingModalService, 'open');
         template.$save.andReturn(q.when(true));
 
@@ -108,7 +108,7 @@ describe('RequisitionTemplateAdminController', function() {
         expect(loadingModalService.open).toHaveBeenCalled();
     });
 
-    it('should close loading modal after save template if success', function() {
+    it('should close loading modal if template save was successful', function() {
         spyOn(loadingModalService, 'close');
         template.$save.andReturn(q.when(true));
 
@@ -118,7 +118,7 @@ describe('RequisitionTemplateAdminController', function() {
         expect(loadingModalService.close).toHaveBeenCalled();
     });
 
-    it('should close loading modal after save template if reject', function() {
+    it('should close loading modal if template save was unsuccessful', function() {
         spyOn(loadingModalService, 'close');
         template.$save.andReturn(q.reject());
 
