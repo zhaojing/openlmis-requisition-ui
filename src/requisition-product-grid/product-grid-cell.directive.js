@@ -122,10 +122,7 @@
 
             function update() {
                 lineItem.updateDependentFields(column, requisition);
-
-                if(element.parents('[openlmis-invalid-hidden]').length == 0){
-                    validate();
-                }
+                validate();
             }
 
             function validate() {
