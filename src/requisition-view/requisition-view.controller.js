@@ -232,6 +232,7 @@
                         failWithMessage('requisitionView.allLineItemsSkipped')();
                     }
                 } else {
+                    $scope.$broadcast('openlmis-form-submit');
                     failWithMessage('requisitionView.rnrHasErrors')();
                 }
             });
@@ -271,6 +272,7 @@
                         failWithMessage('requisitionView.allLineItemsSkipped')();
                     }
                 } else {
+                    $scope.$broadcast('openlmis-form-submit');
                     failWithMessage('requisitionView.rnrHasErrors')();
                 }
             });
@@ -330,6 +332,7 @@
                         handleSaveError(response.status);
                     });
                 } else {
+                    $scope.$broadcast('openlmis-form-submit');
                     failWithMessage('requisitionView.rnrHasErrors')();
                 }
             });
