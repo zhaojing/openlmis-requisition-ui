@@ -32,8 +32,8 @@
         '$state', 'requisition', 'requisitionValidator', 'authorizationService',
         'requisitionService', 'loadingModalService', 'alertService', 'notificationService',
         'confirmService', 'REQUISITION_RIGHTS', 'FULFILLMENT_RIGHTS', 'offlineService', '$window',
-        'requisitionUrlFactory', '$filter', '$scope', '$timeout', 'RequisitionWatcher',
-        'accessTokenFactory', 'messageService', 'stateTrackerService'
+        'requisitionUrlFactory', '$filter', '$scope', 'RequisitionWatcher',
+        'accessTokenFactory', 'messageService', 'stateTrackerService', 'StockCountDateModal'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator,
@@ -41,8 +41,8 @@
                                        loadingModalService, alertService, notificationService,
                                        confirmService, REQUISITION_RIGHTS, FULFILLMENT_RIGHTS,
                                        offlineService, $window, requisitionUrlFactory, $filter,
-                                       $scope, $timeout, RequisitionWatcher, accessTokenFactory,
-                                       messageService, stateTrackerService) {
+                                       $scope, RequisitionWatcher, accessTokenFactory,
+                                       messageService, stateTrackerService, StockCountDateModal) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition);
@@ -216,17 +216,19 @@
         function submitRnr() {
             confirmService.confirm('requisitionView.submit.confirm', 'requisitionView.submit.label').then(function() {
                 if (requisitionValidator.validateRequisition(requisition)) {
-                    var loadingPromise = loadingModalService.open();
                     if (!requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
-                        vm.requisition.$save().then(function () {
-                            vm.requisition.$submit().then(function (response) {
-                                loadingPromise.then(function () {
-                                    notificationService.success('requisitionView.submit.success');
-                                });
-                                stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
-                            }, failWithMessage('requisitionView.submit.failure'));
-                        }, function(response) {
-                            handleSaveError(response.status);
+                        (new StockCountDateModal(vm.requisition)).then(function () {
+                            var loadingPromise = loadingModalService.open();
+                            vm.requisition.$save().then(function () {
+                                vm.requisition.$submit().then(function (response) {
+                                    loadingPromise.then(function () {
+                                        notificationService.success('requisitionView.submit.success');
+                                    });
+                                    stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
+                                }, failWithMessage('requisitionView.submit.failure'));
+                            }, function(response) {
+                                handleSaveError(response.status);
+                            });
                         });
                     } else {
                         failWithMessage('requisitionView.allLineItemsSkipped')();
@@ -256,17 +258,19 @@
                 'requisitionView.authorize.label'
             ).then(function() {
                 if(requisitionValidator.validateRequisition(requisition)) {
-                    var loadingPromise = loadingModalService.open();
                     if(!requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
-                        vm.requisition.$save().then(function() {
-                            vm.requisition.$authorize().then(function(response) {
-                                loadingPromise.then(function() {
-                                    notificationService.success('requisitionView.authorize.success');
-                                });
-                                stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
-                            }, failWithMessage('requisitionView.authorize.failure'));
-                        }, function(response) {
-                            handleSaveError(response.status);
+                        (new StockCountDateModal(vm.requisition)).then(function () {
+                            var loadingPromise = loadingModalService.open();
+                            vm.requisition.$save().then(function () {
+                                vm.requisition.$authorize().then(function (response) {
+                                    loadingPromise.then(function () {
+                                        notificationService.success('requisitionView.authorize.success');
+                                    });
+                                    stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
+                                }, failWithMessage('requisitionView.authorize.failure'));
+                            }, function (response) {
+                                handleSaveError(response.status);
+                            });
                         });
                     } else {
                         failWithMessage('requisitionView.allLineItemsSkipped')();

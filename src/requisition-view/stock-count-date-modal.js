@@ -17,22 +17,30 @@
 
     'use strict';
 
-    /**
-     * @module requisition-view
-     *
-     * @description
-     * Responsible for requisition view screen.
-     */
-    angular.module('requisition-view', [
-        'openlmis-templates',
-        'openlmis-i18n',
-        'openlmis-state-tracker',
-        'openlmis-modal',
-        'requisition',
-        'requisition-summary',
-        'requisition-validation',
-        'requisition-status-messages',
-        'ui.router'
-    ]);
+    angular
+        .module('requisition-view')
+        .factory('StockCountDateModal', StockCountDateModalFactory);
+
+    StockCountDateModalFactory.$inject = ['openlmisModalService'];
+
+    function StockCountDateModalFactory(openlmisModalService) {
+
+        return StockCountDateModal;
+
+        function StockCountDateModal(requisition) {
+            return openlmisModalService.createDialog({
+                controller: 'StockCountDateModalController',
+                controllerAs: 'vm',
+                templateUrl: 'requisition-view/stock-count-date-modal.html',
+                show: true,
+                resolve: {
+                    requisition: function() {
+                        return requisition;
+                    }
+                }
+            }).promise;
+        }
+
+    }
 
 })();

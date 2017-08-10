@@ -47,5 +47,8 @@
     "requisitionView.outdated": "This is an outdated offline version.",
     "requisitionView.update": "Update Requisition",
     "requisitionView.updateWarning": "Updating this requisition will remove any changes that have been made to the offline requisition",
-    "requisitionView.updateOffline": "Can't update this requisition while offline"
+    "requisitionView.updateOffline": "Can't update this requisition while offline",
+    "requisitionView.submitRequisition": "Submit Requisition",
+    "requisitionView.datePhysicalStockCountCompleted": "Date physical stock count completed",
+    "requisitionView.cancel": "Cancel"
 }

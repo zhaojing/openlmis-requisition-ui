@@ -1,0 +1,27 @@
+<div class="modal user-password-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" aria-label="Close" ng-click="$hide()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">{{'requisitionView.submitRequisition'| message}}</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="addDateForm" name="addDateForm" class="user-form" ng-submit="vm.submit()">
+                        <label for="date">{{'requisitionView.datePhysicalStockCountCompleted' | message}}</label>
+                        <openlmis-datepicker input-id="date"
+                                             value="vm.requisition.datePhysicalStockCountCompleted"
+                                             required="true"
+                                             max-date="vm.maxDate"
+                        ></openlmis-datepicker>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="$hide()">{{'requisitionView.cancel' | message}}</button>
+                    <input form="addDateForm" type="submit"
+                        value="{{'requisitionView.submit.label'| message}}"/>
+                </div>
+        </div>
+    </div>
+</div>
