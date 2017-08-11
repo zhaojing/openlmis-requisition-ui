@@ -29,6 +29,7 @@
         'openlmis-state-tracker',
         'openlmis-modal',
         'openlmis-date',
+        'openlmis-invalid',
         'requisition',
         'requisition-summary',
         'requisition-validation',

@@ -49,6 +49,8 @@
     "requisitionView.updateWarning": "Updating this requisition will remove any changes that have been made to the offline requisition",
     "requisitionView.updateOffline": "Can't update this requisition while offline",
     "requisitionView.submitRequisition": "Submit Requisition",
+    "requisitionView.authorizeRequisition": "Authorize Requisition",
     "requisitionView.datePhysicalStockCountCompleted": "Date physical stock count completed",
+    "requisitionView.datePhysicalStockCountCompleted.inFuture": "You cannot record date for the future",
     "requisitionView.cancel": "Cancel"
 }

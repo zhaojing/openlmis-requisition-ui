@@ -29,10 +29,10 @@
         .controller('RequisitionStockCountDateModalController', controller);
 
     controller.$inject = [
-        'requisition', 'modalDeferred'
+        'requisition', 'modalDeferred', 'messageService'
     ];
 
-    function controller(requisition, modalDeferred) {
+    function controller(requisition, modalDeferred, messageService) {
 
         var vm = this;
 
@@ -62,6 +62,17 @@
         vm.maxDate = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionStockCountDateModalController
+         * @name invalidMessage
+         * @type {String}
+         *
+         * @description
+         * Holds form error message.
+         */
+        vm.invalidMessage = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf requisition-view.controller:RequisitionStockCountDateModalController
          * @name $onInit
@@ -88,6 +99,8 @@
         function submit() {
             if (vm.requisition.datePhysicalStockCountCompleted <= new Date()) {
                 modalDeferred.resolve();
+            } else {
+                vm.invalidMessage = messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
             }
         }
     }
