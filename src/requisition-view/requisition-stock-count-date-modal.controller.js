@@ -19,14 +19,14 @@
 
     /**
      * @ngdoc controller
-     * @name requisition-view.controller:StockCountDateModalController
+     * @name requisition-view.controller:RequisitionStockCountDateModalController
      *
      * @description
      * Manages stock count date modal.
      */
     angular
         .module('requisition-view')
-        .controller('StockCountDateModalController', controller);
+        .controller('RequisitionStockCountDateModalController', controller);
 
     controller.$inject = [
         'requisition', 'modalDeferred'
@@ -41,7 +41,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-view.controller:StockCountDateModalController
+         * @propertyOf requisition-view.controller:RequisitionStockCountDateModalController
          * @name requsition
          * @type {Object}
          *
@@ -52,7 +52,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-view.controller:StockCountDateModalController
+         * @propertyOf requisition-view.controller:RequisitionStockCountDateModalController
          * @name maxDate
          * @type {Date}
          *
@@ -63,11 +63,11 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-view.controller:StockCountDateModalController
+         * @methodOf requisition-view.controller:RequisitionStockCountDateModalController
          * @name $onInit
          *
          * @description
-         * Initialization method of the StockCountDateModalController.
+         * Initialization method of the RequisitionStockCountDateModalController.
          */
         function onInit() {
             vm.requisition = requisition;
@@ -77,7 +77,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-view.controller:StockCountDateModalController
+         * @methodOf requisition-view.controller:RequisitionStockCountDateModalController
          * @name submit
          *
          * @description

@@ -24,5 +24,9 @@
             <strong>{{'requisitionView.reportingPeriod' | message}}</strong>
             {{vm.requisition.processingPeriod | period}}
         </li>
+        <li ng-if="vm.requisition.datePhysicalStockCountCompleted">
+            <strong>{{'requisitionView.datePhysicalStockCountCompleted' | message}}</strong>
+            {{vm.requisition.datePhysicalStockCountCompleted | openlmisDate}}
+        </li>
     </ul>
 </aside>

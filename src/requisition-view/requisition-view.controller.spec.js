@@ -20,7 +20,7 @@ describe('RequisitionViewController', function() {
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
         REQUISITION_RIGHTS, accessTokenFactorySpy, $window, stateTrackerService, messageService,
-        StockCountDateModal;
+        RequisitionStockCountDateModal;
 
     beforeEach(function() {
         module('requisition-view');
@@ -59,9 +59,9 @@ describe('RequisitionViewController', function() {
                 return requisitionValidatorMock;
             });
 
-            StockCountDateModal = jasmine.createSpy('StockCountDateModal');
-            $provide.factory('StockCountDateModal', function() {
-                return StockCountDateModal;
+            RequisitionStockCountDateModal = jasmine.createSpy('RequisitionStockCountDateModal');
+            $provide.factory('RequisitionStockCountDateModal', function() {
+                return RequisitionStockCountDateModal;
             });
         });
 
@@ -437,7 +437,7 @@ describe('RequisitionViewController', function() {
 
             requisitionValidatorMock.validateRequisition.andReturn(true);
             requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
-            StockCountDateModal.andReturn($q.when());
+            RequisitionStockCountDateModal.andReturn($q.when());
         });
 
         it('should redirect to previous state', function() {
@@ -470,11 +470,11 @@ describe('RequisitionViewController', function() {
             expect(alertService.error).toHaveBeenCalledWith('requisitionView.allLineItemsSkipped');
         });
 
-        it('should call StockCountDateModal', function() {
+        it('should call RequisitionStockCountDateModal', function() {
             vm.authorizeRnr();
             $scope.$apply();
 
-            expect(StockCountDateModal).toHaveBeenCalledWith(requisition);
+            expect(RequisitionStockCountDateModal).toHaveBeenCalledWith(requisition);
         });
     });
 
@@ -487,7 +487,7 @@ describe('RequisitionViewController', function() {
 
             requisitionValidatorMock.validateRequisition.andReturn(true);
             requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
-            StockCountDateModal.andReturn($q.when());
+            RequisitionStockCountDateModal.andReturn($q.when());
         });
 
         it('should redirect to previous state', function() {
@@ -500,11 +500,11 @@ describe('RequisitionViewController', function() {
             expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
         });
 
-        it('should call StockCountDateModal', function() {
+        it('should call RequisitionStockCountDateModal', function() {
             vm.submitRnr();
             $scope.$apply();
 
-            expect(StockCountDateModal).toHaveBeenCalledWith(requisition);
+            expect(RequisitionStockCountDateModal).toHaveBeenCalledWith(requisition);
         });
     });
 

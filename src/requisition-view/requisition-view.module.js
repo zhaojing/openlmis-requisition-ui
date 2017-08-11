@@ -28,6 +28,7 @@
         'openlmis-i18n',
         'openlmis-state-tracker',
         'openlmis-modal',
+        'openlmis-date',
         'requisition',
         'requisition-summary',
         'requisition-validation',

@@ -33,7 +33,7 @@
         'requisitionService', 'loadingModalService', 'alertService', 'notificationService',
         'confirmService', 'REQUISITION_RIGHTS', 'FULFILLMENT_RIGHTS', 'offlineService', '$window',
         'requisitionUrlFactory', '$filter', '$scope', 'RequisitionWatcher',
-        'accessTokenFactory', 'messageService', 'stateTrackerService', 'StockCountDateModal'
+        'accessTokenFactory', 'messageService', 'stateTrackerService', 'RequisitionStockCountDateModal'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator,
@@ -42,7 +42,7 @@
                                        confirmService, REQUISITION_RIGHTS, FULFILLMENT_RIGHTS,
                                        offlineService, $window, requisitionUrlFactory, $filter,
                                        $scope, RequisitionWatcher, accessTokenFactory,
-                                       messageService, stateTrackerService, StockCountDateModal) {
+                                       messageService, stateTrackerService, RequisitionStockCountDateModal) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition);
@@ -217,7 +217,8 @@
             confirmService.confirm('requisitionView.submit.confirm', 'requisitionView.submit.label').then(function() {
                 if (requisitionValidator.validateRequisition(requisition)) {
                     if (!requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
-                        (new StockCountDateModal(vm.requisition)).then(function () {
+                        var modal = new RequisitionStockCountDateModal(vm.requisition);
+                        modal.then(function () {
                             var loadingPromise = loadingModalService.open();
                             vm.requisition.$save().then(function () {
                                 vm.requisition.$submit().then(function (response) {
@@ -259,7 +260,8 @@
             ).then(function() {
                 if(requisitionValidator.validateRequisition(requisition)) {
                     if(!requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
-                        (new StockCountDateModal(vm.requisition)).then(function () {
+                        var modal = new RequisitionStockCountDateModal(vm.requisition);
+                        modal.then(function () {
                             var loadingPromise = loadingModalService.open();
                             vm.requisition.$save().then(function () {
                                 vm.requisition.$authorize().then(function (response) {

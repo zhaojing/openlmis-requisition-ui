@@ -19,19 +19,19 @@
 
     angular
         .module('requisition-view')
-        .factory('StockCountDateModal', StockCountDateModalFactory);
+        .factory('RequisitionStockCountDateModal', RequisitionStockCountDateModalFactory);
 
-    StockCountDateModalFactory.$inject = ['openlmisModalService'];
+    RequisitionStockCountDateModalFactory.$inject = ['openlmisModalService'];
 
-    function StockCountDateModalFactory(openlmisModalService) {
+    function RequisitionStockCountDateModalFactory(openlmisModalService) {
 
         return StockCountDateModal;
 
         function StockCountDateModal(requisition) {
             return openlmisModalService.createDialog({
-                controller: 'StockCountDateModalController',
+                controller: 'RequisitionStockCountDateModalController',
                 controllerAs: 'vm',
-                templateUrl: 'requisition-view/stock-count-date-modal.html',
+                templateUrl: 'requisition-view/requisition-stock-count-date-modal.html',
                 show: true,
                 resolve: {
                     requisition: function() {
