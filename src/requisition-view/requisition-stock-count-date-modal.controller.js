@@ -82,7 +82,10 @@
          */
         function onInit() {
             vm.requisition = requisition;
-            vm.requisition.datePhysicalStockCountCompleted = new Date(vm.requisition.datePhysicalStockCountCompleted);
+            if (vm.requisition.datePhysicalStockCountCompleted) {
+                vm.requisition.datePhysicalStockCountCompleted =
+                    new Date(vm.requisition.datePhysicalStockCountCompleted);
+            }
             vm.maxDate = new Date();
         }
 
