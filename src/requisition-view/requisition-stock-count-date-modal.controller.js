@@ -53,13 +53,13 @@
         /**
          * @ngdoc property
          * @propertyOf requisition-view.controller:RequisitionStockCountDateModalController
-         * @name maxDate
-         * @type {Date}
+         * @name datePhysicalStockCountCompleted
+         * @type {Object}
          *
          * @description
-         * Object that store max date.
+         * Date object which will be updated with new datePhysicalStockCountCompleted.
          */
-        vm.maxDate = undefined;
+        vm.datePhysicalStockCountCompleted = undefined;
 
         /**
          * @ngdoc property
@@ -83,10 +83,9 @@
         function onInit() {
             vm.requisition = requisition;
             if (vm.requisition.datePhysicalStockCountCompleted) {
-                vm.requisition.datePhysicalStockCountCompleted =
+                vm.datePhysicalStockCountCompleted =
                     new Date(vm.requisition.datePhysicalStockCountCompleted);
             }
-            vm.maxDate = new Date();
         }
 
         /**
@@ -100,7 +99,8 @@
          * @return {Promise} resolves if date is not after today.
          */
         function submit() {
-            if (vm.requisition.datePhysicalStockCountCompleted <= new Date()) {
+            if (vm.datePhysicalStockCountCompleted <= new Date()) {
+                vm.requisition.datePhysicalStockCountCompleted = vm.datePhysicalStockCountCompleted;
                 modalDeferred.resolve();
             } else {
                 vm.invalidMessage = messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');

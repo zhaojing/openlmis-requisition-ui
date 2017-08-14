@@ -54,16 +54,16 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should set datePhysicalStockCountCompleted', function() {
-            expect(vm.requisition.datePhysicalStockCountCompleted).toEqual(new Date("2017-08-11"));
+            expect(vm.datePhysicalStockCountCompleted).toEqual(new Date("2017-08-11"));
         });
     });
 
     describe('submit', function() {
 
         it('should set invalidMessage if date is after now', function () {
-            vm.requisition.datePhysicalStockCountCompleted = new Date();
-            vm.requisition.datePhysicalStockCountCompleted
-                .setDate(vm.requisition.datePhysicalStockCountCompleted.getDate() + 1);
+            vm.datePhysicalStockCountCompleted = new Date();
+            vm.datePhysicalStockCountCompleted
+                .setDate(vm.datePhysicalStockCountCompleted.getDate() + 1);
 
             vm.submit();
             $rootScope.$apply();
@@ -72,7 +72,8 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should resolve modalDeffered if date is today', function () {
-            vm.requisition.datePhysicalStockCountCompleted = new Date();
+            vm.datePhysicalStockCountCompleted = new Date();
+            vm.datePhysicalStockCountCompleted.setHours(0,0,0,0)
 
             var isDeffered = false;
             modalDeferred.promise.then(function () {
@@ -86,7 +87,7 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should resolve modalDeffered if date is in past', function () {
-            vm.requisition.datePhysicalStockCountCompleted = new Date("2017-08-10");
+            vm.datePhysicalStockCountCompleted = new Date("2017-08-10");
 
             var isDeffered = false;
             modalDeferred.promise.then(function () {
