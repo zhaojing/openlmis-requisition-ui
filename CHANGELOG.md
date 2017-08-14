@@ -3,6 +3,10 @@
 
 * [OLMIS-2797:](https://openlmis.atlassian.net/browse/OLMIS-2797) Updated product-grid error messages to use openlmis-invalid.
 
+New functionality that are not backwards-compatible:
+* [OLMIS-2833](https://openlmis.atlassian.net/browse/OLMIS-2833) Add date field to Requisition form
+  * Date physical stock count completed is required for submit and authorize requisition.
+
 Improvements:
 * [OLMIS-2969](https://openlmis.atlassian.net/browse/OLMIS-2969): Requisitions show saving indicator only when requisition is editable.
 
