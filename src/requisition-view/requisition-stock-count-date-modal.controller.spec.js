@@ -25,10 +25,12 @@ describe('RequisitionStockCountDateModalController', function() {
             $q = $injector.get('$q');
             $rootScope = $injector.get('$rootScope');
             messageService = $injector.get('messageService');
+            alertService = $injector.get('alertService');
         });
 
         message = 'some-message';
         spyOn(messageService, 'get').andReturn(message);
+        spyOn(alertService, 'error');
 
         requisition = {
             datePhysicalStockCountCompleted: "2017-08-11"
@@ -69,6 +71,17 @@ describe('RequisitionStockCountDateModalController', function() {
             $rootScope.$apply();
 
             expect(vm.invalidMessage).toEqual(message);
+        });
+
+        it('should call alertService error with proper parameter if date is after now', function () {
+            vm.datePhysicalStockCountCompleted = new Date();
+            vm.datePhysicalStockCountCompleted
+                .setDate(vm.datePhysicalStockCountCompleted.getDate() + 1);
+
+            vm.submit();
+            $rootScope.$apply();
+
+            expect(alertService.error).toHaveBeenCalledWith(message);
         });
 
         it('should resolve modalDeffered if date is today', function () {

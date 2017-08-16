@@ -29,10 +29,10 @@
         .controller('RequisitionStockCountDateModalController', controller);
 
     controller.$inject = [
-        'requisition', 'modalDeferred', 'messageService'
+        'requisition', 'modalDeferred', 'messageService', 'alertService'
     ];
 
-    function controller(requisition, modalDeferred, messageService) {
+    function controller(requisition, modalDeferred, messageService, alertService) {
 
         var vm = this;
 
@@ -103,7 +103,9 @@
                 vm.requisition.datePhysicalStockCountCompleted = vm.datePhysicalStockCountCompleted;
                 modalDeferred.resolve();
             } else {
-                vm.invalidMessage = messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
+                var invalidMessage = messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
+                vm.invalidMessage = invalidMessage;
+                alertService.error(invalidMessage);
             }
         }
     }
