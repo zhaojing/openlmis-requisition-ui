@@ -16,7 +16,7 @@
 describe('requisitionService', function() {
 
     var $rootScope, $httpBackend, requisitionService, dateUtils, confirm, q, allStatuses,
-        requisitionUrlFactory, openlmisUrl, requisitionsStorage, onlineOnlyRequisitions, startDate,
+        requisitionUrlFactory, openlmisUrl, requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate,
         endDate, startDate1, endDate1, modifiedDate, createdDate, processingSchedule, facility,
         program, period, emergency, requisition, requisitionDto, requisitionDto2,
         requisitionToConvert, approvedProductsOffline, templateOffline;
@@ -104,6 +104,8 @@ describe('requisitionService', function() {
             });
 
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
@@ -114,6 +116,7 @@ describe('requisitionService', function() {
                 if (resourceName === 'template') return templateOffline;
                 if (resourceName === 'approvedProducts') return approvedProductsOffline;
                 if (resourceName === 'onlineOnly') return onlineOnlyRequisitions;
+                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
                 return requisitionsStorage;
             });
 

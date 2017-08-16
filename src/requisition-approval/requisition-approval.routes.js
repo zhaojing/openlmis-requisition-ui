@@ -27,8 +27,9 @@
 
 		$stateProvider.state('openlmis.requisitions.approvalList', {
 			showInNavigation: true,
+			isOffline: true,
 			label: 'requisitionApproval.approve',
-			url: '/approvalList?page&size&program',
+			url: '/approvalList?page&size&program&offline',
 			controller: 'RequisitionApprovalListController',
 			controllerAs: 'vm',
 			templateUrl: 'requisition-approval/requisition-approval-list.html',
@@ -36,13 +37,22 @@
             resolve: {
 				requisitions: function(paginationService, requisitionService, $stateParams) {
 					return paginationService.registerUrl($stateParams, function(stateParams) {
-						return requisitionService.forApproval(stateParams);
+					    if (stateParams.program) {
+					        if (stateParams.offline == 'true') {
+					            stateParams.requisitionStatus = [REQUISITION_STATUS.AUTHORIZED, REQUISITION_STATUS.IN_APPROVAL];
+					            stateParams.showBatchRequisitions = true;
+					            return requisitionService.search(stateParams.offline == 'true', stateParams);
+					        } else {
+                                return requisitionService.forApproval(stateParams);
+                            }
+                        }
+                        return requisitionService.forApproval(stateParams);
 					});
 				},
                 user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-				programs: function(programService, user, $q, $filter) {
+				programs: function(programService, user, $q, $filter, alertService) {
                     var deferred = $q.defer();
 
                     $q.all([
@@ -53,7 +63,10 @@
                         	deferred.resolve(results[0]);
                         }
                         deferred.resolve($filter('unique')(results[0].concat(results[1]), 'id'));
-					}, deferred.reject);
+                    }).catch(function() {
+                        alertService.error('error.noOfflineData');
+                        deferred.reject();
+                    });
 
                     return deferred.promise;
                 },

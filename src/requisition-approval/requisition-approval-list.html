@@ -8,12 +8,20 @@
         </select>
         <input class="btn btn-primary" type="submit" value="{{'requisitionApproval.search' | message}}"/>
     </form>
+    <h4>{{ 'requisitionApproval.select' | message }}</h4>
+    <ul>
+        <li><a ng-click="vm.toggleSelectAll(true)">{{'requisitionApproval.all' | message}}</a></li>
+        <li><a ng-click="vm.toggleSelectAll(false)">{{'requisitionApproval.none' | message}}</a></li>
+    </ul>
     <table>
         <caption ng-if="!vm.requisitions.length">
             {{'requisitionApproval.noRnrPendingForApproval' | message}}
         </caption>
         <thead>
             <tr>
+                <th class="col-sticky">
+                    {{ 'requisitionApproval.approve' | message }}
+                </th>
                 <th>{{'requisitionApproval.program' | message}}</th>
                 <th>{{'requisitionApproval.facility' | message}}</th>
                 <th>{{'requisitionApproval.period' | message}}</th>
@@ -21,11 +29,15 @@
                 <th>{{'requisitionApproval.endDate' | message}}</th>
                 <th>{{'requisitionApproval.dateSubmitted' | message}}</th>
                 <th>{{'requisitionApproval.emergency' | message}}</th>
+                <th>{{'requisitionApproval.offline' | message}}</th>
                 <th class="col-sticky sticky-right">{{'requisitionApproval.actions' | message}}</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="requisition in vm.requisitions">
+                <td>
+                    <input type="checkbox" ng-model="requisition.$selected">
+                </td>
                 <td>{{requisition.program.name}}</td>
                 <td>{{requisition.facility.code}} - {{requisition.facility.name}}</td>
                 <td>{{requisition.processingPeriod.name}}</td>
@@ -35,8 +47,11 @@
                 <td class="col-emergency">
                     <span ng-if="requisition.emergency" class="icon-ok"></span>
                 </td>
+                <td class="col-emergency">
+                    <i ng-class="{'icon-ok': requisition.$availableOffline}"></i>
+                </td>
                 <td>
-                    <button class="primary" ng-click="vm.openRnr(requisition.id)">
+                    <button ng-if="vm.isFullRequisitionAvailable(requisition.id)" class="primary" ng-click="vm.openRnr(requisition.id)">
                         {{'requisitionApproval.viewRequisition' | message}}
                     </button>
                 </td>
@@ -44,4 +59,7 @@
         </tbody>
     </table>
     <openlmis-pagination/>
+</div>
+<div class="openlmis-toolbar" ng-if="vm.requisitions.length">
+    <button class="primary" ng-click="vm.viewSelectedRequisitions()">{{'requisitionApproval.viewSelectedRequisitions' | message}}</button>
 </div>

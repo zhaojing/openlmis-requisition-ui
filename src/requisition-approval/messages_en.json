@@ -1,16 +1,23 @@
 {
     "requisitionApproval.actions": "Actions",
+    "requisitionApproval.all": "All",
     "requisitionApproval.approve": "Approve",
     "requisitionApproval.approveRequisitions": "Approve Requisitions",
     "requisitionApproval.dateSubmitted": "Date submitted",
     "requisitionApproval.emergency": "Emergency",
     "requisitionApproval.endDate": "End date",
     "requisitionApproval.facility": "Facility",
+    "requisitionApproval.none": "None",
     "requisitionApproval.noRnrPendingForApproval": "No R&Rs pending for approval",
     "requisitionApproval.period": "Period",
     "requisitionApproval.program": "Program",
+    "requisitionApproval.offline": "Offline",
     "requisitionApproval.search": "Search",
+    "requisitionApproval.select": "Select",
+    "requisitionApproval.selectAtLeastOneRnr": "Please select at least one Requisition.",
     "requisitionApproval.selectProgram": "Select program",
+    "requisitionApproval.selectRequisitionsFromTheSameProgram": "Please select Requisitions from the same program.",
     "requisitionApproval.startDate": "Start date",
-    "requisitionApproval.viewRequisition": "View Requisition"
+    "requisitionApproval.viewRequisition": "View Requisition",
+    "requisitionApproval.viewSelectedRequisitions": "View selected Requisitions"
 }

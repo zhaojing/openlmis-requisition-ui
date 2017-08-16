@@ -31,7 +31,7 @@
     service.$inject = [
         '$q', '$resource', 'messageService', 'openlmisUrlFactory', 'requisitionUrlFactory',
         'Requisition', 'dateUtils', 'localStorageFactory', 'offlineService', 'paginationFactory',
-        'PAGE_SIZE'
+        'PAGE_SIZE', '$filter'
     ];
 
     function service($q, $resource, messageService, openlmisUrlFactory, requisitionUrlFactory,
@@ -39,6 +39,7 @@
                      PAGE_SIZE) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
+            offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions'),
             onlineOnlyRequisitions = localStorageFactory('onlineOnly'),
             offlineStockAdjustmentReasons = localStorageFactory('stockAdjustmentReasons'),
             offlineStatusMessages = localStorageFactory('statusMessages');
@@ -225,7 +226,16 @@
 
             if(offline) {
                 var requisitions = offlineRequisitions.search(searchParams, 'requisitionSearch'),
-                    page = searchParams.page,
+                    batchRequisitions = searchParams.showBatchRequisitions ?
+                        offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [];
+
+                angular.forEach(batchRequisitions, function(batchRequisition) {
+                    if ($filter('filter')(requisitions, {id: batchRequisition.id}).length == 0) {
+                        requisitions.push(batchRequisition);
+                    }
+                });
+
+                var page = searchParams.page,
                     size = searchParams.size,
                     items = paginationFactory.getPage(requisitions, page, size);
 
@@ -420,19 +430,34 @@
         }
 
         function transformRequisitionOffline(requisition) {
-            var offlineRequisition = offlineRequisitions.getBy('id', requisition.id);
-            if (offlineRequisition) {
+            var offlineRequisition = offlineRequisitions.getBy('id', requisition.id),
+                offlineBatchRequisition = offlineBatchRequisitions.getBy('id', requisition.id);
+
+            if (offlineRequisition || offlineBatchRequisition) {
                 requisition.$availableOffline = true;
             }
-            if(offlineRequisition && requisition.modifiedDate && requisition.modifiedDate.getTime) {
-                var offlineDate = dateUtils.toDate(offlineRequisition.modifiedDate);
 
-                if(!offlineDate || offlineDate.getTime() !== requisition.modifiedDate.getTime()) {
-                    offlineRequisition.$outdated = true;
-                } else {
-                    delete offlineRequisition.$outdated;
+            if(requisition.modifiedDate && requisition.modifiedDate.getTime) {
+
+                if (offlineRequisition) {
+                    markIfOutdated(requisition, offlineRequisition);
+                    offlineRequisitions.put(offlineRequisition);
                 }
-                offlineRequisitions.put(offlineRequisition);
+
+                if (offlineBatchRequisition) {
+                    markIfOutdated(requisition, offlineBatchRequisition);
+                    offlineBatchRequisitions.put(offlineBatchRequisition);
+                }
+            }
+        }
+
+        function markIfOutdated(requisition, offlineRequisition) {
+            var offlineDate = dateUtils.toDate(offlineRequisition.modifiedDate);
+
+            if(!offlineDate || offlineDate.getTime() !== requisition.modifiedDate.getTime()) {
+                offlineRequisition.$outdated = true;
+            } else {
+                delete offlineRequisition.$outdated;
             }
         }
     }

@@ -30,16 +30,23 @@
 		.controller('RequisitionApprovalListController', controller);
 
 	controller.$inject = [
-		'$controller', '$state', 'requisitions', 'messageService', '$stateParams', '$filter', 'programs', 'selectedProgram'
+	    '$controller', '$state', 'requisitions', '$stateParams', 'programs', 'selectedProgram',
+	    'alertService', 'offlineService', 'localStorageFactory'
 	];
 
-	function controller($controller, $state, requisitions, messageService, $stateParams, $filter, programs, selectedProgram) {
+	function controller($controller, $state, requisitions, $stateParams, programs, selectedProgram,
+	    alertService, offlineService, localStorageFactory) {
 
-		var vm = this;
+        var vm = this,
+            offlineRequisitions = localStorageFactory('requisitions'),
+            offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions');
 
         vm.$onInit = onInit;
         vm.search = search;
 		vm.openRnr = openRnr;
+		vm.toggleSelectAll = toggleSelectAll;
+		vm.viewSelectedRequisitions = viewSelectedRequisitions;
+		vm.isFullRequisitionAvailable = isFullRequisitionAvailable;
 
 		/**
          * @ngdoc property
@@ -75,6 +82,17 @@
         vm.selectedProgram = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name offline
+         * @type {Boolean}
+         *
+         * @description
+         * Indicates if requisitions will be searched offline or online.
+         */
+        vm.offline = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf requisition-approval.controller:RequisitionApprovalListController
          * @name $onInit
@@ -87,6 +105,7 @@
             vm.requisitions = requisitions;
             vm.programs = programs;
             vm.selectedProgram = selectedProgram;
+            vm.offline = $stateParams.offline === 'true' || offlineService.isOffline();
         }
 
         /**
@@ -101,6 +120,7 @@
             var stateParams = angular.copy($stateParams);
 
             stateParams.program = vm.selectedProgram ? vm.selectedProgram.id : null;
+            stateParams.offline = vm.offline;
 
             $state.go('openlmis.requisitions.approvalList', stateParams, {
                 reload: true
@@ -120,6 +140,120 @@
 				rnr: requisitionId
 			});
 		}
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-approval.controller:RequisitionApprovalListController
+         * @name toggleSelectAll
+         *
+         * @description
+         * Responsible for marking/unmarking all requisitions as selected.
+         *
+         * @param {Boolean} selectAll Determines if all requisitions should be selected or not
+         */
+        function toggleSelectAll(selectAll) {
+            angular.forEach(vm.requisitions, function(requisition) {
+                requisition.$selected = selectAll;
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-approval.controller:RequisitionApprovalListController
+         * @name viewSelectedRequisitions
+         *
+         * @description
+         * Redirects to page for modyfing all selected requisitions.
+         */
+        function viewSelectedRequisitions() {
+            var selectedRequisitionIds = [],
+                requisitionsFromOneProgram = true,
+                requiredProgramId = undefined;
+
+            angular.forEach(vm.requisitions, function(requisition) {
+                if (requisition.$selected) {
+                    if (requiredProgramId && requisition.program.id != requiredProgramId) {
+                        requisitionsFromOneProgram = false;
+                    }
+                    selectedRequisitionIds.push(requisition.id);
+                    requiredProgramId = requisition.program.id;
+                }
+            });
+
+            if(selectedRequisitionIds.length > 0 && requisitionsFromOneProgram) {
+                angular.forEach(selectedRequisitionIds, function(id) {
+                   if (!isBatchRequisitionAvailable(id)) {
+                       var fullRequisitionDto = offlineRequisitions.getBy('id', id);
+                       offlineBatchRequisitions.put(transformToBatchDto(angular.copy(fullRequisitionDto)));
+                   }
+                });
+
+                $state.go('openlmis.requisitions.batchApproval', {
+                    ids: selectedRequisitionIds.join(',')
+                });
+            } else if (!requisitionsFromOneProgram) {
+                alertService.error('requisitionApproval.selectRequisitionsFromTheSameProgram');
+            } else {
+                alertService.error('requisitionApproval.selectAtLeastOneRnr');
+            }
+        }
+
+        function isFullRequisitionAvailable(requisitionId) {
+            var offlineRequisition = offlineRequisitions.search({id: requisitionId});
+            return !vm.offline || vm.offline && offlineRequisition.length > 0;
+        }
+
+        function isBatchRequisitionAvailable(requisitionId) {
+            return !vm.offline || vm.offline && offlineBatchRequisitions.getBy('id', requisitionId);
+        }
+
+        function transformToBatchDto(requisition) {
+            var batchRequisitionDto = {
+                $outdated: requisition.$outdated,
+                $modified: requisition.$modified,
+                $availableOffline: requisition.$availableOffline,
+                id: requisition.id,
+                status : requisition.status,
+                statusChanges: requisition.statusChanges,
+                program: {
+                    id: requisition.program.id,
+                    code: requisition.program.code,
+                    name: requisition.program.name
+                },
+                facility: {
+                    id: requisition.facility.id,
+                    code: requisition.facility.code,
+                    name: requisition.facility.name
+                },
+                processingPeriod: {
+                    id: requisition.processingPeriod.id,
+                    name: requisition.processingPeriod.name,
+                    startDate: requisition.processingPeriod.startDate,
+                    endDate: requisition.processingPeriod.endDate
+                },
+                requisitionLineItems: []
+            };
+            angular.forEach(requisition.requisitionLineItems, function(lineItem) {
+                var newLineItem = {
+                    id: lineItem.id,
+                    approvedQuantity: lineItem.approvedQuantity,
+                    pricePerPack: lineItem.pricePerPack,
+                    totalCost: lineItem.totalCost,
+                    skipped: lineItem.skipped,
+                    orderable: {
+                        id: lineItem.orderable.id,
+                        productCode: lineItem.orderable.productCode,
+                        fullProductName: lineItem.orderable.fullProductName,
+                        netContent: lineItem.orderable.netContent,
+                        packRoundingThreshold: lineItem.orderable.packRoundingThreshold,
+                        roundToZero: lineItem.orderable.roundToZero
+                    }
+                };
+                batchRequisitionDto.requisitionLineItems.push(newLineItem);
+            });
+
+            return batchRequisitionDto;
+        }
 	}
 
 })();

@@ -21,15 +21,16 @@
      * @module
      *
      * @description
-     * Responsible for managing requisition for approval list screen.
+     * Responsible for managing modyfing multiple requisitions screen.
      */
-    angular.module('requisition-approval', [
+    angular.module('requisition-batch-approval', [
         'requisition',
         'openlmis-auth',
-        'openlmis-local-storage',
         'openlmis-pagination',
-        'referencedata-program',
-        'ui.router'
+        'requisition-product-grid',
+        'requisition-validation',
+        'ui.router',
+        'openlmis-state-tracker'
     ]);
 
 })();

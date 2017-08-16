@@ -16,7 +16,7 @@
 describe('RequisitionApprovalListController', function () {
 
     //injects
-    var vm, $state, $stateParams;
+    var vm, $state, $stateParams, alertService, $controller, offlineService, confirmService, $rootScope, $q;
 
     //variables
     var requisitions, programs;
@@ -24,10 +24,17 @@ describe('RequisitionApprovalListController', function () {
     beforeEach(function() {
         module('requisition-approval');
 
-        inject(function ($controller, _$state_, _$stateParams_) {
+        inject(function (_$controller_, _$state_, _$stateParams_, _alertService_,
+                         _offlineService_, _confirmService_, _$rootScope_, _$q_) {
 
+            $controller = _$controller_;
             $state = _$state_;
             $stateParams = _$stateParams_;
+            alertService = _alertService_;
+            offlineService = _offlineService_;
+            confirmService = _confirmService_;
+            $rootScope = _$rootScope_;
+            $q = _$q_;
 
             programs = [
                 {
@@ -62,18 +69,14 @@ describe('RequisitionApprovalListController', function () {
 
                 }
             ];
-
-            spyOn($state, 'go');
-
-            vm = $controller('RequisitionApprovalListController', {
-                requisitions: requisitions,
-                programs: programs,
-                selectedProgram: programs[0]
-            });
         });
     });
 
     describe('$onInit', function() {
+
+        beforeEach(function() {
+            initController();
+        });
 
         it('should expose requisitions', function() {
             vm.$onInit();
@@ -90,9 +93,20 @@ describe('RequisitionApprovalListController', function () {
             expect(vm.selectedProgram).toBe(programs[0]);
         });
 
+        it('should expose offline flag', function() {
+            vm.$onInit();
+            expect(vm.offline).toBe(false);
+        });
+
     });
 
     describe ('search', function() {
+
+        beforeEach(function() {
+            initController();
+
+            spyOn($state, 'go');
+        });
 
         it('should set program', function() {
             vm.selectedProgram = programs[0];
@@ -100,7 +114,20 @@ describe('RequisitionApprovalListController', function () {
             vm.search();
 
             expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
-                program: vm.selectedProgram.id
+                program: vm.selectedProgram.id,
+                offline: false
+            }, {reload: true});
+        });
+
+        it('should set offline flag correctly', function() {
+            vm.selectedProgram = programs[0];
+            vm.offline = true;
+
+            vm.search();
+
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
+                program: vm.selectedProgram.id,
+                offline: true
             }, {reload: true});
         });
 
@@ -115,10 +142,65 @@ describe('RequisitionApprovalListController', function () {
 
     describe ('openRnr', function() {
 
+        beforeEach(function() {
+            initController();
+
+            spyOn($state, 'go');
+        });
+
         it('should go to fullSupply state', function () {
             vm.openRnr(requisitions[0].id);
 
             expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: requisitions[0].id});
         });
     });
+
+    describe('viewSelectedRequisitions', function() {
+
+        beforeEach(function() {
+            initController();
+
+            spyOn($state, 'go');
+            spyOn(alertService, 'error');
+        });
+
+        it('should show error when trying to call with no requisition selected', function() {
+            vm.viewSelectedRequisitions();
+
+            expect($state.go).not.toHaveBeenCalled();
+            expect(alertService.error).toHaveBeenCalledWith('requisitionApproval.selectAtLeastOneRnr');
+        });
+
+        it('should show error when trying to call with requisition selected from two different programs', function() {
+            vm.selectedProgram = undefined;
+            vm.requisitions[0].$selected = true;
+            vm.requisitions[1].$selected = true;
+
+            vm.viewSelectedRequisitions();
+
+            expect($state.go).not.toHaveBeenCalled();
+            expect(alertService.error).toHaveBeenCalledWith('requisitionApproval.selectRequisitionsFromTheSameProgram');
+        });
+
+        it('should not show error when trying to call with requisition selected', function() {
+            vm.requisitions[0].$selected = true;
+
+            vm.viewSelectedRequisitions();
+
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.batchApproval', {
+                ids: [ vm.requisitions[0].id ].join(',')
+            });
+            expect(alertService.error).not.toHaveBeenCalled();
+        });
+
+    });
+
+    function initController() {
+        vm = $controller('RequisitionApprovalListController', {
+            requisitions: requisitions,
+            programs: programs,
+            selectedProgram: programs[0]
+        });
+        vm.$onInit();
+    }
 });
