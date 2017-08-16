@@ -103,9 +103,8 @@
                 vm.requisition.datePhysicalStockCountCompleted = vm.datePhysicalStockCountCompleted;
                 modalDeferred.resolve();
             } else {
-                var invalidMessage = messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
-                vm.invalidMessage = invalidMessage;
-                alertService.error(invalidMessage);
+                vm.invalidMessage = messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
+                alertService.error(vm.invalidMessage);
             }
         }
     }
