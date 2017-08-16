@@ -208,25 +208,6 @@ describe('RequisitionBatchApprovalController', function () {
         });
     });
 
-    describe('isInApproval', function() {
-
-        beforeEach(function() {
-            initController();
-        });
-
-        it('should return true if in approval', function() {
-            vm.requisitions[0].status = requisitionStatus.IN_APPROVAL;
-
-            expect(vm.isInApproval(vm.requisitions[0])).toBe(true);
-        });
-
-        it('should return false if not in approval', function() {
-            vm.requisitions[0].status = requisitionStatus.AUTHORIZED;
-
-            expect(vm.isInApproval(vm.requisitions[0])).toBe(false);
-        });
-    });
-
     describe('updateRequisitions', function() {
         var isOffline;
 
