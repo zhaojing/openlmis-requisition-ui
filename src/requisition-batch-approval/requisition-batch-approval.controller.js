@@ -24,7 +24,6 @@
      * @description
      * Controller for approval list of requisitions.
      */
-
     angular
         .module('requisition-batch-approval')
         .controller('RequisitionBatchApprovalController', controller);

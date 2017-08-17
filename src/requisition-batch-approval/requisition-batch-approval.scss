@@ -4,8 +4,7 @@
 
 .openlmis-table {
 
-    > thead > tr.not-bottom > th {
-        background: lighten($dark-gray, 15%);
+    > thead > tr > th {
         &.is-hidden {
             border-bottom-width: 0px !important;
         }
@@ -15,6 +14,10 @@
         &.merged-cell-right {
             border-right-width: 0px !important;
         }
+    }
+
+    > thead > tr:first-child > th {
+        background: lighten($dark-gray, 15%);
     }
 
     td.numeric {

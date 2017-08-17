@@ -15,52 +15,52 @@
 
 (function() {
 
-	'use strict';
+    'use strict';
 
-	angular
-		.module('requisition-approval')
-		.config(routes);
+    angular
+        .module('requisition-approval')
+        .config(routes);
 
-	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS', 'REQUISITION_STATUS'];
+    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS', 'REQUISITION_STATUS'];
 
-	function routes($stateProvider, REQUISITION_RIGHTS, REQUISITION_STATUS) {
+    function routes($stateProvider, REQUISITION_RIGHTS, REQUISITION_STATUS) {
 
-		$stateProvider.state('openlmis.requisitions.approvalList', {
-			showInNavigation: true,
-			isOffline: true,
-			label: 'requisitionApproval.approve',
-			url: '/approvalList?page&size&program&offline',
-			controller: 'RequisitionApprovalListController',
-			controllerAs: 'vm',
-			templateUrl: 'requisition-approval/requisition-approval-list.html',
-			accessRights: [REQUISITION_RIGHTS.REQUISITION_APPROVE],
+        $stateProvider.state('openlmis.requisitions.approvalList', {
+            showInNavigation: true,
+            isOffline: true,
+            label: 'requisitionApproval.approve',
+            url: '/approvalList?page&size&program&offline',
+            controller: 'RequisitionApprovalListController',
+            controllerAs: 'vm',
+            templateUrl: 'requisition-approval/requisition-approval-list.html',
+            accessRights: [REQUISITION_RIGHTS.REQUISITION_APPROVE],
             resolve: {
-				requisitions: function(paginationService, requisitionService, $stateParams) {
-					return paginationService.registerUrl($stateParams, function(stateParams) {
-					    if (stateParams.program) {
-					        if (stateParams.offline == 'true') {
-					            stateParams.requisitionStatus = [REQUISITION_STATUS.AUTHORIZED, REQUISITION_STATUS.IN_APPROVAL];
-					            stateParams.showBatchRequisitions = true;
-					            return requisitionService.search(stateParams.offline == 'true', stateParams);
-					        } else {
+                requisitions: function(paginationService, requisitionService, $stateParams) {
+                    return paginationService.registerUrl($stateParams, function(stateParams) {
+                        if (stateParams.program) {
+                            if (stateParams.offline == 'true') {
+                                stateParams.requisitionStatus = [REQUISITION_STATUS.AUTHORIZED, REQUISITION_STATUS.IN_APPROVAL];
+                                stateParams.showBatchRequisitions = true;
+                                return requisitionService.search(stateParams.offline == 'true', stateParams);
+                            } else {
                                 return requisitionService.forApproval(stateParams);
                             }
                         }
                         return requisitionService.forApproval(stateParams);
-					});
-				},
+                    });
+                },
                 user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-				programs: function(programService, user, $q, $filter, alertService) {
+                programs: function(programService, user, $q, $filter, alertService) {
                     var deferred = $q.defer();
 
                     $q.all([
-                    programService.getUserPrograms(user.user_id, true),
-                    programService.getUserPrograms(user.user_id, false)
-					]).then(function (results) {
+                        programService.getUserPrograms(user.user_id, true),
+                        programService.getUserPrograms(user.user_id, false)
+                    ]).then(function(results) {
                         if (!results[1]) {
-                        	deferred.resolve(results[0]);
+                            deferred.resolve(results[0]);
                         }
                         deferred.resolve($filter('unique')(results[0].concat(results[1]), 'id'));
                     }).catch(function() {
@@ -70,15 +70,15 @@
 
                     return deferred.promise;
                 },
-				selectedProgram: function($stateParams, $filter, programs) {
+                selectedProgram: function($stateParams, $filter, programs) {
                     if ($stateParams.program) {
                         return $filter('filter')(programs, {
                             id: $stateParams.program
                         })[0];
                     }
-				}
-			}
-		});
-	}
+                }
+            }
+        });
+    }
 
 })();

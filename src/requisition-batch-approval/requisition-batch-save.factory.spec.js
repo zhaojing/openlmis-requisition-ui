@@ -141,12 +141,12 @@ describe('RequisitionBatchSaveFactory', function() {
             });
         });
 
-        inject(function (_requisitionBatchSaveFactory_, _$rootScope_, _$httpBackend_, _openlmisUrlFactory_, _$http_, _$q_) {
-            requisitionBatchSaveFactory = _requisitionBatchSaveFactory_;
-            $rootScope = _$rootScope_;
-            $httpBackend = _$httpBackend_;
-            openlmisUrlFactory = _openlmisUrlFactory_;
-            $q = _$q_;
+        inject(function ($injector) {
+            requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
+            $rootScope = $injector.get('$rootScope');
+            $httpBackend = $injector.get('$httpBackend');
+            openlmisUrlFactory = $injector.get('openlmisUrlFactory');
+            $q = $injector.get('$q');
         });
     });
 

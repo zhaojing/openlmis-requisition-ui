@@ -18,47 +18,44 @@ describe('RequisitionBatchApproveFactory', function() {
 
 	var $rootScope, $httpBackend, requisitionBatchApproveFactory, requisitionSaveSpy, requisitions;
 
-	beforeEach(module('requisition-batch-approval', function($provide) {
-		requisitionSaveSpy = {
-			'save': function(requisitions){
-				return [];
-			}
-		};
-		$provide.factory('requisitionBatchSaveFactory', function(){
-			return requisitionSaveSpy.save;
-		});
+	beforeEach(function() {
+        module('requisition-batch-approval');
 
-		$provide.factory('requisitionUrlFactory', function(){
-			return function(url){
-				return url;
-			}
-		});
-	}));
-
-	beforeEach(inject(function($q){
-		spyOn(requisitionSaveSpy, 'save').andCallFake(function(requisitions){
-			return $q.resolve(requisitions);
-		});
-	}));
-
-	beforeEach(inject(function(_$rootScope_, _requisitionBatchApproveFactory_){
-		$rootScope = _$rootScope_;
-		requisitionBatchApproveFactory = _requisitionBatchApproveFactory_;
-	}));
-
-	beforeEach(inject(function(_$httpBackend_){
-		$httpBackend = _$httpBackend_;
-
-
-	}));
-
-	beforeEach(inject(function() {
 		requisitions = [{
 			id: "requisition-1"
 		}, {
 			id: "requisition-2"
 		}];
-	}));
+
+        module(function($provide) {
+            requisitionSaveSpy = {
+                'save': function(requisitions){
+                    return [];
+                }
+            };
+            $provide.factory('requisitionBatchSaveFactory', function(){
+                return requisitionSaveSpy.save;
+            });
+
+            $provide.factory('requisitionUrlFactory', function(){
+                return function(url){
+                    return url;
+                }
+            });
+		});
+
+        inject(function($injector){
+            $q = $injector.get('$q');
+
+            spyOn(requisitionSaveSpy, 'save').andCallFake(function(requisitions){
+                return $q.resolve(requisitions);
+            });
+
+            $httpBackend = $injector.get('$httpBackend');
+            $rootScope = $injector.get('$rootScope');
+            requisitionBatchApproveFactory = $injector.get('requisitionBatchApproveFactory');
+        });
+	});
 
 	it('returns an empty array if input is invalid', function() {
 		var response;

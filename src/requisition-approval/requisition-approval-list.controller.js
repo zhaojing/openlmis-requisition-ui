@@ -15,7 +15,7 @@
 
 (function() {
 
-	'use strict';
+    'use strict';
 
     /**
      * @ngdoc controller
@@ -25,17 +25,17 @@
      * Controller for approval list of requisitions.
      */
 
-	angular
-		.module('requisition-approval')
-		.controller('RequisitionApprovalListController', controller);
+    angular
+        .module('requisition-approval')
+        .controller('RequisitionApprovalListController', controller);
 
-	controller.$inject = [
-	    '$controller', '$state', 'requisitions', '$stateParams', 'programs', 'selectedProgram',
-	    'alertService', 'offlineService', 'localStorageFactory'
-	];
+    controller.$inject = [
+        '$controller', '$state', 'requisitions', '$stateParams', 'programs', 'selectedProgram',
+        'alertService', 'offlineService', 'localStorageFactory'
+    ];
 
-	function controller($controller, $state, requisitions, $stateParams, programs, selectedProgram,
-	    alertService, offlineService, localStorageFactory) {
+    function controller($controller, $state, requisitions, $stateParams, programs, selectedProgram,
+        alertService, offlineService, localStorageFactory) {
 
         var vm = this,
             offlineRequisitions = localStorageFactory('requisitions'),
@@ -43,12 +43,12 @@
 
         vm.$onInit = onInit;
         vm.search = search;
-		vm.openRnr = openRnr;
-		vm.toggleSelectAll = toggleSelectAll;
-		vm.viewSelectedRequisitions = viewSelectedRequisitions;
-		vm.isFullRequisitionAvailable = isFullRequisitionAvailable;
+        vm.openRnr = openRnr;
+        vm.toggleSelectAll = toggleSelectAll;
+        vm.viewSelectedRequisitions = viewSelectedRequisitions;
+        vm.isFullRequisitionAvailable = isFullRequisitionAvailable;
 
-		/**
+        /**
          * @ngdoc property
          * @propertyOf requisition-approval.controller:RequisitionApprovalListController
          * @name requisitions
@@ -57,7 +57,7 @@
          * @description
          * Holds requisition that will be displayed on screen.
          */
-		vm.requisitions = undefined;
+        vm.requisitions = undefined;
 
         /**
          * @ngdoc property
@@ -135,11 +135,11 @@
          * @description
          * Redirects to requisition page with given requisition UUID.
          */
-		function openRnr(requisitionId) {
-			$state.go('openlmis.requisitions.requisition.fullSupply', {
-				rnr: requisitionId
-			});
-		}
+        function openRnr(requisitionId) {
+            $state.go('openlmis.requisitions.requisition.fullSupply', {
+                rnr: requisitionId
+            });
+        }
 
         /**
          * @ngdoc method
@@ -168,7 +168,7 @@
         function viewSelectedRequisitions() {
             var selectedRequisitionIds = [],
                 requisitionsFromOneProgram = true,
-                requiredProgramId = undefined;
+                requiredProgramId;
 
             angular.forEach(vm.requisitions, function(requisition) {
                 if (requisition.$selected) {
@@ -180,12 +180,12 @@
                 }
             });
 
-            if(selectedRequisitionIds.length > 0 && requisitionsFromOneProgram) {
+            if (selectedRequisitionIds.length > 0 && requisitionsFromOneProgram) {
                 angular.forEach(selectedRequisitionIds, function(id) {
-                   if (!isBatchRequisitionAvailable(id)) {
-                       var fullRequisitionDto = offlineRequisitions.getBy('id', id);
-                       offlineBatchRequisitions.put(transformToBatchDto(angular.copy(fullRequisitionDto)));
-                   }
+                    if (!isBatchRequisitionAvailable(id)) {
+                        var fullRequisitionDto = offlineRequisitions.getBy('id', id);
+                        offlineBatchRequisitions.put(transformToBatchDto(angular.copy(fullRequisitionDto)));
+                    }
                 });
 
                 $state.go('openlmis.requisitions.batchApproval', {
@@ -215,24 +215,16 @@
                 id: requisition.id,
                 status : requisition.status,
                 statusChanges: requisition.statusChanges,
-                program: {
-                    id: requisition.program.id,
-                    code: requisition.program.code,
-                    name: requisition.program.name
-                },
+                program: requisition.program,
                 facility: {
                     id: requisition.facility.id,
                     code: requisition.facility.code,
                     name: requisition.facility.name
                 },
-                processingPeriod: {
-                    id: requisition.processingPeriod.id,
-                    name: requisition.processingPeriod.name,
-                    startDate: requisition.processingPeriod.startDate,
-                    endDate: requisition.processingPeriod.endDate
-                },
+                processingPeriod: requisition.processingPeriod,
                 requisitionLineItems: []
             };
+
             angular.forEach(requisition.requisitionLineItems, function(lineItem) {
                 var newLineItem = {
                     id: lineItem.id,
@@ -254,6 +246,6 @@
 
             return batchRequisitionDto;
         }
-	}
+    }
 
 })();

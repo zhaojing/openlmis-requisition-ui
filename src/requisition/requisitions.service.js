@@ -36,7 +36,7 @@
 
     function service($q, $resource, messageService, openlmisUrlFactory, requisitionUrlFactory,
                      Requisition, dateUtils, localStorageFactory, offlineService, paginationFactory,
-                     PAGE_SIZE) {
+                     PAGE_SIZE, $filter) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
             offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions'),
@@ -227,17 +227,16 @@
             if(offline) {
                 var requisitions = offlineRequisitions.search(searchParams, 'requisitionSearch'),
                     batchRequisitions = searchParams.showBatchRequisitions ?
-                        offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [];
+                        offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [],
+                    page = searchParams.page,
+                    size = searchParams.size,
+                    items = paginationFactory.getPage(requisitions, page, size);
 
                 angular.forEach(batchRequisitions, function(batchRequisition) {
                     if ($filter('filter')(requisitions, {id: batchRequisition.id}).length == 0) {
                         requisitions.push(batchRequisition);
                     }
                 });
-
-                var page = searchParams.page,
-                    size = searchParams.size,
-                    items = paginationFactory.getPage(requisitions, page, size);
 
                 deferred.resolve({
                     content: items,

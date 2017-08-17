@@ -28,7 +28,6 @@
      * This factory will implicitly modify any requisitions passed to it.
      * 
      */
-
     angular
         .module('requisition-batch-approval')
         .factory('requisitionBatchSaveFactory', factory);

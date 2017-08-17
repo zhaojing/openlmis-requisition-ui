@@ -8,7 +8,7 @@
     <saving-indicator class="requisition-indicator" object="vm.requisitions"/>
     <table>
         <thead>
-        <tr class="not-bottom">
+        <tr>
             <th ng-repeat-start="column in vm.columns track by column.id"
                 popover="{{column.requisition.$error}}"
                 ng-class="{'requisition-error': column.requisition.$error,
@@ -69,7 +69,6 @@
         </tfoot>
     </table>
 </div>
-<br /><br />
 <div class="openlmis-toolbar button-group" ng-if="vm.requisitions.length">
     <button ng-disabled="vm.isOffline()" ng-click="vm.sync()">{{'requisitionBatchApproval.sync' | message}}</button>
     <div class="button-group primary">
