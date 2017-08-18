@@ -31,6 +31,13 @@
         </label>
         <p class="note">{{'adminProgramSettings.allowSkippingPeriods.description' | message}}</p>
     </fieldset>
+    <fieldset class="form-group">
+        <label class="checkbox">
+           <input type="checkbox" ng-model="vm.program.enableDatePhysicalStockCountCompleted"/>
+           {{'adminProgramSettings.enableDatePhysicalStockCountCompleted.label' | message}}
+        </label>
+        <p class="note">{{'adminProgramSettings.enableDatePhysicalStockCountCompleted.description' | message}}</p>
+    </fieldset>
     <div class="button-group">
         <button class="primary" type="submit">{{'adminProgramSettings.save' | message}}</button>
         <button ui-sref="openlmis.administration.programs">{{'adminProgramSettings.cancel' | message}}</button>
