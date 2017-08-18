@@ -1,6 +1,17 @@
 .requisition-error {
   background: $brand-danger !important;
 }
+.requisition-error > div::after {
+        content: "\f06a" !important;
+        font: normal normal normal 14px/1 FontAwesome;
+        display: block;
+        height: 1em;
+        width: 1em;
+        position: absolute;
+        top: 50%;
+        right: 0.2em;
+        transform: translateY(-50%);
+}
 
 .openlmis-table {
 
@@ -14,6 +25,7 @@
         &.merged-cell-right {
             border-right-width: 0px !important;
         }
+        padding-right: 10px;
     }
 
     > thead > tr:first-child > th {

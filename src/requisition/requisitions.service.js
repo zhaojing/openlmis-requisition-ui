@@ -229,14 +229,15 @@
                     batchRequisitions = searchParams.showBatchRequisitions ?
                         offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [],
                     page = searchParams.page,
-                    size = searchParams.size,
-                    items = paginationFactory.getPage(requisitions, page, size);
+                    size = searchParams.size;
 
                 angular.forEach(batchRequisitions, function(batchRequisition) {
                     if ($filter('filter')(requisitions, {id: batchRequisition.id}).length == 0) {
                         requisitions.push(batchRequisition);
                     }
                 });
+
+                var items = paginationFactory.getPage(requisitions, page, size);
 
                 deferred.resolve({
                     content: items,

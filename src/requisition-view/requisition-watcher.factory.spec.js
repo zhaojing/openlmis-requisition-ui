@@ -47,7 +47,7 @@ describe('RequisitionWatcher', function() {
             draftStatusMessage: 'message'
         };
 
-        watcher = new RequisitionWatcher(scope, scope.requisition);
+        watcher = new RequisitionWatcher(scope, scope.requisition, requisitionsStorage);
         scope.$digest();
     });
 

@@ -47,9 +47,8 @@
          * @param  {Object}             requisition requisition to set watcher on
          * @return {RequisitionWatcher}             watcher object
          */
-        function RequisitionWatcher(scope, requisition) {
-            var watcher = this,
-                storage = localStorageFactory('requisitions');
+        function RequisitionWatcher(scope, requisition, storage) {
+            var watcher = this;
 
             addWatcher(scope, requisition, 'requisitionLineItems', watcher, storage);
             addWatcher(scope, requisition, 'draftStatusMessage', watcher, storage);

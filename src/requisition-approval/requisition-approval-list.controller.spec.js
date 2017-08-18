@@ -16,13 +16,31 @@
 describe('RequisitionApprovalListController', function () {
 
     //injects
-    var vm, $state, $stateParams, alertService, $controller, offlineService, confirmService, $rootScope, $q;
+    var vm, $state, $stateParams, alertService, $controller, offlineService, confirmService, $rootScope, $q,
+        localStorageFactorySpy, requisitionsStorage, batchRequisitionsStorage, templateOffline, approvedProductsOffline;
 
     //variables
     var requisitions, programs;
 
     beforeEach(function() {
         module('requisition-approval');
+
+        module(function($provide){
+            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+
+            var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
+            offlineFlag.getAll.andReturn([false]);
+            var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
+                if (resourceName === 'offlineFlag') return offlineFlag;
+                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
+                return requisitionsStorage;
+            });
+
+            $provide.service('localStorageFactory', function() {
+                return localStorageFactorySpy;
+            });
+        });
 
         inject(function (_$controller_, _$state_, _$stateParams_, _alertService_,
                          _offlineService_, _confirmService_, _$rootScope_, _$q_) {
@@ -53,6 +71,7 @@ describe('RequisitionApprovalListController', function () {
                 {
                     id: 1,
                     facility: {
+                        id: '1',
                         name: 'first facility',
                         code: 'first code'
                     },
@@ -62,6 +81,7 @@ describe('RequisitionApprovalListController', function () {
                 {
                     id: 2,
                     facility: {
+                        id: '2',
                         name: 'second facility',
                         code: 'second code'
                     },
@@ -69,6 +89,19 @@ describe('RequisitionApprovalListController', function () {
 
                 }
             ];
+
+            batchRequisition = {
+                $outdated : undefined,
+                $modified : undefined,
+                $availableOffline : undefined,
+                id : requisitions[0].id,
+                status : undefined,
+                statusChanges : undefined,
+                program : requisitions[0].program,
+                facility : requisitions[0].facility,
+                processingPeriod : undefined,
+                requisitionLineItems : [  ]
+            }
         });
     });
 
@@ -191,6 +224,32 @@ describe('RequisitionApprovalListController', function () {
                 ids: [ vm.requisitions[0].id ].join(',')
             });
             expect(alertService.error).not.toHaveBeenCalled();
+        });
+
+        it('should should put transformed requisition to batch requisition storage if user is offline', function() {
+            vm.requisitions[0].$selected = true;
+            vm.offline = true;
+
+            requisitionsStorage.getBy.andReturn(vm.requisitions[0]);
+            vm.viewSelectedRequisitions();
+
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.batchApproval', {
+                ids: [ vm.requisitions[0].id ].join(',')
+            });
+            expect(batchRequisitionsStorage.put).toHaveBeenCalledWith(batchRequisition);
+        });
+
+        it('should should not put transformed requisition to batch requisition storage if user is online', function() {
+            vm.requisitions[0].$selected = true;
+            vm.offline = false;
+
+            requisitionsStorage.getBy.andReturn(vm.requisitions[0]);
+            vm.viewSelectedRequisitions();
+
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.batchApproval', {
+                ids: [ vm.requisitions[0].id ].join(',')
+            });
+            expect(batchRequisitionsStorage.put).not.toHaveBeenCalled();
         });
 
     });

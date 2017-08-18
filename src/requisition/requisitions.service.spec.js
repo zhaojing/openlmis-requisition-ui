@@ -319,6 +319,60 @@ describe('requisitionService', function() {
         expect(requisitionsStorage.search).toHaveBeenCalledWith(params, 'requisitionSearch');
     });
 
+    it('should count batch requisitions in search total elements if showBatchRequisitions is true', function() {
+        var data,
+            params = {
+                showBatchRequisitions: true,
+                program: program.id,
+                page: 0,
+                size: 10
+            };
+
+        requisitionsStorage.search.andReturn([requisitionDto]);
+        batchRequisitionsStorage.search.andReturn([requisitionDto, requisitionDto2]);
+
+        requisitionService.search(true, params).then(function(response) {
+            data = response;
+        });
+
+        $rootScope.$apply();
+
+        expect(angular.toJson(data)).toEqual(angular.toJson({
+            content: [requisitionDto, requisitionDto2],
+            number: 0,
+            totalElements: 2,
+            size: 10
+        }));
+        expect(batchRequisitionsStorage.search).toHaveBeenCalledWith(params.program, 'requisitionSearch');
+    });
+
+    it('should not count batch requisitions in search total elements if showBatchRequisitions is false', function() {
+        var data,
+            params = {
+                showBatchRequisitions: false,
+                program: program.id,
+                page: 0,
+                size: 10
+            };
+
+        requisitionsStorage.search.andReturn([requisitionDto]);
+        batchRequisitionsStorage.search.andReturn([requisitionDto, requisitionDto2]);
+
+        requisitionService.search(true, params).then(function(response) {
+            data = response;
+        });
+
+        $rootScope.$apply();
+
+        expect(angular.toJson(data)).toEqual(angular.toJson({
+            content: [requisitionDto],
+            number: 0,
+            totalElements: 1,
+            size: 10
+        }));
+        expect(batchRequisitionsStorage.search).not.toHaveBeenCalled();
+    });
+
     describe('transformRequisition', function() {
 
         it('should not require createdDate to be set', function() {

@@ -33,7 +33,8 @@
         'requisitionService', 'loadingModalService', 'alertService', 'notificationService',
         'confirmService', 'REQUISITION_RIGHTS', 'FULFILLMENT_RIGHTS', 'offlineService', '$window',
         'requisitionUrlFactory', '$filter', '$scope', 'RequisitionWatcher',
-        'accessTokenFactory', 'messageService', 'stateTrackerService', 'RequisitionStockCountDateModal'
+        'accessTokenFactory', 'messageService', 'stateTrackerService', 'RequisitionStockCountDateModal',
+        'localStorageFactory'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator,
@@ -42,10 +43,11 @@
                                        confirmService, REQUISITION_RIGHTS, FULFILLMENT_RIGHTS,
                                        offlineService, $window, requisitionUrlFactory, $filter,
                                        $scope, RequisitionWatcher, accessTokenFactory,
-                                       messageService, stateTrackerService, RequisitionStockCountDateModal) {
+                                       messageService, stateTrackerService, RequisitionStockCountDateModal,
+                                       localStorageFactory) {
 
         var vm = this,
-            watcher = new RequisitionWatcher($scope, requisition);
+            watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions'));
 
         /**
          * @ngdoc property

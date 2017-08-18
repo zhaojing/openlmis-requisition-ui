@@ -31,14 +31,14 @@
     controller.$inject = [
         'requisitions', 'calculationFactory', 'stateTrackerService', 'loadingModalService', 'messageService',
             'alertService', 'confirmService', 'notificationService', 'requisitionBatchSaveFactory',
-            'requisitionBatchApproveFactory', 'offlineService', 'BatchRequisitionWatcher', '$scope', '$filter', 'REQUISITION_STATUS',
-            'localStorageFactory', '$state', '$stateParams'
+            'requisitionBatchApproveFactory', 'offlineService', 'RequisitionWatcher', '$scope', '$filter', 'REQUISITION_STATUS',
+            'localStorageFactory', '$state', '$stateParams', 'requisitionBatchDisplayFactory'
     ];
 
     function controller(requisitions, calculationFactory, stateTrackerService, loadingModalService,
                         messageService, alertService, confirmService, notificationService, requisitionBatchSaveFactory,
-                        requisitionBatchApproveFactory, offlineService, BatchRequisitionWatcher, $scope, $filter, REQUISITION_STATUS,
-                        localStorageFactory, $state, $stateParams) {
+                        requisitionBatchApproveFactory, offlineService, RequisitionWatcher, $scope, $filter, REQUISITION_STATUS,
+                        localStorageFactory, $state, $stateParams, requisitionBatchDisplayFactory) {
 
         var vm = this;
 
@@ -144,65 +144,6 @@
             prepareDataToDisplay(requisitions);
         }
 
-        function prepareDataToDisplay(requisitions) {
-            vm.totalCost = 0;
-            vm.requisitions = [];
-
-            vm.products = {};
-            vm.lineItems = [];
-            vm.errors = [];
-            vm.columns = [];
-
-            addNewColumn(true, false, ['requisitionBatchApproval.productCode']);
-            addNewColumn(true, false, ['requisitionBatchApproval.product']);
-
-            angular.forEach(requisitions, function(requisition) {
-                addNewColumn(false, false, ['requisitionBatchApproval.approvedQuantity', 'requisitionBatchApproval.cost'], requisition);
-                vm.lineItems[requisition.id] = [];
-
-                angular.forEach(requisition.requisitionLineItems, function(lineItem) {
-                    vm.lineItems[requisition.id][lineItem.orderable.id] = lineItem;
-                    lineItem.totalCost = lineItem.totalCost ? lineItem.totalCost : 0;
-                    lineItem.approvedQuantity = lineItem.approvedQuantity ? lineItem.approvedQuantity : 0;
-
-                    vm.totalCost += lineItem.totalCost;
-
-                    if (vm.products[lineItem.orderable.id] !== undefined) {
-                        vm.products[lineItem.orderable.id].requisitions.push(requisition.id);
-                        vm.products[lineItem.orderable.id].totalCost += lineItem.totalCost;
-                        vm.products[lineItem.orderable.id].totalQuantity += lineItem.approvedQuantity;
-                    } else {
-                        vm.products[lineItem.orderable.id] = {
-                            code: lineItem.orderable.productCode,
-                            name: lineItem.orderable.fullProductName,
-                            totalCost: lineItem.totalCost,
-                            totalQuantity: lineItem.approvedQuantity,
-                            requisitions: [requisition.id]
-                        };
-                    }
-
-                });
-
-                //method used in calculation factory
-                requisition.$isAfterAuthorize = isAfterAuthorize;
-                calculateRequisitionTotalCost(requisition);
-
-                //set errors to be displayed (needed when state is reloaded to update outdated requisitions)
-                if ($stateParams.errors[requisition.id]) {
-                    requisition.$error = $stateParams.errors[requisition.id];
-                }
-
-                new BatchRequisitionWatcher($scope, requisition);
-                vm.requisitions.push(requisition);
-            });
-
-            addNewColumn(true, true, ['requisitionBatchApproval.totalQuantityForAllFacilities']);
-            addNewColumn(true, true, ['requisitionBatchApproval.totalCostForAllFacilities']);
-
-            //save copy to provide revert functionality
-            vm.requisitionsCopy = angular.copy(vm.requisitions);
-        }
-
         /**
          * @ngdoc method
          * @methodOf requisition-batch-approval.controller:RequisitionBatchApprovalController
@@ -215,7 +156,7 @@
         function updateLineItem(lineItem, requisition) {
             lineItem.totalCost = calculationFactory['totalCost'](lineItem, requisition);
             updateTotalValues(lineItem.orderable.id);
-            calculateRequisitionTotalCost(requisition);
+            requisition.$totalCost = requisitionBatchDisplayFactory.calculateRequisitionTotalCost(requisition);
         }
 
         /**
@@ -352,11 +293,6 @@
             if(successfulRequisitions.length < vm.requisitions.length) {
                 var errors = {};
 
-                //Not all requisitions got approved, remove all successful requisitions
-                vm.requisitions = _.filter(vm.requisitions, function(requisition){
-                    return requisition.$error;
-                });
-
                 angular.forEach(vm.requisitions, function(requisition) {
                     errors[requisition.id] = requisition.$error;
 
@@ -376,8 +312,6 @@
                     })
                 );
 
-                // Reload state to display page without approved notifications and to update outdated ones
-                $state.go($state.current, {errors: errors, ids: Object.keys(errors).join(',')}, {reload: true});
             } else {
 
                 //All requisitions got approved, display notification and go back to approval list
@@ -389,13 +323,6 @@
 
                 stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
             }
-        }
-
-        function calculateRequisitionTotalCost(requisition) {
-            requisition.$totalCost = 0;
-            angular.forEach(requisition.requisitionLineItems, function(lineItem) {
-                requisition.$totalCost += lineItem.totalCost;
-            });
         }
 
         function updateTotalValues(productId) {
@@ -414,19 +341,26 @@
             });
         }
 
-        function addNewColumn(isSticky, isStickyRight, names, requisition) {
-            vm.columns.push({
-                id: requisition ? requisition.id : vm.columns.length,
-                requisition: requisition,
-                sticky: isSticky,
-                right: isStickyRight,
-                names: names
-            });
-        }
+        function prepareDataToDisplay(requisitions) {
+            var dataToDisplay = requisitionBatchDisplayFactory.prepareDataToDisplay(requisitions);
 
-        // Requisitions in this view are always IN_APPROVAL or AUTHORIZED so always return true
-        function isAfterAuthorize() {
-            return true;
+            vm.totalCost = dataToDisplay.totalCost;
+            vm.requisitions = dataToDisplay.requisitions;
+
+            vm.products = dataToDisplay.products;
+            vm.lineItems = dataToDisplay.lineItems;
+            vm.errors = dataToDisplay.errors;
+            vm.columns = dataToDisplay.columns;
+            vm.requisitionsCopy = dataToDisplay.requisitionsCopy;
+
+            angular.forEach(requisitions, function(requisition) {
+                //set errors to be displayed (needed when state is reloaded to update outdated requisitions)
+                if ($stateParams.errors[requisition.id]) {
+                    requisition.$error = $stateParams.errors[requisition.id];
+                }
+
+                new RequisitionWatcher($scope, requisition, localStorageFactory('batchApproveRequisitions'));
+            });
         }
     }
 

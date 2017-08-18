@@ -7,6 +7,7 @@
     "requisitionApproval.emergency": "Emergency",
     "requisitionApproval.endDate": "End date",
     "requisitionApproval.facility": "Facility",
+    "requisitionApproval.instruction": "To approve more than one requisition, all selected requisition must be associated with the same program.",
     "requisitionApproval.none": "None",
     "requisitionApproval.noRnrPendingForApproval": "No R&Rs pending for approval",
     "requisitionApproval.period": "Period",
