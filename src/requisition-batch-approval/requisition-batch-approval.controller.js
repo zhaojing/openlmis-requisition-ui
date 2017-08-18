@@ -293,6 +293,12 @@
             if(successfulRequisitions.length < vm.requisitions.length) {
                 var errors = {};
 
+
+                //Not all requisitions got approved, remove all successful
+                requisitionsvm.requisitions = _.filter(vm.requisitions, function(requisition){
+                    return requisition.$error;
+                });
+
                 angular.forEach(vm.requisitions, function(requisition) {
                     errors[requisition.id] = requisition.$error;
 
@@ -311,6 +317,9 @@
                         errorCount: vm.requisitions.length
                     })
                 );
+
+                // Reload state to display page without approved notifications and to update outdated ones
+                $state.go($state.current, {errors: errors, ids: Object.keys(errors).join(',')}, {reload: true});
 
             } else {
 
