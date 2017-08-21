@@ -68,7 +68,7 @@
             $scope.$watchCollection('lineItem.stockAdjustments', function() {
                 vm.lineItem.totalLossesAndAdjustments = calculationFactory.totalLossesAndAdjustments(
                     vm.lineItem.stockAdjustments,
-                    $scope.requisition.$stockAdjustmentReasons
+                    $scope.requisition.stockAdjustmentReasons
                 );
 
                 vm.lineItem.updateDependentFields(
@@ -83,7 +83,7 @@
                 // );
             });
 
-            reasons = $scope.requisition.$stockAdjustmentReasons;
+            reasons = $scope.requisition.stockAdjustmentReasons;
         }
 
         /**
@@ -105,7 +105,7 @@
                     'requisitionLossesAndAdjustments.total': function(adjustments) {
                         return calculationFactory.totalLossesAndAdjustments(
                             getSimpleAdjustments(adjustments),
-                            $scope.requisition.$stockAdjustmentReasons
+                            $scope.requisition.stockAdjustmentReasons
                         );
                     }
                 }

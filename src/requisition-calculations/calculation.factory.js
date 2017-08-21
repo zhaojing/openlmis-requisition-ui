@@ -125,7 +125,7 @@
                 var filteredReasons = $filter('filter')(reasons, {id: adjustment.reasonId}, true);
                 var reason = (filteredReasons) ? filteredReasons[0] : null;
                 if (!!reason) {
-                    if (reason.additive === true) {
+                    if (reason.reasonType === 'CREDIT') {
                         total += adjustment.quantity;
                     } else {
                         total -= adjustment.quantity;

@@ -222,12 +222,12 @@ describe('calculationFactory', function() {
     });
 
     describe('Calculate total losses and adjustments', function() {
-        var _additive__, adjustments;
+        var _reasonType_, adjustments;
 
         beforeEach(module(function($provide) {
             var filter = function() {
                 return [{
-                    additive: _additive_,
+                    reasonType: _reasonType_
                 }];
             };
 
@@ -240,8 +240,8 @@ describe('calculationFactory', function() {
             expect(calculationFactory.totalLossesAndAdjustments([], {})).toBe(0);
         });
 
-        it ('should use positive values when calculating totalLossesAndAdjustments and additive parameter is true', function() {
-            _additive_ = true;
+        it ('should use positive values when calculating totalLossesAndAdjustments and additive parameter is CREDIT', function() {
+            _reasonType_ = 'CREDIT';
             adjustments = [
                 {
                     quantity:10
@@ -253,8 +253,8 @@ describe('calculationFactory', function() {
             expect(calculationFactory.totalLossesAndAdjustments(adjustments, {})).toBe(11);
         });
 
-        it ('should use negative values when calculating totalLossesAndAdjustments and additive parameter is false', function() {
-            _additive_ = false;
+        it ('should use negative values when calculating totalLossesAndAdjustments and additive parameter is DEBIT', function() {
+            _reasonType_ = 'DEBIT';
             adjustments = [
                 {
                     quantity:10
