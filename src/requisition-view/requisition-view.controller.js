@@ -219,20 +219,12 @@
             confirmService.confirm('requisitionView.submit.confirm', 'requisitionView.submit.label').then(function() {
                 if (requisitionValidator.validateRequisition(requisition)) {
                     if (!requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
-                        var modal = new RequisitionStockCountDateModal(vm.requisition);
-                        modal.then(function () {
-                            var loadingPromise = loadingModalService.open();
-                            vm.requisition.$save().then(function () {
-                                vm.requisition.$submit().then(function (response) {
-                                    loadingPromise.then(function () {
-                                        notificationService.success('requisitionView.submit.success');
-                                    });
-                                    stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
-                                }, failWithMessage('requisitionView.submit.failure'));
-                            }, function(response) {
-                                handleSaveError(response.status);
-                            });
-                        });
+                        if (vm.requisition.program.enableDatePhysicalStockCountCompleted) {
+                            var modal = new RequisitionStockCountDateModal(vm.requisition);
+                            modal.then(saveThenSubmit);
+                        } else {
+                            saveThenSubmit();
+                        }
                     } else {
                         failWithMessage('requisitionView.allLineItemsSkipped')();
                     }
@@ -241,6 +233,20 @@
                     failWithMessage('requisitionView.rnrHasErrors')();
                 }
             });
+
+            function saveThenSubmit() {
+                var loadingPromise = loadingModalService.open();
+                vm.requisition.$save().then(function () {
+                    vm.requisition.$submit().then(function (response) {
+                        loadingPromise.then(function () {
+                            notificationService.success('requisitionView.submit.success');
+                        });
+                        stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
+                    }, failWithMessage('requisitionView.submit.failure'));
+                }, function(response) {
+                    handleSaveError(response.status);
+                });
+            }
         }
 
         /**
@@ -262,20 +268,12 @@
             ).then(function() {
                 if(requisitionValidator.validateRequisition(requisition)) {
                     if(!requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
-                        var modal = new RequisitionStockCountDateModal(vm.requisition);
-                        modal.then(function () {
-                            var loadingPromise = loadingModalService.open();
-                            vm.requisition.$save().then(function () {
-                                vm.requisition.$authorize().then(function (response) {
-                                    loadingPromise.then(function () {
-                                        notificationService.success('requisitionView.authorize.success');
-                                    });
-                                    stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
-                                }, failWithMessage('requisitionView.authorize.failure'));
-                            }, function (response) {
-                                handleSaveError(response.status);
-                            });
-                        });
+                        if (vm.requisition.program.enableDatePhysicalStockCountCompleted) {
+                            var modal = new RequisitionStockCountDateModal(vm.requisition);
+                            modal.then(saveThenAuthorize);
+                        } else {
+                            saveThenAuthorize();
+                        }
                     } else {
                         failWithMessage('requisitionView.allLineItemsSkipped')();
                     }
@@ -284,6 +282,20 @@
                     failWithMessage('requisitionView.rnrHasErrors')();
                 }
             });
+
+            function saveThenAuthorize() {
+                var loadingPromise = loadingModalService.open();
+                vm.requisition.$save().then(function () {
+                    vm.requisition.$authorize().then(function (response) {
+                        loadingPromise.then(function () {
+                            notificationService.success('requisitionView.authorize.success');
+                        });
+                        stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
+                    }, failWithMessage('requisitionView.authorize.failure'));
+                }, function (response) {
+                    handleSaveError(response.status);
+                });
+            }
         }
 
         /**

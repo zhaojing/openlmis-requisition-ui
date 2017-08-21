@@ -89,7 +89,8 @@ describe('RequisitionViewController', function() {
             requisition.program = {
                 id: '2',
                 periodsSkippable: true,
-                code: 'CODE'
+                code: 'CODE',
+                enableDatePhysicalStockCountCompleted: true
             };
             requisition.$isInitiated.andReturn(true);
             requisition.$isReleased.andReturn(false);
@@ -470,11 +471,20 @@ describe('RequisitionViewController', function() {
             expect(alertService.error).toHaveBeenCalledWith('requisitionView.allLineItemsSkipped');
         });
 
-        it('should call RequisitionStockCountDateModal', function() {
+        it('should call RequisitionStockCountDateModal if enabled', function() {
             vm.authorizeRnr();
             $scope.$apply();
 
             expect(RequisitionStockCountDateModal).toHaveBeenCalledWith(requisition);
+        });
+
+        it('should not call RequisitionStockCountDateModal if disabled', function() {
+            vm.requisition.program.enableDatePhysicalStockCountCompleted = false;
+
+            vm.authorizeRnr();
+            $scope.$apply();
+
+            expect(RequisitionStockCountDateModal).not.toHaveBeenCalled();
         });
     });
 
@@ -500,11 +510,20 @@ describe('RequisitionViewController', function() {
             expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
         });
 
-        it('should call RequisitionStockCountDateModal', function() {
+        it('should call RequisitionStockCountDateModal if enabled', function() {
             vm.submitRnr();
             $scope.$apply();
 
             expect(RequisitionStockCountDateModal).toHaveBeenCalledWith(requisition);
+        });
+
+        it('should not call RequisitionStockCountDateModal if disabled', function() {
+            vm.requisition.program.enableDatePhysicalStockCountCompleted = false;
+
+            vm.submitRnr();
+            $scope.$apply();
+
+            expect(RequisitionStockCountDateModal).not.toHaveBeenCalled();
         });
     });
 
