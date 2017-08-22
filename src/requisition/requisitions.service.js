@@ -143,7 +143,7 @@
                             requisitionId: requisition[0].id
                         });
 
-                    resolve(requisition[0], reasons, statusMessages);
+                    resolve(requisition[0], statusMessages);
                 }
             }
 
