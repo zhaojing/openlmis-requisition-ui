@@ -153,7 +153,7 @@ describe('Requisition', function() {
         REQUISITION_RIGHTS = _REQUISITION_RIGHTS_;
         q = $q;
 
-        requisition = new Requisition(sourceRequisition, {});
+        requisition = new Requisition(sourceRequisition);
     }));
 
     it('should submit requisition that is available offline', function() {

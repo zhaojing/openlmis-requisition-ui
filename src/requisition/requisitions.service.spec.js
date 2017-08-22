@@ -15,11 +15,11 @@
 
 describe('requisitionService', function() {
 
-    var $rootScope, $httpBackend, requisitionService, dateUtils, confirm, q, allStatuses,
+    var $rootScope, httpBackend, requisitionService, dateUtils, confirm, q, allStatuses,
         requisitionUrlFactory, openlmisUrl, requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate,
         endDate, startDate1, endDate1, modifiedDate, createdDate, processingSchedule, facility,
         program, period, emergency, requisition, requisitionDto, requisitionDto2,
-        requisitionToConvert, approvedProductsOffline, templateOffline;
+        requisitionToConvert, templateOffline, statusMessage, statusMessagesStorage;
 
     beforeEach(function() {
         module('requisition');
@@ -87,6 +87,9 @@ describe('requisitionService', function() {
             requisitionId: requisition.id,
             supplyingDepotId: requisition.supplyingFacility
         };
+        statusMessage = {
+            id: "123"
+        };
 
         module(function($provide){
             var RequisitionSpy = jasmine.createSpy('Requisition').andReturn(requisition),
@@ -105,6 +108,7 @@ describe('requisitionService', function() {
 
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
             batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            statusMessagesStorage = jasmine.createSpyObj('statusMessagesStorage', ['search', 'put', 'getBy', 'removeBy']);
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
@@ -113,10 +117,9 @@ describe('requisitionService', function() {
             approvedProducts = jasmine.createSpyObj('approvedProducts', ['put']);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
                 if (resourceName === 'offlineFlag') return offlineFlag;
-                if (resourceName === 'template') return templateOffline;
-                if (resourceName === 'approvedProducts') return approvedProductsOffline;
                 if (resourceName === 'onlineOnly') return onlineOnlyRequisitions;
                 if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
+                if (resourceName === 'statusMessages') return statusMessagesStorage;
                 return requisitionsStorage;
             });
 
@@ -143,19 +146,13 @@ describe('requisitionService', function() {
     });
 
     it('should get requisition by id', function() {
-        var getReasonsUrl = '/api/stockAdjustmentReasons/search';
-        var getTemplateUrl = '/api/requisitionTemplates/' + requisition.template;
         var getRequisitionUrl = '/api/requisitions/' + requisition.id;
-        var getProductsUrl = '/api/facilities/' + requisition.facility.id +
-                             '/approvedProducts?fullSupply=false&programId=' +
-                             requisition.program.id;
+        var getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
 
-        httpBackend.when('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition);
-        httpBackend.when('GET', requisitionUrlFactory(getTemplateUrl)).respond(200, {});
-        httpBackend.when('GET', openlmisUrl(getProductsUrl)).respond(200, []);
-        httpBackend.when('GET', openlmisUrl(getReasonsUrl)).respond(200, []);
+        httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition);
+        httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
 
-        var data;
+        var data = {};
         requisitionService.get('1').then(function(response) {
             data = response;
         });
@@ -164,6 +161,8 @@ describe('requisitionService', function() {
         $rootScope.$apply();
 
         expect(data.id).toBe(requisition.id);
+        expect(requisitionsStorage.put).toHaveBeenCalled();
+        expect(statusMessagesStorage.put).toHaveBeenCalled();
     });
 
     it('should initiate requisition', function() {

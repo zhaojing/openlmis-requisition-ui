@@ -40,7 +40,6 @@
                                 authorizationService, REQUISITION_RIGHTS) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
-            offlineStockAdjustmentReasons = localStorageFactory('stockAdjustmentReasons'),
             resource = $resource(requisitionUrlFactory('/api/requisitions/:id'), {}, {
             'authorize': {
                 url: requisitionUrlFactory('/api/requisitions/:id/authorize'),
@@ -96,17 +95,15 @@
          * @description
          * Adds all needed methods and information from template to given requisition.
          *
-         * @param  {Resource} requisition      resource with requisition
-         * @param  {Resource} approvedProducts resource with approved products
+         * @param  {Resource} source           resource with requisition
+         * @param  {Resource} statusMessages   resource with status messages
          * @return {Requisition}               requisition with methods
          */
-        function Requisition(source, reasons, statusMessages) {
-            var programId = source.program.id,
-                requisition = this;
+        function Requisition(source, statusMessages) {
+            var requisition = this;
 
             angular.copy(source, this);
 
-            this.$stockAdjustmentReasons = reasons;
             this.template = new RequisitionTemplate(this.template, this);
             this.$statusMessages = $filter('orderBy')(statusMessages, '-createdDate');
 
