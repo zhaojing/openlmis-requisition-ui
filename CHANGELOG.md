@@ -8,7 +8,7 @@ New functionality that are not backwards-compatible:
   * Date physical stock count completed is required for submit and authorize requisition.
 * [OLMIS-3025](https://openlmis.atlassian.net/browse/OLMIS-3025): Introduced frontend batch-approval functionality.
 * [OLMIS-3023](https://openlmis.atlassian.net/browse/OLMIS-3023): Added configurable physical stock date field to program settings.
-* [OLMIS-2694](https://openlmis.atlassian.net/browse/OLMIS-2694): Change Requisition adjustment reasons to come from Requisition object.
+* [OLMIS-2694](https://openlmis.atlassian.net/browse/OLMIS-2694): Change Requisition adjustment reasons to come from Requisition object. OpenLMIS Stock Management UI is now connected to Requisition UI.
 
 Improvements:
 * [OLMIS-2969](https://openlmis.atlassian.net/browse/OLMIS-2969): Requisitions show saving indicator only when requisition is editable.
