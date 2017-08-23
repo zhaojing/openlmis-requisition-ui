@@ -28,9 +28,9 @@
     .module('requisition-calculations')
     .factory('calculationFactory', factory);
 
-    factory.$inject = ['TEMPLATE_COLUMNS', 'COLUMN_SOURCES', '$filter'];
+    factory.$inject = ['TEMPLATE_COLUMNS', 'COLUMN_SOURCES', '$filter', 'stockReasonsCalculations'];
 
-    function factory(TEMPLATE_COLUMNS, COLUMN_SOURCES, $filter) {
+    function factory(TEMPLATE_COLUMNS, COLUMN_SOURCES, $filter, stockReasonsCalculations) {
         var A = TEMPLATE_COLUMNS.BEGINNING_BALANCE,
         B = TEMPLATE_COLUMNS.TOTAL_RECEIVED_QUANTITY,
         C = TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY,
@@ -120,19 +120,14 @@
          * @return {Number}                 the calculated Total Losses and Adjustments value
          */
         function calculateTotalLossesAndAdjustments(adjustments, reasons) {
-            var total = 0;
-            angular.forEach(adjustments, function(adjustment) {
+            var adjustmentsForCaculations = angular.copy(adjustments);
+
+            angular.forEach(adjustmentsForCaculations, function(adjustment) {
                 var filteredReasons = $filter('filter')(reasons, {id: adjustment.reasonId}, true);
-                var reason = (filteredReasons) ? filteredReasons[0] : null;
-                if (!!reason) {
-                    if (reason.reasonType === 'CREDIT') {
-                        total += adjustment.quantity;
-                    } else {
-                        total -= adjustment.quantity;
-                    }
-                }
+                adjustment.reason = (filteredReasons) ? filteredReasons[0] : null;
             });
-            return total;
+
+            return stockReasonsCalculations.calculateTotal(adjustmentsForCaculations);
         }
 
         /**

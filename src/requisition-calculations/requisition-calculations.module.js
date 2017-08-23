@@ -25,7 +25,8 @@
      */
     angular.module('requisition-calculations', [
         'requisition-constants',
-        'requisition-template'
+        'requisition-template',
+        'stock-reasons'
     ]);
 
 })();
