@@ -32,9 +32,10 @@
         .module('requisition-batch-approval')
         .factory('requisitionBatchSaveFactory', factory);
 
-    factory.$inject = ['$q', '$http', '$filter', 'openlmisUrlFactory', 'localStorageFactory'];
+    factory.$inject = ['$q', '$http', '$filter', 'openlmisUrlFactory', 'localStorageFactory',
+        'requisitionBatchApprovalService'];
 
-    function factory($q, $http, $filter, openlmisUrlFactory, localStorageFactory) {
+    function factory($q, $http, $filter, openlmisUrlFactory, localStorageFactory, requisitionBatchApprovalService) {
         return saveRequisitions;
 
         /**
@@ -66,15 +67,14 @@
                 requisitionDtos.push(transformRequisition(requisition));
             });
 
-            $http.put(openlmisUrlFactory('/api/requisitions?saveAll'), requisitionDtos)
-            .then(function(response) {
+            requisitionBatchApprovalService.saveAll(requisitionDtos).then(function(response) {
 
                 angular.forEach(requisitions, function(requisition) {
-                    var savedRequisition = $filter('filter')(response.data.requisitionDtos, {id: requisition.id});
+                    var savedRequisition = $filter('filter')(response.requisitionDtos, {id: requisition.id});
                     saveToStorage(angular.copy(savedRequisition[0]), offlineBatchRequisitions);
                 });
 
-                return deferred.resolve(response.data.requisitionDtos);
+                return deferred.resolve(response.requisitionDtos);
             }, function(response) {
 
                 angular.forEach(requisitions, function(requisition) {

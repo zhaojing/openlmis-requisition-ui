@@ -198,6 +198,16 @@
             }
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition-approval.controller:RequisitionApprovalListController
+         * @name isFullRequisitionAvailable
+         *
+         * @description
+         * Responsible for checking if local storage contains the given requisition.
+         *
+         * @param {Boolean} requisitionId Requisition that will be searched in storage
+         */
         function isFullRequisitionAvailable(requisitionId) {
             var offlineRequisition = offlineRequisitions.search({id: requisitionId});
             return !vm.offline || vm.offline && offlineRequisition.length > 0;

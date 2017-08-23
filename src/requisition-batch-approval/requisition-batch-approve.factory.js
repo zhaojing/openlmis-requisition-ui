@@ -27,18 +27,21 @@
      * array.
      *
      * This factory will implicitly modify any requisitions passed to it.
-     * 
      */
-
     angular
         .module('requisition-batch-approval')
         .factory('requisitionBatchApproveFactory', factory);
 
-    factory.$inject = ['$q', '$http', 'requisitionUrlFactory', 'requisitionBatchSaveFactory', 'messageService', 'MAX_INTEGER_VALUE', 'TEMPLATE_COLUMNS', 'localStorageFactory'];
+    factory.$inject = ['$q', 'requisitionBatchSaveFactory', 'messageService', 'MAX_INTEGER_VALUE', 'TEMPLATE_COLUMNS', 'localStorageFactory',
+        'requisitionBatchApprovalService', 'requisitionBatchValidationFactory'];
 
-    function factory($q, $http, requisitionUrlFactory, requisitionBatchSaveFactory, messageService, MAX_INTEGER_VALUE, TEMPLATE_COLUMNS, localStorageFactory) {
+    function factory($q, requisitionBatchSaveFactory, messageService, MAX_INTEGER_VALUE, TEMPLATE_COLUMNS, localStorageFactory,
+        requisitionBatchApprovalService, requisitionBatchValidationFactory) {
 
-        return batchApprove;
+        var factory = {
+            batchApprove: batchApprove
+        }
+        return factory;
 
         /**
          * @ngdoc method
@@ -48,10 +51,12 @@
          * @param {Array} requisitions A list of requisition objects to approve
          *
          * @return {Promise} A promise that returns a list of errors on failure
+         * and list of successfully approved requisitions
          *
          * @description
          * Main function of factory, which takes a list of requisitions
-         * and tries to save then approve them all.
+         * and tries to save then validate them. After that, only successfully validated requisitions
+         * will be approved. Invalid requisitions won't be returned and error message will be applied.
          * 
          */
         function batchApprove(requisitions) {
@@ -63,7 +68,7 @@
             }
 
             return requisitionBatchSaveFactory(requisitions)
-            .then(validateRequisitions, validateRequisitions)
+            .then(requisitionBatchValidationFactory.validateRequisitions, requisitionBatchValidationFactory.validateRequisitions)
             .then(approveRequisitions, approveRequisitions);
         }
 
@@ -79,15 +84,14 @@
 
             var deferred = $q.defer();
 
-            $http.post(requisitionUrlFactory('/api/requisitions?approveAll'), {}, { params: {id: requisitionIds.join(',')}})
-            .then(function(response){
+            requisitionBatchApprovalService.approveAll(requisitionIds).then(function(response){
 
                 // All requisitions are approved so remove them from batchRequisitions storage
                 angular.forEach(requisitions, function(requisition) {
                     removeFromStorage(requisition, offlineBatchRequisitions);
                 });
 
-                return deferred.resolve(response.data.requisitionDtos);
+                return deferred.resolve(response.requisitionDtos);
             })
             .catch(function(response){
                 if(response.status === 400){
@@ -119,51 +123,6 @@
 
             return deferred.promise;
 
-        }
-
-        function validateRequisitions(requisitions) {
-            var successfulRequisitions = [];
-
-            requisitions.forEach(function(requisition) {
-                if(!validateRequisition(requisition)){
-                    requisition.$error = messageService.get("requisitionBatchApproval.invalidRequisition");
-                } else {
-                    successfulRequisitions.push(requisition);
-                }
-            });
-
-            if(successfulRequisitions.length < requisitions.length) {
-                return $q.reject(successfulRequisitions);
-            } else {
-                return $q.resolve(successfulRequisitions);
-            }
-        }
-
-        function validateRequisition(requisition) {
-            var valid = true;
-            angular.forEach(requisition.requisitionLineItems, function (lineItem) {
-               valid = validateApprovedQuantity(lineItem) && valid;
-            });
-
-            return valid;
-        }
-
-        function validateApprovedQuantity(lineItem) {
-            var column = TEMPLATE_COLUMNS.APPROVED_QUANTITY,
-                error;
-
-            if (lineItem.skipped) return true;
-            if (isEmpty(lineItem.approvedQuantity)) {
-                error = messageService.get('requisitionBatchApproval.required');
-            } else if (lineItem.approvedQuantity > MAX_INTEGER_VALUE) {
-                error = messageService.get('requisitionBatchApproval.numberTooLarge')
-            }
-
-            return isEmpty(error);
-        }
-
-        function isEmpty(value) {
-            return value === null || value === undefined || value === '';
         }
 
         function removeFromStorage(requisition, storage) {

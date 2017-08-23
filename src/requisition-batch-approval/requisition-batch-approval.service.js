@@ -37,11 +37,21 @@
         var resource = $resource(requisitionUrlFactory('/api/requisitions?retrieveAll'), {}, {
             'get': {
                 method: 'GET'
+            },
+            'saveAll': {
+                method: 'PUT',
+                url: requisitionUrlFactory('/api/requisitions?saveAll')
+            },
+            'approveAll': {
+                method: 'POST',
+                url: requisitionUrlFactory('/api/requisitions?approveAll')
             }
         });
 
         var service = {
-            get: get
+            get: get,
+            saveAll: saveAll,
+            approveAll: approveAll
         };
 
         return service;
@@ -105,6 +115,14 @@
             }
 
             return deferred.promise;
+        }
+
+        function saveAll(requisitions) {
+            return resource.saveAll(requisitions).$promise;
+        }
+
+        function approveAll(ids) {
+            return resource.approveAll({id: ids.join(',')}, {}).$promise;
         }
 
         function getRequisitions(ids) {

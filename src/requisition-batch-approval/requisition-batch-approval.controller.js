@@ -80,9 +80,9 @@
          * @type {Array}
          *
          * @description
-         * Holds all products that should be displayed as rows in table. Each product from array contains its code and name,
-         * information about total cost and quantity of product for all facilities,
-         * and array of ids of requisitions that contain line item of this product.
+         * Holds all products that should be displayed in the table. Each product contains code, name, information
+         * about total cost and quantity across all facilities,
+         * and an ID array of requisitions that contain line item for this product.
          */
         vm.products = undefined;
 
@@ -232,7 +232,7 @@
                 loadingModalService.open();
 
                 // Using slice to make copy of array, so scope changes at end only
-                requisitionBatchApproveFactory(vm.requisitions.slice())
+                requisitionBatchApproveFactory.batchApprove(vm.requisitions.slice())
                 .then(handleApprove, handleApprove)
                 .finally(loadingModalService.close);
             });
@@ -295,7 +295,7 @@
 
 
                 //Not all requisitions got approved, remove all successful
-                requisitionsvm.requisitions = _.filter(vm.requisitions, function(requisition){
+                vm.requisitions = _.filter(vm.requisitions, function(requisition){
                     return requisition.$error;
                 });
 

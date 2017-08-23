@@ -18,7 +18,7 @@ describe('RequisitionBatchApprovalController', function () {
     //injects
     var vm, $stateParams, $rootScope, $q, confirmService, $controller, calculationFactory,
         confirmDeferred, $scope, requisitionService, requisitionStatus, alertService, $state,
-        localStorageFactory;
+        localStorageFactory, requisitionsStorage, batchRequisitionsStorage, requisitionBatchApprovalService;
 
     //variables
     var requisitions, products, lineItems;
@@ -91,21 +91,34 @@ describe('RequisitionBatchApprovalController', function () {
             $provide.factory('RequisitionWatcher', function() {
                 return requisitionWatcherMock;
             });
+
+            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+
+            var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
+            offlineFlag.getAll.andReturn([false]);
+            var localStorageFactory = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
+                if (resourceName === 'offlineFlag') return offlineFlag;
+                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
+                return requisitionsStorage;
+            });
+
+            $provide.service('localStorageFactory', function() {
+                return localStorageFactory;
+            });
         });
 
-        inject(function (_$controller_, _confirmService_, _$rootScope_, _$q_, _requisitionService_,
-                         _$stateParams_, _REQUISITION_STATUS_, _alertService_, _$state_) {
-            $controller = _$controller_;
-            confirmService = _confirmService_;
-            $rootScope = _$rootScope_;
-            $q = _$q_;
-            $scope = _$rootScope_.$new();
-            requisitionService = _requisitionService_;
-            requisitionStatus = _REQUISITION_STATUS_;
-            $stateParams = _$stateParams_;
-            alertService = _alertService_;
-            $state = _$state_;
-
+        inject(function ($injector) {
+            $controller = $injector.get('$controller');
+            confirmService = $injector.get('confirmService');
+            $rootScope = $injector.get('$rootScope');
+            $q = $injector.get('$q');
+            $scope = $injector.get('$rootScope').$new();
+            requisitionService = $injector.get('requisitionService');
+            requisitionStatus = $injector.get('REQUISITION_STATUS');
+            $stateParams = $injector.get('$stateParams');
+            alertService = $injector.get('alertService');
+            $state = $injector.get('$state');
         });
 
         $stateParams.errors = {};
@@ -206,6 +219,16 @@ describe('RequisitionBatchApprovalController', function () {
             expect(vm.requisitions[0].requisitionLineItems[0].approvedQuantity).toBe(10);
             expect(vm.requisitions).toEqual(vm.requisitionsCopy);
         });
+
+        it('should not revert requisitions if modal was dismissed', function() {
+            vm.requisitions[0].requisitionLineItems[0].approvedQuantity = 1000;
+
+            vm.revert();
+            confirmDeferred.reject();
+            $rootScope.$apply();
+
+            expect(vm.requisitions[0].requisitionLineItems[0].approvedQuantity).toBe(1000);
+        });
     });
 
     describe('updateRequisitions', function() {
@@ -250,6 +273,35 @@ describe('RequisitionBatchApprovalController', function () {
             $rootScope.$apply();
 
             expect($state.reload).toHaveBeenCalled();
+        });
+
+        it('should not reload current state if modal was dismissed', function() {
+            vm.updateRequisitions();
+
+            confirmDeferred.reject();
+            $rootScope.$apply();
+
+            expect($state.reload).not.toHaveBeenCalled();
+        });
+
+        it('should clear local storage', function() {
+            vm.updateRequisitions();
+
+            confirmDeferred.resolve();
+            $rootScope.$apply();
+
+            expect(batchRequisitionsStorage.removeBy).toHaveBeenCalledWith('id', requisitions[0].id);
+            expect(requisitionsStorage.removeBy).toHaveBeenCalledWith('id', requisitions[0].id);
+        });
+
+        it('should not clear local storage if modal was dismissed', function() {
+            vm.updateRequisitions();
+
+            confirmDeferred.reject();
+            $rootScope.$apply();
+
+            expect(batchRequisitionsStorage.removeBy).not.toHaveBeenCalled();
+            expect(requisitionsStorage.removeBy).not.toHaveBeenCalled();
         });
     });
 

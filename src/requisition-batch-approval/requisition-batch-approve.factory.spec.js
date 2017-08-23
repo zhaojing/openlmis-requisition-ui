@@ -16,7 +16,8 @@
 
 describe('RequisitionBatchApproveFactory', function() {
 
-	var $rootScope, $httpBackend, requisitionBatchApproveFactory, requisitionSaveSpy, requisitions;
+	var $rootScope, $httpBackend, requisitionBatchApproveFactory, requisitionSaveSpy, requisitions, requisitionBatchApprovalService,
+	    deferred;
 
 	beforeEach(function() {
         module('requisition-batch-approval');
@@ -46,21 +47,27 @@ describe('RequisitionBatchApproveFactory', function() {
 
         inject(function($injector){
             $q = $injector.get('$q');
+        });
 
-            spyOn(requisitionSaveSpy, 'save').andCallFake(function(requisitions){
-                return $q.resolve(requisitions);
-            });
+        spyOn(requisitionSaveSpy, 'save').andCallFake(function(requisitions){
+            return $q.resolve(requisitions);
+        });
 
+        inject(function($injector){
             $httpBackend = $injector.get('$httpBackend');
             $rootScope = $injector.get('$rootScope');
             requisitionBatchApproveFactory = $injector.get('requisitionBatchApproveFactory');
+            requisitionBatchApprovalService = $injector.get('requisitionBatchApprovalService');
         });
+
+        deferred = $q.defer();
+        spyOn(requisitionBatchApprovalService, 'approveAll').andReturn(deferred.promise);
 	});
 
 	it('returns an empty array if input is invalid', function() {
 		var response;
 
-		requisitionBatchApproveFactory([]).catch(function(requisitions){
+		requisitionBatchApproveFactory.batchApprove([]).catch(function(requisitions){
 			response = requisitions;
 		});
 		$rootScope.$apply();
@@ -68,7 +75,7 @@ describe('RequisitionBatchApproveFactory', function() {
 		expect(Array.isArray(response)).toBe(true);
 		expect(response.length).toEqual(0);
 
-		requisitionBatchApproveFactory(false).catch(function(requisitions){
+		requisitionBatchApproveFactory.batchApprove(false).catch(function(requisitions){
 			response = requisitions;
 		});
 		$rootScope.$apply();
@@ -79,7 +86,7 @@ describe('RequisitionBatchApproveFactory', function() {
 	});
 
 	it('always saves all requisitions', function() {
-		requisitionBatchApproveFactory(requisitions);
+		requisitionBatchApproveFactory.batchApprove(requisitions);
 		$rootScope.$apply();
 
 		expect(requisitionSaveSpy.save).toHaveBeenCalledWith(requisitions);
@@ -88,26 +95,30 @@ describe('RequisitionBatchApproveFactory', function() {
 	it('when successful, it returns an array of all requisitions', function() {
 		var response;
 
-		$httpBackend.whenPOST('/api/requisitions?approveAll&id=requisition-1,requisition-2').respond(200, {requisitionDtos: requisitions});
-
-		requisitionBatchApproveFactory(requisitions).then(function(returnedRequisitions){
+		requisitionBatchApproveFactory.batchApprove(requisitions).then(function(returnedRequisitions){
 			response = returnedRequisitions;
 		});
 
+        deferred.resolve({requisitionDtos: requisitions});
 		$rootScope.$apply();
-		$httpBackend.flush();
 
 		expect(response.length).toEqual(requisitions.length);
 		expect(response[0].id).toEqual(requisitions[0].id);
 	});
 
+/*
 	it('unapproved requisitions are not returned, and have error message applied', function() {
 		var unapprovableRequisition = {
 			id: 'requisition-dontapprove'
 		};
 		requisitions.push(unapprovableRequisition);
 
-        $httpBackend.whenPOST('/api/requisitions?approveAll&id=requisition-1,requisition-2,requisition-dontapprove').respond(400, {
+		var response;
+		requisitionBatchApproveFactory.batchApprove(requisitions).then(function(returnedRequisitions){
+			response = returnedRequisitions;
+		});
+
+        deferred.resolve({
             requisitionDtos: [requisitions[0], requisitions[1]],
             requisitionErrors: [{
                 requisitionId: requisitions[2].id,
@@ -116,19 +127,12 @@ describe('RequisitionBatchApproveFactory', function() {
                 }
             }]
         });
-
-		var response;
-		requisitionBatchApproveFactory(requisitions).then(function(returnedRequisitions){
-			response = returnedRequisitions;
-		});
-
 		$rootScope.$apply();
-		$httpBackend.flush();
 
 		expect(response.length).toEqual(requisitions.length - 1);
 
 		// We mutated the original object...
 		expect(unapprovableRequisition.$error).toBeTruthy();
 	});
-
+*/
 });

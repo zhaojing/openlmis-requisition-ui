@@ -42,67 +42,65 @@ describe('RequisitionApprovalListController', function () {
             });
         });
 
-        inject(function (_$controller_, _$state_, _$stateParams_, _alertService_,
-                         _offlineService_, _confirmService_, _$rootScope_, _$q_) {
+        inject(function($injector) {
 
-            $controller = _$controller_;
-            $state = _$state_;
-            $stateParams = _$stateParams_;
-            alertService = _alertService_;
-            offlineService = _offlineService_;
-            confirmService = _confirmService_;
-            $rootScope = _$rootScope_;
-            $q = _$q_;
-
-            programs = [
-                {
-                    id: '1',
-                    code: 'PRG001',
-                    name: 'Family Planning'
-                },
-                {
-                    id: '2',
-                    code: 'PRG002',
-                    name: 'Essential Meds'
-                }
-            ];
-
-            requisitions = [
-                {
-                    id: 1,
-                    facility: {
-                        id: '1',
-                        name: 'first facility',
-                        code: 'first code'
-                    },
-                    program: programs[0]
-
-                },
-                {
-                    id: 2,
-                    facility: {
-                        id: '2',
-                        name: 'second facility',
-                        code: 'second code'
-                    },
-                    program: programs[1]
-
-                }
-            ];
-
-            batchRequisition = {
-                $outdated : undefined,
-                $modified : undefined,
-                $availableOffline : undefined,
-                id : requisitions[0].id,
-                status : undefined,
-                statusChanges : undefined,
-                program : requisitions[0].program,
-                facility : requisitions[0].facility,
-                processingPeriod : undefined,
-                requisitionLineItems : [  ]
-            }
+            $controller = $injector.get('$controller');
+            $state = $injector.get('$state');
+            $stateParams = $injector.get('$stateParams');
+            alertService = $injector.get('alertService');
+            offlineService = $injector.get('offlineService');
+            confirmService = $injector.get('confirmService');
+            $rootScope = $injector.get('$rootScope');
+            $q = $injector.get('$q');
         });
+
+        programs = [{
+                id: '1',
+                code: 'PRG001',
+                name: 'Family Planning'
+            },
+            {
+                id: '2',
+                code: 'PRG002',
+                name: 'Essential Meds'
+            }
+        ];
+
+        requisitions = [
+            {
+                id: 1,
+                facility: {
+                    id: '1',
+                    name: 'first facility',
+                    code: 'first code'
+                },
+                program: programs[0]
+
+            },
+            {
+                id: 2,
+                facility: {
+                    id: '2',
+                    name: 'second facility',
+                    code: 'second code'
+                },
+                program: programs[1]
+
+            }
+        ];
+
+        batchRequisition = {
+            $outdated: undefined,
+            $modified: undefined,
+            $availableOffline: undefined,
+            id: requisitions[0].id,
+            status: undefined,
+            statusChanges: undefined,
+            program: requisitions[0].program,
+            facility: requisitions[0].facility,
+            processingPeriod: undefined,
+            requisitionLineItems: []
+        }
     });
 
     describe('$onInit', function() {
@@ -226,7 +224,7 @@ describe('RequisitionApprovalListController', function () {
             expect(alertService.error).not.toHaveBeenCalled();
         });
 
-        it('should should put transformed requisition to batch requisition storage if user is offline', function() {
+        it('should put transformed requisition to batch requisition storage if user is offline', function() {
             vm.requisitions[0].$selected = true;
             vm.offline = true;
 
@@ -239,7 +237,7 @@ describe('RequisitionApprovalListController', function () {
             expect(batchRequisitionsStorage.put).toHaveBeenCalledWith(batchRequisition);
         });
 
-        it('should should not put transformed requisition to batch requisition storage if user is online', function() {
+        it('should not put transformed requisition to batch requisition storage if user is online', function() {
             vm.requisitions[0].$selected = true;
             vm.offline = false;
 
