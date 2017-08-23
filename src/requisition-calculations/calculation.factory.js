@@ -120,14 +120,14 @@
          * @return {Number}                 the calculated Total Losses and Adjustments value
          */
         function calculateTotalLossesAndAdjustments(adjustments, reasons) {
-            var adjustmentsForCaculations = angular.copy(adjustments);
+            var adjustmentsForCalculations = angular.copy(adjustments);
 
-            angular.forEach(adjustmentsForCaculations, function(adjustment) {
+            angular.forEach(adjustmentsForCalculations, function(adjustment) {
                 var filteredReasons = $filter('filter')(reasons, {id: adjustment.reasonId}, true);
                 adjustment.reason = (filteredReasons) ? filteredReasons[0] : null;
             });
 
-            return stockReasonsCalculations.calculateTotal(adjustmentsForCaculations);
+            return stockReasonsCalculations.calculateTotal(adjustmentsForCalculations);
         }
 
         /**
