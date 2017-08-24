@@ -460,6 +460,117 @@ describe('requisitionService', function() {
             expect(requisitionsStorage.put.calls.length).toBe(2);
         });
 
+        it('will put requisition to the batch requisitions storage if modifiedDates do not match', function(){
+            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+
+            batchRequisitionsStorage.getBy.andReturn(requisition);
+
+            httpBackend.when('GET',
+                requisitionUrlFactory('/api/requisitions/search')
+            ).respond(200, {
+                content: [
+                    requisition
+                ]
+            });
+
+            requisitionService.search();
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(batchRequisitionsStorage.put).toHaveBeenCalled();
+            expect(requisitionsStorage.put).not.toHaveBeenCalled();
+        });
+
+        it('will put requisition to the requisitions storage if modifiedDates do not match', function(){
+            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+
+            requisitionsStorage.getBy.andReturn(requisition);
+
+            httpBackend.when('GET',
+                requisitionUrlFactory('/api/requisitions/search')
+            ).respond(200, {
+                content: [
+                    requisition
+                ]
+            });
+
+            requisitionService.search();
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(requisitionsStorage.put).toHaveBeenCalled();
+            expect(batchRequisitionsStorage.put).not.toHaveBeenCalled();
+        });
+
+        it('will set requisition as available offline if was found the batch requisitions storage', function(){
+            batchRequisitionsStorage.getBy.andReturn(requisition);
+
+            var data = {};
+
+            httpBackend.when('GET',
+                requisitionUrlFactory('/api/requisitions/search')
+            ).respond(200, {
+                content: [
+                    requisition
+                ]
+            });
+
+            requisitionService.search().then(function(response) {
+                data = response;
+            });
+
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(data.content[0].$availableOffline).toBe(true);
+        });
+
+        it('will set requisition as available offline if was found the requisitions storage', function(){
+            requisitionsStorage.getBy.andReturn(requisition);
+
+            var data = {};
+
+            httpBackend.when('GET',
+                requisitionUrlFactory('/api/requisitions/search')
+            ).respond(200, {
+                content: [
+                    requisition
+                ]
+            });
+
+            requisitionService.search().then(function(response) {
+                data = response;
+            });
+
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(data.content[0].$availableOffline).toBe(true);
+        });
+
+        it('will not set requisition as available offline if was not found in any storage', function(){
+            var data = {};
+
+            httpBackend.when('GET',
+                requisitionUrlFactory('/api/requisitions/search')
+            ).respond(200, {
+                content: [
+                    requisition
+                ]
+            });
+
+            requisitionService.search().then(function(response) {
+                data = response;
+            });
+
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(requisitionsStorage.getBy).toHaveBeenCalled();
+            expect(batchRequisitionsStorage.getBy).toHaveBeenCalled();
+            expect(data.content[0].$availableOffline).toBe(undefined);
+        });
+
     });
 
     function formatDatesInRequisition(requisition) {
