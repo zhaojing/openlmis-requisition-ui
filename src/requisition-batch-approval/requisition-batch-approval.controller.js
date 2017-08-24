@@ -154,7 +154,7 @@
          * and total cost of all products for all facilities.
          */
         function updateLineItem(lineItem, requisition) {
-            lineItem.totalCost = calculationFactory['totalCost'](lineItem, requisition);
+            lineItem.totalCost = calculationFactory.totalCost(lineItem, requisition);
             updateTotalValues(lineItem.orderable.id);
             requisition.$totalCost = requisitionBatchDisplayFactory.calculateRequisitionTotalCost(requisition);
         }
@@ -185,7 +185,7 @@
         function sync() {
             loadingModalService.open();
 
-            requisitionBatchSaveFactory(vm.requisitions)
+            requisitionBatchSaveFactory.saveRequisitions(vm.requisitions)
             .then(function(savedRequisitions){
                 //successfully saved all requisitions
                 var successMessage = messageService.get("requisitionBatchApproval.syncSuccess", {

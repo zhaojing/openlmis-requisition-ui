@@ -29,9 +29,9 @@
         .module('requisition-batch-approval')
         .factory('requisitionBatchDisplayFactory', factory);
 
-    factory.$inject = ['$q', '$http', '$filter', 'openlmisUrlFactory', 'localStorageFactory'];
+    factory.$inject = ['$q', '$http', '$filter', 'openlmisUrlFactory', 'localStorageFactory', 'calculationFactory'];
 
-    function factory($q, $http, $filter, openlmisUrlFactory, localStorageFactory) {
+    function factory($q, $http, $filter, openlmisUrlFactory, localStorageFactory, calculationFactory) {
 
         var requisitionBatchDisplayFactory = {
             prepareDataToDisplay: prepareDataToDisplay,
@@ -70,31 +70,19 @@
                 addNewColumn(columns, false, false, ['requisitionBatchApproval.approvedQuantity', 'requisitionBatchApproval.cost'], requisition);
                 lineItems[requisition.id] = [];
 
+                //method used in calculation factory
+                requisition.$isAfterAuthorize = isAfterAuthorize;
+
                 angular.forEach(requisition.requisitionLineItems, function(lineItem) {
                     lineItems[requisition.id][lineItem.orderable.id] = lineItem;
-                    lineItem.totalCost = lineItem.totalCost ? lineItem.totalCost : 0;
+                    lineItem.totalCost = calculationFactory.totalCost(lineItem, requisition);
                     lineItem.approvedQuantity = lineItem.approvedQuantity ? lineItem.approvedQuantity : 0;
 
                     totalCost += lineItem.totalCost;
 
-                    if (products[lineItem.orderable.id] !== undefined) {
-                        products[lineItem.orderable.id].requisitions.push(requisition.id);
-                        products[lineItem.orderable.id].totalCost += lineItem.totalCost;
-                        products[lineItem.orderable.id].totalQuantity += lineItem.approvedQuantity;
-                    } else {
-                        products[lineItem.orderable.id] = {
-                            code: lineItem.orderable.productCode,
-                            name: lineItem.orderable.fullProductName,
-                            totalCost: lineItem.totalCost,
-                            totalQuantity: lineItem.approvedQuantity,
-                            requisitions: [requisition.id]
-                        };
-                    }
-
+                    products[lineItem.orderable.id] = prepareProductDetails(products[lineItem.orderable.id], lineItem, requisition);
                 });
 
-                //method used in calculation factory
-                requisition.$isAfterAuthorize = isAfterAuthorize;
                 calculateRequisitionTotalCost(requisition);
 
                 requisitionsList.push(requisition);
@@ -117,16 +105,6 @@
                 requisitionsCopy: requisitionsCopy
             }
             return dataToDisplay;
-        }
-
-        function addNewColumn(columns, isSticky, isStickyRight, names, requisition) {
-            columns.push({
-                id: requisition ? requisition.id : columns.length,
-                requisition: requisition,
-                sticky: isSticky,
-                right: isStickyRight,
-                names: names
-            });
         }
 
         /**
@@ -153,6 +131,33 @@
         // Requisitions in this view are always IN_APPROVAL or AUTHORIZED so always return true
         function isAfterAuthorize() {
             return true;
+        }
+
+        function addNewColumn(columns, isSticky, isStickyRight, names, requisition) {
+            columns.push({
+                id: requisition ? requisition.id : columns.length,
+                requisition: requisition,
+                sticky: isSticky,
+                right: isStickyRight,
+                names: names
+            });
+        }
+
+        function prepareProductDetails(product, lineItem, requisition) {
+            if (product !== undefined) {
+                product.requisitions.push(requisition.id);
+                product.totalCost += lineItem.totalCost;
+                product.totalQuantity += lineItem.approvedQuantity;
+            } else {
+                product = {
+                    code: lineItem.orderable.productCode,
+                    name: lineItem.orderable.fullProductName,
+                    totalCost: lineItem.totalCost,
+                    totalQuantity: lineItem.approvedQuantity,
+                    requisitions: [requisition.id]
+                };
+            }
+        return product;
         }
     }
 

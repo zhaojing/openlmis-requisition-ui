@@ -67,7 +67,7 @@
                 return $q.reject([]);
             }
 
-            return requisitionBatchSaveFactory(requisitions)
+            return requisitionBatchSaveFactory.saveRequisitions(requisitions)
             .then(requisitionBatchValidationFactory.validateRequisitions, requisitionBatchValidationFactory.validateRequisitions)
             .then(approveRequisitions, approveRequisitions);
         }

@@ -16,8 +16,8 @@
 
 describe('RequisitionBatchApproveFactory', function() {
 
-	var $rootScope, $httpBackend, requisitionBatchApproveFactory, requisitionSaveSpy, requisitions, requisitionBatchApprovalService,
-	    deferred;
+	var $rootScope, requisitionBatchApproveFactory, requisitions, requisitionBatchApprovalService,
+	    deferred, saveDeferred, validationDeferred, requisitionBatchSaveFactory, requisitionBatchValidationFactory;
 
 	beforeEach(function() {
         module('requisition-batch-approval');
@@ -29,15 +29,6 @@ describe('RequisitionBatchApproveFactory', function() {
 		}];
 
         module(function($provide) {
-            requisitionSaveSpy = {
-                'save': function(requisitions){
-                    return [];
-                }
-            };
-            $provide.factory('requisitionBatchSaveFactory', function(){
-                return requisitionSaveSpy.save;
-            });
-
             $provide.factory('requisitionUrlFactory', function(){
                 return function(url){
                     return url;
@@ -49,19 +40,19 @@ describe('RequisitionBatchApproveFactory', function() {
             $q = $injector.get('$q');
         });
 
-        spyOn(requisitionSaveSpy, 'save').andCallFake(function(requisitions){
-            return $q.resolve(requisitions);
-        });
-
         inject(function($injector){
-            $httpBackend = $injector.get('$httpBackend');
             $rootScope = $injector.get('$rootScope');
             requisitionBatchApproveFactory = $injector.get('requisitionBatchApproveFactory');
             requisitionBatchApprovalService = $injector.get('requisitionBatchApprovalService');
+            requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
+            requisitionBatchValidationFactory = $injector.get('requisitionBatchValidationFactory');
         });
 
         deferred = $q.defer();
+        saveDeferred = $q.defer();
+        validationDeferred = $q.defer();
         spyOn(requisitionBatchApprovalService, 'approveAll').andReturn(deferred.promise);
+        spyOn(requisitionBatchSaveFactory, 'saveRequisitions').andReturn($q.when(requisitions));
 	});
 
 	it('returns an empty array if input is invalid', function() {
@@ -89,7 +80,7 @@ describe('RequisitionBatchApproveFactory', function() {
 		requisitionBatchApproveFactory.batchApprove(requisitions);
 		$rootScope.$apply();
 
-		expect(requisitionSaveSpy.save).toHaveBeenCalledWith(requisitions);
+		expect(requisitionBatchSaveFactory.saveRequisitions).toHaveBeenCalledWith(requisitions);
 	});
 
 	it('when successful, it returns an array of all requisitions', function() {
@@ -106,8 +97,8 @@ describe('RequisitionBatchApproveFactory', function() {
 		expect(response[0].id).toEqual(requisitions[0].id);
 	});
 
-/*
-	it('unapproved requisitions are not returned, and have error message applied', function() {
+
+	it('unapproved requisitions are not returned', function() {
 		var unapprovableRequisition = {
 			id: 'requisition-dontapprove'
 		};
@@ -130,9 +121,5 @@ describe('RequisitionBatchApproveFactory', function() {
 		$rootScope.$apply();
 
 		expect(response.length).toEqual(requisitions.length - 1);
-
-		// We mutated the original object...
-		expect(unapprovableRequisition.$error).toBeTruthy();
 	});
-*/
 });

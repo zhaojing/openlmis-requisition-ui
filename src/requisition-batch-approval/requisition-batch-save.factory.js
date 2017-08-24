@@ -36,7 +36,11 @@
         'requisitionBatchApprovalService'];
 
     function factory($q, $http, $filter, openlmisUrlFactory, localStorageFactory, requisitionBatchApprovalService) {
-        return saveRequisitions;
+
+        var factory = {
+            saveRequisitions: saveRequisitions
+        }
+        return factory;
 
         /**
          * @ngdoc method

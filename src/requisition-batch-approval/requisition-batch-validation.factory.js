@@ -23,7 +23,6 @@
      *
      * @description
      * Takes a list of requisitions and will try to validate all of them.
-     *
      */
     angular
         .module('requisition-batch-approval')
@@ -49,12 +48,9 @@
          * Main function of factory, which takes a list of requisitions
          * and validate them. If approved quantity is to large or empty it rejects promise,
          * otherwise promise will be resolved.
-         *
          */
         function validateRequisitions(requisitions) {
             var successfulRequisitions = [];
-
-            var requisitionsList = requisitions;
 
             requisitions.forEach(function(requisition) {
                 if(!validateRequisition(requisition)){

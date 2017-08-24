@@ -181,13 +181,6 @@
             });
 
             if (selectedRequisitionIds.length > 0 && requisitionsFromOneProgram) {
-                angular.forEach(selectedRequisitionIds, function(id) {
-                    if (!isBatchRequisitionAvailable(id)) {
-                        var fullRequisitionDto = offlineRequisitions.getBy('id', id);
-                        offlineBatchRequisitions.put(transformToBatchDto(angular.copy(fullRequisitionDto)));
-                    }
-                });
-
                 $state.go('openlmis.requisitions.batchApproval', {
                     ids: selectedRequisitionIds.join(',')
                 });
@@ -211,50 +204,6 @@
         function isFullRequisitionAvailable(requisitionId) {
             var offlineRequisition = offlineRequisitions.search({id: requisitionId});
             return !vm.offline || vm.offline && offlineRequisition.length > 0;
-        }
-
-        function isBatchRequisitionAvailable(requisitionId) {
-            return !vm.offline || vm.offline && offlineBatchRequisitions.getBy('id', requisitionId);
-        }
-
-        function transformToBatchDto(requisition) {
-            var batchRequisitionDto = {
-                $outdated: requisition.$outdated,
-                $modified: requisition.$modified,
-                $availableOffline: requisition.$availableOffline,
-                id: requisition.id,
-                status : requisition.status,
-                statusChanges: requisition.statusChanges,
-                program: requisition.program,
-                facility: {
-                    id: requisition.facility.id,
-                    code: requisition.facility.code,
-                    name: requisition.facility.name
-                },
-                processingPeriod: requisition.processingPeriod,
-                requisitionLineItems: []
-            };
-
-            angular.forEach(requisition.requisitionLineItems, function(lineItem) {
-                var newLineItem = {
-                    id: lineItem.id,
-                    approvedQuantity: lineItem.approvedQuantity,
-                    pricePerPack: lineItem.pricePerPack,
-                    totalCost: lineItem.totalCost,
-                    skipped: lineItem.skipped,
-                    orderable: {
-                        id: lineItem.orderable.id,
-                        productCode: lineItem.orderable.productCode,
-                        fullProductName: lineItem.orderable.fullProductName,
-                        netContent: lineItem.orderable.netContent,
-                        packRoundingThreshold: lineItem.orderable.packRoundingThreshold,
-                        roundToZero: lineItem.orderable.roundToZero
-                    }
-                };
-                batchRequisitionDto.requisitionLineItems.push(newLineItem);
-            });
-
-            return batchRequisitionDto;
         }
     }
 

@@ -18,7 +18,9 @@ describe('RequisitionBatchApprovalController', function () {
     //injects
     var vm, $stateParams, $rootScope, $q, confirmService, $controller, calculationFactory,
         confirmDeferred, $scope, requisitionService, requisitionStatus, alertService, $state,
-        localStorageFactory, requisitionsStorage, batchRequisitionsStorage, requisitionBatchApprovalService;
+        localStorageFactory, requisitionsStorage, batchRequisitionsStorage, requisitionBatchApprovalService,
+        notificationService, requisitionBatchSaveFactory, notificationServiceSpy,
+        requisitionBatchApproveFactory;
 
     //variables
     var requisitions, products, lineItems;
@@ -116,14 +118,16 @@ describe('RequisitionBatchApprovalController', function () {
             $scope = $injector.get('$rootScope').$new();
             requisitionService = $injector.get('requisitionService');
             requisitionStatus = $injector.get('REQUISITION_STATUS');
+            notificationService = $injector.get('notificationService');
             $stateParams = $injector.get('$stateParams');
             alertService = $injector.get('alertService');
             $state = $injector.get('$state');
+            requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
+            requisitionBatchApproveFactory = $injector.get('requisitionBatchApproveFactory');
+            calculationFactory = $injector.get('calculationFactory');
         });
 
         $stateParams.errors = {};
-        calculationFactory = jasmine.createSpyObj('calculationFactory', ['totalCost']);
-        calculationFactory.totalCost.andReturn(100);
         spyOn(requisitionService, 'get').andReturn($q.when(requisition));
     });
 
@@ -136,6 +140,12 @@ describe('RequisitionBatchApprovalController', function () {
                 requisitions: requisitions,
                 $scope: $scope,
                 $stateParams: $stateParams
+            });
+
+            spyOn(calculationFactory, 'totalCost').andCallFake(function(lineItem, requisition) {
+                if (lineItem.id == 1) return requisitions[0].requisitionLineItems[0].totalCost;
+                if (lineItem.id == 2) return requisitions[0].requisitionLineItems[1].totalCost;
+                return null;
             });
         });
 
@@ -180,12 +190,18 @@ describe('RequisitionBatchApprovalController', function () {
 
         beforeEach(function() {
             initController();
+            spyOn(calculationFactory, 'totalCost').andReturn(100);
         });
 
         it('should call calculation factory method', function() {
             vm.updateLineItem(lineItems[1][1], requisitions[0]);
 
             expect(calculationFactory.totalCost).toHaveBeenCalled();
+        });
+
+        it('should change total cost value', function() {
+            vm.updateLineItem(lineItems[1][1], requisitions[0]);
+
             expect(lineItems[1][1].totalCost).toBe(100);
         });
     });
@@ -323,6 +339,68 @@ describe('RequisitionBatchApprovalController', function () {
 
     });
 
+    describe('sync', function() {
+
+        beforeEach(function() {
+            initController();
+
+            confirmDeferred = $q.defer();
+            notificationServiceSpy = jasmine.createSpy();
+
+            spyOn($state, 'go').andReturn();
+            spyOn(requisitionBatchSaveFactory, 'saveRequisitions').andReturn(confirmDeferred.promise);
+        });
+
+        it('should show success notification if successfully save', function() {
+            spyOn(notificationService, 'success').andCallFake(notificationServiceSpy);
+
+            vm.sync();
+            confirmDeferred.resolve(requisitions);
+            $rootScope.$apply();
+
+            expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionBatchApproval.syncSuccess');
+        });
+
+        it('should show error notification if unsuccessfully save', function() {
+            spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
+
+            vm.sync();
+            confirmDeferred.reject(requisitions);
+            $rootScope.$apply();
+
+            expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionBatchApproval.syncError');
+        });
+
+        it('should reload current state', function() {
+            vm.sync();
+            confirmDeferred.reject(requisitions);
+            $rootScope.$apply();
+
+            expect($state.go).toHaveBeenCalled();
+        });
+    });
+
+    describe('approve', function() {
+
+        beforeEach(function() {
+            initController();
+
+            confirmDeferred = $q.defer();
+
+            spyOn($state, 'go').andReturn();
+            spyOn(confirmService, 'confirm').andReturn(confirmDeferred.promise);
+            spyOn(requisitionBatchApproveFactory, 'batchApprove').andReturn($q.when());
+        });
+
+        it('should ask user for confirmation to approve', function() {
+            vm.approve();
+
+            confirmDeferred.resolve();
+            $rootScope.$apply();
+
+            expect(confirmService.confirm).toHaveBeenCalledWith('requisitionBatchApproval.approvalConfirm');
+        });
+    });
 
     function initController() {
         vm = $controller('RequisitionBatchApprovalController', {

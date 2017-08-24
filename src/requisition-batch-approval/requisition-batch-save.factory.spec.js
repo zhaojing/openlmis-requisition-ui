@@ -20,7 +20,7 @@ describe('RequisitionBatchSaveFactory', function() {
     var requisitions, dateUtilsMock, requisitionBatchApprovalService, deferred;
 
     //injects
-    var requisitionBatchSaveFactory, $rootScope, $httpBackend, openlmisUrlFactory, $q;
+    var requisitionBatchSaveFactory, $rootScope, $q;
 
     beforeEach(function() {
         module('requisition-batch-approval');
@@ -145,8 +145,6 @@ describe('RequisitionBatchSaveFactory', function() {
             requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
             requisitionBatchApprovalService = $injector.get('requisitionBatchApprovalService');
             $rootScope = $injector.get('$rootScope');
-            $httpBackend = $injector.get('$httpBackend');
-            openlmisUrlFactory = $injector.get('openlmisUrlFactory');
             $q = $injector.get('$q');
         });
 
@@ -158,7 +156,7 @@ describe('RequisitionBatchSaveFactory', function() {
     it('returns an empty array if input is invalid', function() {
         var data;
 
-        requisitionBatchSaveFactory('invalid input').catch(function(response) {
+        requisitionBatchSaveFactory.saveRequisitions('invalid input').catch(function(response) {
             data = response;
         });
 
@@ -169,7 +167,7 @@ describe('RequisitionBatchSaveFactory', function() {
     it('when successful, it returns an array of all requisitions', function() {
         var data;
 
-        requisitionBatchSaveFactory(requisitions).then(function(response) {
+        requisitionBatchSaveFactory.saveRequisitions(requisitions).then(function(response) {
             data = response;
         });
 
@@ -183,7 +181,7 @@ describe('RequisitionBatchSaveFactory', function() {
     it('when errors, it returns only requisitions that were successfully saved', function() {
         var data;
 
-        requisitionBatchSaveFactory(requisitions).catch(function(response) {
+        requisitionBatchSaveFactory.saveRequisitions(requisitions).catch(function(response) {
             data = response;
         });
 
@@ -205,7 +203,7 @@ describe('RequisitionBatchSaveFactory', function() {
     it('it adds errors to requisitions that cannot be saved', function() {
         var data;
 
-        requisitionBatchSaveFactory(requisitions).catch(function(response) {
+        requisitionBatchSaveFactory.saveRequisitions(requisitions).catch(function(response) {
             data = response;
         });
 

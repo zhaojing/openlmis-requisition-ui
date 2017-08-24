@@ -224,32 +224,6 @@ describe('RequisitionApprovalListController', function () {
             expect(alertService.error).not.toHaveBeenCalled();
         });
 
-        it('should put transformed requisition to batch requisition storage if user is offline', function() {
-            vm.requisitions[0].$selected = true;
-            vm.offline = true;
-
-            requisitionsStorage.getBy.andReturn(vm.requisitions[0]);
-            vm.viewSelectedRequisitions();
-
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.batchApproval', {
-                ids: [ vm.requisitions[0].id ].join(',')
-            });
-            expect(batchRequisitionsStorage.put).toHaveBeenCalledWith(batchRequisition);
-        });
-
-        it('should not put transformed requisition to batch requisition storage if user is online', function() {
-            vm.requisitions[0].$selected = true;
-            vm.offline = false;
-
-            requisitionsStorage.getBy.andReturn(vm.requisitions[0]);
-            vm.viewSelectedRequisitions();
-
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.batchApproval', {
-                ids: [ vm.requisitions[0].id ].join(',')
-            });
-            expect(batchRequisitionsStorage.put).not.toHaveBeenCalled();
-        });
-
     });
 
     function initController() {
