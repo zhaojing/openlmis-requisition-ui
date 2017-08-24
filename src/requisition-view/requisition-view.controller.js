@@ -185,6 +185,7 @@
                 popup.document.write(messageService.get('requisitionView.sync.pending'));
                 var loadingPromise = loadingModalService.open();
                 saveRnr().then(function() {
+                    watcher.disableWatcher();
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.sync.success');
                     });
@@ -238,6 +239,7 @@
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$save().then(function () {
                     vm.requisition.$submit().then(function (response) {
+                        watcher.disableWatcher();
                         loadingPromise.then(function () {
                             notificationService.success('requisitionView.submit.success');
                         });
@@ -287,6 +289,7 @@
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$save().then(function () {
                     vm.requisition.$authorize().then(function (response) {
+                        watcher.disableWatcher();
                         loadingPromise.then(function () {
                             notificationService.success('requisitionView.authorize.success');
                         });
@@ -315,6 +318,7 @@
             ).then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$remove().then(function(response) {
+                    watcher.disableWatcher();
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.delete.success');
                     });
@@ -343,6 +347,7 @@
                     var loadingPromise = loadingModalService.open();
                     vm.requisition.$save().then(function() {
                         vm.requisition.$approve().then(function(response) {
+                            watcher.disableWatcher();
                             loadingPromise.then(function() {
                                 notificationService.success('requisitionView.approve.success');
                             });
@@ -376,6 +381,7 @@
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$save().then(function() {
                     vm.requisition.$reject().then().then(function(response) {
+                        watcher.disableWatcher();
                         loadingPromise.then(function() {
                             notificationService.success('requisitionView.reject.success');
                         });
@@ -403,6 +409,7 @@
             ).then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$skip().then(function(response) {
+                    watcher.disableWatcher();
                     loadingPromise.then(function() {
                         notificationService.success('requisitionView.skip.success');
                     });

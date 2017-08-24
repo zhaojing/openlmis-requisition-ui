@@ -20,7 +20,7 @@ describe('RequisitionViewController', function() {
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
         REQUISITION_RIGHTS, accessTokenFactorySpy, $window, stateTrackerService, messageService,
-        RequisitionStockCountDateModal;
+        RequisitionStockCountDateModal, RequisitionWatcher, watcher;
 
     beforeEach(function() {
         module('requisition-view');
@@ -62,6 +62,17 @@ describe('RequisitionViewController', function() {
             RequisitionStockCountDateModal = jasmine.createSpy('RequisitionStockCountDateModal');
             $provide.factory('RequisitionStockCountDateModal', function() {
                 return RequisitionStockCountDateModal;
+            });
+
+            RequisitionWatcher = jasmine.createSpy('RequisitionWatcher').andCallFake(function() {
+                watcher = {
+                    enabled: true,
+                    disableWatcher: jasmine.createSpy()
+                };
+                return watcher;
+            });
+            $provide.factory('RequisitionWatcher', function() {
+                return RequisitionWatcher;
             });
         });
 
@@ -486,6 +497,13 @@ describe('RequisitionViewController', function() {
 
             expect(RequisitionStockCountDateModal).not.toHaveBeenCalled();
         });
+
+        it('should disable RequisitionWatcher', function() {
+            vm.authorizeRnr();
+            $scope.$apply();
+
+            expect(watcher.disableWatcher).toHaveBeenCalled();
+        });
     });
 
     describe('submitRnr', function() {
@@ -525,6 +543,13 @@ describe('RequisitionViewController', function() {
 
             expect(RequisitionStockCountDateModal).not.toHaveBeenCalled();
         });
+
+        it('should disable RequisitionWatcher', function() {
+            vm.submitRnr();
+            $scope.$apply();
+
+            expect(watcher.disableWatcher).toHaveBeenCalled();
+        });
     });
 
     describe('removeRnr', function() {
@@ -546,6 +571,13 @@ describe('RequisitionViewController', function() {
             $scope.$apply();
 
             expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+        });
+
+        it('should disable RequisitionWatcher', function() {
+            vm.removeRnr();
+            $scope.$apply();
+
+            expect(watcher.disableWatcher).toHaveBeenCalled();
         });
     });
 
@@ -578,6 +610,13 @@ describe('RequisitionViewController', function() {
             $scope.$apply();
 
             expect(alertService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
+        });
+
+        it('should disable RequisitionWatcher', function() {
+            vm.approveRnr();
+            $scope.$apply();
+
+            expect(watcher.disableWatcher).toHaveBeenCalled();
         });
     });
 
@@ -622,6 +661,15 @@ describe('RequisitionViewController', function() {
 
             expect(stateTrackerService.goToPreviousState)
                 .toHaveBeenCalledWith('openlmis.requisitions.approvalList');
+        });
+
+        it('should disable RequisitionWatcher', function() {
+            vm.rejectRnr();
+            confirmDeferred.resolve();
+            saveDeferred.resolve();
+            $scope.$apply()
+
+            expect(watcher.disableWatcher).toHaveBeenCalled();
         });
     });
 

@@ -50,15 +50,28 @@
         function RequisitionWatcher(scope, requisition, storage) {
             var watcher = this;
 
+            watcher.enabled = true;
+
+            watcher.disableWatcher = disableWatcher;
+            watcher.enableWatcher = enableWatcher;
+
             addWatcher(scope, requisition, 'requisitionLineItems', watcher, storage);
             addWatcher(scope, requisition, 'draftStatusMessage', watcher, storage);
+
+            function enableWatcher() {
+                watcher.enabled = true;
+            }
+
+            function disableWatcher() {
+                watcher.enabled = false;
+            }
         }
 
         function addWatcher(scope, requisition, valueToWatch, watcher, storage) {
             scope.$watch(function() {
                 return requisition[valueToWatch];
             }, function(oldValue, newValue) {
-                if (oldValue !== newValue) {
+                if (oldValue !== newValue && watcher.enabled) {
                     $timeout.cancel(watcher.syncTimeout);
                     watcher.syncTimeout = $timeout(function() {
                         requisition.$modified = true;
