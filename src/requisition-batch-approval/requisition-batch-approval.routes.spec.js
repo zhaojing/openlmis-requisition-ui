@@ -68,12 +68,10 @@ describe('openlmis.requisitions.batchApproval state', function() {
     function prepareTestData() {
         state = $state.get('openlmis.requisitions.batchApproval');
         $stateParams = {};
-
         requisitions = [{id: 1}, {id: 2}];
     }
 
     function prepareSpies() {
-        deferred = $q.defer();
         spyOn(requisitionBatchApprovalService, 'get').andReturn($q.when(requisitions));
     }
 });
