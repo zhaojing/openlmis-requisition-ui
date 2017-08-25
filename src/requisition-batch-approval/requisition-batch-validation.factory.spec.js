@@ -16,8 +16,7 @@
 
 describe('RequisitionBatchValidationFactory', function() {
 
-	var $rootScope, $httpBackend, requisitionBatchApproveFactory, requisitions, requisitionBatchApprovalService,
-	    deferred, saveDeferred, requisitionBatchSaveFactory;
+	var $rootScope, $httpBackend, requisitions, deferred, saveDeferred, requisitionBatchSaveFactory;
 
 	beforeEach(function() {
         module('requisition-batch-approval');

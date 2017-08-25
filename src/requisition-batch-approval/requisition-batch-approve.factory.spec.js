@@ -17,7 +17,7 @@
 describe('RequisitionBatchApproveFactory', function() {
 
 	var $rootScope, requisitionBatchApproveFactory, requisitions, requisitionBatchApprovalService,
-	    deferred, saveDeferred, validationDeferred, requisitionBatchSaveFactory, requisitionBatchValidationFactory;
+	    deferred, saveDeferred, validationDeferred, requisitionBatchSaveFactory;
 
 	beforeEach(function() {
         module('requisition-batch-approval');
@@ -45,7 +45,6 @@ describe('RequisitionBatchApproveFactory', function() {
             requisitionBatchApproveFactory = $injector.get('requisitionBatchApproveFactory');
             requisitionBatchApprovalService = $injector.get('requisitionBatchApprovalService');
             requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
-            requisitionBatchValidationFactory = $injector.get('requisitionBatchValidationFactory');
         });
 
         deferred = $q.defer();

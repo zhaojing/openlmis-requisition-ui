@@ -82,7 +82,7 @@
             }, function(response) {
 
                 angular.forEach(requisitions, function(requisition) {
-                    var requisitionError = $filter('filter')(response.data.requisitionErrors, {requisitionId: requisition.id});
+                    var requisitionError = $filter('filter')(response.requisitionErrors, {requisitionId: requisition.id});
                     if (requisitionError.length > 0) {
                         requisition.$error = requisitionError[0].errorMessage.message;
                         if (requisitionError[0].errorMessage.messageKey === 'requisition.error.validation.dateModifiedMismatch') {
@@ -92,12 +92,12 @@
                         }
                     } else {
                         //Save successful requisitions to storage
-                        var savedRequisition = $filter('filter')(response.data.requisitionDtos, {id: requisition.id});
+                        var savedRequisition = $filter('filter')(response.requisitionDtos, {id: requisition.id});
                         saveToStorage(angular.copy(savedRequisition[0]), offlineBatchRequisitions);
                     }
                 });
 
-                return deferred.reject(response.data.requisitionDtos);
+                return deferred.reject(response.requisitionDtos);
             });
 
             return deferred.promise;

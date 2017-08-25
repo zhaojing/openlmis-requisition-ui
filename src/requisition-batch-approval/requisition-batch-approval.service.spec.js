@@ -16,7 +16,7 @@
 describe('requisitionBatchApprovalService', function() {
 
     var $rootScope, httpBackend, requisitionBatchApprovalService, q, requisitionUrlFactory, batchRequisitionsStorage,
-        dateUtilsMock, requisitionsStorage, offlineService;
+        dateUtils, requisitionsStorage, offlineService, localStorageFactory;
 
     beforeEach(function() {
         module('requisition-batch-approval');
@@ -123,23 +123,10 @@ describe('requisitionBatchApprovalService', function() {
         var requisitionFactoryMock = jasmine.createSpy('Requisition').andCallFake(function(requisition) {
             return requisition;
         });
-        dateUtilsMock = jasmine.createSpyObj('dateUtils', ['toStringDate']);
-        dateUtilsMock.toStringDate.andCallFake(function(parameter) {
-            return parameter;
-        });
 
         module(function($provide){
             $provide.factory('Requisition', function() {
                 return requisitionFactoryMock;
-            });
-            $provide.factory('dateUtils', function() {
-                return dateUtilsMock;
-            });
-
-            offlineService = jasmine.createSpyObj('offlineService', ['isOffline', 'checkConnection']);
-            offlineService.checkConnection.andCallFake(checkConnection);
-            $provide.service('offlineService', function() {
-                return offlineService;
             });
 
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
@@ -147,7 +134,6 @@ describe('requisitionBatchApprovalService', function() {
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
-            approvedProducts = jasmine.createSpyObj('approvedProducts', ['put']);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
                 if (resourceName === 'offlineFlag') return offlineFlag;
                 if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
@@ -165,7 +151,15 @@ describe('requisitionBatchApprovalService', function() {
             requisitionBatchApprovalService = $injector.get('requisitionBatchApprovalService');
             q = $injector.get('$q');
             requisitionUrlFactory = $injector.get('requisitionUrlFactory');
+            dateUtils = $injector.get('dateUtils');
+            offlineService = $injector.get('offlineService');
         });
+
+        spyOn(dateUtils, 'toStringDate').andCallFake(function(parameter) {
+            return parameter;
+        });
+
+        spyOn(offlineService, 'checkConnection').andCallFake(checkConnection);
     });
 
     it('should get requisition by id', function() {
@@ -222,8 +216,8 @@ describe('requisitionBatchApprovalService', function() {
     it('should get requisition by id from storage while offline', function() {
         var getRequisitionUrl = '/api/requisitions?retrieveAll&id=' + requisitions[0].id;
 
+        spyOn(offlineService, 'isOffline').andReturn(true);
         batchRequisitionsStorage.getBy.andReturn(requisitions[0]);
-        offlineService.isOffline.andReturn(true);
 
         var data = {};
         requisitionBatchApprovalService.get(['1']).then(function(response) {

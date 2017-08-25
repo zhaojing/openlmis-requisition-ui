@@ -17,7 +17,8 @@
 describe('RequisitionBatchSaveFactory', function() {
 
     //variables
-    var requisitions, dateUtilsMock, requisitionBatchApprovalService, deferred;
+    var requisitions, dateUtils, requisitionBatchApprovalService, deferred,
+        requisitionsStorage, batchRequisitionsStorage;
 
     //injects
     var requisitionBatchSaveFactory, $rootScope, $q;
@@ -127,17 +128,25 @@ describe('RequisitionBatchSaveFactory', function() {
         var requisitionFactoryMock = jasmine.createSpy('Requisition').andCallFake(function(requisition) {
             return requisition;
         });
-        dateUtilsMock = jasmine.createSpyObj('dateUtils', ['toStringDate']);
-        dateUtilsMock.toStringDate.andCallFake(function(parameter) {
-            return parameter;
-        });
 
         module(function($provide){
             $provide.factory('Requisition', function() {
                 return requisitionFactoryMock;
             });
-            $provide.factory('dateUtils', function() {
-                return dateUtilsMock;
+
+            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+
+            var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
+            offlineFlag.getAll.andReturn([false]);
+            var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
+                if (resourceName === 'offlineFlag') return offlineFlag;
+                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
+                return requisitionsStorage;
+            });
+
+            $provide.service('localStorageFactory', function() {
+                return localStorageFactorySpy;
             });
         });
 
@@ -146,10 +155,15 @@ describe('RequisitionBatchSaveFactory', function() {
             requisitionBatchApprovalService = $injector.get('requisitionBatchApprovalService');
             $rootScope = $injector.get('$rootScope');
             $q = $injector.get('$q');
+            dateUtils = $injector.get('dateUtils');
         });
 
         deferred = $q.defer();
         spyOn(requisitionBatchApprovalService, 'saveAll').andReturn(deferred.promise);
+
+        spyOn(dateUtils, 'toStringDate').andCallFake(function(parameter) {
+            return parameter;
+        });
     });
 
 
@@ -157,6 +171,17 @@ describe('RequisitionBatchSaveFactory', function() {
         var data;
 
         requisitionBatchSaveFactory.saveRequisitions('invalid input').catch(function(response) {
+            data = response;
+        });
+
+        $rootScope.$apply();
+        expect(data).toEqual([]);
+    });
+
+    it('returns an empty array if input is an empty array', function() {
+        var data;
+
+        requisitionBatchSaveFactory.saveRequisitions([]).catch(function(response) {
             data = response;
         });
 
@@ -177,11 +202,24 @@ describe('RequisitionBatchSaveFactory', function() {
         expect(data).toEqual(requisitions);
     });
 
-/*
+    it('when successful, it mark all requisitions as available offline and then saves them to the batch requisition storage', function() {
+        requisitionBatchSaveFactory.saveRequisitions(requisitions);
+
+        deferred.resolve({requisitionDtos: requisitions});
+        $rootScope.$apply();
+
+        requisitions[0].$availableOffline = true;
+        requisitions[1].$availableOffline = true;
+
+        expect(batchRequisitionsStorage.put).toHaveBeenCalledWith(requisitions[0]);
+        expect(batchRequisitionsStorage.put).toHaveBeenCalledWith(requisitions[1]);
+    });
+
     it('when errors, it returns only requisitions that were successfully saved', function() {
         var data;
 
-        requisitionBatchSaveFactory.saveRequisitions(requisitions).catch(function(response) {
+        requisitionBatchSaveFactory.saveRequisitions(requisitions).then(function() {
+        }, function(response) {
             data = response;
         });
 
@@ -200,12 +238,8 @@ describe('RequisitionBatchSaveFactory', function() {
 
     });
 
-    it('it adds errors to requisitions that cannot be saved', function() {
-        var data;
-
-        requisitionBatchSaveFactory.saveRequisitions(requisitions).catch(function(response) {
-            data = response;
-        });
+    it('adds errors to requisitions that cannot be saved', function() {
+        requisitionBatchSaveFactory.saveRequisitions(requisitions);
 
         deferred.reject({
             requisitionDtos: [requisitions[0]],
@@ -221,5 +255,42 @@ describe('RequisitionBatchSaveFactory', function() {
         expect(requisitions[0].$error).toBe(undefined);
         expect(requisitions[1].$error).toBe('This requisition is invalid!');
     });
-    */
+
+    it('removed requisitions from storage if date modified do not match', function() {
+        requisitionBatchSaveFactory.saveRequisitions(requisitions);
+
+        deferred.reject({
+            requisitionDtos: [requisitions[0]],
+            requisitionErrors: [{
+                requisitionId: requisitions[1].id,
+                errorMessage: {
+                    messageKey: 'requisition.error.validation.dateModifiedMismatch'
+                }
+            }]
+        });
+        $rootScope.$apply();
+
+        expect(batchRequisitionsStorage.removeBy.calls.length).toEqual(1);
+        expect(batchRequisitionsStorage.removeBy).toHaveBeenCalledWith('id', requisitions[1].id);
+    });
+
+    it('mark only successful requisitions as available offline and then saves them to the batch requisitions storage', function() {
+        requisitionBatchSaveFactory.saveRequisitions(requisitions);
+
+        deferred.reject({
+            requisitionDtos: [requisitions[0]],
+            requisitionErrors: [{
+                requisitionId: requisitions[1].id,
+                errorMessage: {
+                    message: 'This requisition is invalid!'
+                }
+            }]
+        });
+        $rootScope.$apply();
+
+        requisitions[0].$availableOffline = true;
+
+        expect(batchRequisitionsStorage.put.calls.length).toEqual(1);
+        expect(batchRequisitionsStorage.put).toHaveBeenCalledWith(requisitions[0]);
+    });
 });
