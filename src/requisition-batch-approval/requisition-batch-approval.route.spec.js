@@ -27,7 +27,7 @@ describe('openlmis.requisitions.batchApproval state', function() {
     });
 
 
-    it('should accept inventoryItem object through query params', function() {
+    it('should accept ids through query params', function() {
         expect(state.url.split('?')[1].indexOf('ids') > -1).toBe(true);
     });
 
