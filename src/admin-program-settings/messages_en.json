@@ -14,6 +14,6 @@
     "adminProgramSettings.saveProgramSettingsConfirm": "Do you want to save changes to the Program Settings?",
     "adminProgramSettings.programSettingsSavedSuccessfully": "Program Settings were saved successfully!",
     "adminProgramSettings.programSettingsSaveFailed": "Program Settings save failed!",
-    "adminProgramSettings.enableDatePhysicalStockCountCompleted.label": "Date Physical Stock Count Completed",
-    "adminProgramSettings.enableDatePhysicalStockCountCompleted.description": "Enable field for Date Physical Stock Count Completed"
+    "adminProgramSettings.enableDatePhysicalStockCountCompleted.label": "Enable field for Date Physical Stock Count Completed",
+    "adminProgramSettings.enableDatePhysicalStockCountCompleted.description": "Require users to enter this date when a requisition is Submitted; the date can be edited when a requisition is Authorized."
 }
