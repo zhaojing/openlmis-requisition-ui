@@ -97,59 +97,6 @@ describe('RequisitionBatchValidationFactory', function() {
 		expect(response.length).toEqual(requisitions.length - 1);
 	});
 
-	it('invalid requisitions have error message applied', function() {
-		var response;
-
-		requisitions[1].requisitionLineItems[1].approvedQuantity = null;
-
-		requisitionBatchValidationFactory.validateRequisitions(requisitions).then(function(returnedRequisitions){
-			response = returnedRequisitions;
-		});
-		$rootScope.$apply();
-
-		expect(requisitions[1].$error).toEqual('requisitionBatchApproval.invalidRequisition');
-	});
-
-	it('applies error message if approved quantity is empty string', function() {
-		var response;
-
-		requisitions[1].requisitionLineItems[1].approvedQuantity = '';
-
-		requisitionBatchValidationFactory.validateRequisitions(requisitions).then(function(returnedRequisitions){
-			response = returnedRequisitions;
-		});
-		$rootScope.$apply();
-
-		expect(requisitions[1].$error).toEqual('requisitionBatchApproval.invalidRequisition');
-	});
-
-
-	it('applies error message if approved quantity is undefined', function() {
-		var response;
-
-		requisitions[1].requisitionLineItems[1].approvedQuantity = undefined;
-
-		requisitionBatchValidationFactory.validateRequisitions(requisitions).then(function(returnedRequisitions){
-			response = returnedRequisitions;
-		});
-		$rootScope.$apply();
-
-		expect(requisitions[1].$error).toEqual('requisitionBatchApproval.invalidRequisition');
-	});
-
-	it('applies error message if approved quantity is too large', function() {
-		var response;
-
-		requisitions[1].requisitionLineItems[1].approvedQuantity = 2147483648;
-
-		requisitionBatchValidationFactory.validateRequisitions(requisitions).then(function(returnedRequisitions){
-			response = returnedRequisitions;
-		});
-		$rootScope.$apply();
-
-		expect(requisitions[1].$error).toEqual('requisitionBatchApproval.invalidRequisition');
-	});
-
 	it('skipped requisitions are always valid', function() {
 		var response;
 

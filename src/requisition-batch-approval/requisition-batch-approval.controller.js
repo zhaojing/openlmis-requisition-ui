@@ -291,17 +291,14 @@
         function handleApprove(successfulRequisitions) {
 
             if(successfulRequisitions.length < vm.requisitions.length) {
-                var errors = {};
+                var errors = {},
+                    ids = [];
 
-
-                //Not all requisitions got approved, remove all successful
-                vm.requisitions = _.filter(vm.requisitions, function(requisition){
-                    return requisition.$error;
-                });
-
-                angular.forEach(vm.requisitions, function(requisition) {
-                    errors[requisition.id] = requisition.$error;
-
+                vm.requisitions.forEach(function(requisition) {
+                    if (!isFoundInSuccessfulRequisitions(requisition, successfulRequisitions)) {
+                        ids.push(requisition.id);
+                        errors[requisition.id] = messageService.get("requisitionBatchApproval.invalidRequisition");
+                    }
                 });
 
                 if (successfulRequisitions.length > 0) {
@@ -314,12 +311,12 @@
 
                 notificationService.error(
                     messageService.get("requisitionBatchApproval.approvalError", {
-                        errorCount: vm.requisitions.length
+                        errorCount: ids.length
                     })
                 );
 
                 // Reload state to display page without approved notifications and to update outdated ones
-                $state.go($state.current, {errors: errors, ids: Object.keys(errors).join(',')}, {reload: true});
+                $state.go($state.current, {errors: errors, ids: ids.join(',')}, {reload: true});
 
             } else {
 
@@ -370,6 +367,12 @@
 
                 new RequisitionWatcher($scope, requisition, localStorageFactory('batchApproveRequisitions'));
             });
+        }
+
+        function isFoundInSuccessfulRequisitions(requisition, successfulRequisitions) {
+            return successfulRequisitions.filter(function(r) {
+                return r.id == requisition.id;
+            }).length > 0;
         }
     }
 

@@ -53,9 +53,7 @@
             var successfulRequisitions = [];
 
             requisitions.forEach(function(requisition) {
-                if(!validateRequisition(requisition)){
-                    requisition.$error = messageService.get("requisitionBatchApproval.invalidRequisition");
-                } else {
+                if(validateRequisition(requisition)){
                     successfulRequisitions.push(requisition);
                 }
             });

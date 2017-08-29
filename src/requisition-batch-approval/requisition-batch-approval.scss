@@ -1,17 +1,6 @@
 .requisition-error {
   background: $brand-danger !important;
 }
-.requisition-error > div::after {
-        content: "\f06a" !important;
-        font: normal normal normal 14px/1 FontAwesome;
-        display: block;
-        height: 1em;
-        width: 1em;
-        position: absolute;
-        top: 50%;
-        right: 0.2em;
-        transform: translateY(-50%);
-}
 
 .openlmis-table {
 
