@@ -1,17 +1,14 @@
 
-.nav > li.is-invalid {
-    &.has-popover {
-		padding-right: 2em !important;
-		> .show-popover {
-			@include icon-only("exclamation-circle");
-			position: absolute;
-			top: 0px;
-			right: 0px;
-			width: 2em;
-			height: 100%;
-			color: $brand-danger;
-            border-left: none;
-		}
+.nav > li.is-invalid.has-popover > a {
+	padding-right: 2em !important;
+	@include icon("exclamation-circle");
+	&::before{
+		position: absolute;
+		top: 50%;
+		right: 0.5em;
+		transform: translateY(-50%);
+		color: $brand-danger;
+        border-left: none;
 	}
 }
 
