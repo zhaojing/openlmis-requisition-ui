@@ -230,8 +230,8 @@
 
             stateParams.program = vm.selectedProgram ? vm.selectedProgram.id : null;
             stateParams.facility = vm.selectedFacility ? vm.selectedFacility.id : null;
-            stateParams.initiatedDateFrom = vm.startDate ? vm.startDate.toISOString() : null;
-            stateParams.initiatedDateTo = vm.endDate ? vm.endDate.toISOString() : null;
+            stateParams.initiatedDateFrom = vm.startDate ? $filter('isoDate')(vm.startDate) : null;
+            stateParams.initiatedDateTo = vm.endDate ? $filter('isoDate')(vm.endDate) : null;
             stateParams.offline = vm.offline;
 
             $state.go('openlmis.requisitions.search', stateParams, {
