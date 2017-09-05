@@ -292,11 +292,11 @@
 
             if(successfulRequisitions.length < vm.requisitions.length) {
                 var errors = {},
-                    ids = [];
+                    requisitionIds = [];
 
                 vm.requisitions.forEach(function(requisition) {
                     if (!isFoundInSuccessfulRequisitions(requisition, successfulRequisitions)) {
-                        ids.push(requisition.id);
+                        requisitionIds.push(requisition.id);
                         errors[requisition.id] = messageService.get("requisitionBatchApproval.invalidRequisition");
                     }
                 });
@@ -311,12 +311,12 @@
 
                 notificationService.error(
                     messageService.get("requisitionBatchApproval.approvalError", {
-                        errorCount: ids.length
+                        errorCount: requisitionIds.length
                     })
                 );
 
                 // Reload state to display page without approved notifications and to update outdated ones
-                $state.go($state.current, {errors: errors, ids: ids.join(',')}, {reload: true});
+                $state.go($state.current, {errors: errors, ids: requisitionIds.join(',')}, {reload: true});
 
             } else {
 
