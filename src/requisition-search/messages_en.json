@@ -1,6 +1,6 @@
 {
     "requisitionSearch.actions": "Actions",
-    "requisitionSearch.date": "Date",
+    "requisitionSearch.date": "Date initiated",
     "requisitionSearch.dateApproved": "Date approved",
     "requisitionSearch.dateAuthorized": "Date authorized",
     "requisitionSearch.dateSubmitted": "Date submitted",
