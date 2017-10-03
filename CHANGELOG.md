@@ -1,7 +1,7 @@
 5.1.2 / WIP
 ===========
 
-* [OLMIS-3201](https://openlmis.atlassian.net/browse/OLMIS-3201): Updated product-grid error messages to use openlmis-invalid.
+* [OLMIS-3201](https://openlmis.atlassian.net/browse/OLMIS-3201): Removed stockout days validation and added popover for stockout days field.
 
 5.1.1 / 2017-09-01
 ===========
