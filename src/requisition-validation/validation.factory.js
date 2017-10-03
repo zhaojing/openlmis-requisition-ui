@@ -35,8 +35,7 @@
             stockOnHand: validateStockOnHand,
             totalConsumedQuantity: validateTotalConsumedQuantity,
             requestedQuantityExplanation: validateRequestedQuantityExplanation,
-            requestedQuantity: validateRequestedQuantity,
-            totalStockoutDays: validateTotalStockoutDays
+            requestedQuantity: validateRequestedQuantity
         };
         return factory;
 
@@ -118,28 +117,6 @@
 
             if (isRequestedQuantityRequired(lineItem, requisition) && !isFilled(requestedQuantity)) {
                 return messageService.get('requisitionValidation.required');
-            }
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-validation.validationFactory
-         * @name validateTotalStockoutDays
-         *
-         * @description
-         * Provides custom validator for the total stock out days column.
-         *
-         * @param  {Object} lineItem    the line item to be validated
-         * @param  {Object} requisition the requisition to validate the field for
-         * @return {String}             the error if field is invalid, undefined otherwise
-         */
-        function validateTotalStockoutDays(lineItem, requisition) {
-            var totalDays = 30 * requisition.processingPeriod.durationInMonths,
-                totalStockoutDays = lineItem.totalStockoutDays,
-                nonStockoutDays = totalDays - totalStockoutDays;
-
-            if (nonStockoutDays < 0) {
-                return messageService.get('requisitionValidation.valueExceedPeriodDuration');
             }
         }
 

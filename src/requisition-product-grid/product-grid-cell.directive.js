@@ -93,6 +93,8 @@
                 var templateUrl = '';
                 if(column.name === TEMPLATE_COLUMNS.SKIPPED) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-skip.html';
+                } else if(column.name === TEMPLATE_COLUMNS.TOTAL_STOCKOUT_DAYS) {
+                    templateUrl = 'requisition-product-grid/product-grid-cell-total-stockout-days.html';
                 } else if(column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-total-losses-and-adjustments.html';
                 } else if(column.$type === COLUMN_TYPES.NUMERIC && !isReadOnly()){
@@ -102,7 +104,7 @@
                 } else if(column.$type === COLUMN_TYPES.CURRENCY) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-currency.html';
                 } else {
-                    templateUrl = 'requisition-product-grid/product-grid-cell-text.html'
+                    templateUrl = 'requisition-product-grid/product-grid-cell-text.html';
                 }
                 $templateRequest(templateUrl).then(replaceCell);
             }
@@ -188,7 +190,6 @@
                     programCode: requisition.program.code
                 });
             }
-
         }
     }
 

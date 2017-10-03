@@ -286,6 +286,18 @@ describe('ProductGridCell', function() {
         expect(directiveElem.find("a").length).toEqual(1);
     });
 
+    it('should produce totalStockoutDays cell', function() {
+        scope.requisition.$isApproved.andReturn(false);
+        scope.requisition.$isReleased.andReturn(false);
+        scope.requisition.$isAuthorized.andReturn(false);
+        scope.column.name = "totalStockoutDays";
+
+        directiveElem = getCompiledElement();
+
+        expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
+        expect(directiveElem.find("input").length).toEqual(1);
+    });
+
     it('should validate full supply line item columns after updating fields', function() {
         scope.requisition.$isInitiated.andReturn(true);
         var element = getCompiledElement(),

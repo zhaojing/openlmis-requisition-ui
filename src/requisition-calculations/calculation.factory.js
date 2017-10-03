@@ -305,7 +305,7 @@
 
             if (pColumn) {
                 pValue = getColumnValue(lineItem, requisition, pColumn);
-                pValue = pValue === undefined ? 0 : pValue
+                pValue = pValue === undefined ? 0 : pValue;
             }
 
             return hColumn && hColumn.option.optionName === 'default' ?
