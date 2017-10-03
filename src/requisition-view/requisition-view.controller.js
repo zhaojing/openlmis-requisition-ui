@@ -244,7 +244,7 @@
                             notificationService.success('requisitionView.submit.success');
                         });
                         stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
-                    }, failWithMessage('requisitionView.submit.failure'));
+                    });
                 }, function(response) {
                     handleSaveError(response.status);
                 });
@@ -294,7 +294,7 @@
                             notificationService.success('requisitionView.authorize.success');
                         });
                         stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
-                    }, failWithMessage('requisitionView.authorize.failure'));
+                    });
                 }, function (response) {
                     handleSaveError(response.status);
                 });
