@@ -352,7 +352,7 @@
                                 notificationService.success('requisitionView.approve.success');
                             });
                             stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
-                        });
+                        }, loadingModalService.close);
                     }, function(response) {
                         handleSaveError(response.status);
                     });
