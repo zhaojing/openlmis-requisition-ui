@@ -234,9 +234,7 @@
                 // Using slice to make copy of array, so scope changes at end only
                 requisitionBatchApproveFactory.batchApprove(vm.requisitions.slice())
                 .then(handleApprove, handleApprove)
-                .catch(function() {
-                    loadingModalService.close();
-                });
+                .catch(loadingModalService.close);
             });
         }
 
