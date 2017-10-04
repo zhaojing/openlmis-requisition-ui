@@ -20,7 +20,7 @@ describe('RequisitionBatchApprovalController', function () {
         confirmDeferred, $scope, requisitionService, requisitionStatus, alertService, $state,
         localStorageFactory, requisitionsStorage, batchRequisitionsStorage, requisitionBatchApprovalService,
         notificationService, requisitionBatchSaveFactory, notificationServiceSpy,
-        requisitionBatchApproveFactory;
+        requisitionBatchApproveFactory, loadingModalService, batchDeferred;
 
     //variables
     var requisitions, products, lineItems;
@@ -125,6 +125,7 @@ describe('RequisitionBatchApprovalController', function () {
             requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
             requisitionBatchApproveFactory = $injector.get('requisitionBatchApproveFactory');
             calculationFactory = $injector.get('calculationFactory');
+            loadingModalService = $injector.get('loadingModalService');
         });
 
         $stateParams.errors = {};
@@ -386,19 +387,32 @@ describe('RequisitionBatchApprovalController', function () {
             initController();
 
             confirmDeferred = $q.defer();
+            batchDeferred = $q.defer();
 
             spyOn($state, 'go').andReturn();
             spyOn(confirmService, 'confirm').andReturn(confirmDeferred.promise);
-            spyOn(requisitionBatchApproveFactory, 'batchApprove').andReturn($q.when());
+            spyOn(requisitionBatchApproveFactory, 'batchApprove').andReturn(batchDeferred.promise);
+            spyOn(loadingModalService, 'close').andReturn();
         });
 
         it('should ask user for confirmation to approve', function() {
             vm.approve();
 
             confirmDeferred.resolve();
+            batchDeferred.resolve();
             $rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith('requisitionBatchApproval.approvalConfirm');
+        });
+
+        it('should close loading modal if an error occurs', function() {
+            vm.approve();
+
+            confirmDeferred.resolve();
+            batchDeferred.reject();
+            $rootScope.$apply();
+
+            expect(loadingModalService.close).toHaveBeenCalled();
         });
     });
 
