@@ -323,7 +323,7 @@
                         notificationService.success('requisitionView.delete.success');
                     });
                     stateTrackerService.goToPreviousState('openlmis.requisitions.initRnr');
-                }, failWithMessage('requisitionView.delete.failure'));
+                }, loadingModalService.close);
             });
         }
 
