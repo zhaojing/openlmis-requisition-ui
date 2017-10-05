@@ -23,7 +23,7 @@
   "requisitionBatchApproval.update": "Update Requisitions",
   "requisitionBatchApproval.updateWarning": "Updating Requisitions will remove any changes that have been made to the offline Requisitions",
   "requisitionBatchApproval.updateOffline": "Can't update Requisitions while offline",
-  "requisitionBatchApproval.invalidRequisition": "This Requisitions is invalid",
+  "requisitionBatchApproval.invalidRequisition": "This Requisition is invalid",
   "requisitionBatchApproval.approvalSuccess": "${successCount} Requisitions were approved",
   "requisitionBatchApproval.approvalConfirm": "Are you sure you want to approve these Requisitions?"
 }
