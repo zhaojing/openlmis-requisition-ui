@@ -65,7 +65,11 @@
         function onInit() {
             vm.lineItem = $scope.lineItem;
 
-            $scope.$watchCollection('lineItem.stockAdjustments', function() {
+            $scope.$watchCollection('lineItem.stockAdjustments', function(newValue, oldValue) {
+                if (newValue === oldValue) {
+                    return;
+                }
+
                 vm.lineItem.totalLossesAndAdjustments = calculationFactory.totalLossesAndAdjustments(
                     vm.lineItem.stockAdjustments,
                     $scope.requisition.stockAdjustmentReasons
@@ -76,11 +80,11 @@
                     $scope.requisition
                 );
 
-                // requisitionValidator.validateLineItem(
-                //     vm.lineItem,
-                //     $scope.requisition.template.columnsMap,
-                //     $scope.requisition
-                // );
+                requisitionValidator.validateLineItem(
+                    vm.lineItem,
+                    $scope.requisition.template.columnsMap,
+                    $scope.requisition
+                );
             });
 
             reasons = $scope.requisition.stockAdjustmentReasons;

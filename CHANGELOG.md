@@ -4,6 +4,9 @@
 * [OLMIS-3201](https://openlmis.atlassian.net/browse/OLMIS-3201): Removed stockout days validation and added popover for stockout days field.
 * [OLMIS-3294](https://openlmis.atlassian.net/browse/OLMIS-3294): Added loading modal after the approval is finished.
 
+Bug fixes:
+* [OLMIS-3151](https://openlmis.atlassian.net/browse/OLMIS-3151): Fixed automatically resolving mathematical error with adjustments.
+
 5.1.1 / 2017-09-01
 ===========
 

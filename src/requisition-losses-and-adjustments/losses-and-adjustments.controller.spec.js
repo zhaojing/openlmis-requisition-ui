@@ -15,16 +15,32 @@
 
 describe('LossesAndAdjustmentsController', function() {
 
-    var vm, $scope, adjustmentsModalService, lineItem;
+    var vm, $scope, adjustmentsModalService, lineItem, lineItem2, requisitionValidatorMock,
+        calculationFactory, columns;
 
     beforeEach(function() {
         module('requisition-losses-and-adjustments');
 
+        module(function($provide) {
+            requisitionValidatorMock = jasmine.createSpyObj('requisitionValidator', ['validateLineItem']);
+
+            $provide.factory('requisitionValidator', function() {
+                return requisitionValidatorMock;
+            });
+        });
+
         inject(function($injector) {
             adjustmentsModalService = $injector.get('adjustmentsModalService');
+            calculationFactory = $injector.get('calculationFactory');
             $q = $injector.get('$q');
 
             $scope = $injector.get('$rootScope').$new();
+
+            columns = [{
+                type: $injector.get('COLUMN_TYPES').NUMERIC,
+                name: 'totalLossesAndAdjustments',
+                source: $injector.get('COLUMN_SOURCES').USER_INPUT
+            }];
 
             vm = $injector.get('$controller')('LossesAndAdjustmentsController', {
                 $scope: $scope
@@ -35,10 +51,57 @@ describe('LossesAndAdjustmentsController', function() {
             id: 'line-item-id'
         };
 
+        lineItem2 = {
+            id: 'line-item-id',
+            stockAdjustments: [{reasonId: 'reason-id', quantity: 20}]
+        };
+
         $scope.requisition = {
             id: 'requisition-id',
-            $stockAdjustments: []
+            $stockAdjustments: [],
+            template: {
+                columnsMap: columns
+            }
         };
+
+        spyOn($scope, '$watchCollection').andCallThrough();
+        spyOn(calculationFactory, 'totalLossesAndAdjustments');
+    });
+
+    it('$onInit should not validate lineItem on first load', function() {
+        $scope.lineItem = lineItem;
+
+        vm.$onInit();
+
+        expect(requisitionValidatorMock.validateLineItem).not.toHaveBeenCalled();
+    });
+
+    it('$onInit should call watchCollection', function() {
+        $scope.lineItem = lineItem;
+
+        vm.$onInit();
+
+        expect($scope.$watchCollection).toHaveBeenCalled();
+    });
+
+    it('$onInit should validate lineItem after change', function() {
+        $scope.lineItem = lineItem2;
+
+        vm.$onInit();
+
+        vm.lineItem = jasmine.createSpyObj('lineItem', [
+            'getFieldValue','updateDependentFields'
+        ]);
+
+        $scope.lineItem = lineItem2;
+        $scope.$digest();
+
+        $scope.lineItem.stockAdjustments = [{reasonId: 'reason-id', quantity: 10}];
+        $scope.$digest();
+
+        expect(calculationFactory.totalLossesAndAdjustments).toHaveBeenCalled();
+        expect(vm.lineItem.updateDependentFields).toHaveBeenCalled();
+        expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalled();
     });
 
     it('$onInit should expose lineItem', function() {
