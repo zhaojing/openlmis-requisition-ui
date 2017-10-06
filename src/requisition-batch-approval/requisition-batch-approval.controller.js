@@ -131,8 +131,6 @@
          */
         vm.columns = [];
 
-        vm.failedRequisitionIds = [];
-
         /**
          * @ngdoc method
          * @methodOf requisition-batch-approval.controller:RequisitionBatchApprovalController
@@ -237,11 +235,12 @@
                 requisitionBatchApproveFactory.batchApprove(vm.requisitions.slice())
                 .then(function(successfulRequisitions) {
                     handleApprove(successfulRequisitions);
+                    var failedCount = vm.requisitions.length - successfulRequisitions.length;
                     loadingModalService.open().then(function() {
-                        if (vm.failedRequisitionIds.length > 0) {
+                        if (failedCount > 0) {
                             notificationService.error(
                                 messageService.get("requisitionBatchApproval.approvalError", {
-                                    errorCount: vm.failedRequisitionIds.length
+                                    errorCount: failedCount
                                 })
                             );
                         }
@@ -311,17 +310,18 @@
         function handleApprove(successfulRequisitions) {
 
             if(successfulRequisitions.length < vm.requisitions.length) {
-                var errors = {};
+                var errors = {},
+                    requisitionIds = [];
 
                 vm.requisitions.forEach(function(requisition) {
                     if (!isFoundInSuccessfulRequisitions(requisition, successfulRequisitions)) {
-                        vm.failedRequisitionIds.push(requisition.id);
+                        requisitionIds.push(requisition.id);
                         errors[requisition.id] = messageService.get("requisitionBatchApproval.invalidRequisition");
                     }
                 });
 
                 // Reload state to display page without approved notifications and to update outdated ones
-                $state.go($state.current, {errors: errors, ids: vm.failedRequisitionIds.join(',')}, {reload: true});
+                $state.go($state.current, {errors: errors, ids: requisitionIds.join(',')}, {reload: true});
 
             } else {
                 stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
