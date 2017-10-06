@@ -131,6 +131,8 @@
          */
         vm.columns = [];
 
+        vm.failedRequisitionIds = [];
+
         /**
          * @ngdoc method
          * @methodOf requisition-batch-approval.controller:RequisitionBatchApprovalController
@@ -233,8 +235,26 @@
 
                 // Using slice to make copy of array, so scope changes at end only
                 requisitionBatchApproveFactory.batchApprove(vm.requisitions.slice())
-                .then(handleApprove, handleApprove)
-                .catch(loadingModalService.close);
+                .then(function(successfulRequisitions) {
+                    handleApprove(successfulRequisitions);
+                    loadingModalService.open().then(function() {
+                        if (vm.failedRequisitionIds.length > 0) {
+                            notificationService.error(
+                                messageService.get("requisitionBatchApproval.approvalError", {
+                                    errorCount: vm.failedRequisitionIds.length
+                                })
+                            );
+                        }
+                        if (successfulRequisitions.length > 0) {
+                            //All requisitions got approved, display notification and go back to approval list
+                            notificationService.success(
+                                messageService.get("requisitionBatchApproval.approvalSuccess", {
+                                    successCount: successfulRequisitions.length
+                                })
+                            );
+                        }
+                    });
+                }).catch(loadingModalService.close);
             });
         }
 
@@ -291,42 +311,19 @@
         function handleApprove(successfulRequisitions) {
 
             if(successfulRequisitions.length < vm.requisitions.length) {
-                var errors = {},
-                    requisitionIds = [];
+                var errors = {};
 
                 vm.requisitions.forEach(function(requisition) {
                     if (!isFoundInSuccessfulRequisitions(requisition, successfulRequisitions)) {
-                        requisitionIds.push(requisition.id);
+                        vm.failedRequisitionIds.push(requisition.id);
                         errors[requisition.id] = messageService.get("requisitionBatchApproval.invalidRequisition");
                     }
                 });
 
-                if (successfulRequisitions.length > 0) {
-                    notificationService.success(
-                        messageService.get("requisitionBatchApproval.approvalSuccess", {
-                            successCount: successfulRequisitions.length
-                        })
-                    );
-                }
-
-                notificationService.error(
-                    messageService.get("requisitionBatchApproval.approvalError", {
-                        errorCount: requisitionIds.length
-                    })
-                );
-
                 // Reload state to display page without approved notifications and to update outdated ones
-                $state.go($state.current, {errors: errors, ids: requisitionIds.join(',')}, {reload: true});
+                $state.go($state.current, {errors: errors, ids: vm.failedRequisitionIds.join(',')}, {reload: true});
 
             } else {
-
-                //All requisitions got approved, display notification and go back to approval list
-                notificationService.success(
-                    messageService.get("requisitionBatchApproval.approvalSuccess", {
-                        successCount: successfulRequisitions.length
-                    })
-                );
-
                 stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
             }
         }
