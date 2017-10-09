@@ -229,30 +229,12 @@
          */
         function approve() {
             confirmService.confirm('requisitionBatchApproval.approvalConfirm').then(function(){
-                loadingModalService.open();
+                var loadingPromise = loadingModalService.open();
 
                 // Using slice to make copy of array, so scope changes at end only
                 requisitionBatchApproveFactory.batchApprove(vm.requisitions.slice())
                 .then(function(successfulRequisitions) {
-                    handleApprove(successfulRequisitions);
-                    var failedCount = vm.requisitions.length - successfulRequisitions.length;
-                    loadingModalService.open().then(function() {
-                        if (failedCount > 0) {
-                            notificationService.error(
-                                messageService.get("requisitionBatchApproval.approvalError", {
-                                    errorCount: failedCount
-                                })
-                            );
-                        }
-                        if (successfulRequisitions.length > 0) {
-                            //All requisitions got approved, display notification and go back to approval list
-                            notificationService.success(
-                                messageService.get("requisitionBatchApproval.approvalSuccess", {
-                                    successCount: successfulRequisitions.length
-                                })
-                            );
-                        }
-                    });
+                    handleApprove(successfulRequisitions, loadingPromise);
                 }).catch(loadingModalService.close);
             });
         }
@@ -307,12 +289,11 @@
             return $filter('filter')(vm.requisitions, {$outdated: true}).length > 0;
         }
 
-        function handleApprove(successfulRequisitions) {
+        function handleApprove(successfulRequisitions, loadingPromise) {
+            var errors = {},
+                requisitionIds = [];
 
             if(successfulRequisitions.length < vm.requisitions.length) {
-                var errors = {},
-                    requisitionIds = [];
-
                 vm.requisitions.forEach(function(requisition) {
                     if (!isFoundInSuccessfulRequisitions(requisition, successfulRequisitions)) {
                         requisitionIds.push(requisition.id);
@@ -324,8 +305,26 @@
                 $state.go($state.current, {errors: errors, ids: requisitionIds.join(',')}, {reload: true});
 
             } else {
+                //All requisitions got approved, display notification and go back to approval list
                 stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
             }
+
+            loadingPromise.then(function() {
+                if (requisitionIds.length > 0) {
+                    notificationService.error(
+                        messageService.get("requisitionBatchApproval.approvalError", {
+                            errorCount: requisitionIds.length
+                        })
+                    );
+                }
+                if (successfulRequisitions.length > 0) {
+                    notificationService.success(
+                        messageService.get("requisitionBatchApproval.approvalSuccess", {
+                            successCount: successfulRequisitions.length
+                        })
+                    );
+                }
+            });
         }
 
         function updateTotalValues(productId) {
