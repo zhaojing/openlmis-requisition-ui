@@ -287,12 +287,9 @@ describe('ProductGridCell', function() {
     });
 
     it('should produce totalStockoutDays cell', function() {
-        scope.requisition.$isInitiated.andReturn(false);
-        scope.requisition.$isSubmitted.andReturn(true);
         scope.requisition.$isApproved.andReturn(false);
         scope.requisition.$isReleased.andReturn(false);
         scope.requisition.$isAuthorized.andReturn(false);
-        scope.requisition.$isInApproval.andReturn(false);
         scope.column.name = "totalStockoutDays";
 
         directiveElem = getCompiledElement();

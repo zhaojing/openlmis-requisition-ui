@@ -210,7 +210,7 @@
             var totalDays = 30 * requisition.processingPeriod.durationInMonths;
             var stockoutDays = lineItem.totalStockoutDays === undefined ? 0: lineItem.totalStockoutDays;
             var nonStockoutDays = totalDays - stockoutDays;
-            if (nonStockoutDays <= 0) {
+            if (nonStockoutDays === 0) {
                 return consumedQuantity;
             }
 

@@ -91,13 +91,13 @@
 
             function updateCellContents(){
                 var templateUrl = '';
-                if (column.name === TEMPLATE_COLUMNS.SKIPPED) {
+                if(column.name === TEMPLATE_COLUMNS.SKIPPED) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-skip.html';
-                } else if(column.name === TEMPLATE_COLUMNS.TOTAL_STOCKOUT_DAYS && !isReadOnly()) {
+                } else if(column.name === TEMPLATE_COLUMNS.TOTAL_STOCKOUT_DAYS) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-total-stockout-days.html';
                 } else if(column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-total-losses-and-adjustments.html';
-                } else if(column.$type === COLUMN_TYPES.NUMERIC && !isReadOnly()) {
+                } else if(column.$type === COLUMN_TYPES.NUMERIC && !isReadOnly()){
                     templateUrl = 'requisition-product-grid/product-grid-cell-input-numeric.html';
                 } else if(!isReadOnly()) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-input-text.html';
