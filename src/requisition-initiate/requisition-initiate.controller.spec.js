@@ -16,7 +16,7 @@
 describe("RequisitionInitiateController", function(){
 
     var $q, programs, $rootScope, requisitionService, authorizationService, facilityService, $state,
-        period, facility, REQUISITION_RIGHTS, userRightFactoryMock, hasRight, loadingModalService,
+        period, facility, REQUISITION_RIGHTS, hasRight, loadingModalService, permissionService,
         periods, $stateParams;
 
     beforeEach(function() {
@@ -48,14 +48,12 @@ describe("RequisitionInitiateController", function(){
                 facility: facility.id
             };
 
-            userRightFactoryMock = jasmine.createSpyObj('userRightFactory',  ['checkRightForCurrentUser']);
-            userRightFactoryMock.checkRightForCurrentUser.andCallFake(function() {
-                return $q.when(hasRight);
-            });
+            permissionService = $injector.get('permissionService');
+            spyOn(permissionService, 'hasPermission').andReturn($q.resolve());
+
+            spyOn(authorizationService, 'getUser').andReturn(user);
 
             vm = $injector.get('$controller')('RequisitionInitiateController', {
-                requisitionService: requisitionService,
-                userRightFactory: userRightFactoryMock,
                 periods: periods,
                 $stateParams: $stateParams
             });
@@ -66,7 +64,7 @@ describe("RequisitionInitiateController", function(){
         var selectedPeriod = {"rnrId": 1};
         spyOn($state, 'go');
 
-        vm.initRnr(selectedPeriod);
+        vm.goToRequisitionForPeriod(selectedPeriod);
 
         expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
     });
@@ -84,11 +82,18 @@ describe("RequisitionInitiateController", function(){
         $rootScope.$apply();
 
         expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
-        expect(userRightFactoryMock.checkRightForCurrentUser).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_CREATE, programs[0].id, facility.id);
+        expect(permissionService.hasPermission).toHaveBeenCalledWith('user_id', {
+            right:REQUISITION_RIGHTS.REQUISITION_CREATE,
+            programId: programs[0].id,
+            facilityId: facility.id
+        });
     });
 
     it("Should display error when user has no right to init requisition", function() {
         var selectedPeriod = {"id":1};
+
+        permissionService.hasPermission.andReturn($q.reject());
+
         vm.$onInit();
         spyOn($state, 'go');
         hasRight = false;
@@ -99,7 +104,7 @@ describe("RequisitionInitiateController", function(){
         $rootScope.$apply();
 
         expect($state.go).not.toHaveBeenCalled();
-        expect(userRightFactoryMock.checkRightForCurrentUser).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_CREATE, programs[0].id, facility.id);
+        expect(permissionService.hasPermission).toHaveBeenCalled();
     });
 
     it("Should not change page to requisitions.requisition with selected period without rnrId and when invalid response from service", function() {

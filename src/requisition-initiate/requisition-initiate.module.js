@@ -30,6 +30,7 @@
         'requisition-constants',
         'openlmis-i18n',
         'openlmis-auth',
+        'openlmis-permissions',
         'openlmis-date',
         'openlmis-facility-program-select',
         'referencedata-facility',
