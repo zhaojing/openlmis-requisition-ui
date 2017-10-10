@@ -2,7 +2,6 @@
 ===========
 
 * [OLMIS-2956:](https://openlmis.atlassian.net/browse/OLMIS-2956) Removed UserRightFactory from requisition-initiate module, and replaced with permissionService
-* [OLMIS-3201:](https://openlmis.atlassian.net/browse/OLMIS-3201) Removed stockout days validation and added popover for stockout days field.
 * [OLMIS-3294:](https://openlmis.atlassian.net/browse/OLMIS-3294) Added loading modal after the approval is finished.
 
 Bug fixes:
