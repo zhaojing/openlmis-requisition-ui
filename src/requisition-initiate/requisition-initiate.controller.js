@@ -118,17 +118,16 @@
          * @param {Object} selectedPeriod a period to initiate or proceed with the requisition for
          */
         function initRnr(selectedPeriod) {
-            var requisitionCreatePermission = {
-                right: REQUISITION_RIGHTS.REQUISITION_CREATE,
-                programId: vm.program.id,
-                facilityId: vm.facility.id
-            },
-                user = authorizationService.getUser();
+            var user = authorizationService.getUser();
 
             vm.error = '';
 
             loadingModalService.open();
-            permissionService.hasPermission(user.user_id, requisitionCreatePermission)
+            permissionService.hasPermission(user.user_id, {
+                right: REQUISITION_RIGHTS.REQUISITION_CREATE,
+                programId: vm.program.id,
+                facilityId: vm.facility.id
+            })
             .catch(function(){
                 notificationService.error('requisitionInitiate.noPermissionToInitiateRequisition');
             })
@@ -139,7 +138,7 @@
                         vm.emergency)
             })
             .then(function (data) {
-                vm.goToRequisitionForPeriod({rnrId: data.id}); // faking a period
+                vm.goToRequisitionForPeriod(data.id);
             })
             .catch(function() {
                 notificationService.error('requisitionInitiate.couldNotInitiateRequisition');
@@ -174,11 +173,11 @@
          * @description
          * Directs a user to the requisition view data for a specific period
          *
-         * @param {Object} period a period with a rnrId
+         * @param {Object} id A requisition id
          */
-        function goToRequisitionForPeriod(period) {
+        function goToRequisitionForPeriod(id) {
             $state.go('openlmis.requisitions.requisition.fullSupply', {
-                rnr: period.rnrId
+                rnr: id
             }); 
         }
     }

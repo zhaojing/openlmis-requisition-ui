@@ -44,7 +44,7 @@
                     <input id="proceedButton" type="button" ng-click="vm.initRnr(period)"
                            value="{{'requisitionInitiate.proceed'| message}}" class="primary"
                            ng-if="period.activeForRnr && !vm.periodHasRequisition(period)"/>
-                    <input id="proceedButton" type="button" ng-click="vm.goToRequisitionForPeriod(period)"
+                    <input id="proceedButton" type="button" ng-click="vm.goToRequisitionForPeriod(period.rnrId)"
                            value="{{'requisitionInitiate.proceed'| message}}" class="primary"
                            ng-if="period.activeForRnr && vm.periodHasRequisition(period)"/>
                 </td>
