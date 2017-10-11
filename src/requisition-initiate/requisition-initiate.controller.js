@@ -45,7 +45,7 @@
         vm.loadPeriods = loadPeriods;
         vm.initRnr = initRnr;
         vm.periodHasRequisition = periodHasRequisition;
-        vm.goToRequisitionForPeriod = goToRequisitionForPeriod;
+        vm.goToRequisition = goToRequisition;
 
         /**
          * @ngdoc property
@@ -138,7 +138,7 @@
                         vm.emergency)
             })
             .then(function (data) {
-                vm.goToRequisitionForPeriod(data.id);
+                vm.goToRequisition(data.id);
             })
             .catch(function() {
                 notificationService.error('requisitionInitiate.couldNotInitiateRequisition');
@@ -168,14 +168,14 @@
         /**
          * @ngdoc method
          * @methodOf requisition-initiate.controller:RequisitionInitiateController
-         * @name goToRequisitionForPeriod
+         * @name goToRequisition
          *
          * @description
          * Directs a user to the requisition view data for a specific period
          *
          * @param {Object} id A requisition id
          */
-        function goToRequisitionForPeriod(id) {
+        function goToRequisition(id) {
             $state.go('openlmis.requisitions.requisition.fullSupply', {
                 rnr: id
             }); 

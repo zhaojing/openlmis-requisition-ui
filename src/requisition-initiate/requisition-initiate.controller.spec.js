@@ -61,10 +61,9 @@ describe("RequisitionInitiateController", function(){
     });
 
     it("Should change page to requisitions.requisition for with selected period with rnrId", function() {
-        var selectedPeriod = {"rnrId": 1};
         spyOn($state, 'go');
 
-        vm.goToRequisitionForPeriod(selectedPeriod);
+        vm.goToRequisition(1);
 
         expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
     });
