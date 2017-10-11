@@ -18,7 +18,7 @@ describe('requisitionService', function() {
     var $rootScope, httpBackend, requisitionService, dateUtils, confirm, q, allStatuses,
         requisitionUrlFactory, openlmisUrl, requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate,
         endDate, startDate1, endDate1, modifiedDate, createdDate, processingSchedule, facility,
-        program, period, emergency, requisition, requisitionDto, requisitionDto2,
+        program, period, emergency, requisition, requisitionDto, requisitionDto2, createdDate2,
         requisitionToConvert, templateOffline, statusMessage, statusMessagesStorage;
 
     beforeEach(function() {
@@ -30,6 +30,7 @@ describe('requisitionService', function() {
         endDate1 = new Date();
         modifiedDate = [2016, 4, 30, 16, 21, 33];
         createdDate = [2016, 4, 30, 16, 21, 33];
+        createdDate2 = [2016, 10, 30, 16, 21, 33];
         processingSchedule = {
             modifiedDate: modifiedDate
         };
@@ -77,11 +78,11 @@ describe('requisitionService', function() {
         requisitionDto2 = {
             id: '3',
             name: 'requisitionDto',
-            status: 'INITIATED',
+            status: 'RELEASED',
             facility: facility,
             program: program,
             processingPeriod: period,
-            createdDate: createdDate
+            createdDate: createdDate2
         };
         requisitionToConvert = {
             requisitionId: requisition.id,
@@ -240,14 +241,15 @@ describe('requisitionService', function() {
                 initiatedDateFrom: startDate1.toISOString(),
                 initiatedDateTo: endDate1.toISOString(),
                 requisitionStatus: [allStatuses[0].label, allStatuses[1].label],
-                emergency: true
+                emergency: true,
+                sort: 'createdDate,desc'
             },
             requisitionCopy = formatDatesInRequisition(angular.copy(requisitionDto));
 
         httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/search?initiatedDateFrom=' + startDate1.toISOString() +
             '&initiatedDateTo=' + endDate1.toISOString() + '&emergency=' + params.emergency +
             '&facility=' + facility.id + '&program=' + program.id +
-            '&requisitionStatus=' + allStatuses[0].label + '&requisitionStatus=' + allStatuses[1].label))
+            '&requisitionStatus=' + allStatuses[0].label + '&requisitionStatus=' + allStatuses[1].label + '&sort=' + params.sort))
         .respond(200, {content: [requisitionDto]});
 
         requisitionsStorage.getBy.andReturn(false);
@@ -298,10 +300,11 @@ describe('requisitionService', function() {
             params = {
                 facility: facility.id,
                 page: 0,
-                size: 10
+                size: 10,
+                sort: 'createdDate,desc'
             };
 
-        requisitionsStorage.search.andReturn([requisitionDto2]);
+        requisitionsStorage.search.andReturn([requisitionDto2, requisitionDto]);
 
         requisitionService.search(true, params).then(function(response) {
             data = response;
@@ -310,10 +313,11 @@ describe('requisitionService', function() {
         $rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson({
-            content: [requisitionDto2],
+            content: [requisitionDto2, requisitionDto],
             number: 0,
-            totalElements: 1,
-            size: 10
+            totalElements: 2,
+            size: 10,
+            sort: 'createdDate,desc'
         }));
         expect(requisitionsStorage.search).toHaveBeenCalledWith(params, 'requisitionSearch');
     });

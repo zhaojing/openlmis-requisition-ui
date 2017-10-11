@@ -209,7 +209,8 @@
                     batchRequisitions = searchParams.showBatchRequisitions ?
                         offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [],
                     page = searchParams.page,
-                    size = searchParams.size;
+                    size = searchParams.size,
+                    sort = searchParams.sort;
 
                 angular.forEach(batchRequisitions, function(batchRequisition) {
                     if ($filter('filter')(requisitions, {id: batchRequisition.id}).length == 0) {
@@ -223,7 +224,8 @@
                     content: items,
                     number: page,
                     totalElements: requisitions.length,
-                    size: size
+                    size: size,
+                    sort: sort
                 });
             } else {
                 return resource.search(searchParams).$promise;

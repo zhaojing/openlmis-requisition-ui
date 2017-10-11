@@ -27,7 +27,10 @@
 			showInNavigation: true,
 			isOffline: true,
 			label: 'requisitionSearch.view',
-			url: '/view?program&facility&initiatedDateFrom&initiatedDateTo&page&size&offline',
+			url: '/view?program&facility&initiatedDateFrom&initiatedDateTo&page&size&offline&sort',
+			params: {
+			    sort: 'createdDate,desc'
+			},
 			controller: 'RequisitionSearchController',
 			templateUrl: 'requisition-search/requisition-search.html',
 			accessRights: [
