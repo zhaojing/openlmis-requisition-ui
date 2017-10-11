@@ -6,7 +6,7 @@
 
 Bug fixes:
 * [OLMIS-3151:](https://openlmis.atlassian.net/browse/OLMIS-3151) Fixed automatically resolving mathematical error with adjustments.
-* [OLMIS-3255:](https://openlmis.atlassian.net/browse/OLMIS-3255) uto-select the "Supplying facility" on Requisition Convert to Order.
+* [OLMIS-3255:](https://openlmis.atlassian.net/browse/OLMIS-3255) Fixed auto-select the "Supplying facility" on Requisition Convert to Order.
 
 5.1.1 / 2017-09-01
 ===========
