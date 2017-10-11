@@ -63,11 +63,7 @@
                 columns = [],
                 requisitionsCopy = [];
 
-            addNewColumn(columns, true, false, ['requisitionBatchApproval.productCode']);
-            addNewColumn(columns, true, false, ['requisitionBatchApproval.product']);
-
             angular.forEach(requisitions, function(requisition) {
-                addNewColumn(columns, false, false, ['requisitionBatchApproval.approvedQuantity', 'requisitionBatchApproval.cost'], requisition);
                 lineItems[requisition.id] = [];
 
                 //method used in calculation factory
@@ -88,9 +84,6 @@
                 requisitionsList.push(requisition);
 
             });
-
-            addNewColumn(columns, true, true, ['requisitionBatchApproval.totalQuantityForAllFacilities']);
-            addNewColumn(columns, true, true, ['requisitionBatchApproval.totalCostForAllFacilities']);
 
             //save copy to provide revert functionality
             requisitionsCopy = angular.copy(requisitions);
@@ -131,16 +124,6 @@
         // Requisitions in this view are always IN_APPROVAL or AUTHORIZED so always return true
         function isAfterAuthorize() {
             return true;
-        }
-
-        function addNewColumn(columns, isSticky, isStickyRight, names, requisition) {
-            columns.push({
-                id: requisition ? requisition.id : columns.length,
-                requisition: requisition,
-                sticky: isSticky,
-                right: isStickyRight,
-                names: names
-            });
         }
 
         function prepareProductDetails(product, lineItem, requisition) {

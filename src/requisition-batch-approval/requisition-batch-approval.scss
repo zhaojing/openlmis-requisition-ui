@@ -1,4 +1,4 @@
-.requisition-error {
+th.is-invalid {
   background: $brand-danger !important;
 }
 
@@ -40,4 +40,13 @@
         font-weight: bold;
     }
 
-} 
+    tr.is-invalid {
+        td.total-cell {
+            background-color: $background-color-danger;
+        }
+    }
+}
+
+form.openlmis-table-container {
+    max-width: none;
+}
