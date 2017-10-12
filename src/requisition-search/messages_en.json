@@ -1,6 +1,6 @@
 {
     "requisitionSearch.actions": "Actions",
-    "requisitionSearch.date": "Date initiated",
+    "requisitionSearch.dateInitiated": "Date initiated",
     "requisitionSearch.emergency": "Emergency",
     "requisitionSearch.endDate": "End date",
     "requisitionSearch.facility": "Facility",

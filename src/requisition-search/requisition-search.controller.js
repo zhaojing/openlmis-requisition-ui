@@ -134,7 +134,7 @@
         vm.offline = undefined;
 
         vm.options = {
-            'createdDate,desc': 'requisitionSearch.date'
+            'createdDate,desc': 'requisitionSearch.dateInitiated'
         };
 
         /**
