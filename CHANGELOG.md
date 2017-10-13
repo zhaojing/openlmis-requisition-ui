@@ -5,6 +5,7 @@ Improvements:
 * [OLMIS-2956:](https://openlmis.atlassian.net/browse/OLMIS-2956) Removed UserRightFactory from requisition-initiate module, and replaced with permissionService
 * [OLMIS-3294:](https://openlmis.atlassian.net/browse/OLMIS-3294) Added loading modal after the approval is finished.
 * [OLMIS-2700:](https://openlmis.atlassian.net/browse/OLMIS-2700) Added date initiated column and sorting to the View Requisitions table. Removed date authorized and date approved.
+* [OLMIS-3181:](https://openlmis.atlassian.net/browse/OLMIS-3181) Added front-end validation to the requisition batch approval screen.
 
 Bug fixes:
 * [OLMIS-3151:](https://openlmis.atlassian.net/browse/OLMIS-3151) Fixed automatically resolving mathematical error with adjustments.

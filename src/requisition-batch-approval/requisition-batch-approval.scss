@@ -2,6 +2,10 @@
   background: $brand-danger !important;
 }
 
+#batch-approval-form {
+    max-width: none;
+}
+
 .openlmis-table {
 
     > thead > tr > th {
@@ -40,4 +44,4 @@
         font-weight: bold;
     }
 
-} 
+}
