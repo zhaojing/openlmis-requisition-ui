@@ -1,4 +1,4 @@
-5.1.2 / WIP
+5.2.0 / WIP
 ===========
 
 Improvements:
