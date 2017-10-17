@@ -23,6 +23,7 @@ describe('validateRequisition directive', function() {
         inject(function($injector) {
             $rootScope = $injector.get('$rootScope');
             $compile = $injector.get('$compile');
+            $timeout = $injector.get('$timeout');
         });
 
         $scope = $rootScope.$new();
@@ -30,12 +31,16 @@ describe('validateRequisition directive', function() {
         $scope.requisition = {
             $error: undefined,
             requisitionLineItems: [{
+                productId: 'product-id-one',
                 approvedQuantity: 10
             }, {
+                productId: 'product-id-two',
                 approvedQuantity: 11
             }, {
+                productId: 'product-id-three',
                 approvedQuantity: 12
             }, {
+                productId: 'product-id-four',
                 approvedQuantity: 13
             }]
         };
@@ -43,57 +48,79 @@ describe('validateRequisition directive', function() {
         div = compileMarkup(
             '<div>' +
                 '<div ng-repeat="lineItem in requisition.requisitionLineItems">' +
-                    '<input validate-requisition="requisition"/>' +
+                    '<input ng-model="lineItem.approvedQuantity" validate-requisition="requisition" productId="lineItem.productId" required/>' +
                 '</div>' +
             '</div>'
         );
     });
 
-    describe('on openlmisInvalid.hide', function() {
+    describe('on openlmisInvalid.show', function() {
 
         it('should set error if any of the inputs is empty', function() {
-            $scope.requisition.requisitionLineItems[2].approvedQuantity = undefined;
+            var input = div.find('div:nth-child(1) input');
+
+            input.val('');
+            input.triggerHandler('change');
             $scope.$apply();
 
-            div.find('div:nth-child(1)').trigger('openlmisInvalid.hide');
+            input.parent().trigger('openlmisInvalid.show');
 
             expect($scope.requisition.$error).not.toBeUndefined();
         });
 
         it('should unset error if all inputs are filled', function() {
-            $scope.requisition.requisitionLineItems[2].approvedQuantity = undefined;
+            var input = div.find('div:nth-child(1) input');
+
+            input.val('');
+            input.triggerHandler('change');
             $scope.$apply();
 
-            $scope.requisition.requisitionLineItems[2].approvedQuantity = 15;
-            $scope.$apply();
 
-            div.find('div:nth-child(1)').trigger('openlmisInvalid.hide');
+            input.parent().trigger('openlmisInvalid.show');
+            expect($scope.requisition.$error).not.toBeUndefined();
 
+            input.val(15);
+            input.triggerHandler('change');
+            $scope.$apply();$timeout.flush();
+
+
+            input.parent().trigger('openlmisInvalid.show');
             expect($scope.requisition.$error).toBeUndefined();
         });
 
     });
 
-    describe('on openlmisInvalid.show', function() {
+    describe('on openlmisInvalid.hide', function() {
 
         it('should set error if any of the inputs is empty', function() {
-            $scope.requisition.requisitionLineItems[3].approvedQuantity = undefined;
+            var input = div.find('div:nth-child(1) input');
+
+            input.val('');
+            input.triggerHandler('change');
             $scope.$apply();
 
-            div.find('div:nth-child(1)').trigger('openlmisInvalid.show');
+            input.parent().trigger('openlmisInvalid.hide');
 
             expect($scope.requisition.$error).not.toBeUndefined();
         });
 
         it('should unset error if all inputs are filled', function() {
-            $scope.requisition.requisitionLineItems[3].approvedQuantity = undefined;
+            var input = div.find('div:nth-child(1) input');
+
+            input.val('');
+            input.triggerHandler('change');
             $scope.$apply();
 
-            $scope.requisition.requisitionLineItems[3].approvedQuantity = 15;
-            $scope.$apply();
 
-            div.find('div:nth-child(1)').trigger('openlmisInvalid.show');
+            input.parent().trigger('openlmisInvalid.hide');
+            expect($scope.requisition.$error).not.toBeUndefined();
 
+            input.val(15);
+            input.triggerHandler('change');
+            $scope.$apply();$timeout.flush();
+
+
+            input.parent().trigger('openlmisInvalid.hide');
             expect($scope.requisition.$error).toBeUndefined();
         });
 

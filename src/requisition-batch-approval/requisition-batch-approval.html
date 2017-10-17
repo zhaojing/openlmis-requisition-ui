@@ -40,7 +40,7 @@
             <td class="requisition-product-grid-cell"><div class="collapsable">{{product.name}}</div></td>
             <td ng-repeat-start="requisition in vm.requisitions track by requisition.id" class="numeric">
                 <input ng-if="(product.requisitions | contains: requisition.id) && !(vm.lineItems[requisition.id][productId].skipped)"
-                       positive-integer required validate-requisition="requisition"
+                       positive-integer required validate-requisition="requisition" product-id="productId"
                        ng-model="vm.lineItems[requisition.id][productId].approvedQuantity"
                        ng-change="vm.updateLineItem(vm.lineItems[requisition.id][productId], requisition)"/>
                 <p ng-if="vm.lineItems[requisition.id][productId].skipped">

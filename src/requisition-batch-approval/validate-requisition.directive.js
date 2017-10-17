@@ -20,9 +20,15 @@
     /**
      * @ngdoc directive
      * @name requisition-batch-approval.invalidateRequisition
+     * @restrict A
      *
      * @description
-     * Validates requisition every time the error message is shown/hidden.
+     * Validates requisition and show attaches an error when appropriate.
+     *
+     * @example
+     * ```
+     * <input ng-model="someModel" validate-requisition="requisitionObj" product-id="productIdString">
+     * ```
      */
     angular
         .module('requisition-batch-approval')
@@ -34,31 +40,70 @@
         var directive = {
             link: link,
             scope: {
-                requisition: '=validateRequisition'
-            }
+                requisition: '=validateRequisition',
+                productId: '='
+            },
+            restrict: 'A',
+            require: 'ngModel'
         }
         return directive;
 
-        function link(scope, element, attrs) {
+        function link(scope, element, attrs, ngModelCtrl) {
             var wrapper = element.parent(),
-                requisition = scope.requisition;
+                requisition = scope.requisition,
+                productId = scope.productId;
 
-            wrapper.on('openlmisInvalid.show', validateRequisition(requisition));
-            wrapper.on('openlmisInvalid.hide', validateRequisition(requisition));
+            //We don't want to store those errors in localStorage to prevent the requisitions
+            //going invalid once we re-enter the state.
+            if (!requisition.$$getErrors) {
+                requisition.$$getErrors = getErrors();
+            }
 
-            function validateRequisition(requisition) {
-                return function() {
-                    var valid = true;
+            //We don't want to store this in local storage.
+            if (!requisition.$$invalid) {
+                requisition.$$invalid = getInvalid();
+            }
 
-                    angular.forEach(requisition.requisitionLineItems, function(lineItem) {
-                        valid = valid && lineItem.approvedQuantity !== undefined;
-                    });
+            ngModelCtrl.$viewChangeListeners.push(validateRequisition);
 
-                    requisition.$error = !valid ?
-                        messageService.get("requisitionBatchApproval.invalidRequisition") :
-                        undefined;
+            wrapper.on('openlmisInvalid.show', updateMessage);
+            wrapper.on('openlmisInvalid.hide', updateMessage);
+
+            function updateMessage() {
+                requisition.$error = requisition.$$invalid() ?
+                    messageService.get("requisitionBatchApproval.invalidRequisition") :
+                    undefined;
+            }
+
+            function validateRequisition() {
+                var errors = requisition.$$getErrors();
+
+                if (ngModelCtrl.$invalid) {
+                    errors[productId] = true
+                    requisition.$$invalid(true);
+                } else {
+                    delete errors[productId];
+                    requisition.$$invalid(Object.keys(errors).length > 0);
                 }
             }
+
+            function getErrors() {
+                var errors = [];
+                return function() {
+                    return errors;
+                }
+            }
+
+            function getInvalid() {
+                var invalid;
+                return function(newValue) {
+                    if (newValue !== undefined) {
+                        invalid = newValue;
+                    }
+                    return invalid
+                }
+            }
+
         }
     }
 
