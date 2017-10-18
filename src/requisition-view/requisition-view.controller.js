@@ -477,7 +477,7 @@
          */
         function displayDelete() {
             if (hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_DELETE)) {
-                if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
+                if (vm.requisition.$isInitiated() || vm.requisition.$isRejected() || vm.requisition.$isSkipped()) {
                     return hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
                 }
                 if (vm.requisition.$isSubmitted()) {

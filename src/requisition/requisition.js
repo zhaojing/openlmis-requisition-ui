@@ -81,6 +81,7 @@
         Requisition.prototype.$isInApproval = isInApproval;
         Requisition.prototype.$isReleased = isReleased;
         Requisition.prototype.$isRejected = isRejected;
+        Requisition.prototype.$isSkipped = isSkipped;
         Requisition.prototype.$isAfterAuthorize = isAfterAuthorize;
         Requisition.prototype.$getProducts = getProducts;
         Requisition.prototype.$isEditable = isEditable;
@@ -354,6 +355,21 @@
          */
         function isRejected() {
             return this.status === REQUISITION_STATUS.REJECTED;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name isSkipped
+         *
+         * @description
+         * Responsible for checking if requisition is skipped.
+         * Returns true only if requisition status equals skipped.
+         *
+         * @return {Boolean} is requisition skipped
+         */
+        function isSkipped() {
+            return this.status === REQUISITION_STATUS.SKIPPED;
         }
 
        /**

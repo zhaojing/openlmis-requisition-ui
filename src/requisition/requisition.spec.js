@@ -599,6 +599,22 @@ describe('Requisition', function() {
         expect(isRejected).toBe(false);
     });
 
+    it('should return true if requisition status is skipped', function() {
+        requisition.status = REQUISITION_STATUS.SKIPPED;
+
+        var isSkipped = requisition.$isSkipped();
+
+        expect(isSkipped).toBe(true);
+    });
+
+    it('should return false if requisition status is not skipped', function() {
+        requisition.status = REQUISITION_STATUS.INITIATED;
+
+        var isSkipped = requisition.$isRejected();
+
+        expect(isSkipped).toBe(false);
+    });
+
     describe('isAfterAuthorize', function() {
         it('should return false for requisition status INITIATED', function() {
             requisition.status = REQUISITION_STATUS.INITIATED;
