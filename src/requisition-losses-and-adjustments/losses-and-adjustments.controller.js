@@ -87,7 +87,9 @@
                 );
             });
 
-            reasons = $scope.requisition.stockAdjustmentReasons;
+            reasons =  $filter('filter')($scope.requisition.stockAdjustmentReasons, {
+                hidden: '!true'
+            });
         }
 
         /**

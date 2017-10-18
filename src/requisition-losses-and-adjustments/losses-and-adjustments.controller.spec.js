@@ -16,7 +16,7 @@
 describe('LossesAndAdjustmentsController', function() {
 
     var vm, $scope, adjustmentsModalService, lineItem, lineItem2, requisitionValidatorMock,
-        calculationFactory, columns;
+        calculationFactory, columns, reasonWithoutHidden, reasonNotHidden, reasonHidden;
 
     beforeEach(function() {
         module('requisition-losses-and-adjustments');
@@ -56,13 +56,29 @@ describe('LossesAndAdjustmentsController', function() {
             stockAdjustments: [{reasonId: 'reason-id', quantity: 20}]
         };
 
+        reasonNotHidden = {
+            id: 'reason-id',
+            hidden: false
+        };
+
+        reasonHidden = {
+            id: 'hidden-id',
+            hidden: true
+        };
+
+        reasonWithoutHidden = {
+            id: 'without-hidden-id'
+        };
+
         $scope.requisition = {
             id: 'requisition-id',
             $stockAdjustments: [],
             template: {
                 columnsMap: columns
-            }
+            },
+            stockAdjustmentReasons: [reasonNotHidden, reasonHidden, reasonWithoutHidden]
         };
+        vm.isDisabled = false;
 
         spyOn($scope, '$watchCollection').andCallThrough();
         spyOn(calculationFactory, 'totalLossesAndAdjustments');
@@ -112,14 +128,35 @@ describe('LossesAndAdjustmentsController', function() {
         expect(vm.lineItem).toEqual($scope.lineItem);
     });
 
-    it('showModal should call adjustmentsModalService', function() {
-        spyOn(adjustmentsModalService, 'open').andReturn($q.when());
+    describe('showModal', function() {
+        beforeEach(function() {
+            spyOn(adjustmentsModalService, 'open').andReturn($q.when());
+            $scope.lineItem = lineItem2;
+            vm.$onInit();
+        });
+        it('should call adjustmentsModalService', function () {
+            vm.showModal();
 
-        vm.lineItem = lineItem;
+            expect(adjustmentsModalService.open).toHaveBeenCalled();
+        });
 
-        vm.showModal();
 
-        expect(adjustmentsModalService.open).toHaveBeenCalled();
+        it('should call adjustmentsModalService with proper params', function () {
+            vm.showModal();
+
+            expect(adjustmentsModalService.open)
+                .toHaveBeenCalledWith(
+                    [{
+                        quantity: 20,
+                        reason: reasonNotHidden
+                    }],
+                    [reasonNotHidden, reasonWithoutHidden],
+                    'requisitionLossesAndAdjustments.lossesAndAdjustments',
+                    'requisitionLossesAndAdjustments.addNewLossOrAdjustment',
+                    vm.isDisabled,
+                    {
+                        'requisitionLossesAndAdjustments.total': jasmine.any(Function)
+                    });
+        });
     });
-
 });
