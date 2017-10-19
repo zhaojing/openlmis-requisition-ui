@@ -7,6 +7,7 @@ Improvements:
 * [OLMIS-2700:](https://openlmis.atlassian.net/browse/OLMIS-2700) Added date initiated column and sorting to the View Requisitions table. Removed date authorized and date approved.
 * [OLMIS-3181:](https://openlmis.atlassian.net/browse/OLMIS-3181) Added front-end validation to the requisition batch approval screen.
 * [OLMIS-3233:](https://openlmis.atlassian.net/browse/OLMIS-3233) Added ability to delete requisitions with "skipped" status.
+* [OLMIS-3246:](https://openlmis.atlassian.net/browse/OLMIS-3246) Added 'show' field to reason assignments
 
 Bug fixes:
 * [OLMIS-3151:](https://openlmis.atlassian.net/browse/OLMIS-3151) Fixed automatically resolving mathematical error with adjustments.
