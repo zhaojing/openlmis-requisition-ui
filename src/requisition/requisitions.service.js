@@ -104,16 +104,17 @@
          */
         function get(id) {
             var deferred = $q.defer(),
-                requisition;
+                requisition,
+                statusMessages;
 
             if (offlineService.isOffline()) {
                 requisition = getOfflineRequisition('id', id);
 
-                if(!requisition) {
+                if (!requisition) {
                     error();
                 }
                 else {
-                    var statusMessages = offlineStatusMessages.search({
+                    statusMessages = offlineStatusMessages.search({
                         requisitionId: requisition.id
                     });
                     resolve(requisition, statusMessages);
@@ -125,6 +126,12 @@
                 });
                 if (!requisition || !requisition.length) {
                     getRequisition(id).then(function(requisition) {
+                        requisition.stockAdjustmentReasons =  $filter('filter')(
+                            requisition.stockAdjustmentReasons, {
+                                hidden: '!true'
+                            }
+                        );
+
                         requisition.$availableOffline = !onlineOnlyRequisitions.contains(id);
                         getStatusMessages(requisition).then(function(response) {
                             if (requisition.$availableOffline) {
@@ -139,7 +146,7 @@
                         });
                     }, error);
                 } else {
-                    var statusMessages = offlineStatusMessages.search({
+                    statusMessages = offlineStatusMessages.search({
                             requisitionId: requisition[0].id
                         });
 
@@ -213,7 +220,7 @@
                     sort = searchParams.sort;
 
                 angular.forEach(batchRequisitions, function(batchRequisition) {
-                    if ($filter('filter')(requisitions, {id: batchRequisition.id}).length == 0) {
+                    if ($filter('filter')(requisitions, {id: batchRequisition.id}).length === 0) {
                         requisitions.push(batchRequisition);
                     }
                 });

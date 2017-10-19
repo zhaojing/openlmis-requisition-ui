@@ -19,7 +19,8 @@ describe('requisitionService', function() {
         requisitionUrlFactory, openlmisUrl, requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate,
         endDate, startDate1, endDate1, modifiedDate, createdDate, processingSchedule, facility,
         program, period, emergency, requisition, requisitionDto, requisitionDto2, createdDate2,
-        requisitionToConvert, templateOffline, statusMessage, statusMessagesStorage;
+        requisitionToConvert, templateOffline, statusMessage, statusMessagesStorage,
+        reasonWithoutHidden, reasonNotHidden, reasonHidden;
 
     beforeEach(function() {
         module('requisition');
@@ -49,6 +50,17 @@ describe('requisitionService', function() {
             processingSchedule: processingSchedule
         };
         emergency = false;
+        reasonNotHidden = {
+            id: 'reason-id',
+            hidden: false
+        };
+        reasonHidden = {
+            id: 'hidden-id',
+            hidden: true
+        };
+        reasonWithoutHidden = {
+            id: 'without-hidden-id'
+        };
         requisition = {
             id: '1',
             name: 'requisition',
@@ -64,7 +76,8 @@ describe('requisitionService', function() {
             },
             facility: {
                 id: 'facility-id'
-            }
+            },
+            stockAdjustmentReasons: [reasonNotHidden, reasonHidden, reasonWithoutHidden]
         };
         requisitionDto = {
             id: '2',
@@ -93,11 +106,14 @@ describe('requisitionService', function() {
         };
 
         module(function($provide){
-            var RequisitionSpy = jasmine.createSpy('Requisition').andReturn(requisition),
-                confirmServiceMock = jasmine.createSpyObj('confirmService', ['confirm'])
-                confirmServiceMock.confirm.andCallFake(function(argumentObject) {
-                    return q.when(true);
-                });
+            var RequisitionSpy = jasmine.createSpy('Requisition').andCallFake(function (requisition) {
+                    return requisition;
+                }),
+                confirmServiceMock = jasmine.createSpyObj('confirmService', ['confirm']);
+
+            confirmServiceMock.confirm.andCallFake(function(argumentObject) {
+                return q.when(true);
+            });
 
         	$provide.service('Requisition', function() {
                 return RequisitionSpy;
@@ -115,7 +131,6 @@ describe('requisitionService', function() {
             offlineFlag.getAll.andReturn([false]);
             onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
             templateOffline = jasmine.createSpyObj('templates', ['put']);
-            approvedProducts = jasmine.createSpyObj('approvedProducts', ['put']);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
                 if (resourceName === 'offlineFlag') return offlineFlag;
                 if (resourceName === 'onlineOnly') return onlineOnlyRequisitions;
@@ -146,24 +161,41 @@ describe('requisitionService', function() {
         });
     });
 
-    it('should get requisition by id', function() {
-        var getRequisitionUrl = '/api/requisitions/' + requisition.id;
-        var getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
+    describe('get', function () {
+        beforeEach(function() {
+            var getRequisitionUrl = '/api/requisitions/' + requisition.id;
+            var getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
 
-        httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition);
-        httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
-
-        var data = {};
-        requisitionService.get('1').then(function(response) {
-            data = response;
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition);
+            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
         });
 
-        httpBackend.flush();
-        $rootScope.$apply();
+        it('should get requisition by id', function() {
+            var data = {};
+            requisitionService.get('1').then(function(response) {
+                data = response;
+            });
 
-        expect(data.id).toBe(requisition.id);
-        expect(requisitionsStorage.put).toHaveBeenCalled();
-        expect(statusMessagesStorage.put).toHaveBeenCalled();
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(data.id).toBe(requisition.id);
+            expect(requisitionsStorage.put).toHaveBeenCalled();
+            expect(statusMessagesStorage.put).toHaveBeenCalled();
+        });
+
+        it('should filter out hidden reasons', function() {
+            var data = {};
+            requisitionService.get('1').then(function(response) {
+                data = response;
+            });
+
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(data.id).toBe(requisition.id);
+            expect(data.stockAdjustmentReasons).toEqual([reasonNotHidden, reasonWithoutHidden]);
+        });
     });
 
     it('should initiate requisition', function() {

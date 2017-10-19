@@ -16,7 +16,7 @@
 describe('LossesAndAdjustmentsController', function() {
 
     var vm, $scope, adjustmentsModalService, lineItem, lineItem2, requisitionValidatorMock,
-        calculationFactory, columns, reasonWithoutHidden, reasonNotHidden, reasonHidden;
+        calculationFactory, columns, reasonOne, reasonTwo;
 
     beforeEach(function() {
         module('requisition-losses-and-adjustments');
@@ -53,21 +53,15 @@ describe('LossesAndAdjustmentsController', function() {
 
         lineItem2 = {
             id: 'line-item-id',
-            stockAdjustments: [{reasonId: 'reason-id', quantity: 20}]
+            stockAdjustments: [{reasonId: 'reason-one', quantity: 20}]
         };
 
-        reasonNotHidden = {
-            id: 'reason-id',
-            hidden: false
+        reasonOne = {
+            id: 'reason-one'
         };
 
-        reasonHidden = {
-            id: 'hidden-id',
-            hidden: true
-        };
-
-        reasonWithoutHidden = {
-            id: 'without-hidden-id'
+        reasonTwo = {
+            id: 'reason-two'
         };
 
         $scope.requisition = {
@@ -76,7 +70,7 @@ describe('LossesAndAdjustmentsController', function() {
             template: {
                 columnsMap: columns
             },
-            stockAdjustmentReasons: [reasonNotHidden, reasonHidden, reasonWithoutHidden]
+            stockAdjustmentReasons: [reasonOne, reasonTwo]
         };
         vm.isDisabled = false;
 
@@ -112,7 +106,7 @@ describe('LossesAndAdjustmentsController', function() {
         $scope.lineItem = lineItem2;
         $scope.$digest();
 
-        $scope.lineItem.stockAdjustments = [{reasonId: 'reason-id', quantity: 10}];
+        $scope.lineItem.stockAdjustments = [{reasonId: 'reason-one', quantity: 10}];
         $scope.$digest();
 
         expect(calculationFactory.totalLossesAndAdjustments).toHaveBeenCalled();
@@ -148,9 +142,9 @@ describe('LossesAndAdjustmentsController', function() {
                 .toHaveBeenCalledWith(
                     [{
                         quantity: 20,
-                        reason: reasonNotHidden
+                        reason: reasonOne
                     }],
-                    [reasonNotHidden, reasonWithoutHidden],
+                    [reasonOne, reasonTwo],
                     'requisitionLossesAndAdjustments.lossesAndAdjustments',
                     'requisitionLossesAndAdjustments.addNewLossOrAdjustment',
                     vm.isDisabled,

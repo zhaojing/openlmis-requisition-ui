@@ -29,14 +29,14 @@
         .factory('Requisition', requisitionFactory);
 
     requisitionFactory.$inject = [
-        '$q', '$resource', 'openlmisUrlFactory', 'requisitionUrlFactory', 'RequisitionTemplate',
-        'LineItem', 'REQUISITION_STATUS', 'COLUMN_SOURCES', 'localStorageFactory', 'offlineService',
+        '$q', '$resource', 'requisitionUrlFactory', 'RequisitionTemplate',
+        'LineItem', 'REQUISITION_STATUS', 'COLUMN_SOURCES', 'localStorageFactory',
         'dateUtils', '$filter', 'TEMPLATE_COLUMNS', 'authorizationService', 'REQUISITION_RIGHTS'
     ];
 
-    function requisitionFactory($q, $resource, openlmisUrlFactory, requisitionUrlFactory,
+    function requisitionFactory($q, $resource, requisitionUrlFactory,
                                 RequisitionTemplate, LineItem, REQUISITION_STATUS, COLUMN_SOURCES,
-                                localStorageFactory, offlineService, dateUtils, $filter, TEMPLATE_COLUMNS,
+                                localStorageFactory, dateUtils, $filter, TEMPLATE_COLUMNS,
                                 authorizationService, REQUISITION_RIGHTS) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
@@ -385,7 +385,7 @@
          */
         function isAfterAuthorize() {
             return [REQUISITION_STATUS.AUTHORIZED, REQUISITION_STATUS.IN_APPROVAL,
-                    REQUISITION_STATUS.APPROVED, REQUISITION_STATUS.RELEASED].indexOf(this.status) != -1;
+                    REQUISITION_STATUS.APPROVED, REQUISITION_STATUS.RELEASED].indexOf(this.status) !== -1;
         }
 
         /**
