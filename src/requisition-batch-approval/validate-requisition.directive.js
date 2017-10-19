@@ -45,7 +45,7 @@
             },
             restrict: 'A',
             require: 'ngModel'
-        }
+        };
         return directive;
 
         function link(scope, element, attrs, ngModelCtrl) {
@@ -59,18 +59,13 @@
                 requisition.$$getErrors = getErrors();
             }
 
-            //We don't want to store this in local storage.
-            if (!requisition.$$invalid) {
-                requisition.$$invalid = getInvalid();
-            }
-
             ngModelCtrl.$viewChangeListeners.push(validateRequisition);
 
             wrapper.on('openlmisInvalid.show', updateMessage);
             wrapper.on('openlmisInvalid.hide', updateMessage);
 
             function updateMessage() {
-                requisition.$error = requisition.$$invalid() ?
+                requisition.$error = isValid(requisition) ?
                     messageService.get("requisitionBatchApproval.invalidRequisition") :
                     undefined;
             }
@@ -79,28 +74,20 @@
                 var errors = requisition.$$getErrors();
 
                 if (ngModelCtrl.$invalid) {
-                    errors[productId] = true
-                    requisition.$$invalid(true);
+                    errors[productId] = true;
                 } else {
                     delete errors[productId];
-                    requisition.$$invalid(Object.keys(errors).length > 0);
                 }
+            }
+
+            function isValid(requisition) {
+                return Object.keys(requisition.$$getErrors()).length > 0;
             }
 
             function getErrors() {
                 var errors = [];
                 return function() {
                     return errors;
-                }
-            }
-
-            function getInvalid() {
-                var invalid;
-                return function(newValue) {
-                    if (newValue !== undefined) {
-                        invalid = newValue;
-                    }
-                    return invalid
                 }
             }
 
