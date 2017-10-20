@@ -52,18 +52,14 @@
                 user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-                programs: function(programService, user, $q, $filter, alertService) {
+                programs: function(programService, user, $q, alertService) {
                     var deferred = $q.defer();
 
-                    $q.all([
-                        programService.getUserPrograms(user.user_id, true),
-                        programService.getUserPrograms(user.user_id, false)
-                    ]).then(function(results) {
-                        if (!results[1]) {
-                            deferred.resolve(results[0]);
-                        }
-                        deferred.resolve($filter('unique')(results[0].concat(results[1]), 'id'));
-                    }).catch(function() {
+                    programService.getUserPrograms(user.user_id)
+                    .then(function(results) {
+                        deferred.resolve(results);
+                    })
+                    .catch(function() {
                         alertService.error('error.noOfflineData');
                         deferred.reject();
                     });
