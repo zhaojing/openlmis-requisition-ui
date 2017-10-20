@@ -101,7 +101,7 @@
         function showModal() {
             adjustmentsModalService.open(
                 getAdjustments(vm.lineItem.stockAdjustments),
-                reasons,
+                filterAvailableReasons(reasons, getAdjustments(vm.lineItem.stockAdjustments)),
                 'requisitionLossesAndAdjustments.lossesAndAdjustments',
                 'requisitionLossesAndAdjustments.addNewLossOrAdjustment',
                 vm.isDisabled,
@@ -112,9 +112,26 @@
                             $scope.requisition.stockAdjustmentReasons
                         );
                     }
+                },
+                undefined,
+                undefined,
+                function(adjustments) {
+                    return filterAvailableReasons(reasons, adjustments);
                 }
             ).then(function(adjustments) {
                 vm.lineItem.stockAdjustments = getSimpleAdjustments(adjustments);
+            });
+        }
+
+        function filterAvailableReasons(reasons, adjustments) {
+            return $filter('filter')(reasons, function(value) {
+                var reasonExists = false;
+                angular.forEach(adjustments, function(adj) {
+                    if (adj.reason.id === value.id) {
+                        reasonExists = true;
+                    }
+                });
+                return !reasonExists;
             });
         }
 

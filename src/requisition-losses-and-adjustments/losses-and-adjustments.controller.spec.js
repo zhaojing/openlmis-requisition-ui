@@ -144,13 +144,17 @@ describe('LossesAndAdjustmentsController', function() {
                         quantity: 20,
                         reason: reasonOne
                     }],
-                    [reasonOne, reasonTwo],
+                    [reasonTwo],
                     'requisitionLossesAndAdjustments.lossesAndAdjustments',
                     'requisitionLossesAndAdjustments.addNewLossOrAdjustment',
                     vm.isDisabled,
                     {
                         'requisitionLossesAndAdjustments.total': jasmine.any(Function)
-                    });
+                    },
+                    undefined,
+                    undefined,
+                    jasmine.any(Function)
+                );
         });
     });
 });
