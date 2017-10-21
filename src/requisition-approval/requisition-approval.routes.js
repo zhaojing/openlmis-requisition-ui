@@ -52,19 +52,11 @@
                 user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-                programs: function(programService, user, $q, alertService) {
-                    var deferred = $q.defer();
-
-                    programService.getUserPrograms(user.user_id)
-                    .then(function(results) {
-                        deferred.resolve(results);
-                    })
+                programs: function(programService, user, alertService) {
+                    return programService.getUserPrograms(user.user_id)
                     .catch(function() {
                         alertService.error('error.noOfflineData');
-                        deferred.reject();
                     });
-
-                    return deferred.promise;
                 },
                 selectedProgram: function($stateParams, $filter, programs) {
                     if ($stateParams.program) {
