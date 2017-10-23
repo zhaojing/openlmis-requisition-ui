@@ -56,6 +56,7 @@
                     return programService.getUserPrograms(user.user_id)
                     .catch(function() {
                         alertService.error('error.noOfflineData');
+                        return $q.reject();
                     });
                 },
                 selectedProgram: function($stateParams, $filter, programs) {
