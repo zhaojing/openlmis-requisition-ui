@@ -8,6 +8,7 @@ Improvements:
 * [OLMIS-3181:](https://openlmis.atlassian.net/browse/OLMIS-3181) Added front-end validation to the requisition batch approval screen.
 * [OLMIS-3233:](https://openlmis.atlassian.net/browse/OLMIS-3233) Added ability to delete requisitions with "skipped" status.
 * [OLMIS-3246:](https://openlmis.atlassian.net/browse/OLMIS-3246) Added 'show' field to reason assignments
+* Updated dev-ui version to 6.
 
 Bug fixes:
 * [OLMIS-3151:](https://openlmis.atlassian.net/browse/OLMIS-3151) Fixed automatically resolving mathematical error with adjustments.
