@@ -185,7 +185,12 @@
                 program: program,
                 suggestedPeriod: suggestedPeriod,
                 emergency: emergency
-            }, {}).$promise;
+            }, {}).$promise
+            .then(function(requisition) {
+                requisition.$modified = true;
+                offlineRequisitions.put(requisition);
+                return requisition;
+            });
         }
 
         /**

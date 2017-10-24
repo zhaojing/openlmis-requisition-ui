@@ -212,7 +212,10 @@ describe('requisitionService', function() {
         httpBackend.flush();
         $rootScope.$apply();
 
+        requisition.$modified = true;
+
         expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
+        expect(requisitionsStorage.put).toHaveBeenCalled();
     });
 
     it('should get requisitions for convert', function() {
