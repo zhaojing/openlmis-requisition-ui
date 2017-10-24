@@ -188,6 +188,7 @@
             }, {}).$promise
             .then(function(requisition) {
                 requisition.$modified = true;
+                requisition.$availableOffline = true;
                 offlineRequisitions.put(requisition);
                 return requisition;
             });

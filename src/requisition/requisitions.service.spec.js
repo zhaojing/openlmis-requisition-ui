@@ -213,6 +213,7 @@ describe('requisitionService', function() {
         $rootScope.$apply();
 
         requisition.$modified = true;
+        requisition.$availableOffline = true;
 
         expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
         expect(requisitionsStorage.put).toHaveBeenCalled();
