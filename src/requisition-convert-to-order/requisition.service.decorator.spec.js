@@ -19,16 +19,7 @@ ddescribe('requisitionService', function() {
         $filter;
 
     beforeEach(function() {
-        module('requisition', function($provide) {
-            $provide.factory('LocalDatabase', function() {
-                return function() {
-                    database = jasmine.createSpyObj('LocalDatabase', [
-                        'put', 'getAll', 'remove', 'removeAll'
-                    ]);
-                    return database;
-                };
-            });
-        });
+        module('requisition-convert-to-order');
 
         inject(function($injector) {
             $httpBackend = $injector.get('$httpBackend');
@@ -37,23 +28,6 @@ ddescribe('requisitionService', function() {
             $q = $injector.get('$q');
             requisitionUrlFactory = $injector.get('requisitionUrlFactory');
             $filter = $injector.get('$filter');
-        });
-
-        cached = [];
-
-        database.put.andCallFake(function(item) {
-            cached.push(item);
-            return $q.resolve();
-        });
-        database.getAll.andCallFake(function() {
-            return $q.resolve(cached);
-        });
-        database.removeAll.andReturn($q.resolve());
-        database.remove.andCallFake(function(id) {
-            cached = $filter('filter')(cached, function(requisition) {
-                return requisition.requisition.id !== id;
-            });
-            return $q.resolve();
         });
     });
 
@@ -654,24 +628,7 @@ ddescribe('requisitionService', function() {
 
     });
 
-    describe('convertToOrder', function() {
-
-        it('should remove the requisition from the database', function() {
-            $httpBackend
-            .whenPOST(requisitionUrlFactory('/api/requisitions/convertToOrder'))
-            .respond(200);
-
-            requisitionService.convertToOrder(createDummyRequisitionsWithDates(3));
-            $httpBackend.flush();
-
-            expect(database.remove).toHaveBeenCalledWith('requisition-0-id');
-            expect(database.remove).toHaveBeenCalledWith('requisition-1-id');
-            expect(database.remove).toHaveBeenCalledWith('requisition-2-id');
-        });
-
-    });
-
-    describe('convertToOrder interaction with forConvert', function() {
+    ddescribe('convertToOrder interaction with forConvert', function() {
 
         it('should cause forConvert make a request if there is not enough data in the database', function() {
             $httpBackend

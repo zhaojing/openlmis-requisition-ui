@@ -30,13 +30,12 @@
             $provide.decorator('requisitionService', decorator);
         });
 
-    decorator.$inject = ['$delegate', '$q', 'LocalDatabase', '$filter'];
+    decorator.$inject = ['$delegate', '$q', '$filter'];
 
     function decorator($delegate, $q, LocalDatabase, $filter) {
         var requisitionService = $delegate,
             $forConvert = $delegate.forConvert,
             $convertToOrder = $delegate.convertToOrder,
-            forConvertDb = new LocalDatabase('forConvert'),
             lastParams,
             lastPage;
 
@@ -50,11 +49,9 @@
 
             if (shouldFetchFromServer(params)) {
                 return $forConvert(newParams)
-                .then(updateDatabase)
                 .then(function(page) {
                     lastParams = params;
-                    lastPage = angular.copy(page);
-                    lastPage.content = undefined;
+                    lastPage = page;
                     return getRequestedPage(page, params, newParams);
                 });
             }
@@ -63,25 +60,20 @@
 
         function convertToOrder(requisitions) {
             return $convertToOrder(requisitions)
-            .then(removeRequisitionsFromDatabase);
-        }
-
-        function removeRequisitionsFromDatabase(requisitions) {
-            var promises = [];
-            angular.forEach(requisitions, function(requisition) {
-                promises.push(removeRequisitionFromDatabase(requisition));
-            });
-
-            return $q.all(promises)
             .then(function() {
-                return requisitions;
+                removeConvertedRequisitions(requisitions);
             });
         }
 
-        function removeRequisitionFromDatabase(requisition) {
-            if (requisition.requisition) {
-                return forConvertDb.remove(requisition.requisition.id)
-                .then(shrinkLastPage);
+        function removeConvertedRequisitions(requisitions) {
+            if (lastPage) {
+                requisitions.forEach(function(requisition) {
+                    var id = requisition.requisition.id;
+                    lastPage.content = lastPage.content.filter(function(requisition) {
+                        return requisition.requisition.id !== id;
+                    });
+                    shrinkLastPage();
+                });
             }
         }
 
@@ -98,49 +90,6 @@
             }
         }
 
-        function updateDatabase(page) {
-            return forConvertDb.removeAll()
-            .then(function() {
-                return cacheRequisitions(page);
-            })
-            .then(function() {
-                return page;
-            });
-        }
-
-        function cacheRequisitions(page) {
-            var promises = [], order = 0;
-
-            angular.forEach(page.content, function(requisition) {
-                promises.push(cacheRequisition(requisition, order++));
-            });
-
-            return $q.all(promises);
-        }
-
-        function cacheRequisition(requisition, order) {
-            requisition.id = requisition.requisition.id;
-            requisition.$order = order;
-            return forConvertDb.put(requisition)
-            .then(function() {
-                delete requisition.id;
-                delete requisition.$order;
-            });
-        }
-
-        function sortRequisitions(requisitions) {
-            return $filter('orderBy')(requisitions, '$order');
-        }
-
-        function clearUtilityFields(items) {
-            angular.forEach(items, function(item) {
-                delete item.id;
-                delete item._id;
-                delete item.$order;
-            });
-            return items;
-        }
-
         function getRequestedPage(page, params, pageable) {
             var originalFrom = calculateFrom(params),
                 from = calculateFrom(pageable),
@@ -152,23 +101,14 @@
                     number: parseInt(params.page),
                     size: parseInt(params.size),
                     totalPages: Math.ceil(parseInt(page.totalElements) / parseInt(params.size)),
-                    totalElements: parseInt(page.totalElements)
+                    totalElements: parseInt(page.totalElements),
+                    content: page.content.slice(offset, offset + parseInt(params.size)),
+
                 };
 
-            if (page.content) {
-                contentPromise = $q.resolve(page.content);
-            } else {
-                contentPromise = forConvertDb.getAll()
-                .then(sortRequisitions)
-                .then(clearUtilityFields);
-            }
+            newPage.numberOfElements = newPage.content.length;
 
-            return contentPromise
-            .then(function(content) {
-                newPage.content = content.slice(offset, offset + parseInt(params.size));
-                newPage.numberOfElements = newPage.content.length;
-                return newPage;
-            });
+            return $q.resolve(newPage);
         }
 
         function shouldFetchFromServer(params) {
