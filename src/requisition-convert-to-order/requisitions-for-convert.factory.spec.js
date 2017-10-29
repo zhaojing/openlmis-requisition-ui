@@ -13,16 +13,16 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-ddescribe('requisitionsForConvert', function() {
+ddescribe('requisitionsForConvertFactory', function() {
 
-    var requisitionsForConvert, $httpBackend, $rootScope, $q, requisitionUrlFactory;
+    var requisitionsForConvertFactory, $httpBackend, $rootScope, $q, requisitionUrlFactory;
 
     beforeEach(function() {
         module('requisition-convert-to-order');
 
         inject(function($injector) {
             $httpBackend = $injector.get('$httpBackend');
-            requisitionsForConvert = $injector.get('requisitionsForConvert');
+            requisitionsForConvertFactory = $injector.get('requisitionsForConvertFactory');
             $rootScope = $injector.get('$rootScope');
             $q = $injector.get('$q');
             requisitionUrlFactory = $injector.get('requisitionUrlFactory');
@@ -51,10 +51,10 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(20)
             });
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             $httpBackend.flush();
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             expect($httpBackend.flush).toThrow();
         });
 
@@ -77,7 +77,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             $httpBackend.flush();
 
             var newParams = {
@@ -85,7 +85,7 @@ ddescribe('requisitionsForConvert', function() {
                 page: 7
             };
 
-            requisitionsForConvert.forConvert(newParams);
+            requisitionsForConvertFactory.forConvert(newParams);
             expect($httpBackend.flush).toThrow();
         });
 
@@ -111,7 +111,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             $httpBackend.flush();
 
             params = {
@@ -134,7 +134,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             $httpBackend.flush();
         });
 
@@ -159,7 +159,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             $httpBackend.flush();
 
             params = {
@@ -182,7 +182,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             $httpBackend.flush();
         });
 
@@ -207,7 +207,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             $httpBackend.flush();
 
             params = {
@@ -230,7 +230,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionsForConvert.forConvert(params);
+            requisitionsForConvertFactory.forConvert(params);
             $httpBackend.flush();
         });
 
@@ -255,7 +255,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(20)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -287,7 +287,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(14)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(page) {
                 result = page;
             });
@@ -319,7 +319,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(31)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -351,7 +351,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(9)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -383,7 +383,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(6)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -415,7 +415,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(33)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -447,7 +447,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(36)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -479,7 +479,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(6)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -511,7 +511,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(1)
             });
 
-            requisitionsForConvert.forConvert(params)
+            requisitionsForConvertFactory.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -538,13 +538,13 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(40)
             });
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 5
             });
             $httpBackend.flush();
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 6
             })
@@ -574,7 +574,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(15)
             });
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 2
             })
@@ -582,7 +582,7 @@ ddescribe('requisitionsForConvert', function() {
             $httpBackend.flush();
             $rootScope.$apply();
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 3
             })
@@ -612,13 +612,13 @@ ddescribe('requisitionsForConvert', function() {
                 content: []
             });
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 0
             });
             $httpBackend.flush();
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 0
             });
@@ -643,13 +643,13 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(20)
             });
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 page: 0,
                 size: 10
             });
             $httpBackend.flush();
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 page: 1,
                 size: 10
             });
@@ -659,7 +659,7 @@ ddescribe('requisitionsForConvert', function() {
             .expectPOST(requisitionUrlFactory('/api/requisitions/convertToOrder'))
             .respond(200);
 
-            requisitionsForConvert.convertToOrder([createDummyRequisitionWithDate(19)]);
+            requisitionsForConvertFactory.convertToOrder([createDummyRequisitionWithDate(19)]);
             $httpBackend.flush();
 
             $httpBackend
@@ -675,7 +675,7 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(30)
             });
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 page: 1,
                 size: 10
             });
@@ -698,14 +698,14 @@ ddescribe('requisitionsForConvert', function() {
                 content: createDummyRequisitions(20)
             });
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 page: 0,
                 size: 10
             });
             $httpBackend.flush();
             $rootScope.$apply();
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 page: 0,
                 size: 10
             });
@@ -716,11 +716,11 @@ ddescribe('requisitionsForConvert', function() {
             .expectPOST(requisitionUrlFactory('/api/requisitions/convertToOrder'))
             .respond(200);
 
-            requisitionsForConvert.convertToOrder(createDummyRequisitionsWithDates(10));
+            requisitionsForConvertFactory.convertToOrder(createDummyRequisitionsWithDates(10));
             $httpBackend.flush();
             $rootScope.$apply();
 
-            requisitionsForConvert.forConvert({
+            requisitionsForConvertFactory.forConvert({
                 page: 0,
                 size: 10
             })

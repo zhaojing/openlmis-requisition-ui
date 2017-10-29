@@ -26,11 +26,11 @@
      */
     angular
         .module('requisition-convert-to-order')
-        .factory('requisitionsForConvert', requisitionsForConvert);
+        .factory('requisitionsForConvertFactory', requisitionsForConvertFactory);
 
-    requisitionsForConvert.$inject = ['requisitionService', '$q'];
+    requisitionsForConvertFactory.$inject = ['requisitionService', '$q'];
 
-    function requisitionsForConvert(requisitionService, $q) {
+    function requisitionsForConvertFactory(requisitionService, $q) {
         var factory = {
             forConvert: forConvert,
             convertToOrder: convertToOrder

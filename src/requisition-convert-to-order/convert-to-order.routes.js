@@ -51,9 +51,9 @@
                 filterValue: ''
             },
             resolve: {
-                requisitions: function(paginationService, requisitionsForConvert, $stateParams) {
+                requisitions: function(paginationService, requisitionsForConvertFactory, $stateParams) {
                     if (!cachedRequisitionService) {
-                        cachedRequisitionService = requisitionsForConvert;
+                        cachedRequisitionService = requisitionsForConvertFactory;
                     }
                     return paginationService.registerUrl($stateParams, function(stateParams) {
 						return cachedRequisitionService.forConvert(stateParams);
