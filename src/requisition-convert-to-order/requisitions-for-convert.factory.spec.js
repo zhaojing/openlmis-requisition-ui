@@ -15,7 +15,8 @@
 
 ddescribe('requisitionsForConvertFactory', function() {
 
-    var requisitionsForConvertFactory, $httpBackend, $rootScope, $q, requisitionUrlFactory;
+    var requisitionsForConvertFactory, $httpBackend, $rootScope, $q, requisitionUrlFactory,
+        requisitionService;
 
     beforeEach(function() {
         module('requisition-convert-to-order');
@@ -26,21 +27,17 @@ ddescribe('requisitionsForConvertFactory', function() {
             $rootScope = $injector.get('$rootScope');
             $q = $injector.get('$q');
             requisitionUrlFactory = $injector.get('requisitionUrlFactory');
-            $filter = $injector.get('$filter');
+            requisitionService = $injector.get('requisitionService');
         });
+
+        spyOn(requisitionService, 'forConvert');
+        spyOn(requisitionService, 'convertToOrder').andReturn($q.resolve());
     });
 
     describe('forConvert', function() {
 
         it('should not call endpoint for subsequent calls', function() {
-            var params = {
-                size: 10,
-                page: 1
-            };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=30&page=0'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: true,
                 last: false,
                 number: 0,
@@ -48,25 +45,28 @@ ddescribe('requisitionsForConvertFactory', function() {
                 numberOfElements: 20,
                 totalElements: 21,
                 totalPages: 2,
-                content: createDummyRequisitions(20)
+                content: createDummyRequisitionsWithDates(20)
+            }));
+
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 1
+            });
+            $rootScope.$apply();
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 1
             });
 
-            requisitionsForConvertFactory.forConvert(params);
-            $httpBackend.flush();
-
-            requisitionsForConvertFactory.forConvert(params);
-            expect($httpBackend.flush).toThrow();
+            expect(requisitionService.forConvert.calls.length).toBe(1);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 30,
+                page: 0
+            });
         });
 
         it('should not call endpoint if enough requisitions are cached', function() {
-            var params = {
-                size: 10,
-                page: 5
-            };
-
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=40&page=1'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -74,32 +74,30 @@ ddescribe('requisitionsForConvertFactory', function() {
                 numberOfElements: 22,
                 totalElements: 65,
                 totalPages: 2,
-                content: createDummyRequisitions(22)
-            });
+                content: createDummyRequisitionsWithDates(22)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params);
-            $httpBackend.flush();
-
-            var newParams = {
-                size: 10,
-                page: 7
-            };
-
-            requisitionsForConvertFactory.forConvert(newParams);
-            expect($httpBackend.flush).toThrow();
-        });
-
-
-
-        it('should always call endpoint if sorting has changed', function() {
-            var params = {
+            requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 5
-            };
+            });
+            $rootScope.$apply();
 
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=40&page=1'))
-            .respond(200, {
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 7
+            });
+            $rootScope.$apply();
+
+            expect(requisitionService.forConvert.calls.length).toBe(1);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 40,
+                page: 1
+            });
+        });
+
+        it('should always call endpoint if sorting has changed', function() {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -108,21 +106,16 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 65,
                 totalPages: 2,
                 sort: null,
-                content: createDummyRequisitions(22)
-            });
+                content: createDummyRequisitionsWithDates(22)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params);
-            $httpBackend.flush();
-
-            params = {
+            requisitionsForConvertFactory.forConvert({
                 size: 10,
-                page: 5,
-                sort: 'program'
-            };
+                page: 5
+            });
+            $rootScope.$apply();
 
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=40&page=1&sort=program'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -131,94 +124,29 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 65,
                 totalPages: 2,
                 sort: 'program',
-                content: createDummyRequisitions(22)
-            });
+                content: createDummyRequisitionsWithDates(22)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params);
-            $httpBackend.flush();
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 5,
+                sort: 'program'
+            });
+            $rootScope.$apply();
+
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 40,
+                page: 1
+            });
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 40,
+                page: 1,
+                sort: 'program'
+            });
         });
 
         it('should always call endpoint if filterBy has changed', function() {
-            var params = {
-                size: 10,
-                page: 5,
-                filterBy: 'program'
-            };
-
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=40&page=1&filterBy=program'))
-            .respond(200, {
-                first: false,
-                last: true,
-                number: 1,
-                size: 40,
-                numberOfElements: 22,
-                totalElements: 65,
-                totalPages: 2,
-                sort: null,
-                content: createDummyRequisitions(22)
-            });
-
-            requisitionsForConvertFactory.forConvert(params);
-            $httpBackend.flush();
-
-            params = {
-                size: 10,
-                page: 5,
-                filterBy: 'all'
-            };
-
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=40&page=1&filterBy=all'))
-            .respond(200, {
-                first: false,
-                last: true,
-                number: 1,
-                size: 40,
-                numberOfElements: 22,
-                totalElements: 65,
-                totalPages: 2,
-                sort: null,
-                content: createDummyRequisitions(22)
-            });
-
-            requisitionsForConvertFactory.forConvert(params);
-            $httpBackend.flush();
-        });
-
-        it('should always call endpoint if filterValue has changed', function() {
-            var params = {
-                size: 10,
-                page: 5,
-                filterValue: 'Bala'
-            };
-
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=40&page=1&filterValue=Bala'))
-            .respond(200, {
-                first: false,
-                last: true,
-                number: 1,
-                size: 40,
-                numberOfElements: 22,
-                totalElements: 65,
-                totalPages: 2,
-                sort: null,
-                content: createDummyRequisitions(22)
-            });
-
-            requisitionsForConvertFactory.forConvert(params);
-            $httpBackend.flush();
-
-            params = {
-                size: 10,
-                page: 5,
-                filterValue: 'B'
-            };
-
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=40&page=1&filterValue=B'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -227,23 +155,100 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 62,
                 totalPages: 2,
                 sort: null,
-                content: createDummyRequisitions(22)
-            });
+                content: createDummyRequisitionsWithDates(22)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params);
-            $httpBackend.flush();
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 5,
+                filterBy: 'program'
+            });
+            $rootScope.$apply();
+
+            requisitionService.forConvert.andReturn($q.resolve({
+                first: false,
+                last: true,
+                number: 1,
+                size: 40,
+                numberOfElements: 25,
+                totalElements: 65,
+                totalPages: 2,
+                sort: null,
+                content: createDummyRequisitionsWithDates(25)
+            }));
+
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 5,
+                filterBy: 'all'
+            });
+            $rootScope.$apply();
+
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 40,
+                page: 1,
+                filterBy: 'program'
+            });
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 40,
+                page: 1,
+                filterBy: 'all'
+            });
+        });
+
+        it('should always call endpoint if filterValue has changed', function() {
+            requisitionService.forConvert.andReturn($q.resolve({
+                first: false,
+                last: true,
+                number: 1,
+                size: 40,
+                numberOfElements: 22,
+                totalElements: 62,
+                totalPages: 2,
+                sort: null,
+                content: createDummyRequisitionsWithDates(22)
+            }));
+
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 5,
+                filterValue: 'Bala'
+            });
+            $rootScope.$apply();
+
+            requisitionService.forConvert.andReturn($q.resolve({
+                first: false,
+                last: true,
+                number: 1,
+                size: 40,
+                numberOfElements: 25,
+                totalElements: 65,
+                totalPages: 2,
+                sort: null,
+                content: createDummyRequisitionsWithDates(25)
+            }));
+
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 5,
+                filterValue: 'B'
+            });
+            $rootScope.$apply();
+
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 40,
+                page: 1,
+                filterValue: 'Bala'
+            });
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 40,
+                page: 1,
+                filterValue: 'B'
+            });
         });
 
         it('should return requested amount of requisitions if downloaded', function() {
-            var result,
-                params = {
-                    size: 10,
-                    page: 2
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=20&page=1'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -252,30 +257,24 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 65,
                 totalPages: 4,
                 sort: null,
-                content: createDummyRequisitions(20)
-            });
+                content: createDummyRequisitionsWithDates(20)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                size: 10,
+                page: 2
+            })
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.content).toEqual(createDummyRequisitionsWithDates(10));
         });
 
         it('should set last correctly if fetching last page', function() {
-            var result,
-                params = {
-                    size: 7,
-                    page: 7
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=21&page=2'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 2,
@@ -284,30 +283,28 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 56,
                 totalPages: 3,
                 sort: null,
-                content: createDummyRequisitions(14)
-            });
+                content: createDummyRequisitionsWithDates(14)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                size: 7,
+                page: 7
+            })
             .then(function(page) {
                 result = page;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.last).toEqual(true);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 21,
+                page: 2
+            });
         });
 
         it('should set last correctly if the transformed is last but the original is not', function() {
-            var result,
-                params = {
-                    size: 15,
-                    page: 5
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=60&page=1'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -316,30 +313,28 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 91,
                 totalPages: 2,
                 sort: null,
-                content: createDummyRequisitions(31)
-            });
+                content: createDummyRequisitionsWithDates(31)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                size: 15,
+                page: 5
+            })
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.last).toEqual(false);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 60,
+                page: 1
+            });
         });
 
         it('should set first correctly if the transformed is first but the original is not', function() {
-            var result,
-                params = {
-                    size: 3,
-                    page: 1
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=9&page=0'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: true,
                 last: true,
                 number: 0,
@@ -348,30 +343,28 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 9,
                 totalPages: 1,
                 sort: null,
-                content: createDummyRequisitions(9)
-            });
+                content: createDummyRequisitionsWithDates(9)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                size: 3,
+                page: 1
+            })
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.first).toEqual(false);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 9,
+                page: 0
+            });
         });
 
         it('should set first correctly if original is first', function() {
-            var result,
-                params = {
-                    size: 3,
-                    page: 0
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=6&page=0'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: true,
                 last: true,
                 number: 0,
@@ -380,30 +373,28 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 6,
                 totalPages: 1,
                 sort: null,
-                content: createDummyRequisitions(6)
-            });
+                content: createDummyRequisitionsWithDates(6)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                size: 3,
+                page: 0
+            })
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.first).toEqual(true);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 6,
+                page: 0
+            });
         });
 
         it('should set pages correctly for full pages', function() {
-            var result,
-                params = {
-                    size: 11,
-                    page: 1
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=33&page=0'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: true,
                 last: false,
                 number: 0,
@@ -412,30 +403,28 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 44,
                 totalPages: 2,
                 sort: null,
-                content: createDummyRequisitions(33)
-            });
+                content: createDummyRequisitionsWithDates(33)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                size: 11,
+                page: 1
+            })
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.totalPages).toEqual(4);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 33,
+                page: 0
+            });
         });
 
         it('should set pages correctly for non full pages', function() {
-            var result,
-                params = {
-                    size: 12,
-                    page: 1
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=36&page=0'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: true,
                 last: false,
                 number: 0,
@@ -444,30 +433,28 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 37,
                 totalPages: 2,
                 sort: null,
-                content: createDummyRequisitions(36)
-            });
+                content: createDummyRequisitionsWithDates(36)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                size: 12,
+                page: 1
+            })
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.totalPages).toEqual(4);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 36,
+                page: 0
+            });
         });
 
         it('should set number of elements correctly for full pages', function() {
-            var result,
-                params = {
-                    size: 6,
-                    page: 2
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=12&page=1'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -476,30 +463,28 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 18,
                 totalPages: 2,
                 sort: null,
-                content: createDummyRequisitions(6)
-            });
+                content: createDummyRequisitionsWithDates(6)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                size: 6,
+                page: 2
+            })
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.numberOfElements).toEqual(6);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 12,
+                page: 1
+            });
         });
 
         it('should set number of elements correctly for non full pages', function() {
-            var result,
-                params = {
-                    size: 8,
-                    page: 4
-                };
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=16&page=2'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 2,
@@ -508,26 +493,27 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 33,
                 totalPages: 3,
                 sort: null,
-                content: createDummyRequisitions(1)
-            });
+                content: createDummyRequisitionsWithDates(1)
+            }));
 
-            requisitionsForConvertFactory.forConvert(params)
+            requisitionsForConvertFactory.forConvert({
+                size: 8,
+                page: 4
+            })
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.numberOfElements).toEqual(1);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 16,
+                page: 2
+            });
         });
 
         it('should return cached requisitions', function() {
-            var result;
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=40&page=1'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -535,15 +521,16 @@ ddescribe('requisitionsForConvertFactory', function() {
                 numberOfElements: 40,
                 totalElements: 80,
                 totalPages: 2,
-                content: createDummyRequisitions(40)
-            });
+                content: createDummyRequisitionsWithDates(40)
+            }));
 
             requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 5
             });
-            $httpBackend.flush();
+            $rootScope.$apply();
 
+            var result;
             requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 6
@@ -551,19 +538,18 @@ ddescribe('requisitionsForConvertFactory', function() {
             .then(function(requisitions) {
                 result = requisitions;
             });
-
-            expect($httpBackend.flush).toThrow();
             $rootScope.$apply();
 
             expect(result.content).toEqual(createDummyRequisitionsWithDates(10, 20));
+            expect(requisitionService.forConvert.calls.length).toBe(1);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 40,
+                page: 1
+            });
         });
 
         it('should return cached requisition if the page is not complete but last', function() {
-            var result;
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=20&page=1'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: false,
                 last: true,
                 number: 1,
@@ -571,37 +557,35 @@ ddescribe('requisitionsForConvertFactory', function() {
                 numberOfElements: 15,
                 totalElements: 35,
                 totalPages: 2,
-                content: createDummyRequisitions(15)
-            });
+                content: createDummyRequisitionsWithDates(15)
+            }));
 
             requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 2
-            })
-
-            $httpBackend.flush();
+            });
             $rootScope.$apply();
 
+            var result;
             requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 3
             })
             .then(function(requisitions) {
                 result = requisitions;
-            })
-
-            expect($httpBackend.flush).toThrow();
+            });
             $rootScope.$apply();
 
             expect(result.content).toEqual(createDummyRequisitionsWithDates(5, 10));
+            expect(requisitionService.forConvert.calls.length).toBe(1);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 20,
+                page: 1
+            });
         });
 
         it('should download requisitions from the server if there are none stored', function() {
-            var result;
-
-            $httpBackend
-            .whenGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?size=20&page=0'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: true,
                 last: true,
                 number: 0,
@@ -610,19 +594,25 @@ ddescribe('requisitionsForConvertFactory', function() {
                 totalElements: 0,
                 totalPages: 0,
                 content: []
-            });
+            }));
 
             requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 0
             });
-            $httpBackend.flush();
+            $rootScope.$apply();
 
             requisitionsForConvertFactory.forConvert({
                 size: 10,
                 page: 0
             });
-            $httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(requisitionService.forConvert.calls.length).toBe(2);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 20,
+                page: 0
+            });
         });
 
     });
@@ -630,9 +620,7 @@ ddescribe('requisitionsForConvertFactory', function() {
     ddescribe('convertToOrder interaction with forConvert', function() {
 
         it('should cause forConvert make a request if there is not enough data cached', function() {
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?page=0&size=20'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: true,
                 last: false,
                 number: 0,
@@ -640,31 +628,26 @@ ddescribe('requisitionsForConvertFactory', function() {
                 numberOfElements: 20,
                 totalElements: 60,
                 totalPages: 3,
-                content: createDummyRequisitions(20)
-            });
+                content: createDummyRequisitionsWithDates(20)
+            }));
 
             requisitionsForConvertFactory.forConvert({
                 page: 0,
                 size: 10
             });
-            $httpBackend.flush();
+            $rootScope.$apply();
 
             requisitionsForConvertFactory.forConvert({
                 page: 1,
                 size: 10
             });
-            expect($httpBackend.flush).toThrow();
-
-            $httpBackend
-            .expectPOST(requisitionUrlFactory('/api/requisitions/convertToOrder'))
-            .respond(200);
+            $rootScope.$apply();
+            expect(requisitionService.forConvert.call.length).toBe(1);
 
             requisitionsForConvertFactory.convertToOrder([createDummyRequisitionWithDate(19)]);
-            $httpBackend.flush();
+            $rootScope.$apply();
 
-            $httpBackend
-            .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?page=0&size=30'))
-            .respond(200, {
+            requisitionService.forConvert.andReturn($q.resolve({
                 first: true,
                 last: false,
                 number: 0,
@@ -672,14 +655,24 @@ ddescribe('requisitionsForConvertFactory', function() {
                 numberOfElements: 30,
                 totalElements: 59,
                 totalPages: 2,
-                content: createDummyRequisitions(30)
-            });
+                content: createDummyRequisitionsWithDates(30)
+            }));
 
             requisitionsForConvertFactory.forConvert({
                 page: 1,
                 size: 10
             });
-            $httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(requisitionService.forConvert.call.length).toBe(2);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 20,
+                page: 0
+            });
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                size: 30,
+                page: 0
+            });
         });
 
         it('should cause forConvert return cached data if there is enough', function() {
@@ -695,7 +688,7 @@ ddescribe('requisitionsForConvertFactory', function() {
                 numberOfElements: 20,
                 totalElements: 60,
                 totalPages: 3,
-                content: createDummyRequisitions(20)
+                content: createDummyRequisitionsWithDates(20)
             });
 
             requisitionsForConvertFactory.forConvert({
@@ -750,16 +743,6 @@ ddescribe('requisitionsForConvertFactory', function() {
         return requisitions;
     }
 
-    function createDummyRequisitions(count, startIndex) {
-        var requisitions = [];
-
-        for (var id = startIndex || 0; id < (startIndex || 0) + count; id++) {
-            requisitions.push(createDummyRequisition(id));
-        }
-
-        return requisitions;
-    }
-
     function createDummyRequisitionWithDate(id) {
         return {
             requisition: {
@@ -767,18 +750,6 @@ ddescribe('requisitionsForConvertFactory', function() {
                 processingPeriod: {
                     startDate: new Date(2016, 3, 30, 16, 21, 33),
                     endDate: new Date(2016, 3, 30, 16, 21, 33)
-                }
-            }
-        };
-    }
-
-    function createDummyRequisition(id) {
-        return {
-            requisition: {
-                id: 'requisition-' + id + '-id',
-                processingPeriod: {
-                    startDate: [2016, 4, 30, 16, 21, 33],
-                    endDate: [2016, 4, 30, 16, 21, 33]
                 }
             }
         };
