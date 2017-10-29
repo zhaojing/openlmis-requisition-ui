@@ -31,11 +31,11 @@
 		.controller('ConvertToOrderController', ConvertToOrderController);
 
 	ConvertToOrderController.$inject = [
-        '$stateParams', 'requisitionService', 'notificationService',
+        '$stateParams', 'requisitionsForConvert', 'notificationService',
         'confirmService', 'loadingModalService', 'requisitions', '$state'
     ];
 
-	function ConvertToOrderController($stateParams, requisitionService, notificationService,
+	function ConvertToOrderController($stateParams, requisitionsForConvert, notificationService,
                                 confirmService, loadingModalService, requisitions, $state) {
 
 	    var vm = this;
@@ -232,7 +232,7 @@
                 if (!missedDepots) {
                     confirmService.confirm('requisitionConvertToOrder.convertToOrder.confirm').then(function() {
                         var loadingPromise = loadingModalService.open();
-                        requisitionService.convertToOrder(requisitions).then(function() {
+                        requisitionsForConvert.convertToOrder(requisitions).then(function() {
                             loadingPromise.then(function() {
                                 notificationService.success('requisitionConvertToOrder.convertToOrder.success');
                             });

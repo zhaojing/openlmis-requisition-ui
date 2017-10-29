@@ -19,9 +19,22 @@
 
     angular
         .module('requisition-convert-to-order')
-        .config(routes);
+        .config(routes)
+        .run(run);
+
+    var cachedRequisitionService;
 
     routes.$inject = ['$stateProvider', 'FULFILLMENT_RIGHTS'];
+    run.$inject = ['$rootScope'];
+
+    function run($rootScope) {
+        $rootScope.$on('$stateChangeStart',
+        function(event, toState, toParams, fromState, fromParams, options){
+            if (toState !== 'openlmis.requisitions.convertToOrder') {
+                cachedRequisitionService = undefined;
+            }
+        });
+    }
 
     function routes($stateProvider, FULFILLMENT_RIGHTS) {
 
@@ -38,9 +51,12 @@
                 filterValue: ''
             },
             resolve: {
-                requisitions: function(paginationService, requisitionService, $stateParams) {
-					return paginationService.registerUrl($stateParams, function(stateParams) {
-						return requisitionService.forConvert(stateParams);
+                requisitions: function(paginationService, requisitionsForConvert, $stateParams) {
+                    if (!cachedRequisitionService) {
+                        cachedRequisitionService = requisitionsForConvert;
+                    }
+                    return paginationService.registerUrl($stateParams, function(stateParams) {
+						return cachedRequisitionService.forConvert(stateParams);
 					});
 				}
             }
