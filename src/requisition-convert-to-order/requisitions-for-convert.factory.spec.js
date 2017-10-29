@@ -13,17 +13,16 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-ddescribe('requisitionService', function() {
+ddescribe('requisitionsForConvert', function() {
 
-    var requisitionService, database, $httpBackend, $rootScope, $q, requisitionUrlFactory, cached,
-        $filter;
+    var requisitionsForConvert, $httpBackend, $rootScope, $q, requisitionUrlFactory;
 
     beforeEach(function() {
         module('requisition-convert-to-order');
 
         inject(function($injector) {
             $httpBackend = $injector.get('$httpBackend');
-            requisitionService = $injector.get('requisitionService');
+            requisitionsForConvert = $injector.get('requisitionsForConvert');
             $rootScope = $injector.get('$rootScope');
             $q = $injector.get('$q');
             requisitionUrlFactory = $injector.get('requisitionUrlFactory');
@@ -52,10 +51,10 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(20)
             });
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             $httpBackend.flush();
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             expect($httpBackend.flush).toThrow();
         });
 
@@ -78,7 +77,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             $httpBackend.flush();
 
             var newParams = {
@@ -86,7 +85,7 @@ ddescribe('requisitionService', function() {
                 page: 7
             };
 
-            requisitionService.forConvert(newParams);
+            requisitionsForConvert.forConvert(newParams);
             expect($httpBackend.flush).toThrow();
         });
 
@@ -112,7 +111,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             $httpBackend.flush();
 
             params = {
@@ -135,7 +134,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             $httpBackend.flush();
         });
 
@@ -160,7 +159,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             $httpBackend.flush();
 
             params = {
@@ -183,7 +182,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             $httpBackend.flush();
         });
 
@@ -208,7 +207,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             $httpBackend.flush();
 
             params = {
@@ -231,7 +230,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(22)
             });
 
-            requisitionService.forConvert(params);
+            requisitionsForConvert.forConvert(params);
             $httpBackend.flush();
         });
 
@@ -256,7 +255,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(20)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -288,7 +287,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(14)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(page) {
                 result = page;
             });
@@ -320,7 +319,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(31)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -352,7 +351,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(9)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -384,7 +383,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(6)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -416,7 +415,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(33)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -448,7 +447,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(36)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -480,7 +479,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(6)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -512,7 +511,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(1)
             });
 
-            requisitionService.forConvert(params)
+            requisitionsForConvert.forConvert(params)
             .then(function(requisitions) {
                 result = requisitions;
             });
@@ -539,13 +538,13 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(40)
             });
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 size: 10,
                 page: 5
             });
             $httpBackend.flush();
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 size: 10,
                 page: 6
             })
@@ -575,7 +574,7 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(15)
             });
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 size: 10,
                 page: 2
             })
@@ -583,7 +582,7 @@ ddescribe('requisitionService', function() {
             $httpBackend.flush();
             $rootScope.$apply();
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 size: 10,
                 page: 3
             })
@@ -613,13 +612,13 @@ ddescribe('requisitionService', function() {
                 content: []
             });
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 size: 10,
                 page: 0
             });
             $httpBackend.flush();
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 size: 10,
                 page: 0
             });
@@ -630,7 +629,7 @@ ddescribe('requisitionService', function() {
 
     ddescribe('convertToOrder interaction with forConvert', function() {
 
-        it('should cause forConvert make a request if there is not enough data in the database', function() {
+        it('should cause forConvert make a request if there is not enough data cached', function() {
             $httpBackend
             .expectGET(requisitionUrlFactory('/api/requisitions/requisitionsForConvert?page=0&size=20'))
             .respond(200, {
@@ -644,13 +643,13 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(20)
             });
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 page: 0,
                 size: 10
             });
             $httpBackend.flush();
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 page: 1,
                 size: 10
             });
@@ -660,7 +659,7 @@ ddescribe('requisitionService', function() {
             .expectPOST(requisitionUrlFactory('/api/requisitions/convertToOrder'))
             .respond(200);
 
-            requisitionService.convertToOrder([createDummyRequisitionWithDate(19)]);
+            requisitionsForConvert.convertToOrder([createDummyRequisitionWithDate(19)]);
             $httpBackend.flush();
 
             $httpBackend
@@ -676,14 +675,14 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(30)
             });
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 page: 1,
                 size: 10
             });
             $httpBackend.flush();
         });
 
-        it('should cause forConvert return data from the database if there is enough', function() {
+        it('should cause forConvert return cached data if there is enough', function() {
             var result;
 
             $httpBackend
@@ -699,14 +698,14 @@ ddescribe('requisitionService', function() {
                 content: createDummyRequisitions(20)
             });
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 page: 0,
                 size: 10
             });
             $httpBackend.flush();
             $rootScope.$apply();
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 page: 0,
                 size: 10
             });
@@ -717,11 +716,11 @@ ddescribe('requisitionService', function() {
             .expectPOST(requisitionUrlFactory('/api/requisitions/convertToOrder'))
             .respond(200);
 
-            requisitionService.convertToOrder(createDummyRequisitionsWithDates(10));
+            requisitionsForConvert.convertToOrder(createDummyRequisitionsWithDates(10));
             $httpBackend.flush();
             $rootScope.$apply();
 
-            requisitionService.forConvert({
+            requisitionsForConvert.forConvert({
                 page: 0,
                 size: 10
             })

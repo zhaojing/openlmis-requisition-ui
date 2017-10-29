@@ -25,30 +25,24 @@
      * Extends program service for this module.
      */
     angular
-        .module('requisition')
-        .config(function($provide) {
-            $provide.decorator('requisitionService', decorator);
-        });
+        .module('requisition-convert-to-order')
+        .factory('requisitionsForConvert', requisitionsForConvert);
 
-    decorator.$inject = ['$delegate', '$q', '$filter'];
+    requisitionsForConvert.$inject = ['requisitionService', '$q'];
 
-    function decorator($delegate, $q, LocalDatabase, $filter) {
-        var requisitionService = $delegate,
-            $forConvert = $delegate.forConvert,
-            $convertToOrder = $delegate.convertToOrder,
-            lastParams,
-            lastPage;
+    function requisitionsForConvert(requisitionService, $q) {
+        var lastParams, lastPage, factory = {
+            forConvert: forConvert,
+            convertToOrder: convertToOrder
+        };
 
-        requisitionService.forConvert = forConvert;
-        requisitionService.convertToOrder = convertToOrder;
-
-        return requisitionService;
+        return factory;
 
         function forConvert(params) {
             var newParams = convertParams(params);
 
             if (shouldFetchFromServer(params)) {
-                return $forConvert(newParams)
+                return requisitionService.forConvert(newParams)
                 .then(function(page) {
                     lastParams = params;
                     lastPage = page;
@@ -59,7 +53,7 @@
         }
 
         function convertToOrder(requisitions) {
-            return $convertToOrder(requisitions)
+            return requisitionService.convertToOrder(requisitions)
             .then(function() {
                 removeConvertedRequisitions(requisitions);
             });
