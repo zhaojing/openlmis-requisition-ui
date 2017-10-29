@@ -31,7 +31,7 @@
     requisitionsForConvert.$inject = ['requisitionService', '$q'];
 
     function requisitionsForConvert(requisitionService, $q) {
-        var lastParams, lastPage, factory = {
+        var factory = {
             forConvert: forConvert,
             convertToOrder: convertToOrder
         };
@@ -41,37 +41,39 @@
         function forConvert(params) {
             var newParams = convertParams(params);
 
-            if (shouldFetchFromServer(params)) {
+            var factory = this;
+            if (shouldFetchFromServer(params, this.lastParams, this.lastPage)) {
                 return requisitionService.forConvert(newParams)
                 .then(function(page) {
-                    lastParams = params;
-                    lastPage = page;
+                    factory.lastParams = params;
+                    factory.lastPage = page;
                     return getRequestedPage(page, params, newParams);
                 });
             }
-            return getRequestedPage(lastPage, params, lastPage);
+            return getRequestedPage(this.lastPage, params, this.lastPage);
         }
 
         function convertToOrder(requisitions) {
+            var lastPage = this.lastPage;
             return requisitionService.convertToOrder(requisitions)
             .then(function() {
-                removeConvertedRequisitions(requisitions);
+                removeConvertedRequisitions(requisitions, lastPage);
             });
         }
 
-        function removeConvertedRequisitions(requisitions) {
+        function removeConvertedRequisitions(requisitions, lastPage) {
             if (lastPage) {
                 requisitions.forEach(function(requisition) {
                     var id = requisition.requisition.id;
                     lastPage.content = lastPage.content.filter(function(requisition) {
                         return requisition.requisition.id !== id;
                     });
-                    shrinkLastPage();
+                    shrinkLastPage(lastPage);
                 });
             }
         }
 
-        function shrinkLastPage() {
+        function shrinkLastPage(lastPage) {
             if (lastPage) {
                 lastPage.totalElements--;
                 lastPage.numberOfElements--;
@@ -105,7 +107,7 @@
             return $q.resolve(newPage);
         }
 
-        function shouldFetchFromServer(params) {
+        function shouldFetchFromServer(params, lastParams, lastPage) {
             if (!lastPage) {
                 return true;
             }
