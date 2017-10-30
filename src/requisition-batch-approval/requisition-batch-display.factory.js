@@ -95,10 +95,17 @@
             //save copy to provide revert functionality
             requisitionsCopy = angular.copy(requisitions);
 
+            var productsToDisplay = [];
+            Object.keys(products).forEach(function(key) {
+                products[key].productId = key;
+                productsToDisplay.push(products[key]);
+            });
+
             var dataToDisplay = {
                 totalCost: totalCost,
                 requisitions: requisitionsList,
                 products: products,
+                productsToDisplay: productsToDisplay,
                 lineItems: lineItems,
                 errors: errors,
                 columns: columns,

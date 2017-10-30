@@ -45,3 +45,27 @@
     }
 
 }
+
+.batch-requisition-pane {
+    @extend .page;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    #batch-approval-form {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        > * {
+            flex-grow: 0;
+        }
+        > .openlmis-table-pane {
+            flex-grow: 1;
+        }
+    }
+
+    .openlmis-toolbar {
+        background: transparent;
+        position: static;
+    }
+}

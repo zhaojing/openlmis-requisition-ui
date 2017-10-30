@@ -29,15 +29,19 @@
             isOffline: true,
             label: 'requisitionBatchApproval.batchApproval',
             url: '/batchApproval?ids',
-            controller: 'RequisitionBatchApprovalController',
-            controllerAs: 'vm',
-            templateUrl: 'requisition-batch-approval/requisition-batch-approval.html',
             accessRights: [REQUISITION_RIGHTS.REQUISITION_APPROVE],
             resolve: {
                 requisitions: getRequisitions
             },
             params: {
                 errors: {}
+            },
+            views: {
+                '@': {
+                    controller: 'RequisitionBatchApprovalController',
+                    controllerAs: 'vm',
+                    templateUrl: 'requisition-batch-approval/requisition-batch-approval.html'
+                }
             }
         });
     }

@@ -350,6 +350,9 @@
             vm.requisitions = dataToDisplay.requisitions;
 
             vm.products = dataToDisplay.products;
+
+            vm.productsToDisplay = dataToDisplay.productsToDisplay;
+
             vm.lineItems = dataToDisplay.lineItems;
             vm.errors = dataToDisplay.errors;
             vm.columns = dataToDisplay.columns;
