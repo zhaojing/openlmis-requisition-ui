@@ -29,9 +29,9 @@
 
     function run($rootScope) {
         $rootScope.$on('$stateChangeStart',
-        function(event, toState, toParams, fromState, fromParams, options){
-            if (toState !== 'openlmis.requisitions.convertToOrder') {
-                cachedRequisitionService = undefined;
+        function(event, toState, toParams, fromState, fromParams, options) {
+            if (toState !== 'openlmis.requisitions.convertToOrder' && cachedRequisitionService) {
+                cachedRequisitionService.clearCache();
             }
         });
     }

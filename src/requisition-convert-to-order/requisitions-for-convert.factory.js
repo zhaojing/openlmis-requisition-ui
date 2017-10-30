@@ -33,7 +33,8 @@
     function requisitionsForConvertFactory(requisitionService, $q) {
         var factory = {
             forConvert: forConvert,
-            convertToOrder: convertToOrder
+            convertToOrder: convertToOrder,
+            clearCache: clearCache
         };
 
         return factory;
@@ -59,6 +60,10 @@
             .then(function() {
                 removeConvertedRequisitions(requisitions, lastPage);
             });
+        }
+
+        function clearCache() {
+            this.lastPage = undefined;
         }
 
         function removeConvertedRequisitions(requisitions, lastPage) {

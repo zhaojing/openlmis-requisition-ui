@@ -713,6 +713,39 @@ describe('requisitionsForConvertFactory', function() {
 
     });
 
+    describe('clearCache', function() {
+
+        it('should clear cache', function() {
+            requisitionService.forConvert.andReturn($q.resolve({
+                first: true,
+                last: false,
+                number: 0,
+                size: 20,
+                numberOfElements: 20,
+                totalElements: 60,
+                totalPages: 3,
+                content: createDummyRequisitionsWithDates(20)
+            }));
+
+            requisitionsForConvertFactory.forConvert({
+                page: 0,
+                size: 10
+            });
+            $rootScope.$apply();
+
+            requisitionsForConvertFactory.clearCache();
+
+            requisitionsForConvertFactory.forConvert({
+                page: 0,
+                size: 10
+            });
+            $rootScope.$apply();
+
+            expect(requisitionService.forConvert.calls.length).toBe(2);
+        });
+
+    });
+
     function createDummyRequisitionsWithDates(count, startIndex) {
         var requisitions = [];
 

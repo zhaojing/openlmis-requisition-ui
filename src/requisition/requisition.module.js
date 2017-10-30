@@ -37,6 +37,7 @@
         'openlmis-rights',
         'openlmis-urls',
         'openlmis-auth',
+        'openlmis-main-state',
         'ui.router',
         'openlmis-database'
     ]);
