@@ -631,7 +631,7 @@ describe('requisitionsForConvertFactory', function() {
             requisitionsForConvertFactory.forConvert({
                 page: 0,
                 size: 10
-            })
+            });
             $rootScope.$apply();
 
             requisitionsForConvertFactory.forConvert({
@@ -641,7 +641,7 @@ describe('requisitionsForConvertFactory', function() {
             $rootScope.$apply();
             expect(requisitionService.forConvert.calls.length).toBe(1);
 
-            requisitionsForConvertFactory.convertToOrder([createDummyRequisitionWithDate(19)])
+            requisitionsForConvertFactory.convertToOrder([createDummyRequisitionWithDate(19)]);
             $rootScope.$apply();
 
             requisitionService.forConvert.andReturn($q.resolve({
@@ -658,7 +658,7 @@ describe('requisitionsForConvertFactory', function() {
             requisitionsForConvertFactory.forConvert({
                 page: 1,
                 size: 10
-            })
+            });
             $rootScope.$apply();
 
             expect(requisitionService.forConvert.calls.length).toBe(2);
