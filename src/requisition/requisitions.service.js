@@ -126,11 +126,7 @@
                 });
                 if (!requisition || !requisition.length) {
                     getRequisition(id).then(function(requisition) {
-                        requisition.stockAdjustmentReasons =  $filter('filter')(
-                            requisition.stockAdjustmentReasons, {
-                                hidden: '!true'
-                            }
-                        );
+                        filterRequisitionStockAdjustmentReasons(requisition);
 
                         requisition.$availableOffline = !onlineOnlyRequisitions.contains(id);
                         getStatusMessages(requisition).then(function(response) {
@@ -187,6 +183,7 @@
                 emergency: emergency
             }, {}).$promise
             .then(function(requisition) {
+                filterRequisitionStockAdjustmentReasons(requisition);
                 requisition.$modified = true;
                 requisition.$availableOffline = true;
                 offlineRequisitions.put(requisition);
@@ -444,6 +441,14 @@
             } else {
                 delete offlineRequisition.$outdated;
             }
+        }
+
+        function filterRequisitionStockAdjustmentReasons(requisition) {
+            requisition.stockAdjustmentReasons =  $filter('filter')(
+                requisition.stockAdjustmentReasons, {
+                    hidden: '!true'
+                }
+            );
         }
     }
 })();

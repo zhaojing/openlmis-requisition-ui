@@ -215,8 +215,9 @@ describe('requisitionService', function() {
         requisition.$modified = true;
         requisition.$availableOffline = true;
 
-        expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
+        expect(angular.toJson(data.id)).toEqual(angular.toJson(requisition.id));
         expect(requisitionsStorage.put).toHaveBeenCalled();
+        expect(data.stockAdjustmentReasons).toEqual([reasonNotHidden, reasonWithoutHidden]);
     });
 
     it('should get requisitions for convert', function() {
