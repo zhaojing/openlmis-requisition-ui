@@ -9,6 +9,7 @@ Improvements:
 * [OLMIS-3233:](https://openlmis.atlassian.net/browse/OLMIS-3233) Added ability to delete requisitions with "skipped" status.
 * [OLMIS-3246:](https://openlmis.atlassian.net/browse/OLMIS-3246) Added 'show' field to reason assignments
 * [OLMIS-3471:](https://openlmis.atlassian.net/browse/OLMIS-3471) Explanation field on Non Full supply tab is no longer mandatory
+* [OLMIS-3318:](https://openlmis.atlassian.net/browse/OLMIS-3318) Added requisitions caching to the Convert to Order screen.
 * Updated dev-ui version to 6.
 
 Bug fixes:

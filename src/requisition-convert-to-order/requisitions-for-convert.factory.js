@@ -19,10 +19,17 @@
 
     /**
      * @ngdoc service
-     * @name requisition.requisitionService
+     * @name requisition-convert-to-order.requisitionsForConvertFactory
      *
      * @description
-     * Extends program service for this module.
+     * Responsible for caching and returning requisitions for convert. It will call the
+     * requisitionService and request at least twice the amount of requested requisitions. Only the
+     * requested page will be returned and the rest of the requisitions will be cached for later
+     * use. The last page returned by the requisitionService will be stored in memory and it will
+     * get shrunk every time we call convertToOrder method (the page will be shrunk by the amount of
+     * requisitions we have converted to orders). Every time we try to get a page we don't have
+     * stored the requisitionService will be called. The requisitionService will also be called when
+     * the last page will show that there should be no more requisitions on the server.
      */
     angular
         .module('requisition-convert-to-order')
@@ -39,6 +46,19 @@
 
         return factory;
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition-convert-to-order.requisitionsForConvertFactory
+         * @name forConvert
+         *
+         * @description
+         * Returns the requested page. If we have enough requisitions cached in memory, the cached
+         * requisitions will be returned, if we don't we will call the server and download at least
+         * twice as much requisitions and cache them.
+         *
+         * @param   {Object}    params  the parameters for downloading the page
+         * @return  {Object}            the requested page
+         */
         function forConvert(params) {
             var newParams = convertParams(params);
 
@@ -54,6 +74,19 @@
             return getRequestedPage(this.lastPage, params, this.lastPage);
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition-convert-to-order.requisitionsForConvertFactory
+         * @name convertToOrder
+         *
+         * @description
+         * Converts the the given list of requisitions to orders. Every requisition that is
+         * converted will be removed from the cache and the stored page will be shrunk.
+         *
+         * @param  {Array}      requisitions    the list of arrays to be converted to order
+         * @return {Promise}                    the promise resolved when the requisitions hass been
+         *                                      successfully converted to order
+         */
         function convertToOrder(requisitions) {
             var lastPage = this.lastPage;
             return requisitionService.convertToOrder(requisitions)
@@ -62,6 +95,14 @@
             });
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition-convert-to-order.requisitionsForConvertFactory
+         * @name clearCache
+         *
+         * @description
+         * Removes all the cached requisitions from memory.
+         */
         function clearCache() {
             this.lastPage = undefined;
         }
