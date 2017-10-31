@@ -35,7 +35,7 @@ describe('RequisitionBatchApprovalController', function () {
                 approvedQuantity: 10,
                 totalCost: 100,
                 orderable: {
-                    id: 1,
+                    id: '1',
                     productCode: 'Code 1',
                     fullProductName: 'Product name 1'
                 }
@@ -46,7 +46,7 @@ describe('RequisitionBatchApprovalController', function () {
                 approvedQuantity: 1,
                 totalCost: 10,
                 orderable: {
-                    id: 2,
+                    id: '2',
                     productCode: 'Code 2',
                     fullProductName: 'Product name 2'
                 }
@@ -73,14 +73,16 @@ describe('RequisitionBatchApprovalController', function () {
             name: requisitionLineItems[0].orderable.fullProductName,
             totalCost: requisitionLineItems[0].totalCost,
             totalQuantity: requisitionLineItems[0].approvedQuantity,
-            requisitions: [requisition.id]
+            requisitions: [requisition.id],
+            productId: requisitionLineItems[0].orderable.id
         };
         products[requisitionLineItems[1].orderable.id] = {
             code: requisitionLineItems[1].orderable.productCode,
             name: requisitionLineItems[1].orderable.fullProductName,
             totalCost: requisitionLineItems[1].totalCost,
             totalQuantity: requisitionLineItems[1].approvedQuantity,
-            requisitions: [requisition.id]
+            requisitions: [requisition.id],
+            productId: requisitionLineItems[1].orderable.id
         };
 
         lineItems = [];
