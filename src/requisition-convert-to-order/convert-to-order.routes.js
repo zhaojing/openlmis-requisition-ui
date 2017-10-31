@@ -53,7 +53,7 @@
             resolve: {
                 requisitions: function(paginationService, requisitionsForConvertFactory, $stateParams) {
                     return paginationService.registerUrl($stateParams, function(stateParams) {
-						return cachedRequisitionService.forConvert(stateParams);
+						return requisitionsForConvertFactory.forConvert(stateParams);
 					});
 				}
             }
