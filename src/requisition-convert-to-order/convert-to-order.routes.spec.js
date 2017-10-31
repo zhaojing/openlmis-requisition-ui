@@ -53,7 +53,6 @@ describe('convert-to-order run block', function() {
         });
         $rootScope.$apply();
 
-
         expect(requisitionsForConvertFactory.clearCache).not.toHaveBeenCalled();
     });
 

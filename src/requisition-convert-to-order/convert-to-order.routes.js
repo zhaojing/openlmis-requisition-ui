@@ -25,13 +25,13 @@
     var cachedRequisitionService;
 
     routes.$inject = ['$stateProvider', 'FULFILLMENT_RIGHTS'];
-    run.$inject = ['$rootScope'];
+    run.$inject = ['$rootScope', 'requisitionsForConvertFactory'];
 
-    function run($rootScope) {
+    function run($rootScope, requisitionsForConvertFactory) {
         $rootScope.$on('$stateChangeStart',
         function(event, toState, toParams, fromState, fromParams, options) {
-            if (toState !== 'openlmis.requisitions.convertToOrder' && cachedRequisitionService) {
-                cachedRequisitionService.clearCache();
+            if (toState.name !== 'openlmis.requisitions.convertToOrder') {
+                requisitionsForConvertFactory.clearCache();
             }
         });
     }
@@ -52,9 +52,6 @@
             },
             resolve: {
                 requisitions: function(paginationService, requisitionsForConvertFactory, $stateParams) {
-                    if (!cachedRequisitionService) {
-                        cachedRequisitionService = requisitionsForConvertFactory;
-                    }
                     return paginationService.registerUrl($stateParams, function(stateParams) {
 						return cachedRequisitionService.forConvert(stateParams);
 					});
