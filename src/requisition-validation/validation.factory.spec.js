@@ -151,7 +151,6 @@ describe('validationFactory', function() {
 
         it('should return undefined if requestedQuantity has value, explanation is missing and line item is non full supply', function() {
             lineItem.requestedQuantity = 10;
-            lineItem.requestedQuantityExplanation = 'explanation';
             lineItem.isNonFullSupply.andReturn(true);
 
             expect(validationFactory.requestedQuantityExplanation(lineItem, requisitionMock))
