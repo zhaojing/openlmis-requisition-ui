@@ -51,6 +51,22 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    padding: 0px;
+
+    > * {
+        margin: $space-size/2 $space-size;
+    }
+
+    .breadcrumb {
+        margin: 0px;
+        padding: 0px;
+        border-bottom-width: 0px;
+    }
+
+    h2 {
+        padding: $space-size/2 0px;
+        margin: 0px $space-size;
+    }
 
     #batch-approval-form {
         display: flex;
@@ -65,7 +81,15 @@
     }
 
     .openlmis-toolbar {
-        background: transparent;
         position: static;
+        margin: 0px;
+        padding: $space-size/2 $space-size;
+    }
+
+    .openlmis-table-pane table td .collapsable,
+    .openlmis-table-pane table th .collapsable {
+        max-width: unset;
+        width: auto;
+        white-space: nowrap;
     }
 }

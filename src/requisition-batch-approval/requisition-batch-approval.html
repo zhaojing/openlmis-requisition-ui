@@ -11,41 +11,43 @@
         <div class="openlmis-table-pane">
             <table>
                 <thead>
-                <tr>
-                    <th class="col-sticky" colspan="2"></th>
-                    <th ng-repeat="requisition in ::vm.requisitions track by requisition.id"
-                        popover="{{requisition.$error}}"
-                        colspan="2"
-                        ng-class="{'requisition-error': requisition.$error,
-                                   'is-hidden': !(requisition)}">
-                        {{requisition.facilityName}} - {{requisition.periodName}}
-                    </th>
-                    <th class="col-sticky col-sticky-right" colspan="2"></th>
-                </tr>
-                <tr>
-                    <th class="col-sticky" >{{'requisitionBatchApproval.productCode' | message}}</th>
-                    <th class="col-sticky" >{{'requisitionBatchApproval.product' | message}}</th>
-                    <th ng-repeat-start="requisition in ::vm.requisitions track by requisition.id"
-                        ng-class="{'requisition-error': requisition.$error}">
-                        {{'requisitionBatchApproval.approvedQuantity' | message}}
-                    </th>
-                    <th ng-repeat-end
-                        ng-class="{'requisition-error': requisition.$error}">
-                        {{'requisitionBatchApproval.cost' | message}}
-                    </th>
-                    <th class="col-sticky col-sticky-right" >{{'requisitionBatchApproval.totalQuantityForAllFacilities' | message}}</th>
-                    <th class="col-sticky col-sticky-right" >{{'requisitionBatchApproval.totalCostForAllFacilities' | message}}</th>
-                </tr>
+                    <tr>
+                        <th class="col-sticky" colspan="2"></th>
+                        <th ng-repeat="requisition in ::vm.requisitions track by requisition.id"
+                            popover="{{requisition.$error}}"
+                            colspan="2"
+                            ng-class="{'requisition-error': requisition.$error,
+                                       'is-hidden': !(requisition)}">
+                            {{requisition.facilityName}} - {{requisition.periodName}}
+                        </th>
+                        <th class="col-sticky col-sticky-right" colspan="2"></th>
+                    </tr>
+                    <tr>
+                        <th class="col-sticky" >{{'requisitionBatchApproval.productCode' | message}}</th>
+                        <th class="col-sticky" >{{'requisitionBatchApproval.product' | message}}</th>
+                        <th ng-repeat-start="requisition in ::vm.requisitions track by requisition.id"
+                            ng-class="{'requisition-error': requisition.$error}">
+                            {{'requisitionBatchApproval.approvedQuantity' | message}}
+                        </th>
+                        <th ng-repeat-end
+                            ng-class="{'requisition-error': requisition.$error}">
+                            {{'requisitionBatchApproval.cost' | message}}
+                        </th>
+                        <th class="col-sticky col-sticky-right" >{{'requisitionBatchApproval.totalQuantityForAllFacilities' | message}}</th>
+                        <th class="col-sticky col-sticky-right" >{{'requisitionBatchApproval.totalCostForAllFacilities' | message}}</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="product in ::vm.productsToDisplay">
                         <td class="col-sticky"> {{product.code}} </td>
                         <td class="col-sticky requisition-product-grid-cell"><div class="collapsable">{{product.name}}</div></td>
                         <td ng-repeat-start="requisition in ::vm.requisitions" class="numeric">
-                            <input ng-if="(product.requisitions | contains: requisition.id) && !(vm.lineItems[requisition.id][product.productId].skipped)"
-                                   positive-integer required validate-requisition="requisition" product-id="product.productId"
-                                   ng-model="vm.lineItems[requisition.id][product.productId].approvedQuantity"
-                                   ng-change="vm.updateLineItem(vm.lineItems[requisition.id][product.productId], requisition)"/>
+                            <div ng-if="(product.requisitions | contains: requisition.id) && !(vm.lineItems[requisition.id][product.productId].skipped)"
+                                class="input-control" input-control openlmis-invalid>
+                                <input positive-integer required validate-requisition="requisition" product-id="product.productId"
+                                    ng-model="vm.lineItems[requisition.id][product.productId].approvedQuantity"
+                                    ng-change="vm.updateLineItem(vm.lineItems[requisition.id][product.productId], requisition)"/>
+                            </div>
                             <p ng-if="vm.lineItems[requisition.id][product.productId].skipped">
                                 {{'requisitionBatchApproval.skipped' | message}}
                             </p>
