@@ -6,46 +6,6 @@
     max-width: none;
 }
 
-.openlmis-table {
-
-    > thead > tr > th {
-        &.is-hidden {
-            border-bottom-width: 0px !important;
-        }
-        &.merged-cell-left {
-            border-left-width: 0px !important;
-        }
-        &.merged-cell-right {
-            border-right-width: 0px !important;
-        }
-        padding-right: 10px;
-    }
-
-    > thead > tr:first-child > th {
-        background: lighten($dark-gray, 15%);
-    }
-
-    td.numeric {
-        text-align: right;
-    }
-
-    td.total-cell,
-    tr.total-row > th,
-    tr:nth-child(2n+1) > td.total-cell {
-        background-color: $light-gray;
-        color: $black;
-    }
-
-    tr:nth-child(2n) > td.total-cell {
-        background-color: $background-color-alt;
-    }
-
-    tr.total-row > th {
-        font-weight: bold;
-    }
-
-}
-
 .batch-requisition-pane {
     @extend .page;
     display: flex;
@@ -54,18 +14,19 @@
     padding: 0px;
 
     > * {
-        margin: $space-size/2 $space-size;
+        margin: 0px;
     }
 
     .breadcrumb {
         margin: 0px;
-        padding: 0px;
+        padding: $space-size/4 $space-size;
         border-bottom-width: 0px;
     }
 
     h2 {
-        padding: $space-size/2 0px;
-        margin: 0px $space-size;
+        padding: 0px 0px 10px;
+        margin: $space-size/2 $space-size;
+        border-bottom: 1px $border-color solid;
     }
 
     #batch-approval-form {
@@ -77,6 +38,10 @@
         }
         > .openlmis-table-pane {
             flex-grow: 1;
+        }
+
+        > .openlmis-table-pane {
+            margin: 0px;
         }
     }
 
