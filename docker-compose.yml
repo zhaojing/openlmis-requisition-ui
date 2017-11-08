@@ -5,6 +5,7 @@ services:
     working_dir: /app
     volumes:
       - '.:/app'
+      - '../openlmis-ui-components:/openlmis-ui-components'
     ports:
       - "9000:9000"
       - "9876:9876"

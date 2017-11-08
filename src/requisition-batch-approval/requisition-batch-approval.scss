@@ -13,19 +13,15 @@
     flex-grow: 1;
     padding: 0px;
 
-    > * {
-        margin: 0px;
-    }
-
     .breadcrumb {
         margin: 0px;
-        padding: $space-size/4 $space-size;
+        padding: $space-size/2 $space-size;
         border-bottom-width: 0px;
     }
 
     h2 {
-        padding: 0px 0px 10px;
-        margin: $space-size/2 $space-size;
+        padding: $space-size 0px;
+        margin: 0px $space-size $space-size/2;
         border-bottom: 1px $border-color solid;
     }
 
@@ -33,15 +29,15 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+
+        margin:0px 20px;
+        
         > * {
             flex: 0 0 auto;
         }
-        > .openlmis-table-pane {
-            flex-grow: 1;
-        }
 
         > .openlmis-table-pane {
-            margin: 0px;
+            flex-grow: 1;
         }
     }
 
@@ -49,12 +45,5 @@
         position: static;
         margin: 0px;
         padding: $space-size/2 $space-size;
-    }
-
-    .openlmis-table-pane table td .collapsable,
-    .openlmis-table-pane table th .collapsable {
-        max-width: unset;
-        width: auto;
-        white-space: nowrap;
     }
 }
