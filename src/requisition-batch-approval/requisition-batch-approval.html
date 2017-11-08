@@ -20,7 +20,7 @@
                                        'is-hidden': !(requisition)}">
                             {{requisition.facilityName}} - {{requisition.periodName}}
                         </th>
-                        <th class="col-sticky col-sticky-right" colspan="2"></th>
+                        <th class="col-sticky col-sticky-right" colspan="2">{{'requisitionBatchApproval.totalForAllFacilities' | message}}</th>
                     </tr>
                     <tr>
                         <th class="col-sticky" >{{'requisitionBatchApproval.productCode' | message}}</th>
@@ -33,8 +33,8 @@
                             ng-class="{'requisition-error': requisition.$error}">
                             {{'requisitionBatchApproval.cost' | message}}
                         </th>
-                        <th class="col-sticky col-sticky-right" >{{'requisitionBatchApproval.totalQuantityForAllFacilities' | message}}</th>
-                        <th class="col-sticky col-sticky-right" >{{'requisitionBatchApproval.totalCostForAllFacilities' | message}}</th>
+                        <th class="col-sticky col-sticky-right" >{{'requisitionBatchApproval.quantity' | message}}</th>
+                        <th class="col-sticky col-sticky-right" >{{'requisitionBatchApproval.cost' | message}}</th>
                     </tr>
                 </thead>
                 <tbody>
