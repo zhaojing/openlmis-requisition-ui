@@ -1,5 +1,5 @@
-5.2.0 / WIP
-===========
+5.2.0 / 2017-11-09
+==================
 
 Improvements:
 * [OLMIS-2956:](https://openlmis.atlassian.net/browse/OLMIS-2956) Removed UserRightFactory from requisition-initiate module, and replaced with permissionService
@@ -19,7 +19,7 @@ Bug fixes:
 * [OLMIS-3322:](https://openlmis.atlassian.net/browse/OLMIS-3322) Added storing initiated requisition in offline cache.
 
 5.1.1 / 2017-09-01
-===========
+==================
 
 * [OLMIS-2797::](https://openlmis.atlassian.net/browse/OLMIS-2797) Updated product-grid error messages to use openlmis-invalid.
 
@@ -40,7 +40,7 @@ Bug fixes:
 * [OLMIS-3017:](https://openlmis.atlassian.net/browse/OLMIS-3017) Fixed problem with outdated status messages after Authorize action.
 
 5.1.0 / 2017-06-22
-===========
+==================
 
 New functionality added in a backwards-compatible manner:
 * [MW-244:](https://openlmis.atlassian.net/browse/MW-244) Added support for requisition REJECTED status.
