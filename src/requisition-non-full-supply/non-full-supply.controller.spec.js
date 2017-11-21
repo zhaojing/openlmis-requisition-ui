@@ -93,7 +93,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton()).toBe(true);
+            expect(vm.displayAddProductButton).toBe(true);
             expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
                REQUISITION_RIGHTS.REQUISITION_CREATE,
                { programCode: requisition.program.code }
@@ -106,7 +106,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton()).toBe(false);
+            expect(vm.displayAddProductButton).toBe(false);
             expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
                REQUISITION_RIGHTS.REQUISITION_CREATE,
                { programCode: requisition.program.code }
@@ -119,7 +119,7 @@ describe('NonFullSupplyController', function() {
 
               initController();
 
-              expect(vm.displayAddProductButton()).toBe(true);
+              expect(vm.displayAddProductButton).toBe(true);
               expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
                  REQUISITION_RIGHTS.REQUISITION_CREATE,
                  { programCode: requisition.program.code }
@@ -132,7 +132,7 @@ describe('NonFullSupplyController', function() {
 
               initController();
 
-              expect(vm.displayAddProductButton()).toBe(false);
+              expect(vm.displayAddProductButton).toBe(false);
               expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
                  REQUISITION_RIGHTS.REQUISITION_CREATE,
                  { programCode: requisition.program.code }
@@ -146,7 +146,7 @@ describe('NonFullSupplyController', function() {
 
            initController();
 
-           expect(vm.displayAddProductButton()).toBe(true);
+           expect(vm.displayAddProductButton).toBe(true);
            expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
                REQUISITION_RIGHTS.REQUISITION_AUTHORIZE,
                { programCode: requisition.program.code }
@@ -160,7 +160,7 @@ describe('NonFullSupplyController', function() {
 
              initController();
 
-             expect(vm.displayAddProductButton()).toBe(false);
+             expect(vm.displayAddProductButton).toBe(false);
              expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
                  REQUISITION_RIGHTS.REQUISITION_AUTHORIZE,
                  { programCode: requisition.program.code }
@@ -173,7 +173,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton()).toBe(false);
+            expect(vm.displayAddProductButton).toBe(false);
         });
 
         it('should not display add product button if requisition is approved', function() {
@@ -182,7 +182,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton()).toBe(false);
+            expect(vm.displayAddProductButton).toBe(false);
         });
 
         it('should not display add product button if requisition is in approval', function() {
@@ -191,7 +191,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton()).toBe(false);
+            expect(vm.displayAddProductButton).toBe(false);
         });
 
         it('should not display add product button if requisition is released', function() {
@@ -200,7 +200,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton()).toBe(false);
+            expect(vm.displayAddProductButton).toBe(false);
         });
 
     });
