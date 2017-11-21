@@ -107,7 +107,7 @@ describe('ProductGridCell', function() {
             scope.column = fullSupplyColumns[0];
 
             scope.lineItem = jasmine.createSpyObj('lineItem', [
-                'getFieldValue','updateDependentFields'
+                'getFieldValue','updateDependentFields', 'canBeSkipped'
             ]);
 
             scope.lineItem.$program = {
