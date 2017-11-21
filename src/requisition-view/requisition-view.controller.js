@@ -96,6 +96,7 @@
         vm.invalidFullSupply = undefined;
 
         // Functions
+        vm.$onInit = onInit;
         vm.updateRequisition = updateRequisition;
         vm.syncRnr = syncRnr;
         vm.syncRnrAndPrint = syncRnrAndPrint;
@@ -105,17 +106,27 @@
         vm.approveRnr = approveRnr;
         vm.rejectRnr = rejectRnr;
         vm.skipRnr = skipRnr;
-        vm.displaySubmit = displaySubmit;
-        vm.displayAuthorize = displayAuthorize;
-        vm.displayDelete = displayDelete;
-        vm.displayApproveAndReject = displayApproveAndReject;
-        vm.displayConvertToOrder = displayConvertToOrder;
-        vm.displaySkip = displaySkip;
-        vm.displaySync = displaySync;
         vm.isOffline = offlineService.isOffline;
         vm.getPrintUrl = getPrintUrl;
         vm.isFullSupplyTabValid = isFullSupplyTabValid;
         vm.isNonFullSupplyTabValid = isNonFullSupplyTabValid;
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view.controller:RequisitionViewController
+         * @name $onInit
+         *
+         * @description
+         * Initialization method of the RequisitionViewController.
+         */
+        function onInit() {
+            vm.canSubmit = displaySubmit();
+            vm.canAuthorize = displayAuthorize();
+            vm.canDelete = displayDelete();
+            vm.canApproveAndReject = displayApproveAndReject();
+            vm.canSkip = displaySkip();
+            vm.canSync = displaySync();
+        }
 
         /**
          * @ngdoc method
@@ -485,21 +496,6 @@
                 }
             }
             return false;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name displayConvertToOrder
-         *
-         * @description
-         * Determines whether to display convert to order button or not. Returns true only if
-         * requisition is approved and user has permission to convert requisition.
-         *
-         * @return {Boolean} should convert to order button be displayed
-         */
-        function displayConvertToOrder() {
-            return vm.requisition.$isApproved() && hasRightForProgram(FULFILLMENT_RIGHTS.ORDERS_EDIT);
         }
 
         /**

@@ -138,40 +138,186 @@ describe('RequisitionViewController', function() {
         requisition.requisitionLineItems = fullSupplyItems.concat(nonFullSupplyItems);
     });
 
-    it('should display skip button', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-        expect(vm.displaySkip()).toBe(true);
-    });
+    describe('$onInit', function() {
 
-    it('should display skip button when requisition is rejected', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-        requisition.$isInitiated.andReturn(false);
-        requisition.$isRejected.andReturn(true);
+        it('should display skip button', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
 
-        expect(vm.displaySkip()).toBe(true);
-    });
+            vm.$onInit();
 
-    it('should not display skip button if user has no permission to create requisition', function() {
-        authorizationServiceSpy.hasRight.andReturn(false);
-        expect(vm.displaySkip()).toBe(false);
-    });
+            expect(vm.canSkip).toBe(true);
+        });
 
-    it('should not display skip button if program does not allow skipping periods', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-        vm.requisition.program.periodsSkippable = false;
-        expect(vm.displaySkip()).toBe(false);
-    });
+        it('should display skip button when requisition is rejected', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isRejected.andReturn(true);
 
-    it('should not display skip button if requisition has emergency type', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-        vm.requisition.emergency = true;
-        expect(vm.displaySkip()).toBe(false);
-    });
+            vm.$onInit();
 
-    it('should display skip button if requisition is not in initiated status', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-        vm.requisition.$isInitiated.andReturn(false);
-        expect(vm.displaySkip()).toBe(false);
+            expect(vm.canSkip).toBe(true);
+        });
+
+        it('should not display skip button if user has no permission to create requisition', function() {
+            authorizationServiceSpy.hasRight.andReturn(false);
+
+            vm.$onInit();
+
+            expect(vm.canSkip).toBe(false);
+        });
+
+        it('should not display skip button if program does not allow skipping periods', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+            vm.requisition.program.periodsSkippable = false;
+
+            vm.$onInit();
+
+            expect(vm.canSkip).toBe(false);
+        });
+
+        it('should not display skip button if requisition has emergency type', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+            vm.requisition.emergency = true;
+
+            vm.$onInit();
+
+            expect(vm.canSkip).toBe(false);
+        });
+
+        it('should display skip button if requisition is not in initiated status', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+            vm.requisition.$isInitiated.andReturn(false);
+
+            vm.$onInit();
+
+            expect(vm.canSkip).toBe(false);
+        });
+
+        it('should display sync button when initiated', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isInitiated.andReturn(true);
+            vm.requisition.$isSubmitted.andReturn(false);
+            vm.requisition.$isAuthorized.andReturn(false);
+            vm.requisition.$isInApproval.andReturn(false);
+
+            vm.$onInit();
+
+            expect(vm.canSync).toBe(true);
+        });
+
+        it('should display sync button when rejected', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isInitiated.andReturn(false);
+            vm.requisition.$isSubmitted.andReturn(false);
+            vm.requisition.$isAuthorized.andReturn(false);
+            vm.requisition.$isInApproval.andReturn(false);
+            vm.requisition.$isRejected.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canSync).toBe(true);
+        });
+
+        it('should display sync button when submitted', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isInitiated.andReturn(false);
+            vm.requisition.$isSubmitted.andReturn(true);
+            vm.requisition.$isAuthorized.andReturn(false);
+            vm.requisition.$isInApproval.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canSync).toBe(true);
+        });
+
+        it('should display sync button when authorized', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isInitiated.andReturn(false);
+            vm.requisition.$isSubmitted.andReturn(false);
+            vm.requisition.$isAuthorized.andReturn(true);
+            vm.requisition.$isInApproval.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canSync).toBe(true);
+        });
+
+        it('should display sync button in approval', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isInitiated.andReturn(false);
+            vm.requisition.$isSubmitted.andReturn(false);
+            vm.requisition.$isAuthorized.andReturn(false);
+            vm.requisition.$isInApproval.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canSync).toBe(true);
+        });
+
+        it('should not display sync button', function() {
+            vm.requisition.$isInitiated.andReturn(false);
+            vm.requisition.$isSubmitted.andReturn(false);
+            vm.requisition.$isAuthorized.andReturn(false);
+            vm.requisition.$isInApproval.andReturn(false);
+
+            vm.$onInit();
+
+            expect(vm.canSync).toBe(false);
+        });
+
+        it('should display delete button when initiated', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isInitiated.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canDelete).toBe(true);
+        });
+
+        it('should display delete button when rejected', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isInitiated.andReturn(false);
+            vm.requisition.$isRejected.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canDelete).toBe(true);
+        });
+
+
+        it('should display delete button when submitted', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isSubmitted.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canDelete).toBe(true);
+        });
+
+        it('should display delete button when skipped', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+
+            vm.requisition.$isSkipped.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canDelete).toBe(true);
+        });
+
+        it('should not display delete button', function() {
+            vm.$onInit();
+
+            expect(vm.canDelete).toBe(false);
+        });
+
     });
 
     it('should display message when successfully skipped requisition', function() {
@@ -210,108 +356,6 @@ describe('RequisitionViewController', function() {
 
     it('getPrintUrl should prepare URL correctly', function() {
         expect(vm.getPrintUrl()).toEqual('http://some.url/api/requisitions/1/print');
-    });
-
-    it('should display sync button when initiated', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isInitiated.andReturn(true);
-        vm.requisition.$isSubmitted.andReturn(false);
-        vm.requisition.$isAuthorized.andReturn(false);
-        vm.requisition.$isInApproval.andReturn(false);
-
-        expect(vm.displaySync()).toBe(true);
-    });
-
-    it('should display sync button when rejected', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isInitiated.andReturn(false);
-        vm.requisition.$isSubmitted.andReturn(false);
-        vm.requisition.$isAuthorized.andReturn(false);
-        vm.requisition.$isInApproval.andReturn(false);
-        vm.requisition.$isRejected.andReturn(true);
-
-        expect(vm.displaySync()).toBe(true);
-    });
-
-    it('should display sync button when submitted', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isInitiated.andReturn(false);
-        vm.requisition.$isSubmitted.andReturn(true);
-        vm.requisition.$isAuthorized.andReturn(false);
-        vm.requisition.$isInApproval.andReturn(true);
-
-        expect(vm.displaySync()).toBe(true);
-    });
-
-    it('should display sync button when authorized', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isInitiated.andReturn(false);
-        vm.requisition.$isSubmitted.andReturn(false);
-        vm.requisition.$isAuthorized.andReturn(true);
-        vm.requisition.$isInApproval.andReturn(true);
-
-        expect(vm.displaySync()).toBe(true);
-    });
-
-    it('should display sync button in approval', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isInitiated.andReturn(false);
-        vm.requisition.$isSubmitted.andReturn(false);
-        vm.requisition.$isAuthorized.andReturn(false);
-        vm.requisition.$isInApproval.andReturn(true);
-
-        expect(vm.displaySync()).toBe(true);
-    });
-
-    it('should not display sync button', function() {
-        vm.requisition.$isInitiated.andReturn(false);
-        vm.requisition.$isSubmitted.andReturn(false);
-        vm.requisition.$isAuthorized.andReturn(false);
-        vm.requisition.$isInApproval.andReturn(false);
-        expect(vm.displaySync()).toBe(false);
-    });
-
-    it('should display delete button when initiated', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isInitiated.andReturn(true);
-
-        expect(vm.displayDelete()).toBe(true);
-    });
-
-    it('should display delete button when rejected', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isInitiated.andReturn(false);
-        vm.requisition.$isRejected.andReturn(true);
-
-        expect(vm.displayDelete()).toBe(true);
-    });
-
-
-    it('should display delete button when submitted', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isSubmitted.andReturn(true);
-
-        expect(vm.displayDelete()).toBe(true);
-    });
-
-    it('should display delete button when skipped', function() {
-        authorizationServiceSpy.hasRight.andReturn(true);
-
-        vm.requisition.$isSkipped.andReturn(true);
-
-        expect(vm.displayDelete()).toBe(true);
-    });
-
-    it('should not display delete button', function() {
-        expect(vm.displayDelete()).toBe(false);
     });
 
     describe('Sync error handling', function() {
