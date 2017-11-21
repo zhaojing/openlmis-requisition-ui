@@ -16,9 +16,10 @@
 
 describe('Requisition', function() {
 
-    var $rootScope, httpBackend, q, REQUISITION_STATUS, requisitionUrlFactory, openlmisUrl,
+    var $rootScope, $httpBackend, q, REQUISITION_STATUS, requisitionUrlFactory,
         LineItemSpy, offlineRequisitions, authorizationServiceSpy, userHasApproveRight,
-        userHasAuthorizeRight, userHasCreateRight, userHasDeleteRight, REQUISITION_RIGHTS;
+        userHasAuthorizeRight, userHasCreateRight, userHasDeleteRight, REQUISITION_RIGHTS,
+        Requisition;
 
     var requisition,
         facility = {
@@ -142,16 +143,14 @@ describe('Requisition', function() {
         });
     }));
 
-    beforeEach(inject(function(_$httpBackend_, _$rootScope_, Requisition, _requisitionUrlFactory_,
-                               openlmisUrlFactory, _REQUISITION_STATUS_, $q, _REQUISITION_RIGHTS_) {
-
-        httpBackend = _$httpBackend_;
-        $rootScope = _$rootScope_;
-        requisitionUrlFactory = _requisitionUrlFactory_;
-        openlmisUrl = openlmisUrlFactory;
-        REQUISITION_STATUS = _REQUISITION_STATUS_;
-        REQUISITION_RIGHTS = _REQUISITION_RIGHTS_;
-        q = $q;
+    beforeEach(inject(function($injector) {
+        $httpBackend = $injector.get('$httpBackend');
+        $rootScope = $injector.get('$rootScope');
+        requisitionUrlFactory = $injector.get('requisitionUrlFactory');
+        REQUISITION_STATUS = $injector.get('REQUISITION_STATUS');
+        REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+        $q = $injector.get('$q');
+        Requisition = $injector.get('Requisition');
 
         requisition = new Requisition(sourceRequisition);
     }));
@@ -167,13 +166,13 @@ describe('Requisition', function() {
 
         requisition.status = REQUISITION_STATUS.SUBMITTED;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
         .respond(200, requisition);
 
         requisition.$availableOffline = true;
         requisition.$submit();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isSubmitted()).toBe(true);
@@ -195,13 +194,13 @@ describe('Requisition', function() {
         updatedRequisition.modifiedDate = [2016, 4, 31, 16, 25, 33];
         updatedRequisition.statusChanges = 'statusChanges';
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
             .respond(200, updatedRequisition);
 
         requisition.$availableOffline = true;
         requisition.$submit();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(offlineRequisitions.put).toHaveBeenCalled();
@@ -219,13 +218,13 @@ describe('Requisition', function() {
 
         updatedRequisition = angular.copy(requisition);
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
             .respond(200, updatedRequisition);
 
         requisition.$availableOffline = true;
         requisition.$submit();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(offlineRequisitions.put).toHaveBeenCalled();
@@ -242,13 +241,13 @@ describe('Requisition', function() {
 
         requisition.status = REQUISITION_STATUS.AUTHORIZED;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
         .respond(200, requisition);
 
         requisition.$availableOffline = true;
         requisition.$authorize();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isAuthorized()).toBe(true);
@@ -268,13 +267,13 @@ describe('Requisition', function() {
 
         requisition.status = REQUISITION_STATUS.APPROVED;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/approve'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/approve'))
         .respond(200, requisition);
 
         requisition.$availableOffline = true;
         requisition.$approve();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isApproved()).toBe(true);
@@ -294,13 +293,13 @@ describe('Requisition', function() {
 
         requisition.status = REQUISITION_STATUS.SUBMITTED;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
         .respond(200, requisition);
 
         requisition.$availableOffline = false;
         requisition.$submit();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isSubmitted()).toBe(true);
@@ -317,13 +316,13 @@ describe('Requisition', function() {
 
         requisition.status = REQUISITION_STATUS.AUTHORIZED;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
         .respond(200, requisition);
 
         requisition.$availableOffline = false;
         requisition.$authorize();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isAuthorized()).toBe(true);
@@ -341,13 +340,13 @@ describe('Requisition', function() {
         requisition.requisitionLineItems[0].requestedQuantity = 10;
         requisition.requisitionLineItems[1].requestedQuantity = 15;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
             .respond(200, requisition);
 
         requisition.$availableOffline = false;
         requisition.$authorize();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isAuthorized()).toBe(true);
@@ -366,13 +365,13 @@ describe('Requisition', function() {
         requisition.requisitionLineItems[0].requestedQuantity = null;
         requisition.requisitionLineItems[1].requestedQuantity = null;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
             .respond(200, requisition);
 
         requisition.$availableOffline = false;
         requisition.$authorize();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isAuthorized()).toBe(true);
@@ -391,13 +390,13 @@ describe('Requisition', function() {
         requisition.requisitionLineItems[0].requestedQuantity = 15;
         requisition.requisitionLineItems[1].requestedQuantity = null;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
             .respond(200, requisition);
 
         requisition.$availableOffline = false;
         requisition.$authorize();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isAuthorized()).toBe(true);
@@ -416,13 +415,13 @@ describe('Requisition', function() {
 
         requisition.status = REQUISITION_STATUS.APPROVED;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/approve'))
+        $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/approve'))
         .respond(200, requisition);
 
         requisition.$availableOffline = false;
         requisition.$approve();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(requisition.$isApproved()).toBe(true);
@@ -432,14 +431,14 @@ describe('Requisition', function() {
     it('should reject requisition', function() {
         var data;
 
-        httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/reject'))
+        $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/reject'))
         .respond(200, requisition);
 
         requisition.$reject().then(function(response) {
             data = response;
         });
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
@@ -448,14 +447,14 @@ describe('Requisition', function() {
     it('should skip requisition', function() {
         var data;
 
-        httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/skip'))
+        $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/skip'))
         .respond(200, requisition);
 
         requisition.$skip().then(function(response) {
             data = response;
         });
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
@@ -464,7 +463,7 @@ describe('Requisition', function() {
     it('should save requisition', function() {
         var data;
 
-        httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id))
+        $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id))
           .respond(200, requisition);
 
         requisition.name = 'Saved requisition';
@@ -473,31 +472,31 @@ describe('Requisition', function() {
             data = response;
         });
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
     });
 
     it('should remove offline when 403', function() {
-        httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id))
+        $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id))
           .respond(403, requisition);
 
         requisition.$save();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(offlineRequisitions.removeBy).toHaveBeenCalledWith('id', '1');
     });
 
     it('should remove offline when 409', function() {
-        httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id))
+        $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id))
           .respond(403, requisition);
 
         requisition.$save();
 
-        httpBackend.flush();
+        $httpBackend.flush();
         $rootScope.$apply();
 
         expect(offlineRequisitions.removeBy).toHaveBeenCalledWith('id', '1');
@@ -648,7 +647,7 @@ describe('Requisition', function() {
     });
 
 
-    describe('isEditable', function() {
+    describe('constructor', function() {
 
         beforeEach(function() {
             userHasApproveRight = false;
@@ -658,114 +657,144 @@ describe('Requisition', function() {
         });
 
 
-        it('should return true if user has REQUISITION_CREATE right and requisition is initiated', function() {
-            requisition.status = REQUISITION_STATUS.INITIATED;
+        it('should set isEditable to true if user has REQUISITION_CREATE right and requisition is initiated', function() {
+            sourceRequisition.status = REQUISITION_STATUS.INITIATED;
             userHasCreateRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_CREATE right and requisition is rejected', function() {
-            requisition.status = REQUISITION_STATUS.REJECTED;
+        it('should set isEditable to true if user has REQUISITION_CREATE right and requisition is rejected', function() {
+            sourceRequisition.status = REQUISITION_STATUS.REJECTED;
             userHasCreateRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_APPROVE right and requisition is authorized', function() {
-            requisition.status = REQUISITION_STATUS.AUTHORIZED;
+        it('should set isEditable to true if user has REQUISITION_APPROVE right and requisition is authorized', function() {
+            sourceRequisition.status = REQUISITION_STATUS.AUTHORIZED;
             userHasApproveRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_APPROVE right and requisition is in aproval', function() {
-            requisition.status = REQUISITION_STATUS.IN_APPROVAL;
+        it('should set isEditable to true if user has REQUISITION_APPROVE right and requisition is in aproval', function() {
+            sourceRequisition.status = REQUISITION_STATUS.IN_APPROVAL;
             userHasApproveRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_DELETE and REQUISITION_CREATE rights and requisition is initiated', function() {
-            requisition.status = REQUISITION_STATUS.INITIATED;
+        it('should set isEditable to true if user has REQUISITION_DELETE and REQUISITION_CREATE rights and requisition is initiated', function() {
+            sourceRequisition.status = REQUISITION_STATUS.INITIATED;
             userHasDeleteRight = true;
             userHasCreateRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_DELETE and REQUISITION_CREATE rights and requisition is rejected', function() {
-            requisition.status = REQUISITION_STATUS.REJECTED;
+        it('should set isEditable to true if user has REQUISITION_DELETE and REQUISITION_CREATE rights and requisition is rejected', function() {
+            sourceRequisition.status = REQUISITION_STATUS.REJECTED;
             userHasDeleteRight = true;
             userHasCreateRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_DELETE and REQUISITION_AUTHORIZE rights and requisition is submitted', function() {
-            requisition.status = REQUISITION_STATUS.SUBMITTED;
+        it('should set isEditable to true if user has REQUISITION_DELETE and REQUISITION_AUTHORIZE rights and requisition is submitted', function() {
+            sourceRequisition.status = REQUISITION_STATUS.SUBMITTED;
             userHasDeleteRight = true;
             userHasAuthorizeRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_AUTHORIZE right and requisition is initiated', function() {
-            requisition.status = REQUISITION_STATUS.INITIATED;
+        it('should set isEditable to true if user has REQUISITION_AUTHORIZE right and requisition is initiated', function() {
+            sourceRequisition.status = REQUISITION_STATUS.INITIATED;
             userHasAuthorizeRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_AUTHORIZE right and requisition is rejected', function() {
-            requisition.status = REQUISITION_STATUS.REJECTED;
+        it('should set isEditable to true if user has REQUISITION_AUTHORIZE right and requisition is rejected', function() {
+            sourceRequisition.status = REQUISITION_STATUS.REJECTED;
             userHasAuthorizeRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return true if user has REQUISITION_AUTHORIZE right and requisition is submitted', function() {
-            requisition.status = REQUISITION_STATUS.SUBMITTED;
+        it('should set isEditable to true if user has REQUISITION_AUTHORIZE right and requisition is submitted', function() {
+            sourceRequisition.status = REQUISITION_STATUS.SUBMITTED;
             userHasAuthorizeRight = true;
 
-            expect(requisition.$isEditable()).toBe(true);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(true);
         });
 
-        it('should return false if user does not have REQUISITION_CREATE right and requisition is initiated', function() {
-            requisition.status = REQUISITION_STATUS.INITIATED;
+        it('should set isEditable to false if user does not have REQUISITION_CREATE right and requisition is initiated', function() {
+            sourceRequisition.status = REQUISITION_STATUS.INITIATED;
 
-            expect(requisition.$isEditable()).toBe(false);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(false);
         });
 
-        it('should return false if user has REQUISITION_CREATE right and requisition is submitted', function() {
-            requisition.status = REQUISITION_STATUS.SUBMITTED;
+        it('should set isEditable to false if user has REQUISITION_CREATE right and requisition is submitted', function() {
+            sourceRequisition.status = REQUISITION_STATUS.SUBMITTED;
             userHasCreateRight = true;
 
-            expect(requisition.$isEditable()).toBe(false);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(false);
         });
 
-        it('should return false if user has REQUISITION_AUTHORIZE right and requisition is authorized', function() {
-            requisition.status = REQUISITION_STATUS.AUTHORIZED;
+        it('should set isEditable to false if user has REQUISITION_AUTHORIZE right and requisition is authorized', function() {
+            sourceRequisition.status = REQUISITION_STATUS.AUTHORIZED;
             userHasAuthorizeRight = true;
 
-            expect(requisition.$isEditable()).toBe(false);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(false);
         });
 
-        it('should return false if user has REQUISITION_APPROVE right and requisition is approved', function() {
-            requisition.status = REQUISITION_STATUS.APPROVED;
+        it('should set isEditable to false if user has REQUISITION_APPROVE right and requisition is approved', function() {
+            sourceRequisition.status = REQUISITION_STATUS.APPROVED;
             userHasApproveRight = true;
 
-            expect(requisition.$isEditable()).toBe(false);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(false);
         });
 
-        it('should return false if requisition is released', function() {
-            requisition.status = REQUISITION_STATUS.RELEASED;
+        it('should set isEditable to false if requisition is released', function() {
+            sourceRequisition.status = REQUISITION_STATUS.RELEASED;
             userHasAuthorizeRight = true;
             userHasCreateRight = true;
             userHasApproveRight = true;
             userHasDeleteRight = true;
 
-            expect(requisition.$isEditable()).toBe(false);
+            requisition = new Requisition(sourceRequisition);
+
+            expect(requisition.$isEditable).toBe(false);
         });
     });
 

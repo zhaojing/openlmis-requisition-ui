@@ -84,7 +84,6 @@
         Requisition.prototype.$isSkipped = isSkipped;
         Requisition.prototype.$isAfterAuthorize = isAfterAuthorize;
         Requisition.prototype.$getProducts = getProducts;
-        Requisition.prototype.$isEditable = isEditable;
 
         return Requisition;
 
@@ -112,6 +111,8 @@
             source.requisitionLineItems.forEach(function(lineItem) {
                 requisition.requisitionLineItems.push(new LineItem(lineItem, requisition));
             });
+
+            this.$isEditable = isEditable(this);
         }
 
         /**
@@ -398,8 +399,7 @@
          *
          * @return {Boolean} true if this requisition' is editable, false otherwise
          */
-        function isEditable() {
-            var requisition = this;
+        function isEditable(requisition) {
             return hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, requisition) && (requisition.$isInitiated() || requisition.$isRejected())
                 || hasRight(REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition) && (requisition.$isAuthorized() || requisition.$isInApproval())
                 || hasRight(REQUISITION_RIGHTS.REQUISITION_DELETE, requisition) && hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, requisition) && (requisition.$isInitiated() || requisition.$isRejected())
