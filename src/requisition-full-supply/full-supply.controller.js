@@ -34,11 +34,10 @@
 
         var vm = this;
 
-        vm.areSkipControlsVisible = areSkipControlsVisible;
+        vm.$onInit = onInit;
         vm.skipAll = skipAll;
         vm.unskipAll = unskipAll;
         vm.isSkipColumn = isSkipColumn;
-        vm.canEditRequisition = canEditRequisition;
 
         /**
          * @ngdoc property
@@ -49,7 +48,7 @@
          * @description
          * Holds all requisition line items.
          */
-        vm.lineItems = lineItems;
+        vm.lineItems = undefined;
 
         /**
          * @ngdoc property
@@ -71,7 +70,7 @@
          * @description
          * Holds requisition. This object is shared with the parent and nonFullSupply states.
          */
-        vm.requisition = requisition;
+        vm.requisition = undefined;
 
         /**
          * @ngdoc property
@@ -82,7 +81,26 @@
          * @description
          * Holds the list of columns visible on this screen.
          */
-        vm.columns = columns;
+        vm.columns = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-full-supply.controller:FullSupplyController
+         * @name skippedAll
+         * @type {Boolean}
+         *
+         * @description
+         * Indicates if the skip all button has been clicked.
+         */
+        vm.skippedAll = undefined;
+
+        function onInit() {
+            vm.lineItems = lineItems;
+            vm.requisition = requisition;
+            vm.columns = columns;
+            vm.skippedAll = false;
+            vm.areSkipControlsVisible = areSkipControlsVisible();
+        }
 
         /**
          *
@@ -98,17 +116,6 @@
          * @return {Boolean}          true if any of the fields has error, false otherwise
          */
         vm.isLineItemValid = requisitionValidator.isLineItemValid;
-
-        /**
-         * @ngdoc property
-         * @propertyOf requisition-full-supply.controller:FullSupplyController
-         * @name skippedAll
-         * @type {Boolean}
-         *
-         * @description
-         * Indicates if the skip all button has been clicked.
-         */
-        vm.skippedAll = false;
 
         /**
          * @ngdoc method
@@ -169,20 +176,6 @@
          */
         function isSkipColumn(column) {
             return column.name === TEMPLATE_COLUMNS.SKIPPED;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-full-supply.controller:FullSupplyController
-         * @name canEditRequisition
-         *
-         * @description
-         * Determines whether the requisition is editable.
-         *
-         * @return {Boolean} true if requisition is editable
-         */
-        function canEditRequisition() {
-            return requisition.$isEditable();
         }
 
         function setSkipAll(value) {

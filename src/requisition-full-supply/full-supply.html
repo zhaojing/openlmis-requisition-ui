@@ -1,10 +1,10 @@
 <div class="openlmis-table-container">
-	<h4 ng-show="vm.areSkipControlsVisible()">{{'requisitionFullSupply.skip' | message}}</h4>
-	<ul ng-show="vm.areSkipControlsVisible()">
+	<h4 ng-show="vm.areSkipControlsVisible">{{'requisitionFullSupply.skip' | message}}</h4>
+	<ul ng-show="vm.areSkipControlsVisible">
 		<li><a ng-click="vm.skipAll()">{{'requisitionFullSupply.all' | message}}</a></li>
 		<li><a ng-click="vm.unskipAll()">{{'requisitionFullSupply.none' | message}}</a></li>
 	</ul>
-	<saving-indicator  ng-show="vm.canEditRequisition()" class="requisition-indicator" object="vm.requisition.requisitionLineItems"/>
+	<saving-indicator ng-show="vm.requisition.$isEditable" class="requisition-indicator" object="vm.requisition.requisitionLineItems"/>
 	<table>
 		<thead>
 			<tr>

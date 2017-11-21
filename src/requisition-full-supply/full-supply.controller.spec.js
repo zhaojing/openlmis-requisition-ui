@@ -106,6 +106,8 @@ describe('FullSupplyController', function() {
     });
 
     it('should mark all full supply line items as skipped', function() {
+        vm.$onInit();
+
         vm.skipAll();
 
         expect(requisition.requisitionLineItems[0].skipped).toBe(true);
@@ -117,6 +119,8 @@ describe('FullSupplyController', function() {
     });
 
     it('should mark all full supply line items as not skipped', function() {
+        vm.$onInit();
+
         vm.unskipAll();
 
         expect(requisition.requisitionLineItems[0].skipped).toBe(false);
@@ -126,49 +130,69 @@ describe('FullSupplyController', function() {
         expect(requisition.requisitionLineItems[4].skipped).toBe(false);
     });
 
-    it('should not show skip controls', function(){
-        expect(vm.areSkipControlsVisible()).toBe(false);
-    });
+    describe('$onInit', function() {
 
-    it('should show skip controls if the requisition status is INITIATED', function(){
-        requisition.$isInitiated.andReturn(true);
-        expect(vm.areSkipControlsVisible()).toBe(true);
-    });
+        it('should not show skip controls', function(){
+            vm.$onInit();
 
-    it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function(){
-        requisition.$isSubmitted.andReturn(true);
-        spyOn(authorizationService, 'hasRight').andReturn(true);
-
-        expect(vm.areSkipControlsVisible()).toBe(true);
-    });
-
-    it('should show skip controls if the requisition status is REJECTED', function(){
-        requisition.$isRejected.andReturn(true);
-        expect(vm.areSkipControlsVisible()).toBe(true);
-    });
-
-    it('should show skip controls if the requisition template has a skip columm', function(){
-        requisition.$isInitiated.andReturn(true);
-        columns[0].name = 'skipped';
-
-        expect(vm.areSkipControlsVisible()).toBe(true);
-    });
-
-
-    it('should not show skip controls if the requisition template doesnt have a skip columm', function(){
-        requisition.$isInitiated.andReturn(true);
-        columns[0].name = 'foo';
-
-        expect(vm.areSkipControlsVisible()).toBe(false);
-    });
-
-    it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
-        requisition.$isSubmitted.andReturn(true);
-        spyOn(authorizationService, 'hasRight').andReturn(false);
-
-        expect(vm.areSkipControlsVisible()).toBe(false);
-        expect(authorizationService.hasRight).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
-            programCode: requisition.program.code
+            expect(vm.areSkipControlsVisible).toBe(false);
         });
+
+        it('should show skip controls if the requisition status is INITIATED', function(){
+            requisition.$isInitiated.andReturn(true);
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(true);
+        });
+
+        it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function(){
+            requisition.$isSubmitted.andReturn(true);
+            spyOn(authorizationService, 'hasRight').andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(true);
+        });
+
+        it('should show skip controls if the requisition status is REJECTED', function(){
+            requisition.$isRejected.andReturn(true);
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(true);
+        });
+
+        it('should show skip controls if the requisition template has a skip columm', function(){
+            requisition.$isInitiated.andReturn(true);
+            columns[0].name = 'skipped';
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(true);
+        });
+
+
+        it('should not show skip controls if the requisition template doesnt have a skip columm', function(){
+            requisition.$isInitiated.andReturn(true);
+            columns[0].name = 'foo';
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(false);
+        });
+
+        it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
+            requisition.$isSubmitted.andReturn(true);
+            spyOn(authorizationService, 'hasRight').andReturn(false);
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(false);
+            expect(authorizationService.hasRight).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
+                programCode: requisition.program.code
+            });
+        });
+
     });
+
+
 });
