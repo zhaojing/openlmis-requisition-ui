@@ -1,3 +1,9 @@
+5.2.1 / Work in Progress
+========================
+
+Improvements:
+* [OLMIS-3657:](https://openlmis.atlassian.net/browse/OLMIS-3657) Improved performance of the requisition view page.
+
 5.2.0 / 2017-11-09
 ==================
 
