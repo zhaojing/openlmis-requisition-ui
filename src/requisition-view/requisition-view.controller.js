@@ -95,6 +95,72 @@
          */
         vm.invalidFullSupply = undefined;
 
+        /**
+         * ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name canSubmit
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether current user has a right to submit the requisition.
+         */
+        vm.canSubmit = undefined;
+
+        /**
+         * ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name canAuthorize
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether current user has a right to authorize the requisition.
+         */
+        vm.canAuthorize = undefined;
+
+        /**
+         * ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name canDelete
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether current user has a right to delete the requisition.
+         */
+        vm.canDelete = undefined;
+
+        /**
+         * ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name canApproveAndReject
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether current user has a right to approve and reject the requisition.
+         */
+        vm.canApproveAndReject = undefined;
+
+        /**
+         * ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name canSkip
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether current user has a right to skip the requisition.
+         */
+        vm.canSkip = undefined;
+
+        /**
+         * ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name canSync
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether current user has a right to synchronize the requisition.
+         */
+        vm.canSync = undefined;
+
         // Functions
         vm.$onInit = onInit;
         vm.updateRequisition = updateRequisition;
