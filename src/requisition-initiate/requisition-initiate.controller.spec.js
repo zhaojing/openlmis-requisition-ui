@@ -95,6 +95,7 @@ describe("RequisitionInitiateController", function(){
 
         vm.$onInit();
         spyOn($state, 'go');
+        spyOn(requisitionService, 'initiate');
         hasRight = false;
         vm.program = programs[0];
         vm.facility = facility;
@@ -104,6 +105,7 @@ describe("RequisitionInitiateController", function(){
 
         expect($state.go).not.toHaveBeenCalled();
         expect(permissionService.hasPermission).toHaveBeenCalled();
+        expect(requisitionService.initiate).not.toHaveBeenCalled();
     });
 
     it("Should not change page to requisitions.requisition with selected period without rnrId and when invalid response from service", function() {
