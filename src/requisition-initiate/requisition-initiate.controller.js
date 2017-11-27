@@ -111,7 +111,7 @@
          * @name initRnr
          *
          * @description
-         * Responsible for initiating a requisition for a specified period. If 
+         * Responsible for initiating a requisition for a specified period. If
          * creating the requisition is successful, then the user is sent to the
          * requisition view page. Otherwise an error message is shown.
          *
@@ -128,22 +128,20 @@
                 programId: vm.program.id,
                 facilityId: vm.facility.id
             })
-            .catch(function(){
-                notificationService.error('requisitionInitiate.noPermissionToInitiateRequisition');
-            })
-            .then(function(response) {
-                return requisitionService.initiate(vm.facility.id,
-                        vm.program.id,
-                        selectedPeriod.id,
-                        vm.emergency)
-            })
-            .then(function (data) {
-                vm.goToRequisition(data.id);
+            .then(function() {
+                requisitionService.initiate(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency)
+                .then(function(data) {
+                    vm.goToRequisition(data.id);
+                })
+                .catch(function() {
+                    notificationService.error('requisitionInitiate.couldNotInitiateRequisition');
+                    loadingModalService.close();
+                });
             })
             .catch(function() {
-                notificationService.error('requisitionInitiate.couldNotInitiateRequisition');
-            })
-            .finally(loadingModalService.close);
+                notificationService.error('requisitionInitiate.noPermissionToInitiateRequisition');
+                loadingModalService.close();
+            });
         }
 
         /**
@@ -178,7 +176,7 @@
         function goToRequisition(id) {
             $state.go('openlmis.requisitions.requisition.fullSupply', {
                 rnr: id
-            }); 
+            });
         }
     }
 })();
