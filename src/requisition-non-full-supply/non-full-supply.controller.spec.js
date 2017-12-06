@@ -257,7 +257,7 @@ describe('NonFullSupplyController', function() {
                 $visible: true
             }];
 
-            spyOn(alertService, 'warning');
+            spyOn(alertService, 'error');
 
             initController();
         });
@@ -325,8 +325,7 @@ describe('NonFullSupplyController', function() {
             vm.addProduct();
             $rootScope.$apply();
 
-            expect(alertService.warning).toHaveBeenCalledWith(
-                'requisitionNonFullSupply.noProductsToAdd.label',
+            expect(alertService.error).toHaveBeenCalledWith(
                 'requisitionNonFullSupply.noProductsToAdd.message'
             );
         });

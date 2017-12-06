@@ -155,10 +155,7 @@
                     reload();
                 });
             } else {
-                alertService.warning(
-                    'requisitionNonFullSupply.noProductsToAdd.label',
-                    'requisitionNonFullSupply.noProductsToAdd.message'
-                );
+                alertService.error('requisitionNonFullSupply.noProductsToAdd.message');
             }
         }
 
