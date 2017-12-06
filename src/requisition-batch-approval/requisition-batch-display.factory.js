@@ -60,14 +60,9 @@
                 products = {},
                 lineItems = [],
                 errors = [],
-                columns = [],
                 requisitionsCopy = [];
 
-            addNewColumn(columns, true, false, ['requisitionBatchApproval.productCode']);
-            addNewColumn(columns, true, false, ['requisitionBatchApproval.product']);
-
             angular.forEach(requisitions, function(requisition) {
-                addNewColumn(columns, false, false, ['requisitionBatchApproval.approvedQuantity', 'requisitionBatchApproval.cost'], requisition);
                 lineItems[requisition.id] = [];
 
                 //method used in calculation factory
@@ -89,9 +84,6 @@
 
             });
 
-            addNewColumn(columns, true, true, ['requisitionBatchApproval.totalQuantityForAllFacilities']);
-            addNewColumn(columns, true, true, ['requisitionBatchApproval.totalCostForAllFacilities']);
-
             //save copy to provide revert functionality
             requisitionsCopy = angular.copy(requisitions);
 
@@ -108,7 +100,6 @@
                 productsToDisplay: productsToDisplay,
                 lineItems: lineItems,
                 errors: errors,
-                columns: columns,
                 requisitionsCopy: requisitionsCopy
             }
             return dataToDisplay;
@@ -140,16 +131,6 @@
             return true;
         }
 
-        function addNewColumn(columns, isSticky, isStickyRight, names, requisition) {
-            columns.push({
-                id: requisition ? requisition.id : columns.length,
-                requisition: requisition,
-                sticky: isSticky,
-                right: isStickyRight,
-                names: names
-            });
-        }
-
         function prepareProductDetails(product, lineItem, requisition) {
             if (product !== undefined) {
                 product.requisitions.push(requisition.id);
@@ -164,7 +145,7 @@
                     requisitions: [requisition.id]
                 };
             }
-        return product;
+            return product;
         }
     }
 

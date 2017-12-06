@@ -121,17 +121,6 @@
         vm.requisitionsCopy = undefined;
 
         /**
-         * @ngdoc property
-         * @propertyOf requisition-batch-approval.controller:RequisitionBatchApprovalController
-         * @name columns
-         * @type {Array}
-         *
-         * @description
-         * Holds columns that will be displayed in the batch approval table.
-         */
-        vm.columns = [];
-
-        /**
          * @ngdoc method
          * @methodOf requisition-batch-approval.controller:RequisitionBatchApprovalController
          * @name $onInit
@@ -355,7 +344,6 @@
 
             vm.lineItems = dataToDisplay.lineItems;
             vm.errors = dataToDisplay.errors;
-            vm.columns = dataToDisplay.columns;
             vm.requisitionsCopy = dataToDisplay.requisitionsCopy;
 
             angular.forEach(requisitions, function(requisition) {

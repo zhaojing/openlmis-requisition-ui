@@ -1,3 +1,9 @@
+5.2.3 / In Progress
+===================
+
+Improvements:
+* [OLMIS-3535:](https://openlmis.atlassian.net/browse/OLMIS-3535) Shortened column names on batch requisition screen
+
 5.2.2 / 2017-11-23
 ==================
 
