@@ -326,6 +326,7 @@ describe('NonFullSupplyController', function() {
             $rootScope.$apply();
 
             expect(alertService.error).toHaveBeenCalledWith(
+                'requisitionNonFullSupply.noProductsToAdd.label',
                 'requisitionNonFullSupply.noProductsToAdd.message'
             );
         });

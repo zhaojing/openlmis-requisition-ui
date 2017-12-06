@@ -6,5 +6,6 @@
     "requisitionNonFullSupply.explanation": "Explanation",
     "requisitionNonFullSupply.cancel": "Cancel",
     "requisitionNonFullSupply.noProducts": "No non-full supply items have been added.",
+    "requisitionNonFullSupply.noProductsToAdd.label": "Warning",
     "requisitionNonFullSupply.noProductsToAdd.message": "There are no more products to add. All available non-full supply products have already been added onto this requisition."
 }
