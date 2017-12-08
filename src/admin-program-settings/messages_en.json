@@ -9,6 +9,8 @@
     "adminProgramSettings.displayNonFullSupply.description": "Enable the Non-Full Supply tab for this program's requisition form",
     "adminProgramSettings.allowSkippingPeriods.label": "Allow Skipping Periods",
     "adminProgramSettings.allowSkippingPeriods.description": "Enable Skipping Periods for this program's requisition form",
+    "adminProgramSettings.skipAuthorization.label": "Skip Authorization Step",
+    "adminProgramSettings.skipAuthorization.description": "When selected, requisitions from this program will not go through authorization",
     "adminProgramSettings.save": "Save",
     "adminProgramSettings.cancel": "Cancel",
     "adminProgramSettings.saveProgramSettingsConfirm": "Do you want to save changes to the Program Settings?",
