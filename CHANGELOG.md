@@ -4,6 +4,7 @@
 Improvements:
 * [OLMIS-3535:](https://openlmis.atlassian.net/browse/OLMIS-3535) Shortened column names on batch requisition screen
 * [OLMIS-3080:](https://openlmis.atlassian.net/browse/OLMIS-3080) Replaced warning with error modal when there are no more products to add to the non-full supply requisition page.
+* [OLMIS-3782:](https://openlmis.atlassian.net/browse/OLMIS-3782) New option in the program settings to skip authorization step
 
 5.2.2 / 2017-11-23
 ==================
