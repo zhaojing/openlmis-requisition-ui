@@ -1,0 +1,16 @@
+<div class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1>{{'adminProgramAdd.addProgram' | message}}</h1>
+            </div>
+            <div class="modal-body">
+                <ng-include src="'admin-program-add/program-form.html'"></ng-include>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel" ng-click="vm.goToPreviousState()">{{'adminProgramAdd.cancel' | message}}</button>
+                <button class="primary" ng-click="vm.saveProgram()">{{'adminProgramAdd.create' | message}}</button>
+            </div>
+        </div>
+    </div>
+</div>

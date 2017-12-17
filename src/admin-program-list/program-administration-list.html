@@ -1,5 +1,8 @@
 <h2>{{'adminProgramList.programs' | message}}</h2>
 <div class="openlmis-table-container">
+    <button id="add-program" class="add" ng-click="vm.goToAddProgram()">
+        {{'adminProgramList.addProgram' | message}}
+    </button>
     <table class="openlmis-table" ng-if="vm.programs.length">
         <thead>
             <tr>

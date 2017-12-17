@@ -9,5 +9,6 @@
     "adminProgramList.actions": "Actions",
     "adminProgramList.programSettings": "Program Settings",
     "adminProgramList.active": "Active",
-    "adminProgramList.notActive": "Not Active"
+    "adminProgramList.notActive": "Not Active",
+    "adminProgramList.addProgram": "Add Program"
 }

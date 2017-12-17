@@ -1,0 +1,20 @@
+{
+    "adminProgramAdd.addProgram": "Add Program",
+    "adminProgramAdd.active": "Active",
+    "adminProgramAdd.programName": "Program Name",
+    "adminProgramAdd.programCode": "Program Code",
+    "adminProgramAdd.description": "Description",
+    "adminProgramAdd.displayNonFullSupply.label": "Display Non Full Supply Tab",
+    "adminProgramAdd.displayNonFullSupply.description": "Enable the Non-Full Supply tab for this program's requisition form",
+    "adminProgramAdd.allowSkippingPeriods.label": "Allow Skipping Periods",
+    "adminProgramAdd.allowSkippingPeriods.description": "Enable Skipping Periods for this program's requisition form",
+    "adminProgramAdd.skipAuthorization.label": "Skip Authorization Step",
+    "adminProgramAdd.skipAuthorization.description": "When selected, requisitions from this program will not go through authorization",
+    "adminProgramAdd.create": "Create",
+    "adminProgramAdd.cancel": "Cancel",
+    "adminProgramAdd.createProgram.confirm": "Do you want to create new program?",
+    "adminProgramAdd.createProgram.success": "Program Settings were saved successfully!",
+    "adminProgramAdd.createProgram.failure": "Program Settings save failed!",
+    "adminProgramAdd.enableDatePhysicalStockCountCompleted.label": "Enable field for Date Physical Stock Count Completed",
+    "adminProgramAdd.enableDatePhysicalStockCountCompleted.description": "Require users to enter this date when a requisition is Submitted; the date can be edited when a requisition is Authorized."
+}

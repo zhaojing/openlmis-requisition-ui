@@ -28,10 +28,12 @@
         .module('admin-program-list')
         .controller('ProgramAdministrationListController', controller);
 
-    controller.$inject = ['programList'];
+    controller.$inject = ['$state', 'programList'];
 
-    function controller(programList) {
+    function controller($state, programList) {
         var vm = this;
+
+        vm.goToAddProgram = goToAddProgram;
 
         /**
          * @ngdoc property
@@ -43,5 +45,17 @@
          * Holds list of all programs with templates.
          */
         vm.programs = programList;
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-program-list.controller:ProgramAdministrationListController
+         * @name goToAddProgram
+         *
+         * @description
+         * Takes the user to the add program page.
+         */
+        function goToAddProgram() {
+            $state.go('openlmis.administration.programs.add');
+        }
     }
 })();

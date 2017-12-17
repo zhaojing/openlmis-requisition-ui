@@ -1,0 +1,32 @@
+<form id="program-form">
+    <label for="name">{{'adminProgramAdd.programName' | message}}</label>
+    <input id="name" class="form-control" ng-model="vm.program.name" required/>
+    <label for="code">{{'adminProgramAdd.programCode' | message}}</label>
+    <input id="code" class="form-control" ng-model="vm.program.code" required/>
+    <label for="description">{{'adminProgramAdd.description' | message}}</label>
+    <textarea id="description" ng-model="vm.program.description"></textarea>
+    <label class="checkbox">
+        <input type="checkbox" ng-model="vm.program.active"/>
+        {{'adminProgramAdd.active' | message}}
+    </label>
+    <label class="checkbox">
+       <input type="checkbox" ng-model="vm.program.showNonFullSupplyTab"/>
+       {{'adminProgramAdd.displayNonFullSupply.label' | message}}
+    </label>
+    <p class="note">{{'adminProgramAdd.displayNonFullSupply.description' | message}}</p>
+    <label class="checkbox">
+       <input type="checkbox" ng-model="vm.program.periodsSkippable"/>
+       {{'adminProgramAdd.allowSkippingPeriods.label' | message}}
+    </label>
+    <p class="note">{{'adminProgramAdd.allowSkippingPeriods.description' | message}}</p>
+    <label class="checkbox">
+        <input type="checkbox" ng-model="vm.program.skipAuthorization"/>
+        {{'adminProgramAdd.skipAuthorization.label' | message}}
+    </label>
+    <p class="note">{{'adminProgramAdd.skipAuthorization.description' | message}}</p>
+    <label class="checkbox">
+       <input type="checkbox" ng-model="vm.program.enableDatePhysicalStockCountCompleted"/>
+       {{'adminProgramAdd.enableDatePhysicalStockCountCompleted.label' | message}}
+    </label>
+    <p class="note">{{'adminProgramAdd.enableDatePhysicalStockCountCompleted.description' | message}}</p>
+</form>
