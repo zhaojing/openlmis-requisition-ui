@@ -1,4 +1,4 @@
-5.2.3 / In Progress
+5.3.0 / In Progress
 ===================
 
 New functionality added in a backwards-compatible manner:
