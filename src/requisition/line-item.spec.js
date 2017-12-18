@@ -15,7 +15,9 @@
 
 describe('LineItem', function() {
 
-    var LineItem, requisitionLineItem, requisition, program, calculationFactory, template;
+    var LineItem, requisitionLineItem, authorizationServiceSpy, requisition, program,
+        calculationFactory, column, lineItem, TEMPLATE_COLUMNS, REQUISITION_RIGHTS,
+        userAlwaysHasRight, userHasCreateRight, userHasAuthorizedRight, userHasApprovedRight;
 
     beforeEach(function() {
         module('requisition');
@@ -29,8 +31,42 @@ describe('LineItem', function() {
             });
         });
 
-        inject(function(_LineItem_) {
+        module('openlmis-templates', function($provide) {
+
+            authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight', 'isAuthenticated']);
+            $provide.service('authorizationService', function() {
+                return authorizationServiceSpy;
+            });
+
+            userAlwaysHasRight = true;
+            authorizationServiceSpy.hasRight.andCallFake(function(right) {
+                if (userAlwaysHasRight) {
+                    return true;
+                }
+                if (userHasApprovedRight && right == REQUISITION_RIGHTS.REQUISITION_APPROVE) {
+                    return true;
+                }
+                if (userHasAuthorizedRight && right == REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
+                    return true;
+                }
+                if (userHasCreateRight && right == REQUISITION_RIGHTS.REQUISITION_CREATE) {
+                    return true;
+                }
+                return false;
+            });
+
+            authorizationServiceSpy.isAuthenticated.andReturn(true);
+        });
+
+        inject(function(_LineItem_, _TEMPLATE_COLUMNS_, _REQUISITION_RIGHTS_, _COLUMN_TYPES_, _COLUMN_SOURCES_) {
+            TEMPLATE_COLUMNS = _TEMPLATE_COLUMNS_;
+            REQUISITION_RIGHTS = _REQUISITION_RIGHTS_;
             LineItem = _LineItem_;
+            column = {
+                type: _COLUMN_TYPES_.NUMERIC,
+                name: 'beginningBalance',
+                source: _COLUMN_SOURCES_.USER_INPUT
+            };
         });
 
         var template = jasmine.createSpyObj('template', ['getColumns']);
@@ -98,10 +134,13 @@ describe('LineItem', function() {
             requestedQuantity: 10,
             requestedQuantityExplanation: 'explanation'
         };
-        requisition = jasmine.createSpyObj('requisition', ['$isApproved', '$isAuthorized', '$isInApproval', '$isReleased']);
+        requisition = jasmine.createSpyObj('requisition', ['$isApproved', '$isAuthorized', '$isInApproval', '$isReleased', '$isInitiated', '$isSubmitted', '$isRejected']);
         requisition.$isApproved.andReturn(false);
         requisition.$isAuthorized.andReturn(false);
+        requisition.$isInitiated.andReturn(false);
         requisition.$isReleased.andReturn(false);
+        requisition.$isSubmitted.andReturn(false);
+        requisition.$isRejected.andReturn(false);
         requisition.requisitionLineItems = [requisitionLineItem];
         requisition.program = program;
         requisition.status = 'SUBMITTED';
@@ -110,11 +149,10 @@ describe('LineItem', function() {
             startDate: [2016, 4, 1],
             endDate: [2016, 4, 30]
         };
+        lineItem = new LineItem(requisitionLineItem, requisition);
     });
 
     it('should add needed properties and methods to requisition line item', function() {
-        var lineItem = new LineItem(requisitionLineItem, requisition);
-
         expect(lineItem.orderable).toEqual(requisitionLineItem.orderable);
         expect(lineItem.$errors).toEqual({});
         expect(lineItem.$program).toEqual(requisitionLineItem.orderable.programs[0]);
@@ -125,8 +163,6 @@ describe('LineItem', function() {
     describe('updateFieldValue', function() {
 
         it('should not update values in line item if they are set', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
-
             lineItem.updateFieldValue(requisition.template.columnsMap[0], requisition);
             lineItem.updateFieldValue(requisition.template.columnsMap[1], requisition);
 
@@ -135,8 +171,6 @@ describe('LineItem', function() {
         });
 
         it('should update values in line item if they are undefined', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
-
             lineItem.requestedQuantity = undefined;
             lineItem.requestedQuantityExplanation = undefined;
             lineItem.totalCost = undefined;
@@ -153,21 +187,18 @@ describe('LineItem', function() {
         });
 
         it('should call proper calculation method when column name is Adjusted Consumption', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
             lineItem.updateFieldValue(requisition.template.columnsMap[3], requisition);
 
             expect(calculationFactory.adjustedConsumption).toHaveBeenCalledWith(lineItem, requisition);
         });
 
         it('should call proper calculation method when column name is calculated and not Adjusted Consumption', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
             lineItem.updateFieldValue(requisition.template.columnsMap[2], requisition);
 
             expect(calculationFactory.totalCost).toHaveBeenCalledWith(lineItem, requisition);
         });
 
         it('should set null if there is no calculation method for given column', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
             lineItem.columnWithoutCalculations = 100;
 
             lineItem.updateFieldValue(requisition.template.columnsMap[4], requisition);
@@ -179,8 +210,6 @@ describe('LineItem', function() {
     describe('canBeSkipped', function() {
 
         it('should return true if line item can be skipped', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
-
             lineItem.requestedQuantity = 0;
             lineItem.requestedQuantityExplanation = '';
 
@@ -190,8 +219,6 @@ describe('LineItem', function() {
        });
 
        it('should return false if line item cannot be skipped', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
-
             lineItem.requestedQuantity = 100;
             lineItem.requestedQuantityExplanation = 'we need more';
 
@@ -201,8 +228,6 @@ describe('LineItem', function() {
        });
 
         it('should return false if requisition status is authorized', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
-
             lineItem.requestedQuantity = 0;
             lineItem.requestedQuantityExplanation = '';
             requisition.$isAuthorized.andReturn(true);
@@ -213,8 +238,6 @@ describe('LineItem', function() {
         });
 
         it('should return false if requisition status is in approval', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
-
             lineItem.requestedQuantity = 0;
             lineItem.requestedQuantityExplanation = '';
             requisition.$isInApproval.andReturn(true);
@@ -225,8 +248,6 @@ describe('LineItem', function() {
         });
 
         it('should return false if requisition status is approved', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
-
             lineItem.requestedQuantity = 0;
             lineItem.requestedQuantityExplanation = '';
             requisition.$isApproved.andReturn(true);
@@ -237,8 +258,6 @@ describe('LineItem', function() {
         });
 
         it('should return false if requisition status is released', function() {
-            var lineItem = new LineItem(requisitionLineItem, requisition);
-
             lineItem.requestedQuantity = 0;
             lineItem.requestedQuantityExplanation = '';
             requisition.$isReleased.andReturn(true);
@@ -248,4 +267,153 @@ describe('LineItem', function() {
             expect(result).toBe(false);
         });
     });
+
+    describe('isReadOnly', function() {
+
+        it('should return true if approved', function() {
+            requisition.$isApproved.andReturn(true);
+            requisition.$isReleased.andReturn(false);
+
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return true if released', function() {
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(true);
+
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return true if authorized', function() {
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isInApproval.andReturn(true);
+            requisition.$isAuthorized.andReturn(false);
+
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return true if in approval', function() {
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isInApproval.andReturn(false);
+            requisition.$isAuthorized.andReturn(true);
+
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return true if authorized and column is approved quantity', function() {
+            column.name = TEMPLATE_COLUMNS.APPROVED_QUANTITY;
+
+            authorizationServiceSpy.hasRight.andReturn(false);
+
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isInApproval.andReturn(true);
+            requisition.$isAuthorized.andReturn(false);
+
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(true);
+        });
+
+        it('should return false if user has no right to approve', function() {
+            column.name = TEMPLATE_COLUMNS.APPROVED_QUANTITY;
+
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isInApproval.andReturn(true);
+            requisition.$isAuthorized.andReturn(false);
+
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(false);
+        });
+
+        it('should return false', function() {
+            requisition.$isInitiated.andReturn(true);
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isAuthorized.andReturn(false);
+            requisition.$isInApproval.andReturn(false);
+
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(false);
+        });
+
+        it('should return false if initiated and user can submit', function(){
+            requisition.$isInitiated.andReturn(true);
+            requisition.$isRejected.andReturn(false);
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isAuthorized.andReturn(false);
+            requisition.$isInApproval.andReturn(false);
+
+            userAlwaysHasRight = false;
+            userHasCreateRight = false;
+            
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(true);
+            
+            userHasCreateRight = true;
+
+            result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(false);
+        });
+
+        it('should return false if rejected and user can submit', function(){
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isRejected.andReturn(true);
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isAuthorized.andReturn(false);
+            requisition.$isInApproval.andReturn(false);
+
+            userAlwaysHasRight = false;
+            userHasCreateRight = false;
+
+            var result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(true);
+
+            userHasCreateRight = true;
+
+            result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(false);
+        });
+
+        it('should return false if submitted and user can approve', function(){
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isSubmitted.andReturn(true);
+            requisition.$isApproved.andReturn(false);
+            requisition.$isReleased.andReturn(false);
+            requisition.$isAuthorized.andReturn(false);
+            requisition.$isInApproval.andReturn(false);
+
+            userAlwaysHasRight = false;
+
+            result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(true);
+
+            userHasAuthorizedRight = true;
+
+            result = lineItem.isReadOnly(requisition, column);
+
+            expect(result).toBe(false);
+        });
+
+    })
 });
