@@ -30,7 +30,7 @@ services:
     volumes:
       - '/openlmis-fulfillment-ui'
   referencedata-ui:
-    image: openlmis/referencedata-ui:5.2.3-SNAPSHOT
+    image: openlmis/referencedata-ui:5.3.0-SNAPSHOT
     volumes:
       - '/openlmis-referencedata-ui'
   stockmanagement-ui:
