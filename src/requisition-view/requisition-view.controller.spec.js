@@ -100,6 +100,7 @@ describe('RequisitionViewController', function() {
             requisition.program = {
                 id: '2',
                 periodsSkippable: true,
+                skipAuthorization: false,
                 code: 'CODE',
                 enableDatePhysicalStockCountCompleted: true
             };
@@ -317,6 +318,28 @@ describe('RequisitionViewController', function() {
 
             expect(vm.canDelete).toBe(false);
         });
+
+        it('should display submit', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+            vm.requisition.$isInitiated.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.canSubmit).toBe(true);
+            expect(vm.canSubmitAndAuthorize).toBe(false);
+        });
+
+        it('should display submit and authorize', function() {
+            authorizationServiceSpy.hasRight.andReturn(true);
+            vm.requisition.$isInitiated.andReturn(true);
+            vm.requisition.program.skipAuthorization = true;
+
+            vm.$onInit();
+
+            expect(vm.canSubmitAndAuthorize).toBe(true);
+            expect(vm.canSubmit).toBe(false);
+        });
+
 
     });
 

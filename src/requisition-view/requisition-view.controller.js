@@ -109,6 +109,17 @@
         /**
          * ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name canSubmitAndAuthorize
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether current user has a right to submit and authorize the requisition.
+         */
+        vm.canSubmitAndAuthorize = undefined;
+
+        /**
+         * ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
          * @name canAuthorize
          * @type {Boolean}
          *
@@ -187,6 +198,7 @@
          */
         function onInit() {
             vm.canSubmit = displaySubmit();
+            vm.canSubmitAndAuthorize = displaySubmitAndAuthorize();
             vm.canAuthorize = displayAuthorize();
             vm.canDelete = displayDelete();
             vm.canApproveAndReject = displayApproveAndReject();
@@ -517,12 +529,32 @@
          *
          * @description
          * Determines whether to display submit button or not. Returns true only if requisition
-         * is initiated and user has permission to create requisition.
+         * is initiated/rejected and user has permission to create requisition.
          *
          * @return {Boolean} should submit button be displayed
          */
         function displaySubmit() {
-            return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) && hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
+            return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) &&
+                !vm.requisition.program.skipAuthorization &&
+                hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view.controller:RequisitionViewController
+         * @name displaySubmitAndAuthorize
+         *
+         * @description
+         * Determines whether to display submit & authorize button or not. Returns true only if requisition
+         * is initiated/rejected, user has permission to create requisition and the program skips
+         * the authorization step.
+         *
+         * @return {Boolean} should submit & authorize button be displayed
+         */
+        function displaySubmitAndAuthorize() {
+            return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) &&
+                vm.requisition.program.skipAuthorization &&
+                hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
         }
 
         /**

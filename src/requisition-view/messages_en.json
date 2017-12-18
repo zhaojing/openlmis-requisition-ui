@@ -35,6 +35,7 @@
     "requisitionView.submit.confirm": "Are you sure you want to submit this R&R?",
     "requisitionView.submit.failure": "Failed to submit requisition!",
     "requisitionView.submit.label": "Submit",
+    "requisitionView.submitAndAuthorize.label": "Submit & Authorize",
     "requisitionView.submit.success": "Requisition has been submitted!",
     "requisitionView.sync.failure": "Failed to synchronize requisition!",
     "requisitionView.sync.label": "Sync with Server",
