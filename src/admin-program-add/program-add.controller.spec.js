@@ -79,7 +79,7 @@ describe('ProgramAddController', function () {
             });
         });
 
-        it('should not open loading modal and call programService when confirmation fails', function() {
+        it('should not call any service when confirmation fails', function() {
             confirmService.confirm.andReturn($q.reject());
 
             vm.program = program;
@@ -115,9 +115,7 @@ describe('ProgramAddController', function () {
 
         it('should redirects to previous state', function() {
             vm.goToPreviousState();
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs', stateParams, {
-                reload: true
-            });
+            expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs');
         });
     });
 });

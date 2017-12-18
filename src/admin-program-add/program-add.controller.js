@@ -79,7 +79,9 @@
                     .then(function() {
                         notificationService.success('adminProgramAdd.createProgram.success')
                     });
-                    goToPreviousState();
+                    $state.go('openlmis.administration.programs', $stateParams, {
+                        reload: true
+                    });
                 })
                 .catch(function() {
                     notificationService.error('adminProgramAdd.createProgram.failure');
@@ -97,9 +99,7 @@
          * Redirects user to program list screen.
          */
         function goToPreviousState() {
-            $state.go('openlmis.administration.programs', $stateParams, {
-                reload: true
-            });
+            $state.go('openlmis.administration.programs');
         }
     }
 })();

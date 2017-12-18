@@ -40,7 +40,7 @@ describe('ProgramAdministrationListController', function () {
 
     describe('goToAddProgram', function() {
 
-        it('should redirect user to ad program page', function() {
+        it('should redirect user to add program page', function() {
             vm.goToAddProgram();
             expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs.add');
         });
