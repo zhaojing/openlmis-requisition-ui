@@ -15,7 +15,7 @@
 
 describe('ProgramAddController', function () {
 
-    var $q, $state, $controller, $rootScope, confirmService, loadingModalService, programService, notificationService, ProgramDataBuilder,
+    var $q, $state, $controller, $rootScope, confirmService, loadingModalService, programService, notificationService, messageService, ProgramDataBuilder,
         vm, program, stateParams;
 
     beforeEach(function() {
@@ -30,6 +30,7 @@ describe('ProgramAddController', function () {
             loadingModalService = $injector.get('loadingModalService');
             programService = $injector.get('programService');
             notificationService = $injector.get('notificationService');
+            messageService = $injector.get('messageService');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
         });
 
@@ -49,8 +50,10 @@ describe('ProgramAddController', function () {
 
     describe('onInit', function() {
 
-        it('should set empty object as program', function() {
-            expect(vm.program).toEqual({});
+        it('should set active property to program object', function() {
+            expect(vm.program).toEqual({
+                active: true
+            });
         });
     });
 
@@ -63,6 +66,9 @@ describe('ProgramAddController', function () {
             spyOn(programService, 'create').andReturn($q.resolve());
             spyOn(notificationService, 'success').andReturn($q.resolve());
             spyOn(notificationService, 'error').andReturn($q.resolve());
+            spyOn(messageService, 'get').andCallFake(function(messageKey) {
+                return messageKey;
+            });
         });
 
         it('should create a program and display success notification', function() {

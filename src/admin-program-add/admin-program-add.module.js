@@ -25,6 +25,7 @@
      */
     angular.module('admin-program-add', [
         'referencedata-program',
+        'openlmis-i18n',
         'openlmis-modal',
         'openlmis-templates',
         'openlmis-state-tracker',

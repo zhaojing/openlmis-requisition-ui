@@ -1,8 +1,8 @@
-<form id="program-form">
-    <label for="name">{{'adminProgramAdd.programName' | message}}</label>
-    <input id="name" class="form-control" ng-model="vm.program.name" required/>
+<form id="program-form" ng-submit="vm.saveProgram()">
     <label for="code">{{'adminProgramAdd.programCode' | message}}</label>
     <input id="code" class="form-control" ng-model="vm.program.code" required/>
+    <label for="name">{{'adminProgramAdd.programName' | message}}</label>
+    <input id="name" class="form-control" ng-model="vm.program.name" required/>
     <label for="description">{{'adminProgramAdd.description' | message}}</label>
     <textarea id="description" ng-model="vm.program.description"></textarea>
     <label class="checkbox">
@@ -29,4 +29,5 @@
        {{'adminProgramAdd.enableDatePhysicalStockCountCompleted.label' | message}}
     </label>
     <p class="note">{{'adminProgramAdd.enableDatePhysicalStockCountCompleted.description' | message}}</p>
+    <p>{{'adminProgramAdd.changesEffectiveImmediately' | message}}</p>
 </form>

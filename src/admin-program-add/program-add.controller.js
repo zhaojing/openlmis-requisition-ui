@@ -28,9 +28,9 @@
         .module('admin-program-add')
         .controller('ProgramAddController', ProgramAddController);
 
-    ProgramAddController.$inject = ['$stateParams', '$state', 'programService', 'confirmService', 'notificationService', 'loadingModalService'];
+    ProgramAddController.$inject = ['$stateParams', '$state', 'programService', 'confirmService', 'notificationService', 'loadingModalService', 'messageService'];
 
-    function ProgramAddController($stateParams, $state, programService, confirmService, notificationService, loadingModalService) {
+    function ProgramAddController($stateParams, $state, programService, confirmService, notificationService, loadingModalService, messageService) {
 
         var vm = this;
 
@@ -58,7 +58,9 @@
          * Initialization method for ProgramAddController.
          */
         function onInit() {
-            vm.program = {};
+            vm.program = {
+                active: true
+            };
         }
 
         /**
@@ -70,7 +72,10 @@
          * Saves program to the server. Before action confirm modal will be shown.
          */
         function saveProgram() {
-            confirmService.confirm('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create')
+            var confirmMessage = messageService.get('adminProgramAdd.createProgram.confirm', {
+                program: vm.program.name
+            });
+            confirmService.confirm(confirmMessage, 'adminProgramAdd.create')
             .then(function() {
                 var loadingPromise = loadingModalService.open();
                 programService.create(vm.program)
