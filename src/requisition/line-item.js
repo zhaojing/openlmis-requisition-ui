@@ -221,15 +221,15 @@
                 return true;
             }
             if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                if (hasApproveRightForProgram() && isApprovalColumn(column)) {
+                if (hasApproveRightForProgram(requisition) && isApprovalColumn(column)) {
                     return false;
                 }
             }
             if (column.source === COLUMN_SOURCES.USER_INPUT) {
-                if (hasAuthorizeRightForProgram() && requisition.$isSubmitted()) {
+                if (hasAuthorizeRightForProgram(requisition) && requisition.$isSubmitted()) {
                     return false;
                 }
-                if (hasCreateRightForProgram() && (requisition.$isInitiated() || requisition.$isRejected())) {
+                if (hasCreateRightForProgram(requisition) && (requisition.$isInitiated() || requisition.$isRejected())) {
                     return false;
                 }
             }
@@ -239,19 +239,19 @@
         }
 
 
-        function hasApproveRightForProgram() {
+        function hasApproveRightForProgram(requisition) {
             return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_APPROVE, {
                 programCode: requisition.program.code
             });
         }
 
-        function hasAuthorizeRightForProgram() {
+        function hasAuthorizeRightForProgram(requisition) {
             return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
                 programCode: requisition.program.code
             });
         }
 
-        function hasCreateRightForProgram() {
+        function hasCreateRightForProgram(requisition) {
             return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, {
                 programCode: requisition.program.code
             });
@@ -260,11 +260,7 @@
         function isApprovalColumn(column) {
             var approvalColumns = [TEMPLATE_COLUMNS.APPROVED_QUANTITY, TEMPLATE_COLUMNS.REMARKS];
 
-            if(approvalColumns.indexOf(column.name) === -1){
-                return false;
-            } else {
-                return true;
-            }
+            return approvalColumns.indexOf(column.name) !== -1;
         }
 
         function isInputDisplayedAndNotEmpty(column, lineItem) {
