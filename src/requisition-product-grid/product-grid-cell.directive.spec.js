@@ -15,7 +15,7 @@
 describe('ProductGridCell', function() {
 
     var $compile, scope, requisition, directiveElem, requisitionValidatorMock,
-        authorizationServiceSpy, TEMPLATE_COLUMNS, fullSupplyColumns, nonFullSupplyColumns,
+        authorizationServiceSpy, fullSupplyColumns, nonFullSupplyColumns,
         REQUISITION_RIGHTS, userAlwaysHasRight, userHasAuthorizedRight;
 
     beforeEach(function() {
@@ -61,7 +61,6 @@ describe('ProductGridCell', function() {
         inject(function($injector) {
             $compile = $injector.get('$compile');
             scope = $injector.get('$rootScope').$new();
-            TEMPLATE_COLUMNS =  $injector.get('TEMPLATE_COLUMNS');
 
             REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
 
