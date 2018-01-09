@@ -1,7 +1,4 @@
 {
-  "app": {
-    "src": "./src"
-  },
   "orderedBuildDirectories": [
     "/openlmis-ui-components",
     "/openlmis-ui-layout",
@@ -12,7 +9,5 @@
     "/openlmis-requisition-ui",
     "/openlmis-stockmanagement-ui"
   ],
-  "requisitionServiceURL": "/",
-  "transifexProjectName": "openlmis-requisition-ui",
-  "defaultLanguage": "en"
+  "requisitionServiceURL": "/"
 }
