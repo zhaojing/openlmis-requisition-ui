@@ -2,6 +2,7 @@
 ===================
 
 New functionality added in a backwards-compatible manner:
+* [OLMIS-3108:](https://openlmis.atlassian.net/browse/OLMIS-3108) Updated to use dev-ui v7 transifex build process
 * [OLMIS-2666:](https://openlmis.atlassian.net/browse/OLMIS-2666) Added create program modal.
 
 Improvements:
