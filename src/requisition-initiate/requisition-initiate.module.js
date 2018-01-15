@@ -34,6 +34,7 @@
         'openlmis-date',
         'openlmis-facility-program-select',
         'referencedata-facility',
+        'referencedata-period',
         'openlmis-form',
         'openlmis-modal',
         'referencedata-program',

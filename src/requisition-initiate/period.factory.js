@@ -26,15 +26,18 @@
      */
     angular
         .module('requisition-initiate')
-        .factory('periodFactory', periodFactory);
+        .config(function($provide) {
+            $provide.decorator('periodFactory', decorator);
+        });
 
-    periodFactory.$inject = ['periodService', 'requisitionService', 'messageService', '$q', 'REQUISITION_STATUS'];
+    decorator.$inject = ['$delegate', 'periodService', 'requisitionService', 'messageService', '$q', 'REQUISITION_STATUS'];
 
-    function periodFactory(periodService, requisitionService, messageService, $q, REQUISITION_STATUS) {
-        var factory = {
-            get: get
-        };
-        return factory;
+    function decorator($delegate, periodService, requisitionService, messageService, $q, REQUISITION_STATUS) {
+        var periodFactory = $delegate;
+
+        periodFactory.get = get;
+
+        return periodFactory;
 
         /**
          * @ngdoc method
