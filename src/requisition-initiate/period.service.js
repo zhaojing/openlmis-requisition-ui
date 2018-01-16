@@ -26,21 +26,25 @@
      */
 	angular
 		.module('requisition-initiate')
-	    .service('periodService', service);
-
-    service.$inject = ['$resource', 'requisitionUrlFactory', 'dateUtils'];
-
-    function service($resource, requisitionUrlFactory, dateUtils) {
-
-        var resource = $resource(requisitionUrlFactory('/api/requisitions/periodsForInitiate'), {}, {
-            periodsForInitiate: {
-                method: 'GET',
-                isArray: true,
-                transformResponse: transformResponse
-            }
+        .config(function($provide) {
+            $provide.decorator('periodService', decorator);
         });
 
-        this.getPeriodsForInitiate = getPeriodsForInitiate;
+    decorator.$inject = ['$delegate', '$resource', 'requisitionUrlFactory', 'dateUtils'];
+
+    function decorator($delegate, $resource, requisitionUrlFactory, dateUtils) {
+        var resource = $resource(requisitionUrlFactory('/api/requisitions/periodsForInitiate'), {}, {
+                periodsForInitiate: {
+                    method: 'GET',
+                    isArray: true,
+                    transformResponse: transformResponse
+                }
+            }),
+            periodService = $delegate;
+
+        periodService.getPeriodsForInitiate = getPeriodsForInitiate;
+
+        return periodService;
 
 		/**
          * @ngdoc method
