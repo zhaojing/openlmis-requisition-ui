@@ -15,7 +15,7 @@
 
 describe('requisitionValidator', function() {
 
-    var validator, TEMPLATE_COLUMNS, COLUMN_SOURCES, MAX_INTEGER_VALUE, COLUMN_TYPES, MAX_COMMENT_LENGTH, calculationFactory,
+    var validator, TEMPLATE_COLUMNS, COLUMN_SOURCES, MAX_INTEGER_VALUE, COLUMN_TYPES, calculationFactory,
         validationFactory, lineItem, lineItems, column, columns, requisition;
 
     beforeEach(function() {
@@ -32,11 +32,10 @@ describe('requisitionValidator', function() {
             });
         });
 
-        inject(function(_requisitionValidator_, _TEMPLATE_COLUMNS_, _COLUMN_SOURCES_, _MAX_COMMENT_LENGTH_,
+        inject(function(_requisitionValidator_, _TEMPLATE_COLUMNS_, _COLUMN_SOURCES_,
                                    _calculationFactory_, _MAX_INTEGER_VALUE_, _COLUMN_TYPES_) {
 
             validator = _requisitionValidator_;
-            MAX_COMMENT_LENGTH = _MAX_COMMENT_LENGTH_;
             TEMPLATE_COLUMNS = _TEMPLATE_COLUMNS_;
             COLUMN_SOURCES = _COLUMN_SOURCES_;
             MAX_INTEGER_VALUE = _MAX_INTEGER_VALUE_;
@@ -127,14 +126,14 @@ describe('requisitionValidator', function() {
             });
         });
 
-        it('should return false if requisition comment is to long', function() {
+        it('should return true if requisition comment is longer than 255 chars', function() {
             spyOn(validator, 'validateLineItem').andReturn(true);
 
-            for(var i = 0; i < MAX_COMMENT_LENGTH + 1; i++) {
-                requisition.draftStatusMessage += 'a';
+            for(var i = 0; i < 10; i++) {
+                requisition.draftStatusMessage += 'abcdefghijklmnopqrstuvwxyz';
             }
 
-            expect(validator.validateRequisition(requisition)).toBe(false);
+            expect(validator.validateRequisition(requisition)).toBe(true);
         });
     });
 

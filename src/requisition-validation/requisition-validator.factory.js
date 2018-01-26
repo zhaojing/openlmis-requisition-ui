@@ -29,11 +29,11 @@
         .factory('requisitionValidator', requisitionValidator);
 
     requisitionValidator.$inject = [
-        'validationFactory', 'calculationFactory', 'TEMPLATE_COLUMNS', 'MAX_COMMENT_LENGTH',
+        'validationFactory', 'calculationFactory', 'TEMPLATE_COLUMNS',
         'COLUMN_SOURCES', 'COLUMN_TYPES', 'messageService', '$filter', 'MAX_INTEGER_VALUE'
     ];
 
-    function requisitionValidator(validationFactory, calculationFactory, TEMPLATE_COLUMNS, MAX_COMMENT_LENGTH,
+    function requisitionValidator(validationFactory, calculationFactory, TEMPLATE_COLUMNS,
                                   COLUMN_SOURCES, COLUMN_TYPES, messageService, $filter, MAX_INTEGER_VALUE) {
 
         var counterparts = {
@@ -83,10 +83,6 @@
             }), function(lineItem) {
                 valid = validator.validateLineItem(lineItem, nonFullSupplyColumns, requisition) && valid;
             });
-
-            if(requisition.draftStatusMessage) {
-                valid = requisition.draftStatusMessage.length <= MAX_COMMENT_LENGTH && valid;
-            }
 
             return valid;
         }
