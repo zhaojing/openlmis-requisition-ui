@@ -10,6 +10,9 @@ Improvements:
 * [OLMIS-3080:](https://openlmis.atlassian.net/browse/OLMIS-3080) Replaced warning with error modal when there are no more products to add to the non-full supply requisition page.
 * [OLMIS-3782:](https://openlmis.atlassian.net/browse/OLMIS-3782) New option in the program settings to skip authorization step and button rename on the product grid if that setting is enabled.
 
+Bug fixes:
+* [OLMIS-3492](https://openlmis.atlassian.net/browse/OLMIS-3492): Allow to save comment in requisition longer than 255 characters
+
 5.2.2 / 2017-11-23
 ==================
 
