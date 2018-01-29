@@ -1,5 +1,6 @@
 {
     "requisitionConstants.calculated": "Calculated",
     "requisitionConstants.referenceData": "Reference data",
-    "requisitionConstants.userInput": "User input"
+    "requisitionConstants.userInput": "User input",
+    "requisitionConstants.stockCards": "Stock cards"
 }

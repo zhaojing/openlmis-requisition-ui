@@ -90,7 +90,7 @@
                 validateSource(column.source) ||
                 validateOption(column) ||
                 validateCalculated(column, template) ||
-                validateUserInput(column, template) ||
+                validateUserInput(column) ||
                 validateColumn(column, template);
 
             return error;
@@ -212,7 +212,5 @@
         function isEmpty(value) {
             return !value || !value.toString().trim();
         }
-
     }
-
 })();

@@ -1,13 +1,13 @@
 <div class="requisition-template-admin">
     <h2>{{'adminProgramTemplate.configureRnrTemplate' | message}}</h2>
     <aside>
-        <dl>
-            <dt>{{'adminProgramTemplate.program' | message}}</dt>
-            <dd>
-                {{vm.program.name}}
-                <a ng-click="vm.goToTemplateList()">{{'adminProgramTemplate.change' | message}}</a>
-            </dd>
-        </dl>
+        <label>
+            <input type="checkbox" id="enableStockOnHand"
+                ng-model="vm.template.populateStockOnHandFromStockCards"
+                ng-change="vm.template.$changePopulateStockOnHandFromStockCards()"/>
+            {{'adminProgramTemplate.enableStockOnHand.label' | message}}
+        </label>
+        <p>{{'adminProgramTemplate.enableStockOnHand.description' | message}}</p>
     </aside>
     <div class="openlmis-table-container">
         <table class="openlmis-table">
@@ -30,7 +30,7 @@
                             <div ng-if="column.columnDefinition.canChangeOrder" dnd-handle class="handle">:::</div>
                         </td>
                         <td>
-                            <input type="checkbox" ng-model="column.isDisplayed" ng-disabled="column.columnDefinition.isDisplayRequired">
+                            <input type="checkbox" ng-model="column.isDisplayed" ng-disabled="column.columnDefinition.isDisplayRequired || vm.template.$columnDisabled(column.name)">
                         </td>
                         <td>
                             <div class="circle">
@@ -38,10 +38,10 @@
                             </div>
                         </td>
                         <td>
-                            <input disable-drag type="text" ng-model="column.label" class="form-control"></input>
+                            <input disable-drag type="text" ng-model="column.label" class="form-control" ng-disabled="vm.template.$columnDisabled(column.name)"></input>
                         </td>
                         <td>
-                            <input characters-left ng-maxlength="{{vm.maxColumnDescriptionLength}}" disable-drag ng-model="column.definition" class="form-control" type="text"></input>
+                            <input characters-left ng-maxlength="{{vm.maxColumnDescriptionLength}}" disable-drag ng-model="column.definition" class="form-control" type="text" ng-disabled="vm.template.$columnDisabled(column.name)"></input>
                         </td>
                         <td>
                             <div ng-if="!vm.canChangeSource(column.columnDefinition)">{{vm.sourceDisplayName(column.source)}}</div>
@@ -75,6 +75,6 @@
     </div>
 </div>
 <div class="openlmis-toolbar">
-    <input type="button" ng-click="vm.saveTemplate()" class="primary" ng-disabled="!vm.isTemplateValid(vm.template)" value="{{'adminProgramTemplate.save' | message}}"/>
+    <input type="button" ng-click="vm.saveTemplate()" class="primary" value="{{'adminProgramTemplate.save' | message}}"/>
     <input type="button" ng-click="vm.goToTemplateList()" value="{{'adminProgramTemplate.cancel' | message}}">
 </div>

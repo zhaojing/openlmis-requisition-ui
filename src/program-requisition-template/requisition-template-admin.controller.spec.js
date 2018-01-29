@@ -22,12 +22,12 @@ describe('RequisitionTemplateAdminController', function() {
     var template, program, loadingModalService;
 
     //injects
-    var q, state, notificationService, COLUMN_SOURCES, rootScope, MAX_COLUMN_DESCRIPTION_LENGTH;
+    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope, TEMPLATE_COLUMNS, templateValidator, confirmService;
 
     beforeEach(function() {
         module('program-requisition-template');
 
-        template = jasmine.createSpyObj('template', ['$save', '$moveColumn', '$findCircularCalculatedDependencies']);
+        template = jasmine.createSpyObj('template', ['$save', '$moveColumn', '$findCircularCalculatedDependencies', '$columnDisabled']);
         template.id = '1';
         template.programId = '1';
         template.columnsMap = {
@@ -60,20 +60,21 @@ describe('RequisitionTemplateAdminController', function() {
         };
 
         inject(function($injector) {
-
+            TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
             q = $injector.get('$q');
             state = $injector.get('$state');
             notificationService = $injector.get('notificationService');
             COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
-            MAX_COLUMN_DESCRIPTION_LENGTH = $injector.get('MAX_COLUMN_DESCRIPTION_LENGTH');
             loadingModalService = $injector.get('loadingModalService');
-            message = $injector.get('messageService');
             rootScope = $injector.get('$rootScope');
+            $controller = $injector.get('$controller');
+            templateValidator = $injector.get('templateValidator');
+            confirmService = $injector.get('confirmService');
+        });
 
-            vm = $injector.get('$controller')('RequisitionTemplateAdminController', {
-                program: program,
-                template: template
-            });
+        vm = $controller('RequisitionTemplateAdminController', {
+            program: program,
+            template: template
         });
     });
 
@@ -82,50 +83,72 @@ describe('RequisitionTemplateAdminController', function() {
         expect(vm.template).toEqual(template);
     });
 
-    it('should save template and then display success notification and change state', function() {
+    describe('save template', function() {
+
         var stateGoSpy = jasmine.createSpy(),
-            notificationServiceSpy = jasmine.createSpy();
+            successNotificationServiceSpy = jasmine.createSpy(),
+            errorNotificationServiceSpy = jasmine.createSpy();
 
-        template.$save.andReturn(q.when(true));
+        beforeEach(function() {
+            spyOn(notificationService, 'success').andCallFake(successNotificationServiceSpy);
+            spyOn(notificationService, 'error').andCallFake(errorNotificationServiceSpy);
 
-        spyOn(state, 'go').andCallFake(stateGoSpy);
-        spyOn(notificationService, 'success').andCallFake(notificationServiceSpy);
+            spyOn(state, 'go').andCallFake(stateGoSpy);
 
-        vm.saveTemplate();
+            spyOn(loadingModalService, 'close');
+            spyOn(loadingModalService, 'open');
 
-        rootScope.$apply();
+            spyOn(templateValidator, 'isTemplateValid').andReturn(true);
 
-        expect(stateGoSpy).toHaveBeenCalled();
-        expect(notificationServiceSpy).toHaveBeenCalled();
-    });
+            spyOn(confirmService, 'confirm').andReturn(q.resolve());
+        });
 
-    it('should open loading modal when when saving template', function() {
-        spyOn(loadingModalService, 'open');
-        template.$save.andReturn(q.when(true));
+        it('should display error message when template is invalid', function() {
+            templateValidator.isTemplateValid.andReturn(false);
 
-        vm.saveTemplate();
+            vm.saveTemplate();
 
-        expect(loadingModalService.open).toHaveBeenCalled();
-    });
+            rootScope.$apply();
 
-    it('should close loading modal if template save was successful', function() {
-        spyOn(loadingModalService, 'close');
-        template.$save.andReturn(q.when(true));
+            expect(stateGoSpy).not.toHaveBeenCalled();
+            expect(loadingModalService.open).not.toHaveBeenCalled();
+            expect(errorNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.template.invalid');
+            expect(confirmService.confirm).not.toHaveBeenCalled();
+        });
 
-        vm.saveTemplate();
-        rootScope.$apply();
+        it('should not save template if confirm failed', function() {
+            confirmService.confirm.andReturn(q.reject());
 
-        expect(loadingModalService.close).toHaveBeenCalled();
-    });
+            vm.saveTemplate();
 
-    it('should close loading modal if template save was unsuccessful', function() {
-        spyOn(loadingModalService, 'close');
-        template.$save.andReturn(q.reject());
+            rootScope.$apply();
 
-        vm.saveTemplate();
-        rootScope.$apply();
+            expect(stateGoSpy).not.toHaveBeenCalled();
+            expect(loadingModalService.open).not.toHaveBeenCalled();
+            expect(successNotificationServiceSpy).not.toHaveBeenCalled();
+        });
 
-        expect(loadingModalService.close).toHaveBeenCalled();
+        it('should save template and then display success notification and change state', function() {
+            template.$save.andReturn(q.when(true));
+
+            vm.saveTemplate();
+
+            rootScope.$apply();
+
+            expect(loadingModalService.open).toHaveBeenCalled();
+            expect(stateGoSpy).toHaveBeenCalled();
+            expect(successNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.success');
+        });
+
+        it('should close loading modal if template save was unsuccessful', function() {
+            template.$save.andReturn(q.reject());
+
+            vm.saveTemplate();
+            rootScope.$apply();
+
+            expect(loadingModalService.close).toHaveBeenCalled();
+            expect(errorNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.failure');
+        });
     });
 
     it('should call column drop method and display error notification when drop failed', function() {
@@ -141,12 +164,27 @@ describe('RequisitionTemplateAdminController', function() {
     });
 
     it('can change source works correctly', function() {
+        template.$columnDisabled.andReturn(false);
         expect(vm.canChangeSource({
+            name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
             sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
         })).toBe(true);
+
         expect(vm.canChangeSource({
             sources: [COLUMN_SOURCES.USER_INPUT]
         })).toBe(false);
-    });
 
+        template.populateStockOnHandFromStockCards = true;
+        expect(vm.canChangeSource({
+            name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
+            sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
+        })).toBe(false);
+
+        template.$columnDisabled.andReturn(true);
+        template.populateStockOnHandFromStockCards = false;
+        expect(vm.canChangeSource({
+            name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
+            sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
+        })).toBe(false);
+    });
 });

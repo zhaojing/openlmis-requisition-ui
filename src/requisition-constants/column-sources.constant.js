@@ -33,12 +33,14 @@
         var Source = {
             USER_INPUT: 'USER_INPUT',
             CALCULATED: 'CALCULATED',
-            REFERENCE_DATA: 'REFERENCE_DATA'
+            REFERENCE_DATA: 'REFERENCE_DATA',
+            STOCK_CARDS: 'STOCK_CARDS'
         },
         labels = {
             USER_INPUT: 'requisitionConstants.userInput',
             CALCULATED: 'requisitionConstants.calculated',
-            REFERENCE_DATA: 'requisitionConstants.referenceData'
+            REFERENCE_DATA: 'requisitionConstants.referenceData',
+            STOCK_CARDS: 'requisitionConstants.stockCards'
         };
 
         Source.getLabel = getLabel;

@@ -1,6 +1,11 @@
 .page .requisition-template-admin {
 	overflow: hidden;
 
+    aside {
+        padding-left: 1em;
+        padding-top: 0.5em;
+    }
+
 	.info-box {
 		display: inline-flex;
 		width: 100%;

@@ -31,13 +31,13 @@
     RequisitionTemplateAdminController.$inject = [
         '$state', 'template', 'program', '$q', 'notificationService', 'messageService',
         'templateValidator', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS',
-        'loadingModalService'
+        'loadingModalService', 'confirmService'
     ];
 
     function RequisitionTemplateAdminController($state, template, program, $q, notificationService,
                                                 messageService, templateValidator,
                                                 MAX_COLUMN_DESCRIPTION_LENGTH, COLUMN_SOURCES,
-                                                TEMPLATE_COLUMNS, loadingModalService) {
+                                                TEMPLATE_COLUMNS, loadingModalService, confirmService) {
 
         var vm = this;
 
@@ -79,7 +79,6 @@
         vm.dropCallback = dropCallback;
         vm.canChangeSource = canChangeSource;
         vm.sourceDisplayName = sourceDisplayName;
-        vm.isTemplateValid = templateValidator.isTemplateValid;
         vm.getColumnError = templateValidator.getColumnError;
         vm.isAverageConsumption = isAverageConsumption;
 
@@ -101,18 +100,26 @@
          * @name saveTemplate
          *
          * @description
-         * Saves template from scope. After successful action displays
+         * Saves template from scope if template is valid. After successful action displays
          * success notification on screen and redirects user to template
          * list view page. If saving is unsuccessful error notification is displayed.
          */
         function saveTemplate() {
-            loadingModalService.open();
-            vm.template.$save().then(function() {
-                notificationService.success('adminProgramTemplate.templateSave.success');
-                goToTemplateList();
-            }, function() {
-                notificationService.error('adminProgramTemplate.templateSave.failure');
-            }).finally(loadingModalService.close);
+            if (templateValidator.isTemplateValid(vm.template)) {
+                confirmService.confirm('adminProgramTemplate.templateSave.question')
+                .then(function() {
+                    loadingModalService.open();
+                    vm.template.$save().then(function() {
+                        notificationService.success('adminProgramTemplate.templateSave.success');
+                        goToTemplateList();
+                    }, function() {
+                        notificationService.error('adminProgramTemplate.templateSave.failure');
+                        loadingModalService.close();
+                    });
+                });
+            } else {
+                notificationService.error('adminProgramTemplate.template.invalid');
+            }
         }
 
         /**
@@ -141,13 +148,14 @@
          * @name canChangeSource
          *
          * @description
-         * Indicates if column source can be changed based on canBeChanged property
-         * and if there is more then one possible source to choose from.
+         * Indicates if column source can be changed based on if there is more then one possible source to choose from.
          *
          * @param {Object} columnDefinition Contains info about how column can be manipulated by user
          */
         function canChangeSource(columnDefinition) {
-            return columnDefinition.sources.length > 1;
+            return columnDefinition.sources.length > 1 &&
+                !vm.template.$columnDisabled(columnDefinition.name) &&
+                !(columnDefinition.name === TEMPLATE_COLUMNS.STOCK_ON_HAND && vm.template.populateStockOnHandFromStockCards);
         }
 
         /**

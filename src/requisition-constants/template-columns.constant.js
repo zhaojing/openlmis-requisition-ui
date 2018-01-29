@@ -52,8 +52,23 @@
             TOTAL_STOCKOUT_DAYS: 'totalStockoutDays',
             AVERAGE_CONSUMPTION: 'averageConsumption',
             MAXIMUM_STOCK_QUANTITY: 'maximumStockQuantity',
-            CALCULATED_ORDER_QUANTITY: 'calculatedOrderQuantity'
+            CALCULATED_ORDER_QUANTITY: 'calculatedOrderQuantity',
+            getStockDisabledColumns: getStockDisabledColumns
         };
+
+        function getStockDisabledColumns() {
+            return [
+                this.BEGINNING_BALANCE,
+                this.TOTAL_RECEIVED_QUANTITY,
+                this.TOTAL_CONSUMED_QUANTITY,
+                this.TOTAL_STOCKOUT_DAYS,
+                this.TOTAL,
+                this.NUMBER_OF_NEW_PATIENTS_ADDED,
+                this.ADJUSTED_CONSUMPTION,
+                this.MAXIMUM_STOCK_QUANTITY,
+                this.CALCULATED_ORDER_QUANTITY
+            ];
+        }
     }
 
 })();

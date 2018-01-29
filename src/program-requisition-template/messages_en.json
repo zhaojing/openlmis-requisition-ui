@@ -34,5 +34,9 @@
     "adminProgramTemplate.templateSave.failure": "Template save failed!",
     "adminProgramTemplate.templateSave.success": "Template saved successfully!",
     "adminProgramTemplate.shouldDisplayRequestedQuantity": "If ${calculatedOrderQuantity} is not displayed, then ${requestedQuantity} and ${requestedQuantityExplanation} should be displayed",
-    "adminProgramTemplate.template": "Template"
+    "adminProgramTemplate.template": "Template",
+    "adminProgramTemplate.enableStockOnHand.label": "Enable Stock on Hand to populate from stock cards",
+    "adminProgramTemplate.enableStockOnHand.description": "Stock on Hand will be populated from stock cards instead of being entered manually.",
+    "adminProgramTemplate.templateSave.question": "Do you want to save changes to Requisition Template?",
+    "adminProgramTemplate.template.invalid": "Requisition Template is invalid"
 }

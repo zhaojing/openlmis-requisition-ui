@@ -110,6 +110,8 @@
             template.$save = save;
             template.$moveColumn = moveColumn;
             template.$findCircularCalculatedDependencies = findCircularCalculatedDependencies;
+            template.$changePopulateStockOnHandFromStockCards = changePopulateStockOnHandFromStockCards;
+            template.$columnDisabled = columnDisabled;
 
             angular.forEach(template.columnsMap, function(column) {
                 addDependentColumnValidation(column, template.columnsMap);
@@ -269,10 +271,29 @@
             }
         }
 
-        function isAverageConsumptionInvalid(numberOfPeriods) {
-            return !numberOfPeriods ||
-                !numberOfPeriods.toString().trim() ||
-                numberOfPeriods < 2;
+        function changePopulateStockOnHandFromStockCards() {
+            if (this.populateStockOnHandFromStockCards) {
+                this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.STOCK_CARDS;
+                for (var columnName in this.columnsMap) {
+                    if (TEMPLATE_COLUMNS.getStockDisabledColumns().includes(columnName)) {
+                        var column = this.columnsMap[columnName];
+                        column.isDisplayed = false;
+                        if (column.source == COLUMN_SOURCES.USER_INPUT) {
+                            if (column.columnDefinition.sources.includes(COLUMN_SOURCES.REFERENCE_DATA)) {
+                                column.source = COLUMN_SOURCES.REFERENCE_DATA;
+                            } else if (column.columnDefinition.sources.includes(COLUMN_SOURCES.CALCULATED)) {
+                                column.source = COLUMN_SOURCES.CALCULATED;
+                            }
+                        }
+                    }
+                }
+            } else {
+                this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.USER_INPUT;
+            }
+        }
+
+        function columnDisabled(columnName) {
+            return this.populateStockOnHandFromStockCards && TEMPLATE_COLUMNS.getStockDisabledColumns().includes(columnName);
         }
 
         //this fixes setting initial value of the select on the program-requisition-template screen
