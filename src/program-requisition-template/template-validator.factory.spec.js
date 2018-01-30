@@ -23,8 +23,9 @@ describe('templateValidator', function() {
             templateValidator = $injector.get('templateValidator');
         });
 
-        template = jasmine.createSpyObj('template', ['findCircularCalculatedDependencies']);
+        template = jasmine.createSpyObj('template', ['findCircularCalculatedDependencies', 'isColumnDisabled']);
         template.columnsMap = {};
+        template.isColumnDisabled.andReturn(false);
     });
 
     describe('isTemplateValid', function() {
@@ -99,7 +100,7 @@ describe('templateValidator', function() {
         });
 
         it('should return undefined if column is valid', function() {
-            var result = templateValidator.getColumnError(column);
+            var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBeUndefined();
         });
@@ -107,15 +108,24 @@ describe('templateValidator', function() {
         it('should return error if label is undefined', function() {
             column.label = undefined;
 
-            var result = templateValidator.getColumnError(column);
+            var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBe('adminProgramTemplate.columnLabelEmpty');
+        });
+
+        it('should return undefined if column is disabled', function() {
+            template.isColumnDisabled.andReturn(true);
+            column.label = undefined;
+
+            var result = templateValidator.getColumnError(column, template);
+
+            expect(result).toBe(undefined);
         });
 
         it('should return error if label is empty', function() {
             column.label = '';
 
-            var result = templateValidator.getColumnError(column);
+            var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBe('adminProgramTemplate.columnLabelEmpty');
         });
@@ -123,7 +133,7 @@ describe('templateValidator', function() {
         it('should return error if label is too short', function() {
             column.label = 'a';
 
-            var result = templateValidator.getColumnError(column);
+            var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBe('adminProgramTemplate.columnLabelToShort');
         });
@@ -131,7 +141,7 @@ describe('templateValidator', function() {
         it('should return error if label is not alphanumeric', function() {
             column.label = '!abe!';
 
-            var result = templateValidator.getColumnError(column);
+            var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBe('adminProgramTemplate.columnLabelNotAllowedCharacters');
         });
@@ -141,7 +151,7 @@ describe('templateValidator', function() {
                 'abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' +
                 'a';
 
-            var result = templateValidator.getColumnError(column);
+            var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBe('adminProgramTemplate.columnDescriptionTooLong');
         });
@@ -149,7 +159,7 @@ describe('templateValidator', function() {
         it('should return error if column source is not selected', function() {
             column.source = undefined;
 
-            var result = templateValidator.getColumnError(column);
+            var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBe('adminProgramTemplate.emptyColumnSource');
         });
@@ -157,7 +167,7 @@ describe('templateValidator', function() {
         it('should return error if column is visible but option is not selected', function() {
             column.option = undefined;
 
-            var result = templateValidator.getColumnError(column);
+            var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBe('adminProgramTemplate.emptyColumnOption');
         });
@@ -289,7 +299,6 @@ describe('templateValidator', function() {
 
                 expect(result).toBe('adminProgramTemplate.calculatedError Stock on Hand, Total');
             });
-
         });
 
         describe('for calculated column', function() {
@@ -309,12 +318,11 @@ describe('templateValidator', function() {
             });
 
             it('should validate if column is not displayed when has USER_INPUT source', function() {
-                var result = templateValidator.getColumnError(template.columnsMap.stockOnHand);
+                var result = templateValidator.getColumnError(template.columnsMap.stockOnHand, template);
 
                 expect(result)
                     .toEqual('adminProgramTemplate.shouldBeDisplayedadminProgramTemplate.isUserInput');
             });
-
         });
 
         describe('for total stockout days', function() {

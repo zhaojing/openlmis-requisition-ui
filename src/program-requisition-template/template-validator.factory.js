@@ -85,6 +85,11 @@
          * @return  {String}                undefined if column is valid, error as string otherwise
          */
         function getColumnError(column, template) {
+
+            if (template.isColumnDisabled(column)) {
+                return undefined;
+            }
+
             var error = validateLabel(column.label) ||
                 validateDefinition(column.definition) ||
                 validateSource(column.source) ||
