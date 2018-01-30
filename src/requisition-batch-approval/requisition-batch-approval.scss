@@ -15,11 +15,11 @@
 
     .breadcrumb {
         margin: 0px;
+        padding: $space-size/2 $space-size;
         border-bottom-width: 0px;
     }
 
     h2 {
-        padding: $space-size 0px;
         margin: 0px $space-size $space-size/2;
         border-bottom: 1px $border-color solid;
     }
