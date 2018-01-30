@@ -38,7 +38,7 @@
 
         function TemplateColumn(column) {
             angular.merge(this, column);
-            fixColumnOptionModelReference(column);
+            fixColumnOptionModelReference(this);
         }
 
         /**
@@ -74,7 +74,7 @@
         }
 
         function fixColumnOptionModelReference(column) {
-            if (column.option ) {
+            if (column.option) {
                 column.option = $filter('filter')(column.columnDefinition.options, {
                     id: column.option.id
                 })[0];
