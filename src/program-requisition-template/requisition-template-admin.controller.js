@@ -105,7 +105,9 @@
          */
         function saveTemplate() {
             if (vm.template.isValid()) {
-                confirmService.confirm('adminProgramTemplate.templateSave.question')
+                confirmService.confirm(
+                    'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
+                    undefined, 'adminProgramTemplate.templateSave.question')
                 .then(function() {
                     loadingModalService.open();
                     requisitionTemplateService.save(vm.template).then(function() {
