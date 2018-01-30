@@ -4,7 +4,7 @@
         <label>
             <input type="checkbox" id="enableStockOnHand"
                 ng-model="vm.template.populateStockOnHandFromStockCards"
-                ng-change="vm.template.$changePopulateStockOnHandFromStockCards()"/>
+                ng-change="vm.template.changePopulateStockOnHandFromStockCards()"/>
             {{'adminProgramTemplate.enableStockOnHand.label' | message}}
         </label>
         <p>{{'adminProgramTemplate.enableStockOnHand.description' | message}}</p>
@@ -30,7 +30,7 @@
                             <div ng-if="column.columnDefinition.canChangeOrder" dnd-handle class="handle">:::</div>
                         </td>
                         <td>
-                            <input type="checkbox" ng-model="column.isDisplayed" ng-disabled="column.columnDefinition.isDisplayRequired || vm.template.$columnDisabled(column.name)">
+                            <input type="checkbox" ng-model="column.isDisplayed" ng-disabled="column.columnDefinition.isDisplayRequired || vm.template.columnDisabled(column)">
                         </td>
                         <td>
                             <div class="circle">

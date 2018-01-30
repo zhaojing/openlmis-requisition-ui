@@ -19,126 +19,64 @@
 
     /**
      * @ngdoc service
-     * @name program-requisition-template.templateFactory
+     * @name program-requisition-template.Template
      *
      * @description
-     * Communicates with templateDataService.
+     * Represents a single requisition template.
      */
-    angular.module('program-requisition-template').factory('templateFactory', templateFactory);
+    angular
+        .module('program-requisition-template')
+        .factory('Template', Template);
 
-    templateFactory.$inject = ['$q', '$filter', 'requisitionTemplateService', 'RequisitionColumn', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'ALPHA_NUMERIC_REGEX'];
+    Template.$inject = ['templateValidator', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'TemplateColumn', 'RequisitionColumn'];
 
-    function templateFactory($q, $filter, requisitionTemplateService, RequisitionColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS, MAX_COLUMN_DESCRIPTION_LENGTH, ALPHA_NUMERIC_REGEX) {
+    function Template(templateValidator, TEMPLATE_COLUMNS, COLUMN_SOURCES, TemplateColumn, RequisitionColumn) {
+        Template.prototype.moveColumn = moveColumn;
+        Template.prototype.findCircularCalculatedDependencies = findCircularCalculatedDependencies;
+        Template.prototype.changePopulateStockOnHandFromStockCards = changePopulateStockOnHandFromStockCards;
+        Template.prototype.isColumnDisabled = isColumnDisabled;
+        Template.prototype.isValid = isValid;
 
-        var factory = {
-            get: get,
-            getAll: getAll,
-            getByProgram: getByProgram,
-            search: search
-        };
+        return Template;
 
-        return factory;
+        function Template(template) {
+            angular.merge(this, template);
 
-        /**
-         * @ngdoc method
-         * @methodOf program-requisition-template.templateFactory
-         * @name get
-         *
-         * @description
-         * Gets requisition template by id and adds validation and column sorting methods.
-         *
-         * @param  {String}  id Template UUID
-         * @return {Promise}    Template
-         */
-        function get(id) {
-            var deferred = $q.defer();
-            requisitionTemplateService.get(id).then(function(template) {
-                deferred.resolve(prepareTemplate(template));
-            }, deferred.reject);
-            return deferred.promise;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf program-requisition-template.templateFactory
-         * @name search
-         *
-         * @description
-         * Gets requisition template by program id and adds validation and column sorting methods.
-         *
-         * @param  {String}  id Template UUID
-         * @return {Promise}    Template
-         */
-        function search(programId) {
-            var deferred = $q.defer();
-            requisitionTemplateService.search(programId).then(function(template) {
-                deferred.resolve(prepareTemplate(template));
-            }, deferred.reject);
-            return deferred.promise;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf program-requisition-template.templateFactory
-         * @name getAll
-         *
-         * @description
-         * Gets all requisition templates from templateDataService.
-         *
-         * @return {Promise} Array of requisition templates
-         */
-        function getAll() {
-            return requisitionTemplateService.getAll();
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf program-requisition-template.templateFactory
-         * @name getByProgram
-         *
-         * @description
-         * Gets requisition template for given program UUID.
-         *
-         * @param  {String}  programId Program UUID
-         * @return {Promise}           Template for given program
-         */
-        function getByProgram(programId) {
-            return requisitionTemplateService.search(programId);
-        }
-
-        function prepareTemplate(template) {
-            template.$save = save;
-            template.$moveColumn = moveColumn;
-            template.$findCircularCalculatedDependencies = findCircularCalculatedDependencies;
-            template.$changePopulateStockOnHandFromStockCards = changePopulateStockOnHandFromStockCards;
-            template.$columnDisabled = columnDisabled;
+            for (var columnName in this.columnsMap) {
+                this.columnsMap[columnName] = new TemplateColumn(this.columnsMap[columnName]);
+            }
 
             angular.forEach(template.columnsMap, function(column) {
                 addDependentColumnValidation(column, template.columnsMap);
-                fixColumnOptionModelReference(column);
             });
-
-            return template;
         }
 
-        // Saves template
-        function save() {
-            return requisitionTemplateService.save(this);
+        /**
+         * @ngdoc method
+         * @methodOf program-requisition-template.Template
+         * @name isValid
+         *
+         * @description
+         * Checks if template is valid using template validator.
+         *
+         * @return {boolean} true if template is valid
+         */
+        function isValid() {
+            return templateValidator.isTemplateValid(this);
         }
 
-        // Creates a array with dependent column names.
-        function addDependentColumnValidation(column, columns) {
-            var dependencies = RequisitionColumn.columnDependencies(column);
-            if(dependencies && dependencies.length > 0) {
-                angular.forEach(dependencies, function(dependency) {
-                    if(!columns[dependency].$dependentOn) columns[dependency].$dependentOn = [];
-                    columns[dependency].$dependentOn.push(column.name);
-                });
-            }
-        }
-
-        // Checks if column can be dropped in area and if so,
-        // changes display order of columns between old and new position of dropped column.
+        /**
+         * @ngdoc method
+         * @methodOf program-requisition-template.Template
+         * @name moveColumn
+         *
+         * @description
+         * Checks if column can be dropped in area and if so,
+         * changes display order of columns between old and new position of dropped column.
+         *
+         * @param {Object} droppedItem   the column to be moved
+         * @param {Number} dropSpotIndex the index on which column was dropped
+         */
         function moveColumn(droppedItem, dropSpotIndex) {
             var maxNumber = 999999999999999,
                 pinnedColumns = [], // columns that position can't be changed
@@ -217,12 +155,59 @@
             }
         }
 
-        // check if a column has a calculated dependency that is dependent on this columns
+        /**
+         * @ngdoc method
+         * @methodOf program-requisition-template.Template
+         * @name moveColumn
+         *
+         * @description
+         * Check if a column has a calculated dependency that is dependent on this columns
+         *
+         * @param  {Object} columnName column we want circular dependencies
+         * @return {Array}             circular dependencies for given column
+         */
         function findCircularCalculatedDependencies(columnName) {
             var circularDependencies = [];
             checkForCircularCalculatedDependencies(null, columnName, [], null,
                                                    this.columnsMap, circularDependencies);
             return circularDependencies;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf program-requisition-template.Template
+         * @name changePopulateStockOnHandFromStockCards
+         *
+         * @description
+         * Changes stock columns display and sources based on populateStockOnHandFromStockCards flag.
+         */
+        function changePopulateStockOnHandFromStockCards() {
+            if (this.populateStockOnHandFromStockCards) {
+                this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.STOCK_CARDS;
+                for (var columnName in this.columnsMap) {
+                    var column = this.columnsMap[columnName];
+                    if (column.isStockDisabledColumn()) {
+                        column.disableColumnsAndChangeSource();
+                    }
+                }
+            } else {
+                this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.USER_INPUT;
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf program-requisition-template.Template
+         * @name isColumnDisabled
+         *
+         * @description
+         * Checks if column should be disabled.
+         *
+         * @param  {Object}  column template column to be checked
+         * @return {boolean}        true if column should be disabled
+         */
+        function isColumnDisabled(column) {
+            return this.populateStockOnHandFromStockCards && column.isStockDisabledColumn();
         }
 
         function checkForCircularCalculatedDependencies(columnNameToCheck, columnNameToFind, columnsVisited,
@@ -271,39 +256,14 @@
             }
         }
 
-        function changePopulateStockOnHandFromStockCards() {
-            if (this.populateStockOnHandFromStockCards) {
-                this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.STOCK_CARDS;
-                for (var columnName in this.columnsMap) {
-                    if (TEMPLATE_COLUMNS.getStockDisabledColumns().includes(columnName)) {
-                        var column = this.columnsMap[columnName];
-                        column.isDisplayed = false;
-                        if (column.source == COLUMN_SOURCES.USER_INPUT) {
-                            if (column.columnDefinition.sources.includes(COLUMN_SOURCES.REFERENCE_DATA)) {
-                                column.source = COLUMN_SOURCES.REFERENCE_DATA;
-                            } else if (column.columnDefinition.sources.includes(COLUMN_SOURCES.CALCULATED)) {
-                                column.source = COLUMN_SOURCES.CALCULATED;
-                            }
-                        }
-                    }
-                }
-            } else {
-                this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.USER_INPUT;
-            }
-        }
-
-        function columnDisabled(columnName) {
-            return this.populateStockOnHandFromStockCards && TEMPLATE_COLUMNS.getStockDisabledColumns().includes(columnName);
-        }
-
-        //this fixes setting initial value of the select on the program-requisition-template screen
-        function fixColumnOptionModelReference(column) {
-            if (column.option ) {
-                column.option = $filter('filter')(column.columnDefinition.options, {
-                    id: column.option.id
-                })[0];
+        function addDependentColumnValidation(column, columns) {
+            var dependencies = RequisitionColumn.columnDependencies(column);
+            if(dependencies && dependencies.length > 0) {
+                angular.forEach(dependencies, function(dependency) {
+                    if(!columns[dependency].$dependentOn) columns[dependency].$dependentOn = [];
+                    columns[dependency].$dependentOn.push(column.name);
+                });
             }
         }
     }
-
 })();

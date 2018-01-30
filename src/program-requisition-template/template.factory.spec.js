@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('templateFactory', function() {
+xdescribe('templateFactory', function() {
 
     var rootScope, TemplateFactory, template, q, dependencyTestColumns, MAX_COLUMN_DESCRIPTION_LENGTH;
 

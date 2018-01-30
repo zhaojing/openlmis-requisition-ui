@@ -24,11 +24,13 @@
      * @description
      * Allows user to perform operations on requisition template resource.
      */
-    angular.module('program-requisition-template').service('requisitionTemplateService', requisitionTemplateService);
+    angular
+        .module('program-requisition-template')
+        .service('requisitionTemplateService', requisitionTemplateService);
 
-    requisitionTemplateService.$inject = ['requisitionUrlFactory', '$resource'];
+    requisitionTemplateService.$inject = ['requisitionUrlFactory', '$resource', 'Template'];
 
-    function requisitionTemplateService(requisitionUrlFactory, $resource) {
+    function requisitionTemplateService(requisitionUrlFactory, $resource, Template) {
 
         var resource = $resource(requisitionUrlFactory('/api/requisitionTemplates/:id'), {}, {
             'getAll': {
@@ -76,7 +78,14 @@
          * @return {Promise} Array of all requisition templates
          */
         function getAll() {
-            return resource.getAll().$promise;
+            return resource.getAll().$promise
+            .then(function(response) {
+                var templates = [];
+                response.forEach(function(template) {
+                    templates.push(new Template(template));
+                });
+                return templates;
+            });
         }
 
         /**
@@ -91,7 +100,10 @@
          * @return {Promise}            Requisition template for given program
          */
         function search(programId) {
-            return resource.search({program: programId}).$promise;
+            return resource.search({program: programId}).$promise
+            .then(function(response) {
+                return new Template(response);
+            });
         }
 
         /**

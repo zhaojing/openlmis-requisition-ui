@@ -31,13 +31,12 @@
     RequisitionTemplateAdminController.$inject = [
         '$state', 'template', 'program', '$q', 'notificationService', 'messageService',
         'templateValidator', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS',
-        'loadingModalService', 'confirmService'
+        'loadingModalService', 'confirmService', 'requisitionTemplateService'
     ];
 
     function RequisitionTemplateAdminController($state, template, program, $q, notificationService,
-                                                messageService, templateValidator,
-                                                MAX_COLUMN_DESCRIPTION_LENGTH, COLUMN_SOURCES,
-                                                TEMPLATE_COLUMNS, loadingModalService, confirmService) {
+                                                messageService, templateValidator, MAX_COLUMN_DESCRIPTION_LENGTH, COLUMN_SOURCES,
+                                                TEMPLATE_COLUMNS, loadingModalService, confirmService, requisitionTemplateService) {
 
         var vm = this;
 
@@ -105,11 +104,11 @@
          * list view page. If saving is unsuccessful error notification is displayed.
          */
         function saveTemplate() {
-            if (templateValidator.isTemplateValid(vm.template)) {
+            if (vm.template.isValid()) {
                 confirmService.confirm('adminProgramTemplate.templateSave.question')
                 .then(function() {
                     loadingModalService.open();
-                    vm.template.$save().then(function() {
+                    requisitionTemplateService.save(vm.template).then(function() {
                         notificationService.success('adminProgramTemplate.templateSave.success');
                         goToTemplateList();
                     }, function() {
@@ -136,7 +135,7 @@
          * @param {Object}  item  Dropped column
          */
         function dropCallback(event, index, item) {
-            if(!vm.template.$moveColumn(item, index)) {
+            if(!vm.template.moveColumn(item, index)) {
                 notificationService.error('adminProgramTemplate.canNotDropColumn');
             }
             return false; // disable default drop functionality
@@ -154,7 +153,7 @@
          */
         function canChangeSource(columnDefinition) {
             return columnDefinition.sources.length > 1 &&
-                !vm.template.$columnDisabled(columnDefinition.name) &&
+                !vm.template.isColumnDisabled(columnDefinition.name) &&
                 !(columnDefinition.name === TEMPLATE_COLUMNS.STOCK_ON_HAND && vm.template.populateStockOnHandFromStockCards);
         }
 

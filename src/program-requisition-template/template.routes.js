@@ -32,8 +32,8 @@
             controllerAs: 'vm',
             accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
             resolve: {
-                template: function(program, templateFactory) {
-                    return templateFactory.search(program.id);
+                template: function(program, requisitionTemplateService) {
+                    return requisitionTemplateService.search(program.id);
                 }
             }
 		});

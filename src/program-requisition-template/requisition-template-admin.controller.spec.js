@@ -22,12 +22,12 @@ describe('RequisitionTemplateAdminController', function() {
     var template, program, loadingModalService;
 
     //injects
-    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope, TEMPLATE_COLUMNS, templateValidator, confirmService;
+    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope, TEMPLATE_COLUMNS, confirmService, requisitionTemplateService;
 
     beforeEach(function() {
         module('program-requisition-template');
 
-        template = jasmine.createSpyObj('template', ['$save', '$moveColumn', '$findCircularCalculatedDependencies', '$columnDisabled']);
+        template = jasmine.createSpyObj('template', ['moveColumn', 'findCircularCalculatedDependencies', 'isColumnDisabled', 'isValid']);
         template.id = '1';
         template.programId = '1';
         template.columnsMap = {
@@ -68,8 +68,8 @@ describe('RequisitionTemplateAdminController', function() {
             loadingModalService = $injector.get('loadingModalService');
             rootScope = $injector.get('$rootScope');
             $controller = $injector.get('$controller');
-            templateValidator = $injector.get('templateValidator');
             confirmService = $injector.get('confirmService');
+            requisitionTemplateService = $injector.get('requisitionTemplateService');
         });
 
         vm = $controller('RequisitionTemplateAdminController', {
@@ -98,13 +98,15 @@ describe('RequisitionTemplateAdminController', function() {
             spyOn(loadingModalService, 'close');
             spyOn(loadingModalService, 'open');
 
-            spyOn(templateValidator, 'isTemplateValid').andReturn(true);
-
             spyOn(confirmService, 'confirm').andReturn(q.resolve());
+
+            spyOn(requisitionTemplateService, 'save').andReturn(q.resolve());
+
+            template.isValid.andReturn(true);
         });
 
         it('should display error message when template is invalid', function() {
-            templateValidator.isTemplateValid.andReturn(false);
+            template.isValid.andReturn(false);
 
             vm.saveTemplate();
 
@@ -129,24 +131,24 @@ describe('RequisitionTemplateAdminController', function() {
         });
 
         it('should save template and then display success notification and change state', function() {
-            template.$save.andReturn(q.when(true));
-
             vm.saveTemplate();
 
             rootScope.$apply();
 
             expect(loadingModalService.open).toHaveBeenCalled();
+            expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(stateGoSpy).toHaveBeenCalled();
             expect(successNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.success');
         });
 
         it('should close loading modal if template save was unsuccessful', function() {
-            template.$save.andReturn(q.reject());
+            requisitionTemplateService.save.andReturn(q.reject());
 
             vm.saveTemplate();
             rootScope.$apply();
 
             expect(loadingModalService.close).toHaveBeenCalled();
+            expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(errorNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.failure');
         });
     });
@@ -154,7 +156,7 @@ describe('RequisitionTemplateAdminController', function() {
     it('should call column drop method and display error notification when drop failed', function() {
         var notificationServiceSpy = jasmine.createSpy();
 
-        template.$moveColumn.andReturn(false);
+        template.moveColumn.andReturn(false);
 
         spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
 
@@ -164,7 +166,7 @@ describe('RequisitionTemplateAdminController', function() {
     });
 
     it('can change source works correctly', function() {
-        template.$columnDisabled.andReturn(false);
+        template.isColumnDisabled.andReturn(false);
         expect(vm.canChangeSource({
             name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
             sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
@@ -180,7 +182,7 @@ describe('RequisitionTemplateAdminController', function() {
             sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
         })).toBe(false);
 
-        template.$columnDisabled.andReturn(true);
+        template.isColumnDisabled.andReturn(true);
         template.populateStockOnHandFromStockCards = false;
         expect(vm.canChangeSource({
             name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
