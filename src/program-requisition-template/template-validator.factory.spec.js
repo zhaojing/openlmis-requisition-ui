@@ -23,7 +23,7 @@ describe('templateValidator', function() {
             templateValidator = $injector.get('templateValidator');
         });
 
-        template = jasmine.createSpyObj('template', ['$findCircularCalculatedDependencies']);
+        template = jasmine.createSpyObj('template', ['findCircularCalculatedDependencies']);
         template.columnsMap = {};
     });
 
@@ -275,7 +275,7 @@ describe('templateValidator', function() {
             });
 
             it('should validate for circular dependencies', function() {
-                template.$findCircularCalculatedDependencies.andReturn(['stockOnHand']);
+                template.findCircularCalculatedDependencies.andReturn(['stockOnHand']);
 
                 var result = templateValidator.getColumnError(column, template);
 
@@ -283,7 +283,7 @@ describe('templateValidator', function() {
             });
 
             it('should validate for circular dependencies and return error for multiple columns', function() {
-                template.$findCircularCalculatedDependencies.andReturn(['stockOnHand', 'total']);
+                template.findCircularCalculatedDependencies.andReturn(['stockOnHand', 'total']);
 
                 var result = templateValidator.getColumnError(column, template);
 

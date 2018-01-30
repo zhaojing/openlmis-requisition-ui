@@ -149,12 +149,13 @@
          * @description
          * Indicates if column source can be changed based on if there is more then one possible source to choose from.
          *
-         * @param {Object} columnDefinition Contains info about how column can be manipulated by user
+         * @param  {Object}  column column to be checked
+         * @return {boolean}        true if source can be changed
          */
-        function canChangeSource(columnDefinition) {
-            return columnDefinition.sources.length > 1 &&
-                !vm.template.isColumnDisabled(columnDefinition.name) &&
-                !(columnDefinition.name === TEMPLATE_COLUMNS.STOCK_ON_HAND && vm.template.populateStockOnHandFromStockCards);
+        function canChangeSource(column) {
+            return column.columnDefinition.sources.length > 1 &&
+                !vm.template.isColumnDisabled(column) &&
+                !(column.name === TEMPLATE_COLUMNS.STOCK_ON_HAND && vm.template.populateStockOnHandFromStockCards);
         }
 
         /**

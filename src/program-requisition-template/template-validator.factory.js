@@ -156,7 +156,7 @@
                 message;
 
             if(column.source === COLUMN_SOURCES.CALCULATED) {
-                var circularDependencyArray = template.$findCircularCalculatedDependencies(column.name);
+                var circularDependencyArray = template.findCircularCalculatedDependencies(column.name);
                 angular.forEach(circularDependencyArray, function(dependency) {
                     dependencies = dependencies + ' ' + template.columnsMap[dependency].label + ',';
                 });

@@ -30,7 +30,7 @@
                             <div ng-if="column.columnDefinition.canChangeOrder" dnd-handle class="handle">:::</div>
                         </td>
                         <td>
-                            <input type="checkbox" ng-model="column.isDisplayed" ng-disabled="column.columnDefinition.isDisplayRequired || vm.template.columnDisabled(column)">
+                            <input type="checkbox" ng-model="column.isDisplayed" ng-disabled="column.columnDefinition.isDisplayRequired || vm.template.isColumnDisabled(column)">
                         </td>
                         <td>
                             <div class="circle">
@@ -38,14 +38,14 @@
                             </div>
                         </td>
                         <td>
-                            <input disable-drag type="text" ng-model="column.label" class="form-control" ng-disabled="vm.template.$columnDisabled(column.name)"></input>
+                            <input disable-drag type="text" ng-model="column.label" class="form-control" ng-disabled="vm.template.isColumnDisabled(column)"></input>
                         </td>
                         <td>
-                            <input characters-left ng-maxlength="{{vm.maxColumnDescriptionLength}}" disable-drag ng-model="column.definition" class="form-control" type="text" ng-disabled="vm.template.$columnDisabled(column.name)"></input>
+                            <input characters-left ng-maxlength="{{vm.maxColumnDescriptionLength}}" disable-drag ng-model="column.definition" class="form-control" type="text" ng-disabled="vm.template.isColumnDisabled(column)"></input>
                         </td>
                         <td>
-                            <div ng-if="!vm.canChangeSource(column.columnDefinition)">{{vm.sourceDisplayName(column.source)}}</div>
-                            <div ng-if="vm.canChangeSource(column.columnDefinition)">
+                            <div ng-if="!vm.canChangeSource(column)">{{vm.sourceDisplayName(column.source)}}</div>
+                            <div ng-if="vm.canChangeSource(column)">
                                 <select ng-model="column.source" ng-options="source as vm.sourceDisplayName(source) for source in column.columnDefinition.sources"></select>
                             </div>
                         </td>

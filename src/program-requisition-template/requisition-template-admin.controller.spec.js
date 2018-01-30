@@ -168,25 +168,34 @@ describe('RequisitionTemplateAdminController', function() {
     it('can change source works correctly', function() {
         template.isColumnDisabled.andReturn(false);
         expect(vm.canChangeSource({
-            name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-            sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
+            columnDefinition: {
+                name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
+                sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
+            }
         })).toBe(true);
 
         expect(vm.canChangeSource({
-            sources: [COLUMN_SOURCES.USER_INPUT]
+            columnDefinition: {
+                sources: [COLUMN_SOURCES.USER_INPUT]
+            }
         })).toBe(false);
 
         template.populateStockOnHandFromStockCards = true;
         expect(vm.canChangeSource({
             name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
-            sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
+            columnDefinition: {
+                name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
+                sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
+            }
         })).toBe(false);
 
         template.isColumnDisabled.andReturn(true);
         template.populateStockOnHandFromStockCards = false;
         expect(vm.canChangeSource({
-            name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-            sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
+            columnDefinition: {
+                name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
+                sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
+            }
         })).toBe(false);
     });
 });

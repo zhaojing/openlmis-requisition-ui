@@ -40,14 +40,20 @@
         return Template;
 
         function Template(template) {
-            angular.merge(this, template);
+            this.createdDate = template.createdDate;
+            this.id = template.id;
+            this.numberOfPeriodsToAverage = template.numberOfPeriodsToAverage;
+            this.programId = template.programId;
+            this.populateStockOnHandFromStockCards = template.populateStockOnHandFromStockCards;
+            this.columnsMap = {};
 
-            for (var columnName in this.columnsMap) {
-                this.columnsMap[columnName] = new TemplateColumn(this.columnsMap[columnName]);
+            for (var columnName in template.columnsMap) {
+                this.columnsMap[columnName] = new TemplateColumn(template.columnsMap[columnName]);
             }
 
-            angular.forEach(template.columnsMap, function(column) {
-                addDependentColumnValidation(column, template.columnsMap);
+            var columns = this.columnsMap;
+            angular.forEach(this.columnsMap, function(column) {
+                addDependentColumnValidation(column, columns);
             });
         }
 
