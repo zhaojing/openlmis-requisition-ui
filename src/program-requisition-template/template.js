@@ -191,9 +191,11 @@
             if (this.populateStockOnHandFromStockCards) {
                 this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.STOCK_CARDS;
                 for (var columnName in this.columnsMap) {
-                    var column = this.columnsMap[columnName];
-                    if (column.isStockDisabledColumn()) {
-                        column.disableColumnsAndChangeSource();
+                    if (this.columnsMap.hasOwnProperty(columnName)) {
+                        var column = this.columnsMap[columnName];
+                        if (column.isStockDisabledColumn()) {
+                            column.disableColumnsAndChangeSource();
+                        }
                     }
                 }
             } else {
