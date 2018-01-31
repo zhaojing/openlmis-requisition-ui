@@ -127,7 +127,7 @@ describe('RequisitionTemplateAdminController', function() {
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.question');
+                undefined, 'adminProgramTemplate.templateSave.title');
             expect(stateGoSpy).not.toHaveBeenCalled();
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(successNotificationServiceSpy).not.toHaveBeenCalled();
@@ -140,7 +140,7 @@ describe('RequisitionTemplateAdminController', function() {
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.question');
+                undefined, 'adminProgramTemplate.templateSave.title');
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(stateGoSpy).toHaveBeenCalled();
@@ -155,7 +155,7 @@ describe('RequisitionTemplateAdminController', function() {
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.question');
+                undefined, 'adminProgramTemplate.templateSave.title');
             expect(loadingModalService.close).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(errorNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.failure');
