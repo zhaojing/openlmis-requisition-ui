@@ -19,14 +19,14 @@ describe('programService', function() {
 
     beforeEach(function() {
         module('admin-program-list', function($provide) {
-            var templateFactorySpy = jasmine.createSpyObj('templateFactory', ['getAll']);
+            var templateServiceSpy = jasmine.createSpyObj('templateService', ['getAll']);
 
-            templateFactorySpy.getAll.andCallFake(function() {
+            templateServiceSpy.getAll.andCallFake(function() {
                 return $q.when([template]);
             });
 
-        	$provide.factory('templateFactory', function(){
-        		return templateFactorySpy;
+        	$provide.factory('templateService', function(){
+        		return templateServiceSpy;
         	});
         });
 
