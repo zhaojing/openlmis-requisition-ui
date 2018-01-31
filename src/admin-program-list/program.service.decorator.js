@@ -30,9 +30,9 @@
             $provide.decorator('programService', decorator);
         });
 
-    decorator.$inject = ['$delegate', '$q', '$filter', 'templateService'];
+    decorator.$inject = ['$delegate', '$q', '$filter', 'requisitionTemplateService'];
 
-    function decorator($delegate, $q, $filter, templateService) {
+    function decorator($delegate, $q, $filter, requisitionTemplateService) {
         var programService = $delegate;
 
         programService.getAllProgramsWithTemplates = getAllProgramsWithTemplates;
@@ -54,7 +54,7 @@
 
             $q.all([
                 programService.getAll(),
-                templateService.getAll()
+                requisitionTemplateService.getAll()
             ]).then(function(responses) {
                 var programs = responses[0],
                     templates = responses[1];
