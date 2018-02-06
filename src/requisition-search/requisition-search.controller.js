@@ -164,11 +164,11 @@
             }
 
             if ($stateParams.initiatedDateFrom) {
-                vm.startDate = new Date($stateParams.initiatedDateFrom);
+                vm.startDate = $stateParams.initiatedDateFrom;
             }
 
             if ($stateParams.initiatedDateTo) {
-                vm.endDate = new Date($stateParams.initiatedDateTo);
+                vm.endDate = $stateParams.initiatedDateTo;
             }
         }
 

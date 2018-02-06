@@ -146,11 +146,11 @@ describe('RequisitionSearchController', function() {
         });
 
         it('should set startDate if initiated date from was passed through the URL', function() {
-            $stateParams.initiatedDateFrom = '2017-01-31T00:00:00.000Z';
+            $stateParams.initiatedDateFrom = '2017-01-31';
 
             vm.$onInit();
 
-            expect(vm.startDate).toEqual(new Date('2017-01-31'));
+            expect(vm.startDate).toEqual('2017-01-31');
         });
 
         it('should not set starDate if initiated date from not passed through the URL', function() {
@@ -162,11 +162,11 @@ describe('RequisitionSearchController', function() {
         });
 
         it('should set endDate if initiated date to was passed through the URL', function() {
-            $stateParams.initiatedDateTo = '2017-01-31T00:00:00.000Z';
+            $stateParams.initiatedDateTo = '2017-01-31';
 
             vm.$onInit();
 
-            expect(vm.endDate).toEqual(new Date('2017-01-31'));
+            expect(vm.endDate).toEqual('2017-01-31');
         });
 
         it('should not set endDate if initiated date to not passed through the URL', function() {
