@@ -66,7 +66,9 @@
                 this.NUMBER_OF_NEW_PATIENTS_ADDED,
                 this.ADJUSTED_CONSUMPTION,
                 this.MAXIMUM_STOCK_QUANTITY,
-                this.CALCULATED_ORDER_QUANTITY
+                this.CALCULATED_ORDER_QUANTITY,
+                this.TOTAL_LOSSES_AND_ADJUSTMENTS,
+                this.AVERAGE_CONSUMPTION
             ];
         }
     }

@@ -40,6 +40,8 @@ describe("TEMPLATE_COLUMNS", function() {
             expect(returnedList[6]).toEqual('adjustedConsumption');
             expect(returnedList[7]).toEqual('maximumStockQuantity');
             expect(returnedList[8]).toEqual('calculatedOrderQuantity');
+            expect(returnedList[9]).toEqual('totalLossesAndAdjustments');
+            expect(returnedList[10]).toEqual('averageConsumption');
         });
     });
 });
