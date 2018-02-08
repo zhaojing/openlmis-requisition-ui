@@ -18,17 +18,13 @@
     'use strict';
 
     /**
-     * @module admin-program-list
-     *
-     * @description
-     * Provides base admin-program state and factory/controller for retrieving
-     * list of programs from the OpenLMIS server.
-     */
-    angular.module('admin-program-list', [
-        'admin-program-settings',
-        'openlmis-admin',
-        'referencedata-program',
-        'requisition',
-        'ui.router'
-    ]);
+    * @ngdoc object
+    * @name admin-template-configure-columns.MAX_COLUMN_DESCRIPTION_LENGTH
+    *
+    * @description
+    * This is constant for max column description length.
+    */
+    angular
+        .module('admin-template-configure-columns')
+        .constant('MAX_COLUMN_DESCRIPTION_LENGTH', 140);
 })();

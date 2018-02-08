@@ -1,0 +1,25 @@
+<h2>{{'adminTemplateList.templates' | message}}</h2>
+<div ng-repeat="program in vm.programs | orderBy: 'name'">
+    <div class="openlmis-table-container">
+        <h2>{{program.name}}</h2>
+        <table class="openlmis-table" ng-if="vm.programs.length">
+            <thead>
+                <tr>
+                    <th>{{'adminTemplateList.templateName' | message}}</th>
+                    <th>{{'adminTemplateList.facilityType' | message}}</th>
+                    <th>{{'adminTemplateList.action' | message}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="template in program.templates | orderBy: 'name'">
+                    <td>{{template.name}}</td>
+                    <td ng-show="template.facilityTypes.length > 1">{{'adminTemplateList.facilityTypes' | message: {'number': template.facilityTypes.length } }}</td>
+                    <td ng-hide="template.facilityTypes.length > 1">{{vm.template.facilityTypes[0].name}}</td>
+                    <td>
+                        <button ui-sref="openlmis.administration.templates.configure.columns({id: template.id})">{{'adminTemplateList.configure' | message}}</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

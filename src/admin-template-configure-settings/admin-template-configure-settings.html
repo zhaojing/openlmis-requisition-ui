@@ -1,0 +1,43 @@
+<div class="requisition-template-admin">
+  <h2>{{'adminTemplateConfigureSettings.title' | message}}</h2>
+  <section class="openlmis-table-container">
+    <section class="is-primary">
+      <form class="form-inline">
+        <div class="form-group">
+          <label for="facilityTypeSelect">{{'adminTemplateConfigureSettings.facilityType' | message}}</label>
+          <select id="facilityTypeSelect" ng-model="vm.facilityType"
+                  ng-options="facilityType.name for facilityType in vm.facilityTypes" required>
+          </select>
+        </div>
+        <button class="add" ng-click="vm.add(vm.facilityType)">
+          {{'adminTemplateConfigureSettings.add' | message}}
+        </button>
+      </form>
+    </section>
+    <table>
+      <caption ng-if="!vm.template.facilityTypes.length">
+        {{'adminTemplateConfigureSettings.noFacilityTypeFound' | message}}
+      </caption>
+      <thead>
+      <tr>
+        <th>{{'adminTemplateConfigureSettings.facilityType' | message}}</th>
+        <th class="col-sticky sticky-right">{{'adminTemplateConfigureSettings.action' | message}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="facilityType in vm.template.facilityTypes">
+        <td>{{facilityType.name}}</td>
+        <td>
+          <button ng-click="vm.remove(facilityType)">
+            {{'adminTemplateConfigureSettings.remove' | message}}
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<div class="openlmis-toolbar">
+  <input type="button" ng-click="vm.saveTemplate()" class="primary" value="{{'adminTemplateConfigureSettings.save' | message}}"/>
+  <input type="button" ng-click="vm.goToTemplateList()" value="{{'adminTemplateConfigureSettings.cancel' | message}}">
+</div>

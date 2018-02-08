@@ -1,0 +1,18 @@
+<header>
+    <h2>{{'adminTemplateConfigure.configureColumns.title' | message:({program: vm.program.name, template: vm.template.name})}}</h2>
+</header>
+<nav>
+    <ul>
+        <li ui-sref-active="active" role="presentation">
+            <a ui-sref="openlmis.administration.templates.configure.columns">
+                {{'adminTemplateConfigure.templateColumns' | message}}
+            </a>
+        </li>
+        <li ui-sref-active="active" role="presentation">
+            <a ui-sref="openlmis.administration.templates.configure.settings">
+                {{'adminTemplateConfigure.templateSettings' | message}}
+            </a>
+        </li>
+    </ul>
+</nav>
+<div ui-view=""></div>

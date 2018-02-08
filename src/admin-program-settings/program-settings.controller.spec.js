@@ -16,7 +16,7 @@
 describe('ProgramSettingsController', function() {
 
     var $q, $rootScope, $state, confirmService, loadingModalService, programService, notificationService,
-        program, vm;
+        program, vm, ProgramDataBuilder, $controller;
 
     beforeEach(function() {
         module('admin-program-settings', function($provide) {
@@ -41,28 +41,25 @@ describe('ProgramSettingsController', function() {
             });
         });
 
-        program = {
-            id: 'program-id-1',
-            name: 'program-1'
-        };
-
         inject(function($injector) {
             $rootScope = $injector.get('$rootScope');
             $q = $injector.get('$q');
             $state = $injector.get('$state');
-
-            vm = $injector.get('$controller')('ProgramSettingsController', {
-                program: program
-            });
+            $controller = $injector.get('$controller');
+            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
         });
-        vm.$onInit();
+
+        program = new ProgramDataBuilder()
+            .withId('program-id-1')
+            .withName('program-1')
+            .build();
+
+        vm = $controller('ProgramSettingsController', {
+            program: program
+        });
     });
 
     describe('init', function() {
-
-        it('should expose onInit method', function() {
-            expect(angular.isFunction(vm.$onInit)).toBe(true);
-        });
 
         it('should expose saveProgram method', function() {
             expect(angular.isFunction(vm.saveProgram)).toBe(true);

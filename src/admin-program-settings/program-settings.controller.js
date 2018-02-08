@@ -34,7 +34,6 @@
 
         var vm = this;
 
-        vm.$onInit = onInit
         vm.saveProgram = saveProgram;
 
         /**
@@ -46,19 +45,7 @@
          * @description
          * Holds program that can be edited and saved.
          */
-        vm.program = undefined;
-
-        /**
-         * @ngdoc property
-         * @methodOf admin-program-settings.controller:ProgramSettingsController
-         * @name onInit
-         *
-         * @description
-         * Initialization method for ProgramSettingsController.
-         */
-        function onInit() {
-            vm.program = angular.copy(program);
-        }
+        vm.program = program;
 
         /**
          * @ngdoc property

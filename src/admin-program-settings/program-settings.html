@@ -1,3 +1,6 @@
+<header>
+    <h2>{{'adminProgramSettings.settings' | message:({program: vm.program.name})}}</h2>
+</header>
 <ng-include src="'admin-program-add/program-form.html'"></ng-include>
 <div class="button-group">
     <button class="primary" type="submit" form="program-form">{{'adminProgramSettings.save' | message}}</button>

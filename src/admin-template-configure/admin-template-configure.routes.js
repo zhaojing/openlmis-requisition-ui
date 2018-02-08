@@ -18,29 +18,31 @@
     'use strict';
 
     angular
-        .module('admin-program-settings')
+        .module('admin-template-configure')
         .config(routes);
 
     routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
     function routes($stateProvider, REQUISITION_RIGHTS) {
-        $stateProvider.state('openlmis.administration.programs.settings', {
-            label: 'adminProgramSettings.settings',
-            url: '/:id/settings',
-            templateUrl: 'admin-program-settings/program-settings.html',
-            controller: 'ProgramSettingsController',
-            controllerAs: 'vm',
+
+        $stateProvider.state('openlmis.administration.templates.configure', {
+            abstract: 'true',
+            label: 'adminTemplateConfigure.label',
+            url: '/:id',
             accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
             views: {
                 '@openlmis': {
-                    controller: 'ProgramSettingsController',
-                    templateUrl: 'admin-program-settings/program-settings.html',
+                    controller: 'AdminTemplateConfigureController',
+                    templateUrl: 'admin-template-configure/admin-template-configure.html',
                     controllerAs: 'vm',
                 }
             },
             resolve: {
-                program: function(programService, $stateParams) {
-                    return programService.get($stateParams.id);
+                template: function(requisitionTemplateService, $stateParams) {
+                    return requisitionTemplateService.get($stateParams.id);
+                },
+                program: function(programService, template) {
+                    return programService.get(template.program.id);
                 }
             }
         });

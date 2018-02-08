@@ -1,0 +1,12 @@
+{
+    "adminTemplateConfigureSettings.action": "Action",
+    "adminTemplateConfigureSettings.add": "Add",
+    "adminTemplateConfigureSettings.cancel": "Cancel",
+    "adminTemplateConfigureSettings.facilityType": "Facility Type",
+    "adminTemplateConfigureSettings.noFacilityTypeFound": "No facility type found.",
+    "adminTemplateConfigureSettings.remove": "Remove",
+    "adminTemplateConfigureSettings.save": "Save",
+    "adminTemplateConfigureSettings.title": "Configure Template Settings",
+    "adminTemplateConfigureSettings.templateSettingsSave.failure": "Template Settings save failed!",
+    "adminTemplateConfigureSettings.templateSettingsSave.success": "Template Settings saved successfully!"
+}

@@ -1,0 +1,6 @@
+{
+    "adminTemplateConfigure.label": "Configure Template",
+    "adminTemplateConfigure.configureColumns.title": "Configure ${template} for ${program}",
+    "adminTemplateConfigure.templateColumns": "Template Columns",
+    "adminTemplateConfigure.templateSettings": "Template Settings"
+}

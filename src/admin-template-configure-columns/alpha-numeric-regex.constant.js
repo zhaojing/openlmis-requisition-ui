@@ -18,17 +18,13 @@
     'use strict';
 
     /**
-     * @module admin-program-list
+     * @ngdoc object
+     * @name admin-template-configure-columns.ALPHA_NUMERIC_REGEX
      *
      * @description
-     * Provides base admin-program state and factory/controller for retrieving
-     * list of programs from the OpenLMIS server.
+     * This is constant for alpha numeric regex.
      */
-    angular.module('admin-program-list', [
-        'admin-program-settings',
-        'openlmis-admin',
-        'referencedata-program',
-        'requisition',
-        'ui.router'
-    ]);
+    angular
+        .module('admin-template-configure-columns')
+        .constant('ALPHA_NUMERIC_REGEX', /^[a-zA-z0-9/]+[a-zA-Z0-9/ ]+$/);
 })();

@@ -18,17 +18,18 @@
     'use strict';
 
     /**
-     * @module admin-program-list
+     * @module admin-template-configure-columns
      *
      * @description
-     * Provides base admin-program state and factory/controller for retrieving
-     * list of programs from the OpenLMIS server.
+     * Provides base admin-template-configure-columns state and service/factory/controller
+     * for retrieving templates from the OpenLMIS server.
      */
-    angular.module('admin-program-list', [
-        'admin-program-settings',
+    angular.module('admin-template-configure-columns', [
+        'dndLists',
         'openlmis-admin',
         'referencedata-program',
         'requisition',
         'ui.router'
     ]);
+
 })();

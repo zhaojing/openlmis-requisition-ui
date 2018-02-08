@@ -15,20 +15,22 @@
 
 (function() {
 
-    'use strict';
+	'use strict';
 
-    /**
-     * @module admin-program-list
-     *
-     * @description
-     * Provides base admin-program state and factory/controller for retrieving
-     * list of programs from the OpenLMIS server.
-     */
-    angular.module('admin-program-list', [
-        'admin-program-settings',
-        'openlmis-admin',
-        'referencedata-program',
-        'requisition',
-        'ui.router'
-    ]);
+	angular
+        .module('admin-template-configure-columns')
+        .config(routes);
+
+	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+
+	function routes($stateProvider, REQUISITION_RIGHTS) {
+		$stateProvider.state('openlmis.administration.templates.configure.columns', {
+			label: 'adminProgramTemplate.templateColumns',
+			url: '/columns',
+            templateUrl: 'admin-template-configure-columns/template.html',
+            controller: 'RequisitionTemplateAdminController',
+            controllerAs: 'vm',
+            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE]
+		});
+	}
 })();

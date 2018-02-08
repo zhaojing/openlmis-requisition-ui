@@ -18,17 +18,14 @@
     'use strict';
 
     /**
-     * @module admin-program-list
+     * @module admin-template-configure
      *
      * @description
-     * Provides base admin-program state and factory/controller for retrieving
-     * list of programs from the OpenLMIS server.
+     * Provides admin edit screen for programs.
      */
-    angular.module('admin-program-list', [
-        'admin-program-settings',
-        'openlmis-admin',
+    angular.module('admin-template-configure', [
         'referencedata-program',
-        'requisition',
+        'openlmis-rights',
         'ui.router'
     ]);
 })();
