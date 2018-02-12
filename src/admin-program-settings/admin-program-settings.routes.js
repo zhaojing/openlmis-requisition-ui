@@ -35,7 +35,7 @@
                 '@openlmis': {
                     controller: 'ProgramSettingsController',
                     templateUrl: 'admin-program-settings/program-settings.html',
-                    controllerAs: 'vm',
+                    controllerAs: 'vm'
                 }
             },
             resolve: {

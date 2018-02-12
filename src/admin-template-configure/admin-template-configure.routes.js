@@ -34,7 +34,7 @@
                 '@openlmis': {
                     controller: 'AdminTemplateConfigureController',
                     templateUrl: 'admin-template-configure/admin-template-configure.html',
-                    controllerAs: 'vm',
+                    controllerAs: 'vm'
                 }
             },
             resolve: {
