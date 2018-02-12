@@ -21,14 +21,15 @@
      * @module admin-template-configure-settings
      *
      * @description
-     * Provides base admin-template-configure-settings state and service/factory/controller for retrieving
+     * Provides base admin-template-configure-settings state and controller for retrieving
      * templates from the OpenLMIS server.
      */
     angular.module('admin-template-configure-settings', [
         'openlmis-admin',
         'referencedata-facility-type',
         'requisition',
-        'ui.router'
+        'ui.router',
+        'admin-template-configure-columns'
     ]);
 
 })();

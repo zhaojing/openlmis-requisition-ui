@@ -15,8 +15,9 @@
 
 describe('AdminTemplateConfigureSettingsController', function() {
 
-    var vm, template, loadingModalService, facilityTypes, $q, $state, notificationService,
-        rootScope, FacilityTypeDataBuilder, $controller, confirmService;
+    var vm, template, loadingModalService, $q, $state, notificationService, rootScope,
+        FacilityTypeDataBuilder, $controller, confirmService, requisitionTemplateService,
+        TemplateDataBuilder, districtHospital, healthCenter, districtStore;
 
     beforeEach(function() {
         module('admin-template-configure-settings');
@@ -28,51 +29,33 @@ describe('AdminTemplateConfigureSettingsController', function() {
             $controller = $injector.get('$controller');
             loadingModalService = $injector.get('loadingModalService');
             rootScope = $injector.get('$rootScope');
+            confirmService = $injector.get('confirmService');
+            requisitionTemplateService = $injector.get('requisitionTemplateService');
             FacilityTypeDataBuilder = $injector.get('FacilityTypeDataBuilder');
+            TemplateDataBuilder = $injector.get('TemplateDataBuilder');
         });
 
-        template = jasmine.createSpyObj('template', ['$save']);
-        template.id = '1';
-        template.programId = '1';
-        template.columnsMap = {
-            remarks: {
-                displayOrder: 1,
-                isDisplayed: true,
-                label: 'Remarks'
-            },
-            total: {
-                displayOrder: 2,
-                isDisplayed: true,
-                label: 'Total'
-            },
-            stockOnHand: {
-                displayOrder: 3,
-                isDisplayed: true,
-                label: "Stock on Hand"
-            },
-            averageConsumption: {
-                name: 'averageConsumption',
-                displayOrder: 4,
-                isDisplayed: true,
-                label: "Average Consumption"
-            }
-        };
-        template.numberOfPeriodsToAverage = 3;
+        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital().build();
+        healthCenter = new FacilityTypeDataBuilder().build();
+        districtStore = new FacilityTypeDataBuilder().buildDistrictStore().build();
 
-        facilityTypes = new FacilityTypeDataBuilder().build();
-
-        vm = $controller('AdminTemplateConfigureSettingsController', {
-            facilityTypes: facilityTypes,
-            template: template
-        });
+        template = new TemplateDataBuilder().withFacilityTypes([healthCenter]).build();
     });
 
-    describe('init', function() {
+    describe('$onInit', function() {
+
+        beforeEach(function() {
+            initController();
+        });
 
         it('should set template and facility types', function() {
-            expect(vm.facilityTypes).toEqual(facilityTypes);
             expect(vm.template).toEqual(template);
         });
+
+        it('should set template facility types', function() {
+            expect(vm.template.facilityTypes).toEqual([healthCenter]);
+        });
+
     });
 
     describe('save template', function() {
@@ -82,44 +65,32 @@ describe('AdminTemplateConfigureSettingsController', function() {
             errorNotificationServiceSpy = jasmine.createSpy();
 
         beforeEach(function() {
+            initController();
+
             spyOn(notificationService, 'success').andCallFake(successNotificationServiceSpy);
             spyOn(notificationService, 'error').andCallFake(errorNotificationServiceSpy);
 
-            spyOn(state, 'go').andCallFake(stateGoSpy);
+            spyOn($state, 'go').andCallFake(stateGoSpy);
 
             spyOn(loadingModalService, 'close');
             spyOn(loadingModalService, 'open');
 
-            spyOn(confirmService, 'confirm').andReturn(q.resolve());
+            spyOn(confirmService, 'confirm').andReturn($q.resolve());
 
-            spyOn(requisitionTemplateService, 'save').andReturn(q.resolve());
-
-            template.isValid.andReturn(true);
-        });
-
-        it('should display error message when template is invalid', function() {
-            template.isValid.andReturn(false);
-
-            vm.saveTemplate();
-
-            rootScope.$apply();
-
-            expect(stateGoSpy).not.toHaveBeenCalled();
-            expect(loadingModalService.open).not.toHaveBeenCalled();
-            expect(errorNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.template.invalid');
-            expect(confirmService.confirm).not.toHaveBeenCalled();
+            spyOn(requisitionTemplateService, 'save').andReturn($q.resolve());
         });
 
         it('should not save template if confirm failed', function() {
-            confirmService.confirm.andReturn(q.reject());
+            confirmService.confirm.andReturn($q.reject());
 
             vm.saveTemplate();
 
             rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
-                'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.title');
+                'adminTemplateConfigureSettings.templateSettingsSave.description',
+                'adminTemplateConfigureSettings.save',
+                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title');
             expect(stateGoSpy).not.toHaveBeenCalled();
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(successNotificationServiceSpy).not.toHaveBeenCalled();
@@ -131,30 +102,82 @@ describe('AdminTemplateConfigureSettingsController', function() {
             rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
-                'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.title');
+                'adminTemplateConfigureSettings.templateSettingsSave.description',
+                'adminTemplateConfigureSettings.save',
+                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title');
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(stateGoSpy).toHaveBeenCalled();
-            expect(successNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.success');
+            expect(successNotificationServiceSpy).toHaveBeenCalledWith(
+                'adminTemplateConfigureSettings.templateSettingsSave.success');
         });
 
         it('should close loading modal if template save was unsuccessful', function() {
-            requisitionTemplateService.save.andReturn(q.reject());
+            requisitionTemplateService.save.andReturn($q.reject());
 
             vm.saveTemplate();
             rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
-                'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.title');
+                'adminTemplateConfigureSettings.templateSettingsSave.description',
+                'adminTemplateConfigureSettings.save',
+                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title');
             expect(loadingModalService.close).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
-            expect(errorNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.failure');
+            expect(errorNotificationServiceSpy).toHaveBeenCalledWith(
+                'adminTemplateConfigureSettings.templateSettingsSave.failure');
+        });
+    });
+
+    describe('add', function() {
+
+        beforeEach(function() {
+            initController();
+            vm.facilityType = districtHospital;
+        });
+
+        it('should add facility type to template facility types', function() {
+            vm.add();
+            rootScope.$apply();
+
+            expect(vm.template.facilityTypes).toEqual([healthCenter, districtHospital]);
+        });
+
+        it('should remove facility type from available facility types', function() {
+            vm.add();
+            rootScope.$apply();
+
+            expect(vm.facilityTypes).toEqual([districtStore]);
+        });
+    });
+
+    describe('remove', function() {
+
+        beforeEach(function() {
+            initController();
+            vm.facilityType = healthCenter;
+        });
+
+        it('should remove facility type from template facility types', function() {
+            vm.remove(healthCenter);
+            rootScope.$apply();
+
+            expect(vm.template.facilityTypes).toEqual([]);
+        });
+
+        it('should add facility type to available facility types', function() {
+            vm.remove(healthCenter);
+            rootScope.$apply();
+
+            expect(vm.facilityTypes).toEqual([districtHospital, districtStore, healthCenter]);
         });
     });
 
     describe('goToTemplateList', function() {
+
+        beforeEach(function() {
+            initController();
+        });
 
         it('should go to the template list', function() {
             spyOn($state, 'go');
@@ -164,5 +187,15 @@ describe('AdminTemplateConfigureSettingsController', function() {
             expect($state.go).toHaveBeenCalledWith('openlmis.administration.templates');
         });
     });
+
+    function initController() {
+        vm = $controller('AdminTemplateConfigureSettingsController', {
+            template: template,
+            facilityTypes: [districtHospital, districtStore, healthCenter],
+            templateFacilityTypes: [healthCenter]
+        });
+
+        vm.$onInit();
+    }
 
 });

@@ -5,6 +5,7 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-3108:](https://openlmis.atlassian.net/browse/OLMIS-3108) Updated to use dev-ui v7 transifex build process
 * [OLMIS-2666:](https://openlmis.atlassian.net/browse/OLMIS-2666) Added create program modal.
 * [OLMIS-3917](https://openlmis.atlassian.net/browse/OLMIS-3917): Added stock based configuration to template screen.
+* [OLMIS-4087](https://openlmis.atlassian.net/browse/OLMIS-4087): Moved template screen to separate tab and support multiple templates per program.
 
 Improvements:
 * [OLMIS-3535:](https://openlmis.atlassian.net/browse/OLMIS-3535) Shortened column names on batch requisition screen.

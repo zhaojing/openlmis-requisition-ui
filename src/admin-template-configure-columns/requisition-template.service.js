@@ -64,7 +64,10 @@
          * @return {Promise}    Requisition template info
          */
         function get(id) {
-            return resource.get({id: id}).$promise;
+            return resource.get({id: id}).$promise
+            .then(function(response) {
+                return new Template(response);
+            });
         }
 
         /**

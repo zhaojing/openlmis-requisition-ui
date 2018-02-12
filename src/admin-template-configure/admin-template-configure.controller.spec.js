@@ -15,21 +15,19 @@
 
 describe('AdminTemplateConfigureController', function() {
 
-    var vm, template, program, $controller, ProgramDataBuilder;
+    var vm, template, program, $controller, ProgramDataBuilder, TemplateDataBuilder;
 
     beforeEach(function() {
         module('admin-template-configure');
+        module('admin-template-configure-columns');
 
         inject(function($injector) {
             $controller = $injector.get('$controller');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            TemplateDataBuilder = $injector.get('TemplateDataBuilder');
         });
 
-        template = {
-            id: 'template-id-1',
-            name: 'template-1'
-        };
-
+        template = new TemplateDataBuilder().build();
         program = new ProgramDataBuilder().build();
 
         vm = $controller('AdminTemplateConfigureController', {

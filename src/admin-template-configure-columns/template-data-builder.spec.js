@@ -21,12 +21,15 @@
         .module('admin-template-configure-columns')
         .factory('TemplateDataBuilder', TemplateDataBuilder);
 
-    TemplateDataBuilder.$inject = ['Template', 'TemplateColumnDataBuilder', 'COLUMN_SOURCES'];
+    TemplateDataBuilder.$inject = ['Template', 'TemplateColumnDataBuilder', 'COLUMN_SOURCES',
+        'ObjectReferenceDataBuilder', 'FacilityTypeDataBuilder'];
 
-    function TemplateDataBuilder(Template, TemplateColumnDataBuilder, COLUMN_SOURCES) {
+    function TemplateDataBuilder(Template, TemplateColumnDataBuilder, COLUMN_SOURCES,
+        ObjectReferenceDataBuilder, FacilityTypeDataBuilder) {
 
         TemplateDataBuilder.prototype.build = build;
         TemplateDataBuilder.prototype.withColumn = withColumn;
+        TemplateDataBuilder.prototype.withFacilityTypes = withFacilityTypes;
         TemplateDataBuilder.prototype.withPopulateStockOnHandFromStockCards = withPopulateStockOnHandFromStockCards;
 
         return TemplateDataBuilder;
@@ -37,9 +40,11 @@
             this.createdDate = new Date();
             this.id = 'template-' + TemplateDataBuilder.instanceNumber;
             this.numberOfPeriodsToAverage = 3;
-            this.programId = 'program-' + TemplateDataBuilder.instanceNumber;
+            this.program = new ObjectReferenceDataBuilder()
+                .withId('program-' + TemplateDataBuilder.instanceNumber).build();
             this.populateStockOnHandFromStockCards = false;
             this.columnsMap = {};
+            this.facilityTypes = [];
 
             var column = new TemplateColumnDataBuilder().build();
             this.columnsMap[column.name] = column;
@@ -51,6 +56,11 @@
 
         function withColumn(column) {
             this.columnsMap[column.name] = column;
+            return this;
+        }
+
+        function withFacilityTypes(types) {
+            this.facilityTypes = types;
             return this;
         }
 

@@ -29,10 +29,12 @@
         .controller('AdminTemplateConfigureSettingsController', AdminTemplateConfigureSettingsController);
 
     AdminTemplateConfigureSettingsController.$inject = ['template', 'facilityTypes', 'loadingModalService',
-        'notificationService', '$state', 'confirmService', 'requisitionTemplateService'];
+        'notificationService', '$state', 'confirmService', 'requisitionTemplateService', 'facilityTypeService',
+        'templateFacilityTypes'];
 
     function AdminTemplateConfigureSettingsController(template, facilityTypes, loadingModalService,
-        notificationService, $state, confirmService, requisitionTemplateService) {
+        notificationService, $state, confirmService, requisitionTemplateService, facilityTypeService,
+        templateFacilityTypes) {
 
         var vm = this;
 
@@ -73,8 +75,7 @@
         vm.goToTemplateList = goToTemplateList;
         vm.remove = remove;
         vm.saveTemplate = saveTemplate;
-
-        vm.template.facilityTypes = [];
+        vm.$onInit = onInit;
 
         /**
          * @ngdoc method
@@ -83,13 +84,11 @@
          *
          * @description
          * Add a facility type to the template facility types.
-         *
-         * @param {Object} facilityType facility type to be added.
          */
-        function add(facilityType) {
-            vm.template.facilityTypes.push(facilityType);
+        function add() {
+            vm.template.facilityTypes.push(vm.facilityType);
 
-            var index = vm.facilityTypes.indexOf(facilityType);
+            var index = vm.facilityTypes.indexOf(vm.facilityType);
             vm.facilityTypes.splice(index, 1);
         }
 
@@ -133,23 +132,39 @@
          * list view page. If saving is unsuccessful error notification is displayed.
          */
         function saveTemplate() {
-            if (vm.template.isValid()) {
-                confirmService.confirm(
-                    'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                    undefined, 'adminProgramTemplate.templateSave.title')
-                .then(function() {
-                    loadingModalService.open();
-                    requisitionTemplateService.save(vm.template).then(function() {
-                        notificationService.success('adminProgramTemplate.templateSave.success');
-                        goToTemplateList();
-                    }, function() {
-                        notificationService.error('adminProgramTemplate.templateSave.failure');
-                        loadingModalService.close();
-                    });
+            confirmService.confirm(
+                'adminTemplateConfigureSettings.templateSettingsSave.description', 'adminTemplateConfigureSettings.save',
+                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title')
+            .then(function() {
+                loadingModalService.open();
+                requisitionTemplateService.save(vm.template).then(function() {
+                    notificationService.success('adminTemplateConfigureSettings.templateSettingsSave.success');
+                    goToTemplateList();
+                }, function() {
+                    notificationService.error('adminTemplateConfigureSettings.templateSettingsSave.failure');
+                    loadingModalService.close();
                 });
-            } else {
-                notificationService.error('adminProgramTemplate.template.invalid');
-            }
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-settings.controller:AdminTemplateConfigureSettingsController
+         * @name onInit
+         *
+         * @description
+         * Removes facility types assigned to template from available facility types.
+         */
+        function onInit() {
+            vm.template.facilityTypes = templateFacilityTypes;
+            removeAssignedFacilityTypes();
+        }
+
+        function removeAssignedFacilityTypes() {
+            angular.forEach(vm.template.facilityTypes, function(type) {
+                var index = vm.facilityTypes.indexOf(type);
+                vm.facilityTypes.splice(index, 1);
+            });
         }
     }
 })();

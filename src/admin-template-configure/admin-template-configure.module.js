@@ -21,7 +21,7 @@
      * @module admin-template-configure
      *
      * @description
-     * Provides admin edit screen for programs.
+     * Provides admin configuration screen for templates.
      */
     angular.module('admin-template-configure', [
         'referencedata-program',

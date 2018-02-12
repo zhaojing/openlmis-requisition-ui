@@ -47,6 +47,7 @@
             this.populateStockOnHandFromStockCards = template.populateStockOnHandFromStockCards;
             this.columnsMap = {};
             this.facilityTypes = template.facilityTypes;
+            this.name = template.name;
 
             for (var columnName in template.columnsMap) {
                 this.columnsMap[columnName] = new TemplateColumn(template.columnsMap[columnName]);

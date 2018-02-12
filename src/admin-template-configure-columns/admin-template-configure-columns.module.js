@@ -28,6 +28,8 @@
         'dndLists',
         'openlmis-admin',
         'referencedata-program',
+        'referencedata-facility-type',
+        'referencedata',
         'requisition',
         'ui.router'
     ]);

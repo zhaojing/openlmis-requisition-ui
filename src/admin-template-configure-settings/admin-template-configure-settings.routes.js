@@ -33,7 +33,14 @@
             accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
             resolve: {
                 facilityTypes: function(facilityTypeService) {
-                    return facilityTypeService.getAll();
+                    return facilityTypeService.query();
+                },
+                templateFacilityTypes: function(template, facilityTypeService) {
+                    var ids = [];
+                    angular.forEach(template.facilityTypes, function(type) {
+                        ids.push(type.id);
+                    });
+                    return facilityTypeService.query({id: ids});
                 }
             }
 		});

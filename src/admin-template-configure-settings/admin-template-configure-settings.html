@@ -2,14 +2,14 @@
   <h2>{{'adminTemplateConfigureSettings.title' | message}}</h2>
   <section class="openlmis-table-container">
     <section class="is-primary">
-      <form class="form-inline">
+      <form class="form-inline" ng-submit="vm.add()">
         <div class="form-group">
           <label for="facilityTypeSelect">{{'adminTemplateConfigureSettings.facilityType' | message}}</label>
           <select id="facilityTypeSelect" ng-model="vm.facilityType"
                   ng-options="facilityType.name for facilityType in vm.facilityTypes" required>
           </select>
         </div>
-        <button class="add" ng-click="vm.add(vm.facilityType)">
+        <button class="add" type="submit">
           {{'adminTemplateConfigureSettings.add' | message}}
         </button>
       </form>

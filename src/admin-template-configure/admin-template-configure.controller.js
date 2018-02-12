@@ -22,7 +22,7 @@
      * @name admin-template-configure:AdminTemplateConfigureController
      *
      * @description
-     * Controller for managing program edit screen.
+     * Controller for managing template configuration screen.
      */
     angular
         .module('admin-template-configure')

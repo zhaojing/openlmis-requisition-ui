@@ -58,7 +58,8 @@ describe('TemplateColumn', function() {
             createdDate: new Date(),
             id: 'template-1',
             numberOfPeriodsToAverage: 3,
-            programId: 'program-1',
+            program: { id: 'program-1' },
+            name: 'template-name',
             populateStockOnHandFromStockCards: false,
             columnsMap: {
                 someColumn: {
@@ -87,8 +88,9 @@ describe('TemplateColumn', function() {
             expect(template.createdDate).toEqual(templateJson.createdDate);
             expect(template.id).toEqual(templateJson.id);
             expect(template.numberOfPeriodsToAverage).toEqual(templateJson.numberOfPeriodsToAverage);
-            expect(template.programId).toEqual(templateJson.programId);
+            expect(template.program.id).toEqual(templateJson.program.id);
             expect(template.populateStockOnHandFromStockCards).toEqual(templateJson.populateStockOnHandFromStockCards);
+            expect(template.name).toEqual(templateJson.name);
         });
 
         it('should wrap columns with class', function() {

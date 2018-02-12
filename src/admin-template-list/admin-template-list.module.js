@@ -21,11 +21,11 @@
      * @module admin-template-list
      *
      * @description
-     * Provides base admin-template-list state and service/factory/controller for retrieving
-     * templates from the OpenLMIS server.
+     * Provides template list screen.
      */
     angular.module('admin-template-list', [
         'admin-template-configure',
+        'admin-template-configure-columns',
         'openlmis-admin',
         'referencedata-program',
         'requisition',

@@ -29,11 +29,15 @@ describe('requisitionTemplateService', function() {
 
         template1 = {
             id: '1',
-            programId: '1'
+            program: {
+                id: '1'
+            }
         };
         template2 = {
             id: '2',
-            programId: '2'
+            program: {
+                id: '2'
+            }
         };
     }));
 
@@ -68,9 +72,9 @@ describe('requisitionTemplateService', function() {
         rootScope.$apply();
 
         expect(data[0].id).toEqual(template1.id);
-        expect(data[0].programId).toEqual(template1.programId);
+        expect(data[0].program.id).toEqual(template1.program.id);
         expect(data[1].id).toEqual(template2.id);
-        expect(data[1].programId).toEqual(template2.programId);
+        expect(data[1].program.id).toEqual(template2.program.id);
     });
 
     xit('should search requisition template by program id', function() {
