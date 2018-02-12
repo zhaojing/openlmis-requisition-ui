@@ -34,7 +34,7 @@
     "adminProgramTemplate.enableStockOnHand.label": "Enable Stock on Hand to populate from stock cards",
     "adminProgramTemplate.enableStockOnHand.description": "Stock on Hand will be populated from stock cards instead of being entered manually.",
     "adminProgramTemplate.templateSave.title": "Save changes to the requisition template",
-    "adminProgramTemplate.templateSave.description": "Changes to the requisition template will only happen on new requisitions initiated.",
+    "adminProgramTemplate.templateSave.description": "All changes to the requisition template columns and settings will only affect future initiated requisitions.",
     "adminProgramTemplate.template.invalid": "Requisition Template is invalid",
     "adminProgramTemplate.templateColumns": "Template Columns",
     "adminProgramTemplate.templateSettings": "Template Settings"
