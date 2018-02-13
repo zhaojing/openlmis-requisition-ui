@@ -74,7 +74,7 @@ describe('TemplateListAdminController', function() {
 
         it('should set templateFacilityTypes', function() {
             vm.$onInit();
-            expect(vm.templateFacilityTypes[template.id]).toEqual([districtStore, healthCenter]);
+            expect(vm.templateFacilityTypes[template.id]).toEqual([healthCenter, districtHospital]);
             expect(vm.templateFacilityTypes[templateTwo.id]).toEqual([healthCenter]);
         });
     });
