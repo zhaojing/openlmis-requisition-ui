@@ -516,7 +516,8 @@
 
         function hasRight(right, requisition) {
             return authorizationService.hasRight(right, {
-                programCode: requisition.program.code
+                programId: requisition.program.id,
+                facilityId: requisition.facility.id
             });
         }
     }
