@@ -519,7 +519,7 @@
          * @return {Boolean} should authorize button be displayed
          */
         function displayAuthorize() {
-            return vm.requisition.$isSubmitted() && hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE);
+            return vm.requisition.$isSubmitted() && hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, vm.requisition.program.id, vm.requisition.facility.id);
         }
 
         /**
@@ -536,7 +536,7 @@
         function displaySubmit() {
             return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) &&
                 !vm.requisition.program.skipAuthorization &&
-                hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
+                hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
         }
 
         /**
@@ -554,7 +554,7 @@
         function displaySubmitAndAuthorize() {
             return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) &&
                 vm.requisition.program.skipAuthorization &&
-                hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
+                hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
         }
 
         /**
@@ -569,7 +569,7 @@
          * @return {Boolean} should approve and reject buttons be displayed
          */
         function displayApproveAndReject() {
-            return (vm.requisition.$isAuthorized() || vm.requisition.$isInApproval()) && hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_APPROVE);
+            return (vm.requisition.$isAuthorized() || vm.requisition.$isInApproval()) && hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_APPROVE, vm.requisition.program.id, vm.requisition.facility.id);
         }
 
         /**
@@ -585,12 +585,12 @@
          * @return {Boolean} should delete button be displayed
          */
         function displayDelete() {
-            if (hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_DELETE)) {
+            if (hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_DELETE)) {
                 if (vm.requisition.$isInitiated() || vm.requisition.$isRejected() || vm.requisition.$isSkipped()) {
-                    return hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
+                    return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
                 }
                 if (vm.requisition.$isSubmitted()) {
-                    return hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE);
+                    return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, vm.requisition.program.id, vm.requisition.facility.id);
                 }
             }
             return false;
@@ -611,7 +611,7 @@
             return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) &&
                 vm.requisition.program.periodsSkippable &&
                 !vm.requisition.emergency &&
-                hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
+                hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
         }
 
         /**
@@ -627,13 +627,13 @@
          */
         function displaySync() {
             if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
-                return hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_CREATE);
+                return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
             }
             if (vm.requisition.$isSubmitted()) {
-                return hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE);
+                return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, vm.requisition.program.id, vm.requisition.facility.id);
             }
             if (vm.requisition.$isAuthorized() || vm.requisition.$isInApproval()) {
-                return hasRightForProgram(REQUISITION_RIGHTS.REQUISITION_APPROVE);
+                return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_APPROVE, vm.requisition.program.id, vm.requisition.facility.id);
             }
             return false;
         }
@@ -725,9 +725,10 @@
             };
         }
 
-        function hasRightForProgram(rightName) {
+        function hasRightForProgramAndFacility(rightName, programId, facilityId) {
             return authorizationService.hasRight(rightName, {
-                programCode: vm.requisition.program.code
+                programId: programId,
+                facilityId: facilityId
             });
         }
     }

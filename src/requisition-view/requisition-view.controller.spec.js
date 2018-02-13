@@ -104,6 +104,9 @@ describe('RequisitionViewController', function() {
                 code: 'CODE',
                 enableDatePhysicalStockCountCompleted: true
             };
+            requisition.facility = {
+                id: '3'
+            };
             requisition.$isInitiated.andReturn(true);
             requisition.$isReleased.andReturn(false);
             requisition.$isRejected.andReturn(false);
