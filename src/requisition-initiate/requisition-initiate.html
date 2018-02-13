@@ -1,26 +1,26 @@
 <h2>{{'requisitionInitiate.initiateReportAndRequisition' | message}}</h2>
 <div ng-if="vm.error" class="alert is-error" ng-show="vm.error">{{vm.error}}</div>
+<form class="sidebar" ng-submit="vm.loadPeriods()">
+    <openlmis-facility-program-select
+        is-supervised="vm.isSupervised"
+        facility="vm.facility"
+        program="vm.program"
+        module="'requisition-initiate'">
+    </openlmis-facility-program-select>
+    <fieldset class="form-group">
+        <legend>{{'requisitionInitiate.type' | message}}</legend>
+        <label class="radio">
+            <input type="radio" ng-model="vm.emergency" ng-value="false"/>
+            {{'requisitionInitiate.regular' | message}}
+        </label>
+        <label class="radio">
+            <input type="radio" ng-model="vm.emergency" ng-value="true"/>
+            {{'requisitionInitiate.emergency' | message}}
+        </label>
+    </fieldset>
+    <input type="submit" value="{{'requisitionInitiate.search'|message}}"/>
+</form>
 <section class="openlmis-table-container">
-    <form ng-submit="vm.loadPeriods()">
-        <openlmis-facility-program-select
-            is-supervised="vm.isSupervised"
-            facility="vm.facility"
-            program="vm.program"
-            module="'requisition-initiate'">
-        </openlmis-facility-program-select>
-        <fieldset class="form-group">
-            <legend>{{'requisitionInitiate.type' | message}}</legend>
-            <label class="radio">
-                <input type="radio" ng-model="vm.emergency" ng-value="false"/>
-                {{'requisitionInitiate.regular' | message}}
-            </label>
-            <label class="radio">
-                <input type="radio" ng-model="vm.emergency" ng-value="true"/>
-                {{'requisitionInitiate.emergency' | message}}
-            </label>
-        </fieldset>
-        <input type="submit" value="{{'requisitionInitiate.search'|message}}"/>
-    </form>
     <table>
         <caption ng-if="!vm.periods.length">
             {{'requisitionInitiate.selectRequiredFields' | message}}

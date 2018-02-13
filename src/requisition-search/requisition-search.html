@@ -2,15 +2,18 @@
 <div ng-if="vm.error" class="alert is-info" ng-show="vm.error">
     {{vm.error | message}}
 </div>
+<form class="sidebar" ng-submit="vm.search()">
+    <label for="facility">{{'requisitionSearch.facility' | message}}</label>
+    <select id="facility" placeholder="{{'requisitionSearch.selectFacility' | message}}"
+            ng-model="vm.selectedFacility"
+            ng-options="facility as facility.name for facility in vm.facilities"
+            required>
+    </select>
+    <input class="btn btn-primary" type="submit" value="{{'requisitionSearch.search' | message}}"/>
+</form>
 <section class="openlmis-table-container">
     <openlmis-sort options="vm.options"/>
     <form class="openlmis-table-filters" ng-submit="vm.search()">
-        <label for="facility">{{'requisitionSearch.facility' | message}}</label>
-        <select id="facility" placeholder="{{'requisitionSearch.selectFacility' | message}}"
-                ng-model="vm.selectedFacility"
-                ng-options="facility as facility.name for facility in vm.facilities"
-                required>
-        </select>
         <label for=program>{{'requisitionSearch.program' | message}}</label>
         <select id="program" placeholder="{{'requisitionSearch.selectProgram' | message}}" ng-required
                 ng-options="program as program.name for program in vm.selectedFacility.supportedPrograms"
