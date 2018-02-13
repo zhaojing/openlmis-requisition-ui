@@ -32,20 +32,17 @@ describe('TemplateListAdminController', function() {
         program = new ProgramDataBuilder().withId('program-1').build();
         programTwo = new ProgramDataBuilder().withId('program-2').build();
 
-        template = new TemplateDataBuilder()
-            .withFacilityTypes([
-                new FacilityTypeDataBuilder().build(),
-                new FacilityTypeDataBuilder().buildDistrictHospital().build()
-            ]).build();
-
-        templateTwo = new TemplateDataBuilder()
-            .withFacilityTypes([
-                new FacilityTypeDataBuilder().build()
-            ]).build();
-
         districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital().build();
         healthCenter = new FacilityTypeDataBuilder().build();
         districtStore = new FacilityTypeDataBuilder().buildDistrictStore().build();
+
+        template = new TemplateDataBuilder()
+            .withFacilityTypes([healthCenter, districtHospital])
+            .build();
+
+        templateTwo = new TemplateDataBuilder()
+            .withFacilityTypes([healthCenter])
+            .build();
 
         vm = $controller('TemplateListAdminController', {
             programs: [program, programTwo],
