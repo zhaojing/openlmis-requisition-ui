@@ -24,16 +24,16 @@
 	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
 	function routes($stateProvider, REQUISITION_RIGHTS) {
-		$stateProvider.state('openlmis.administration.templates.configure.settings', {
-			label: 'adminTemplateConfigureSettings.title',
-			url: '/settings',
-            templateUrl: 'admin-template-configure-settings/admin-template-configure-settings.html',
-            controller: 'AdminTemplateConfigureSettingsController',
-            controllerAs: 'vm',
-            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
-            resolve: {
-                facilityTypes: function(facilityTypeService) {
-                    return facilityTypeService.query();
+	    $stateProvider.state('openlmis.administration.templates.configure.settings', {
+	        label: 'adminTemplateConfigureSettings.title',
+	        url: '/settings',
+	        templateUrl: 'admin-template-configure-settings/admin-template-configure-settings.html',
+	        controller: 'AdminTemplateConfigureSettingsController',
+	        controllerAs: 'vm',
+	        accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
+	        resolve: {
+	            facilityTypes: function(facilityTypeService) {
+	                return facilityTypeService.query();
                 },
                 templateFacilityTypes: function(template, facilityTypeService) {
                     var ids = [];
@@ -43,6 +43,6 @@
                     return facilityTypeService.query({id: ids});
                 }
             }
-		});
-	}
+        });
+    }
 })();

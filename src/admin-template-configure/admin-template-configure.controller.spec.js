@@ -38,9 +38,13 @@ describe('AdminTemplateConfigureController', function() {
 
     describe('init', function() {
 
-        it('should expose program and template', function() {
+        it('should expose program', function() {
             expect(vm.program).toEqual(program);
+        });
+
+        it('should expose template', function() {
             expect(vm.template).toEqual(template);
         });
+
     });
 });
