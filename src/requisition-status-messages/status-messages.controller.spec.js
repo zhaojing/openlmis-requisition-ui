@@ -25,7 +25,7 @@ describe('StatusMessagesController', function() {
 
         module('requisition-status-messages');
 
-        requisition = jasmine.createSpyObj('requisition', ['$statusMessages', '$isReleased', '$isApproved']);
+        requisition = jasmine.createSpyObj('requisition', ['$statusMessages', '$isEditable']);
 
         inject(function($rootScope, statusMessagesHistoryModalService) {
             rootScope = $rootScope;
@@ -53,19 +53,19 @@ describe('StatusMessagesController', function() {
 
     describe('displayAddComment', function() {
 
-        it('should show button if requisition has no draft for status message', function() {
+        it('should show button if requisition has no draft for status message, text area is visible, and requisition is editable', function() {
             vm.requisition.draftStatusMessage = null;
             vm.isTextAreaVisible = false;
-            vm.requisition.$isReleased.andReturn(false);
+            vm.requisition.$isEditable = true;
 
             var result = vm.displayAddComment();
             expect(result).toBe(true);
         });
 
-        it('should not show button if requisition has approved status', function() {
+        it('should not show button if requisition is not editable', function() {
             vm.requisition.draftStatusMessage = null;
             vm.isTextAreaVisible = false;
-            vm.requisition.$isApproved.andReturn(true);
+            vm.requisition.$isEditable = false;
 
             var result = vm.displayAddComment();
             expect(result).toBe(false);
@@ -73,8 +73,8 @@ describe('StatusMessagesController', function() {
 
         it('should not show button if requisition has released status', function() {
             vm.requisition.draftStatusMessage = null;
-            vm.isTextAreaVisible = false;
-            vm.requisition.$isReleased.andReturn(true);
+            vm.isTextAreaVisible = true;
+            vm.requisition.$isEditable = true;
 
             var result = vm.displayAddComment();
             expect(result).toBe(false);
@@ -82,7 +82,9 @@ describe('StatusMessagesController', function() {
 
         it('should not show button if requisition has draft for status message', function() {
             vm.requisition.draftStatusMessage = 'Draft';
-            vm.isTextAreaVisible = true;
+            vm.isTextAreaVisible = false;
+            vm.requisition.$isEditable = true;
+
             var result = vm.displayAddComment();
             expect(result).toBe(false);
         });
@@ -91,28 +93,25 @@ describe('StatusMessagesController', function() {
 
     describe('displayEditComment', function() {
 
-        it('should show text area and remove button of comment if requisition has no approved and released status', function() {
-            spyOn(vm, 'displayAddComment').andReturn(true);
-            vm.requisition.$isApproved.andReturn(false);
-            vm.requisition.$isReleased.andReturn(false);
+        it('should show text area and remove button of comment if add comment is not displayed and requisition is editable', function() {
+            spyOn(vm, 'displayAddComment').andReturn(false);
+            vm.requisition.$isEditable = true;
 
             var result = vm.displayEditComment();
             expect(result).toBe(true);
         });
 
-        it('should not show text area and remove button of comment if requisition has approved status', function() {
-            spyOn(vm, 'displayAddComment').andReturn(false);
-            vm.requisition.$isApproved.andReturn(true);
-            vm.requisition.$isReleased.andReturn(false);
+        it('should not show text area and remove button of comment if add comment is displayed', function() {
+            spyOn(vm, 'displayAddComment').andReturn(true);
+            vm.requisition.$isEditable = true;
 
             var result = vm.displayEditComment();
             expect(result).toBe(false);
         });
 
-        it('should not show text area and remove button of comment if requisition has released status', function() {
-            spyOn(vm, 'displayAddComment').andReturn(false);
-            vm.requisition.$isApproved.andReturn(false);
-            vm.requisition.$isReleased.andReturn(true);
+        it('should not show text area and remove button of comment if requisition is not editable', function() {
+            spyOn(vm, 'displayAddComment').andReturn(true);
+            vm.requisition.$isEditable = false;
 
             var result = vm.displayEditComment();
             expect(result).toBe(false);

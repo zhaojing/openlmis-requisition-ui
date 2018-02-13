@@ -106,12 +106,12 @@
          * @name displayAddComment
          *
          * @description
-         * Responsible for checking if requisition has draft.
-         * If text area is not visible and draftStatusMessage is not set and requisition is not released or approved then button will be displayed.
-         * Otherwise add button will be displayed.
+         * Responsible for checking if requisition does not have a draft.
+         * If text area is not visible and draftStatusMessage is not set and requisition is editable then button will be displayed.
+         * Otherwise add button will not be displayed.
          */
         function displayAddComment() {
-            return !vm.requisition.draftStatusMessage && !vm.isTextAreaVisible && !vm.requisition.$isApproved() && !vm.requisition.$isReleased();
+            return !vm.requisition.draftStatusMessage && !vm.isTextAreaVisible && vm.requisition.$isEditable;
         }
 
         /**
@@ -121,9 +121,10 @@
          *
          * @description
          * Responsible for displaying text area and removing button of comment in requisition.
+         * Only if add button is not displayed and requisition is editable.
          */
         function displayEditComment() {
-            return !displayAddComment() && !vm.requisition.$isApproved() && !vm.requisition.$isReleased();
+            return !vm.displayAddComment() && vm.requisition.$isEditable;
         }
     }
 })();
