@@ -28,9 +28,9 @@
         .module('admin-template-list')
         .controller('TemplateListAdminController', TemplateListAdminController);
 
-    TemplateListAdminController.$inject = ['templates', 'programs', '$filter'];
+    TemplateListAdminController.$inject = ['templates', 'programs', '$filter', 'facilityTypes', 'templateListFactory'];
 
-    function TemplateListAdminController(templates, programs, $filter) {
+    function TemplateListAdminController(templates, programs, $filter, facilityTypes, templateListFactory) {
 
         var vm = this;
 
@@ -56,6 +56,39 @@
          */
         vm.programs = programs;
 
+        /**
+         * @ngdoc property
+         * @propertyOf admin-template-list.controller:TemplateListAdminController
+         * @name facilityTypes
+         * @type {Array}
+         *
+         * @description
+         * Holds facility types.
+         */
+        vm.facilityTypes = facilityTypes;
+
+        /**
+         * @ngdoc property
+         * @propertyOf admin-template-list.controller:TemplateListAdminController
+         * @name programTemplates
+         * @type {Array}
+         *
+         * @description
+         * Holds programs with its templates.
+         */
+        vm.programTemplates = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf admin-template-list.controller:TemplateListAdminController
+         * @name templateFacilityTypes
+         * @type {Array}
+         *
+         * @description
+         * Holds templates with its facility types.
+         */
+        vm.templateFacilityTypes = undefined;
+
         vm.$onInit = onInit;
 
         /**
@@ -69,15 +102,8 @@
          * @return {Array}  Programs with templates.
          */
         function onInit() {
-            angular.forEach(vm.programs, function(program) {
-                program.templates = [];
-                vm.templates.filter(function(template) {
-                    if (template.program.id == program.id) {
-                        program.templates.push(template);
-                    }
-                });
-            });
-            return vm.programs;
+            vm.programTemplates = templateListFactory.getProgramTemplates(vm.templates, vm.programs);
+            vm.templateFacilityTypes = templateListFactory.getTemplateFacilityTypes(vm.templates, vm.facilityTypes);
         }
     }
 })();

@@ -1,5 +1,5 @@
 {
-    "adminTemplateList.templates": "R&R Templates",
+    "adminTemplateList.templates": "Requisition Templates",
     "adminTemplateList.templateName": "Template Name",
     "adminTemplateList.facilityType": "Facility Type",
     "adminTemplateList.facilityTypes": "${number} Facility Types",

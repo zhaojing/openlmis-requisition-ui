@@ -8,6 +8,7 @@
     "adminTemplateConfigureSettings.save": "Save",
     "adminTemplateConfigureSettings.title": "Configure Template Settings",
     "adminTemplateConfigureSettings.template.invalid": "Requisition Template is invalid",
+    "adminTemplateConfigureSettings.templateName": "Template Name",
     "adminTemplateConfigureSettings.templateSettingsSave.description": "All changes to the requisition template columns and settings will only affect future initiated requisitions.",
     "adminTemplateConfigureSettings.templateSettingsSave.failure": "Template Settings save failed!",
     "adminTemplateConfigureSettings.templateSettingsSave.success": "Template Settings saved successfully!",

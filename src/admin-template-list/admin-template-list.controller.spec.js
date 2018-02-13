@@ -16,7 +16,8 @@
 describe('TemplateListAdminController', function() {
 
     var vm, template, program, ProgramDataBuilder, TemplateDataBuilder, $controller,
-        FacilityTypeDataBuilder;
+        FacilityTypeDataBuilder, programTwo, templateTwo, districtHospital, healthCenter,
+        districtStore;
 
     beforeEach(function() {
         module('admin-template-list');
@@ -29,6 +30,7 @@ describe('TemplateListAdminController', function() {
         });
 
         program = new ProgramDataBuilder().withId('program-1').build();
+        programTwo = new ProgramDataBuilder().withId('program-2').build();
 
         template = new TemplateDataBuilder()
             .withFacilityTypes([
@@ -36,23 +38,44 @@ describe('TemplateListAdminController', function() {
                 new FacilityTypeDataBuilder().buildDistrictHospital().build()
             ]).build();
 
+        templateTwo = new TemplateDataBuilder()
+            .withFacilityTypes([
+                new FacilityTypeDataBuilder().build()
+            ]).build();
+
+        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital().build();
+        healthCenter = new FacilityTypeDataBuilder().build();
+        districtStore = new FacilityTypeDataBuilder().buildDistrictStore().build();
+
         vm = $controller('TemplateListAdminController', {
-            programs: [program],
-            templates: [template]
+            programs: [program, programTwo],
+            templates: [template, templateTwo],
+            facilityTypes: [districtHospital, districtStore, healthCenter]
         });
     });
 
     describe('init', function() {
 
-        it('should set templates and programs', function() {
+        it('should set programs', function() {
             vm.$onInit();
-            expect(vm.programs).toEqual([program]);
-            expect(vm.templates).toEqual([template]);
+            expect(vm.programs).toEqual([program, programTwo]);
         });
 
-        it('should add templates to program', function() {
+        it('should set templates', function() {
             vm.$onInit();
-            expect(vm.programs[0].templates).toEqual([template]);
+            expect(vm.templates).toEqual([template, templateTwo]);
+        });
+
+        it('should set programTemplates', function() {
+            vm.$onInit();
+            expect(vm.programTemplates[program.id]).toEqual([template]);
+            expect(vm.programTemplates[programTwo.id]).toEqual([templateTwo]);
+        });
+
+        it('should set templateFacilityTypes', function() {
+            vm.$onInit();
+            expect(vm.templateFacilityTypes[template.id]).toEqual([districtStore, healthCenter]);
+            expect(vm.templateFacilityTypes[templateTwo.id]).toEqual([healthCenter]);
         });
     });
 

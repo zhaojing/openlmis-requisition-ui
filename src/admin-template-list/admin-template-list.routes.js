@@ -24,22 +24,31 @@
 	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
 	function routes($stateProvider, REQUISITION_RIGHTS) {
-		$stateProvider.state('openlmis.administration.templates', {
-		    showInNavigation: true,
-			label: 'adminTemplateList.templates',
-			url: '/templates',
-            templateUrl: 'admin-template-list/admin-template-list.html',
-            controller: 'TemplateListAdminController',
-            controllerAs: 'vm',
-            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
-            resolve: {
-                templates: function(requisitionTemplateService) {
-                    return requisitionTemplateService.getAll();
+	    $stateProvider.state('openlmis.administration.templates', {
+	        showInNavigation: true,
+	        label: 'adminTemplateList.templates',
+	        url: '/templates',
+	        templateUrl: 'admin-template-list/admin-template-list.html',
+	        controller: 'TemplateListAdminController',
+	        controllerAs: 'vm',
+	        accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
+	        resolve: {
+	            templates: function(requisitionTemplateService) {
+	                return requisitionTemplateService.getAll();
+                },
+                facilityTypes: function(templates, facilityTypeService) {
+	                var ids = [];
+	                angular.forEach(templates, function(template) {
+                        angular.forEach(template.facilityTypes, function(facilityType) {
+                            ids.push(facilityType.id);
+                        });
+	                });
+	                return facilityTypeService.query({id: ids});
                 },
                 programs: function(programService) {
                     return programService.getAll();
                 }
             }
-		});
-	}
+        });
+    }
 })();

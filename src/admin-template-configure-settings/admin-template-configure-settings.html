@@ -2,6 +2,10 @@
   <h2>{{'adminTemplateConfigureSettings.title' | message}}</h2>
   <section class="openlmis-table-container">
     <section class="is-primary">
+      <div class="form-group">
+        <label for="name">{{'adminTemplateConfigureSettings.templateName' | message}}</label>
+        <input id="name" class="form-control" ng-model="vm.template.name" required/>
+      </div>
       <form class="form-inline" ng-submit="vm.add()">
         <div class="form-group">
           <label for="facilityTypeSelect">{{'adminTemplateConfigureSettings.facilityType' | message}}</label>
