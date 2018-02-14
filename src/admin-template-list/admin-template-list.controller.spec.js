@@ -17,7 +17,7 @@ describe('TemplateListAdminController', function() {
 
     var vm, template, program, ProgramDataBuilder, TemplateDataBuilder, $controller,
         FacilityTypeDataBuilder, programTwo, templateTwo, districtHospital, healthCenter,
-        templateListFactory, result;
+        templateListFactory, result, templateFacilityTypes;
 
     beforeEach(function() {
         module('admin-template-list');
@@ -44,9 +44,14 @@ describe('TemplateListAdminController', function() {
             .withFacilityTypes([healthCenter])
             .build();
 
+        templateFacilityTypes = {};
+        templateFacilityTypes[template.id] = [healthCenter, districtHospital];
+        templateFacilityTypes[templateTwo.id] = [healthCenter];
+
         vm = $controller('TemplateListAdminController', {
             programs: [program, programTwo],
-            templates: [template, templateTwo]
+            templates: [template, templateTwo],
+            templateFacilityTypes: templateFacilityTypes
         });
     });
 
@@ -62,6 +67,11 @@ describe('TemplateListAdminController', function() {
             expect(vm.templates).toEqual([template, templateTwo]);
         });
 
+        it('should set templateFacilityTypes', function() {
+            vm.$onInit();
+            expect(vm.templateFacilityTypes).toEqual(templateFacilityTypes);
+        });
+
         it('should set programTemplates', function() {
             result = {};
             result[program.id] = [template];
@@ -72,18 +82,6 @@ describe('TemplateListAdminController', function() {
             vm.$onInit();
             expect(vm.programTemplates[program.id]).toEqual([template]);
             expect(vm.programTemplates[programTwo.id]).toEqual([templateTwo]);
-        });
-
-        it('should set templateFacilityTypes', function() {
-            result = {};
-            result[template.id] = [healthCenter, districtHospital];
-            result[templateTwo.id] = [healthCenter];
-
-            spyOn(templateListFactory, 'getTemplateFacilityTypes').andReturn(result);
-
-            vm.$onInit();
-            expect(vm.templateFacilityTypes[template.id]).toEqual([healthCenter, districtHospital]);
-            expect(vm.templateFacilityTypes[templateTwo.id]).toEqual([healthCenter]);
         });
     });
 
