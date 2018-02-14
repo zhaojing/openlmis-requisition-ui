@@ -15,33 +15,33 @@
 
 (function() {
 
-	'use strict';
+    'use strict';
 
-	angular
+    angular
         .module('admin-template-list')
         .config(routes);
 
-	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
-	function routes($stateProvider, REQUISITION_RIGHTS) {
-	    $stateProvider.state('openlmis.administration.templates', {
-	        showInNavigation: true,
-	        label: 'adminTemplateList.templates',
-	        url: '/templates',
-	        templateUrl: 'admin-template-list/admin-template-list.html',
-	        controller: 'TemplateListAdminController',
-	        controllerAs: 'vm',
-	        accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
-	        resolve: {
-	            templates: function(requisitionTemplateService) {
-	                return requisitionTemplateService.getAll();
+    function routes($stateProvider, REQUISITION_RIGHTS) {
+        $stateProvider.state('openlmis.administration.templates', {
+            showInNavigation: true,
+            label: 'adminTemplateList.templates',
+            url: '/templates',
+            templateUrl: 'admin-template-list/admin-template-list.html',
+            controller: 'TemplateListAdminController',
+            controllerAs: 'vm',
+            accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
+            resolve: {
+                templates: function(requisitionTemplateService) {
+                    return requisitionTemplateService.getAll();
                 },
                 programs: function(programService) {
                     return programService.getAll();
                 },
-				templateFacilityTypes: function(templates, templateListFactory) {
-					return templateListFactory.getTemplateFacilityTypes(templates);
-				}
+                templateFacilityTypes: function(templates, templateListFactory) {
+                    return templateListFactory.getTemplateFacilityTypes(templates);
+                }
             }
         });
     }
