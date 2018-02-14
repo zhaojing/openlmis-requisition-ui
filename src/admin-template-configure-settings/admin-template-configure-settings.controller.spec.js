@@ -184,7 +184,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
 
             vm.goToTemplateList();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.templates', {}, {reload: true});
+            expect($state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates', {}, {reload: true});
         });
     });
 

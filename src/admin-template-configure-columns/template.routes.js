@@ -24,7 +24,7 @@
 	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
 	function routes($stateProvider, REQUISITION_RIGHTS) {
-		$stateProvider.state('openlmis.administration.templates.configure.columns', {
+		$stateProvider.state('openlmis.administration.requisitionTemplates.configure.columns', {
 			label: 'adminProgramTemplate.templateColumns',
 			url: '/columns',
             templateUrl: 'admin-template-configure-columns/template.html',

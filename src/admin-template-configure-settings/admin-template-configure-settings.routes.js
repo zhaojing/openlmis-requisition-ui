@@ -24,7 +24,7 @@
 	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
 	function routes($stateProvider, REQUISITION_RIGHTS) {
-	    $stateProvider.state('openlmis.administration.templates.configure.settings', {
+	    $stateProvider.state('openlmis.administration.requisitionTemplates.configure.settings', {
 	        label: 'adminTemplateConfigureSettings.title',
 	        url: '/settings',
 	        templateUrl: 'admin-template-configure-settings/admin-template-configure-settings.html',

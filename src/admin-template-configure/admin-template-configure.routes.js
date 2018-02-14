@@ -25,7 +25,7 @@
 
     function routes($stateProvider, REQUISITION_RIGHTS) {
 
-        $stateProvider.state('openlmis.administration.templates.configure', {
+        $stateProvider.state('openlmis.administration.requisitionTemplates.configure', {
             abstract: 'true',
             label: 'adminTemplateConfigure.label',
             url: '/:id',
