@@ -13,7 +13,10 @@
             <tbody>
                 <tr ng-repeat="template in vm.programTemplates[program.id] | orderBy: 'name'">
                     <td>{{template.name}}</td>
-                    <td ng-if="template.facilityTypes.length > 1">{{'adminTemplateList.facilityTypes' | message: {'number': template.facilityTypes.length } }}</td>
+                    <td ng-if="template.facilityTypes.length > 1"
+                        popover-class="facility-types-popover"
+                        popover-template="admin-template-list/facility-types-popover.html">
+                        {{'adminTemplateList.facilityTypes' | message: {'number': template.facilityTypes.length } }}</td>
                     <td ng-if="!(template.facilityTypes.length > 1)">{{vm.templateFacilityTypes[template.id][0].name}}</td>
                     <td>
                         <button ui-sref="openlmis.administration.templates.configure.columns({id: template.id})">{{'adminTemplateList.configure' | message}}</button>

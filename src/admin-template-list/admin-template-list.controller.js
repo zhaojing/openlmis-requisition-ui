@@ -28,9 +28,11 @@
         .module('admin-template-list')
         .controller('TemplateListAdminController', TemplateListAdminController);
 
-    TemplateListAdminController.$inject = ['templates', 'programs', '$filter', 'templateListFactory'];
+    TemplateListAdminController.$inject = [
+        'templates', 'programs', '$filter', 'templateListFactory', 'templateFacilityTypes'
+    ];
 
-    function TemplateListAdminController(templates, programs, $filter, templateListFactory) {
+    function TemplateListAdminController(templates, programs, $filter, templateListFactory, templateFacilityTypes) {
 
         var vm = this;
 
@@ -94,7 +96,7 @@
             vm.templates = templates;
             vm.programs = programs;
             vm.programTemplates = templateListFactory.getProgramTemplates(vm.templates, vm.programs);
-            vm.templateFacilityTypes = templateListFactory.getTemplateFacilityTypes(vm.templates, vm.facilityTypes);
+            vm.templateFacilityTypes = templateFacilityTypes;
         }
     }
 })();

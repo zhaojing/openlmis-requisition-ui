@@ -38,7 +38,10 @@
                 },
                 programs: function(programService) {
                     return programService.getAll();
-                }
+                },
+				templateFacilityTypes: function(templates, templateListFactory) {
+					return templateListFactory.getTemplateFacilityTypes(templates);
+				}
             }
         });
     }
