@@ -47,7 +47,7 @@
          * @description
          * Holds template.
          */
-        vm.template = template;
+        vm.template = undefined;
 
         /**
          * @ngdoc property
@@ -58,7 +58,7 @@
          * @description
          * Holds facilityTypes.
          */
-        vm.facilityTypes = facilityTypes;
+        vm.facilityTypes = undefined;
 
         /**
          * @ngdoc property
@@ -156,13 +156,18 @@
          * Removes facility types assigned to template from available facility types.
          */
         function onInit() {
+            vm.template = template;
+            vm.facilityTypes = facilityTypes;
             vm.template.facilityTypes = templateFacilityTypes;
             removeAssignedFacilityTypes();
         }
 
         function removeAssignedFacilityTypes() {
-            angular.forEach(vm.template.facilityTypes, function(type) {
-                var index = vm.facilityTypes.indexOf(type);
+            vm.template.facilityTypes.forEach(function(type) {
+                var filtered = vm.facilityTypes.filter(function(facilityType) {
+                    return facilityType.id == type.id;
+                });
+                var index = vm.facilityTypes.indexOf(filtered[0]);
                 vm.facilityTypes.splice(index, 1);
             });
         }

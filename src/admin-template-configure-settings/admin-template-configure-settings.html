@@ -10,7 +10,7 @@
         <div class="form-group">
           <label for="facilityTypeSelect">{{'adminTemplateConfigureSettings.facilityType' | message}}</label>
           <select id="facilityTypeSelect" ng-model="vm.facilityType"
-                  ng-options="facilityType.name for facilityType in vm.facilityTypes" required>
+                  ng-options="facilityType.name for facilityType in vm.facilityTypes">
           </select>
         </div>
         <button class="add" type="submit">

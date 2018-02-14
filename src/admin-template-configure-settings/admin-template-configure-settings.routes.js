@@ -35,12 +35,12 @@
 	            facilityTypes: function(facilityTypeService) {
 	                return facilityTypeService.query();
                 },
-                templateFacilityTypes: function(template, facilityTypeService) {
+                templateFacilityTypes: function(template, facilityTypeService, $q) {
                     var ids = [];
                     angular.forEach(template.facilityTypes, function(type) {
                         ids.push(type.id);
                     });
-                    return facilityTypeService.query({id: ids});
+                    return ids.length ? facilityTypeService.query({id: ids}) : $q.resolve([]);
                 }
             }
         });
