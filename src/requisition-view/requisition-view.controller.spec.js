@@ -116,7 +116,6 @@ describe('RequisitionViewController', function() {
             spyOn(stateTrackerService, 'goToPreviousState');
 
             canSubmit = true;
-            canSubmitAndAuthorize = false;
             canAuthorize = false;
             canApproveAndReject = false;
             canDelete = true;
@@ -127,7 +126,6 @@ describe('RequisitionViewController', function() {
                 $scope: $scope,
                 requisition: requisition,
                 canSubmit: canSubmit,
-                canSubmitAndAuthorize: canSubmitAndAuthorize,
                 canAuthorize: canAuthorize,
                 canApproveAndReject: canApproveAndReject,
                 canDelete: canDelete,
@@ -155,6 +153,31 @@ describe('RequisitionViewController', function() {
         }];
 
         requisition.requisitionLineItems = fullSupplyItems.concat(nonFullSupplyItems);
+    });
+
+    describe('$onInit', function() {
+
+        it('should display submit button when user can submit requisition and skip authorization is not configured', function() {
+            vm.canSubmit = true;
+            vm.requisition.program.skipAuthorization = false;
+
+            vm.$onInit();
+
+            expect(vm.displaySubmitButton).toBe(true);
+            expect(vm.displaySubmitAndAuthorizeButton).toBe(false);
+        });
+
+        it('should display submit and authorize button when user can submit requisition and skip authorization is configured', function() {
+            vm.canSubmit = true;
+            vm.requisition.program.skipAuthorization = true;
+
+            vm.$onInit();
+
+            expect(vm.displaySubmitAndAuthorizeButton).toBe(true);
+            expect(vm.displaySubmitButton).toBe(false);
+        });
+
+
     });
 
     it('should display message when successfully skipped requisition', function() {

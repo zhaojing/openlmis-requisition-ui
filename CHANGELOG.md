@@ -15,6 +15,7 @@ Improvements:
 
 Bug fixes:
 * [OLMIS-3492](https://openlmis.atlassian.net/browse/OLMIS-3492): Allow to save comment in requisition longer than 255 characters
+* [OLMIS-4004](https://openlmis.atlassian.net/browse/OLMIS-4004): Fix action button permission criteria to check by both program and facility.
 
 5.2.2 / 2017-11-23
 ==================

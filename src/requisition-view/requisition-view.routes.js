@@ -55,9 +55,6 @@
                 canSubmit: function(requisitionViewFactory, user, requisition) {
                     return requisitionViewFactory.canSubmit(user.user_id, requisition);
                 },
-                canSubmitAndAuthorize: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canSubmitAndAuthorize(user.user_id, requisition);
-                },
                 canAuthorize: function(requisitionViewFactory, user, requisition) {
                     return requisitionViewFactory.canAuthorize(user.user_id, requisition);
                 },

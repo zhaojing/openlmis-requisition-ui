@@ -34,7 +34,7 @@
         'confirmService', 'REQUISITION_RIGHTS', 'FULFILLMENT_RIGHTS', 'offlineService', '$window',
         'requisitionUrlFactory', '$filter', '$scope', 'RequisitionWatcher',
         'accessTokenFactory', 'messageService', 'stateTrackerService', 'RequisitionStockCountDateModal',
-        'localStorageFactory', 'canSubmit', 'canSubmitAndAuthorize', 'canAuthorize',
+        'localStorageFactory', 'canSubmit', 'canAuthorize',
         'canApproveAndReject', 'canDelete', 'canSkip', 'canSync'
     ];
 
@@ -45,8 +45,8 @@
                                        offlineService, $window, requisitionUrlFactory, $filter,
                                        $scope, RequisitionWatcher, accessTokenFactory,
                                        messageService, stateTrackerService, RequisitionStockCountDateModal,
-                                       localStorageFactory, canSubmit, canSubmitAndAuthorize,
-                                       canAuthorize, canApproveAndReject, canDelete, canSkip, canSync) {
+                                       localStorageFactory, canSubmit, canAuthorize, canApproveAndReject, 
+                                       canDelete, canSkip, canSync) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions'));
@@ -100,79 +100,79 @@
         /**
          * ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
-         * @name canSubmit
+         * @name displaySubmitButton
          * @type {Boolean}
          *
          * @description
-         * Flag defining whether current user has a right to submit the requisition.
+         * Flag defining whether current user should see the submit button.
          */
-        vm.canSubmit = canSubmit;
+        vm.displaySubmitButton = undefined;
 
         /**
          * ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
-         * @name canSubmitAndAuthorize
+         * @name displaySubmitAndAuthorizeButton
          * @type {Boolean}
          *
          * @description
-         * Flag defining whether current user has a right to submit and authorize the requisition.
+         * Flag defining whether current user should see the submit and authorize button.
          */
-        vm.canSubmitAndAuthorize = canSubmitAndAuthorize;
+        vm.displaySubmitAndAuthorizeButton = undefined;
 
         /**
          * ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
-         * @name canAuthorize
+         * @name displayAuthorizeButton
          * @type {Boolean}
          *
          * @description
-         * Flag defining whether current user has a right to authorize the requisition.
+         * Flag defining whether current user should see the authorize button.
          */
-        vm.canAuthorize = canAuthorize;
+        vm.displayAuthorizeButton = undefined;
 
         /**
          * ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
-         * @name canDelete
+         * @name displayDeleteButton
          * @type {Boolean}
          *
          * @description
-         * Flag defining whether current user has a right to delete the requisition.
+         * Flag defining whether current user should see the delete button.
          */
-        vm.canDelete = canDelete;
+        vm.displayDeleteButton = undefined;
 
         /**
          * ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
-         * @name canApproveAndReject
+         * @name displayApproveAndRejectButtons
          * @type {Boolean}
          *
          * @description
-         * Flag defining whether current user has a right to approve and reject the requisition.
+         * Flag defining whether current user should see the approve and reject buttons.
          */
-        vm.canApproveAndReject = canApproveAndReject;
+        vm.displayApproveAndRejectButtons = undefined;
 
         /**
          * ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
-         * @name canSkip
+         * @name displaySkipButton
          * @type {Boolean}
          *
          * @description
-         * Flag defining whether current user has a right to skip the requisition.
+         * Flag defining whether current user should see the skip button.
          */
-        vm.canSkip = canSkip;
+        vm.displaySkipButton = undefined;
 
         /**
          * ngdoc property
          * @propertyOf requisition-view.controller:RequisitionViewController
-         * @name canSync
+         * @name displaySyncButton
          * @type {Boolean}
          *
          * @description
-         * Flag defining whether current user has a right to synchronize the requisition.
+         * Flag defining whether current user should see the sync to server button.
          */
-        vm.canSync = canSync;
+        vm.displaySyncButton = undefined;
 
         // Functions
         vm.$onInit = onInit;
@@ -199,6 +199,13 @@
          * Initialization method of the RequisitionViewController.
          */
         function onInit() {
+            vm.displaySubmitButton = canSubmit && !vm.requisition.program.skipAuthorization;
+            vm.displaySubmitAndAuthorizeButton = canSubmit && vm.requisition.program.skipAuthorization;
+            vm.displayAuthorizeButton = canAuthorize;
+            vm.displayDeleteButton = canDelete;
+            vm.displayApproveAndRejectButtons = canApproveAndReject;
+            vm.displaySkipButton = canSkip;
+            vm.displaySyncButton = canSync;
         }
 
         /**

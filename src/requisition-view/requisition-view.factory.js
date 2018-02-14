@@ -34,7 +34,6 @@
 
         var factory = {
             canSubmit: canSubmit,
-            canSubmitAndAuthorize: canSubmitAndAuthorize,
             canAuthorize: canAuthorize,
             canApproveAndReject: canApproveAndReject,
             canDelete: canDelete,
@@ -57,31 +56,7 @@
          * @return {Boolean} can user submit this requisition
          */
         function canSubmit(userId, requisition) {
-            if ((requisition.$isInitiated() || requisition.$isRejected()) &&
-                !requisition.program.skipAuthorization) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition.program.id, requisition.facility.id);
-            } else {
-                return $q.resolve(false);
-            }
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.requisitionViewFactory
-         * @name canSubmitAndAuthorize
-         *
-         * @description
-         * Determines whether the user can submit & authorize or not. Returns true only if requisition
-         * is initiated/rejected, user has permission to create requisition and the program skips
-         * the authorization step.
-         *
-         * @param  {String} userId id of user to check
-         * @param  {Object} requisition requisition to check
-         * @return {Boolean} can user submit & authorize this requisition
-         */
-        function canSubmitAndAuthorize(userId, requisition) {
-            if ((requisition.$isInitiated() || requisition.$isRejected()) &&
-                requisition.program.skipAuthorization) {
+            if (requisition.$isInitiated() || requisition.$isRejected()) {
                 return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition.program.id, requisition.facility.id);
             } else {
                 return $q.resolve(false);

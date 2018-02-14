@@ -54,18 +54,16 @@ describe('requisitionViewFactory', function() {
 
     describe('canSubmit', function() {
 
-        it('should be true if requisition is initiated, skip authorization is configured, and user has right to create (initiate/submit) this requisition', function() {
+        it('should be true if requisition is initiated and user has right to create (initiate/submit) this requisition', function() {
             requisition.$isInitiated.andReturn(true);
-            requisition.program.skipAuthorization = true;
 
             requisitionViewFactory.canSubmit(userId, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
 
-        it('should be true if requisition is rejected, skip authorization is configured, and user has right to create (initiate/submit) this requisition', function() {
+        it('should be true if requisition is rejected and user has right to create (initiate/submit) this requisition', function() {
             requisition.$isRejected.andReturn(true);
-            requisition.program.skipAuthorization = true;
 
             requisitionViewFactory.canSubmit(userId, requisition).then(function(response) {
                 expect(response).toBe(true);
@@ -80,64 +78,10 @@ describe('requisitionViewFactory', function() {
             });
         });
 
-        it('should be false if skip authorization is not configured', function() {
-            requisition.program.skipAuthorization = false;
-
-            requisitionViewFactory.canSubmit(userId, requisition).then(function(response) {
-                expect(response).toBe(false);
-            });
-        });
-
         it('should be false if user does not have right to create (initiate/submit) this requisition', function() {
             permissionService.hasPermission.andReturn($q.resolve(false));
 
             requisitionViewFactory.canSubmit(userId, requisition).then(function(response) {
-                expect(response).toBe(false);
-            });
-        });
-
-    });
-
-    describe('canSubmitAndAuthorize', function() {
-
-        it('should be true if requisition is initiated, skip authorization is not configured, and user has right to create (initiate/submit) this requisition', function() {
-            requisition.$isInitiated.andReturn(true);
-            requisition.program.skipAuthorization = false;
-
-            requisitionViewFactory.canSubmitAndAuthorize(userId, requisition).then(function(response) {
-                expect(response).toBe(true);
-            });
-        });
-
-        it('should be true if requisition is rejected, skip authorization is not configured, and user has right to create (initiate/submit) this requisition', function() {
-            requisition.$isRejected.andReturn(true);
-            requisition.program.skipAuthorization = false;
-
-            requisitionViewFactory.canSubmitAndAuthorize(userId, requisition).then(function(response) {
-                expect(response).toBe(true);
-            });
-        });
-
-        it('should be false if requisition is not initiated or rejected', function() {
-            requisition.$isSubmitted.andReturn(true);
-
-            requisitionViewFactory.canSubmitAndAuthorize(userId, requisition).then(function(response) {
-                expect(response).toBe(false);
-            });
-        });
-
-        it('should be false if skip authorization is configured', function() {
-            requisition.program.skipAuthorization = true;
-
-            requisitionViewFactory.canSubmitAndAuthorize(userId, requisition).then(function(response) {
-                expect(response).toBe(false);
-            });
-        });
-
-        it('should be false if user does not have right to create (initiate/submit) this requisition', function() {
-            permissionService.hasPermission.andReturn($q.resolve(false));
-
-            requisitionViewFactory.canSubmitAndAuthorize(userId, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
