@@ -1,4 +1,4 @@
-# OpenLMIS Requisition Reference UI Module
+# OpenLMIS Requisition UI Module
 This repository is the UI for the [OpenLMIS Requisition Service.](https://github.com/OpenLMIS/openlmis-requisition)
 
 ## Prerequisites
