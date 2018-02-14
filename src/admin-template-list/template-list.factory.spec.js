@@ -35,9 +35,9 @@ describe('templateListFactory', function() {
         program = new ProgramDataBuilder().withId('program-1').build();
         programTwo = new ProgramDataBuilder().withId('program-2').build();
 
-        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital().build();
-        healthCenter = new FacilityTypeDataBuilder().build();
-        districtStore = new FacilityTypeDataBuilder().buildDistrictStore().build();
+        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital();
+        healthCenter = new FacilityTypeDataBuilder();
+        districtStore = new FacilityTypeDataBuilder().buildDistrictStore();
 
         template = new TemplateDataBuilder()
             .withFacilityTypes([healthCenter, districtHospital])

@@ -35,9 +35,9 @@ describe('AdminTemplateConfigureSettingsController', function() {
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
         });
 
-        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital().build();
-        healthCenter = new FacilityTypeDataBuilder().build();
-        districtStore = new FacilityTypeDataBuilder().buildDistrictStore().build();
+        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital();
+        healthCenter = new FacilityTypeDataBuilder();
+        districtStore = new FacilityTypeDataBuilder().buildDistrictStore();
 
         template = new TemplateDataBuilder().withFacilityTypes([healthCenter]).build();
     });
