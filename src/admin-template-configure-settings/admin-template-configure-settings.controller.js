@@ -118,7 +118,7 @@
          * Redirects user to template list view page.
          */
         function goToTemplateList() {
-            $state.go('openlmis.administration.templates');
+            $state.go('openlmis.administration.templates', {}, {reload: true});
         }
 
         /**
