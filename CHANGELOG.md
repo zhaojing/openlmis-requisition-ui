@@ -8,6 +8,7 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-4087](https://openlmis.atlassian.net/browse/OLMIS-4087): Moved template screen to separate tab and support multiple templates per program.
 
 Improvements:
+* [OLMIS-3876:](https://openlmis.atlassian.net/browse/OLMIS-3876) Split navigation and filter logic on requisition approve and view requisitions pages
 * [OLMIS-3535:](https://openlmis.atlassian.net/browse/OLMIS-3535) Shortened column names on batch requisition screen.
 * [OLMIS-3080:](https://openlmis.atlassian.net/browse/OLMIS-3080) Replaced warning with error modal when there are no more products to add to the non-full supply requisition page.
 * [OLMIS-3782:](https://openlmis.atlassian.net/browse/OLMIS-3782) New option in the program settings to skip authorization step and button rename on the product grid if that setting is enabled.
