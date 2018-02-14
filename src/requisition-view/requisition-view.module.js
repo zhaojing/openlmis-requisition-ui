@@ -30,6 +30,7 @@
         'openlmis-modal',
         'openlmis-date',
         'openlmis-invalid',
+        'openlmis-permissions',
         'requisition',
         'requisition-summary',
         'requisition-validation',

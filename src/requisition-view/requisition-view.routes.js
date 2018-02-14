@@ -37,6 +37,9 @@
                 REQUISITION_RIGHTS.REQUISITION_APPROVE,
                 FULFILLMENT_RIGHTS.ORDERS_EDIT],
             resolve: {
+                user: function(authorizationService) {
+                    return authorizationService.getUser();
+                },
                 requisition: function($state, $q, $stateParams, requisitionService) {
                     var deferred = $q.defer();
 
@@ -48,6 +51,27 @@
                     });
 
                     return deferred.promise;
+                },
+                canSubmit: function(requisitionViewFactory, user, requisition) {
+                    return requisitionViewFactory.canSubmit(user.user_id, requisition);
+                },
+                canSubmitAndAuthorize: function(requisitionViewFactory, user, requisition) {
+                    return requisitionViewFactory.canSubmitAndAuthorize(user.user_id, requisition);
+                },
+                canAuthorize: function(requisitionViewFactory, user, requisition) {
+                    return requisitionViewFactory.canAuthorize(user.user_id, requisition);
+                },
+                canApproveAndReject: function(requisitionViewFactory, user, requisition) {
+                    return requisitionViewFactory.canApproveAndReject(user.user_id, requisition);
+                },
+                canDelete: function(requisitionViewFactory, user, requisition) {
+                    return requisitionViewFactory.canDelete(user.user_id, requisition);
+                },
+                canSkip: function(requisitionViewFactory, user, requisition) {
+                    return requisitionViewFactory.canSkip(user.user_id, requisition);
+                },
+                canSync: function(requisitionViewFactory, user, requisition) {
+                    return requisitionViewFactory.canSync(user.user_id, requisition);
                 }
             }
         });

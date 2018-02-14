@@ -34,7 +34,8 @@
         'confirmService', 'REQUISITION_RIGHTS', 'FULFILLMENT_RIGHTS', 'offlineService', '$window',
         'requisitionUrlFactory', '$filter', '$scope', 'RequisitionWatcher',
         'accessTokenFactory', 'messageService', 'stateTrackerService', 'RequisitionStockCountDateModal',
-        'localStorageFactory'
+        'localStorageFactory', 'canSubmit', 'canSubmitAndAuthorize', 'canAuthorize',
+        'canApproveAndReject', 'canDelete', 'canSkip', 'canSync'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator,
@@ -44,7 +45,8 @@
                                        offlineService, $window, requisitionUrlFactory, $filter,
                                        $scope, RequisitionWatcher, accessTokenFactory,
                                        messageService, stateTrackerService, RequisitionStockCountDateModal,
-                                       localStorageFactory) {
+                                       localStorageFactory, canSubmit, canSubmitAndAuthorize,
+                                       canAuthorize, canApproveAndReject, canDelete, canSkip, canSync) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions'));
@@ -104,7 +106,7 @@
          * @description
          * Flag defining whether current user has a right to submit the requisition.
          */
-        vm.canSubmit = undefined;
+        vm.canSubmit = canSubmit;
 
         /**
          * ngdoc property
@@ -115,7 +117,7 @@
          * @description
          * Flag defining whether current user has a right to submit and authorize the requisition.
          */
-        vm.canSubmitAndAuthorize = undefined;
+        vm.canSubmitAndAuthorize = canSubmitAndAuthorize;
 
         /**
          * ngdoc property
@@ -126,7 +128,7 @@
          * @description
          * Flag defining whether current user has a right to authorize the requisition.
          */
-        vm.canAuthorize = undefined;
+        vm.canAuthorize = canAuthorize;
 
         /**
          * ngdoc property
@@ -137,7 +139,7 @@
          * @description
          * Flag defining whether current user has a right to delete the requisition.
          */
-        vm.canDelete = undefined;
+        vm.canDelete = canDelete;
 
         /**
          * ngdoc property
@@ -148,7 +150,7 @@
          * @description
          * Flag defining whether current user has a right to approve and reject the requisition.
          */
-        vm.canApproveAndReject = undefined;
+        vm.canApproveAndReject = canApproveAndReject;
 
         /**
          * ngdoc property
@@ -159,7 +161,7 @@
          * @description
          * Flag defining whether current user has a right to skip the requisition.
          */
-        vm.canSkip = undefined;
+        vm.canSkip = canSkip;
 
         /**
          * ngdoc property
@@ -170,7 +172,7 @@
          * @description
          * Flag defining whether current user has a right to synchronize the requisition.
          */
-        vm.canSync = undefined;
+        vm.canSync = canSync;
 
         // Functions
         vm.$onInit = onInit;
@@ -197,13 +199,6 @@
          * Initialization method of the RequisitionViewController.
          */
         function onInit() {
-            vm.canSubmit = displaySubmit();
-            vm.canSubmitAndAuthorize = displaySubmitAndAuthorize();
-            vm.canAuthorize = displayAuthorize();
-            vm.canDelete = displayDelete();
-            vm.canApproveAndReject = displayApproveAndReject();
-            vm.canSkip = displaySkip();
-            vm.canSync = displaySync();
         }
 
         /**
@@ -269,7 +264,7 @@
          * indicates a version conflict.
          */
         function syncRnrAndPrint() {
-            if (displaySync()) {
+            if (vm.canSync) {
                 var popup = $window.open('', '_blank');
                 popup.document.write(messageService.get('requisitionView.sync.pending'));
                 var loadingPromise = loadingModalService.open();
@@ -506,138 +501,6 @@
                 }, failWithMessage('requisitionView.skip.failure'));
             });
         }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name displayAuthorize
-         *
-         * @description
-         * Determines whether to display authorize button or not. Returns true only if requisition
-         * is submitted and user has permission to authorize requisition.
-         *
-         * @return {Boolean} should authorize button be displayed
-         */
-        function displayAuthorize() {
-            return vm.requisition.$isSubmitted() && hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, vm.requisition.program.id, vm.requisition.facility.id);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name displaySubmit
-         *
-         * @description
-         * Determines whether to display submit button or not. Returns true only if requisition
-         * is initiated/rejected and user has permission to create requisition.
-         *
-         * @return {Boolean} should submit button be displayed
-         */
-        function displaySubmit() {
-            return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) &&
-                !vm.requisition.program.skipAuthorization &&
-                hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name displaySubmitAndAuthorize
-         *
-         * @description
-         * Determines whether to display submit & authorize button or not. Returns true only if requisition
-         * is initiated/rejected, user has permission to create requisition and the program skips
-         * the authorization step.
-         *
-         * @return {Boolean} should submit & authorize button be displayed
-         */
-        function displaySubmitAndAuthorize() {
-            return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) &&
-                vm.requisition.program.skipAuthorization &&
-                hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name displayApproveAndReject
-         *
-         * @description
-         * Determines whether to display approve and reject buttons or not. Returns true only if
-         * requisition is authorized or in approval and user has permission to approve requisition.
-         *
-         * @return {Boolean} should approve and reject buttons be displayed
-         */
-        function displayApproveAndReject() {
-            return (vm.requisition.$isAuthorized() || vm.requisition.$isInApproval()) && hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_APPROVE, vm.requisition.program.id, vm.requisition.facility.id);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name displayDelete
-         *
-         * @description
-         * Determines whether to display delete button or not. Returns true only if
-         * user has permission to delete requisition. User needs to have create right when
-         * requisition is initiated and authorize right when requisition is in submitted state.
-         *
-         * @return {Boolean} should delete button be displayed
-         */
-        function displayDelete() {
-            if (hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_DELETE)) {
-                if (vm.requisition.$isInitiated() || vm.requisition.$isRejected() || vm.requisition.$isSkipped()) {
-                    return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
-                }
-                if (vm.requisition.$isSubmitted()) {
-                    return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, vm.requisition.program.id, vm.requisition.facility.id);
-                }
-            }
-            return false;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name displaySkip
-         *
-         * @description
-         * Determines whether to display skip requisition button or not. Returns true only if
-         * requisition program allows to skip requisition.
-         *
-         * @return {Boolean} true if skip button should be visible, false otherwise
-         */
-        function displaySkip() {
-            return (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) &&
-                vm.requisition.program.periodsSkippable &&
-                !vm.requisition.emergency &&
-                hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.controller:RequisitionViewController
-         * @name displaySync
-         *
-         * @description
-         * Determines whether to display sync with server button or not. Returns true only if
-         * requisition has status INITIATED, SUBMITTED or AUTHORIZED.
-         *
-         * @return {Boolean} true if sync button should be visible, false otherwise
-         */
-        function displaySync() {
-            if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
-                return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_CREATE, vm.requisition.program.id, vm.requisition.facility.id);
-            }
-            if (vm.requisition.$isSubmitted()) {
-                return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, vm.requisition.program.id, vm.requisition.facility.id);
-            }
-            if (vm.requisition.$isAuthorized() || vm.requisition.$isInApproval()) {
-                return hasRightForProgramAndFacility(REQUISITION_RIGHTS.REQUISITION_APPROVE, vm.requisition.program.id, vm.requisition.facility.id);
-            }
-            return false;
-        }
-
         /**
          * @ngdoc method
          * @methodOf requisition-view.controller:RequisitionViewController
@@ -723,13 +586,6 @@
                 loadingModalService.close();
                 alertService.error(message);
             };
-        }
-
-        function hasRightForProgramAndFacility(rightName, programId, facilityId) {
-            return authorizationService.hasRight(rightName, {
-                programId: programId,
-                facilityId: facilityId
-            });
         }
     }
 })();
