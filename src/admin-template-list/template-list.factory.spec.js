@@ -13,21 +13,23 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('TemplateListAdminController', function() {
+describe('templateListFactory', function() {
 
-    var vm, template, program, ProgramDataBuilder, TemplateDataBuilder, $controller,
-        FacilityTypeDataBuilder, programTwo, templateTwo, districtHospital, healthCenter,
-        templateListFactory, result;
+    var template, program, ProgramDataBuilder, TemplateDataBuilder, FacilityTypeDataBuilder,
+        programTwo, templateTwo, templateThree, districtHospital, healthCenter, districtStore,
+        templateListFactory, facilityTypeService, templates, $q, $rootScope, result;
 
     beforeEach(function() {
         module('admin-template-list');
 
         inject(function($injector) {
-            $controller = $injector.get('$controller');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
             FacilityTypeDataBuilder = $injector.get('FacilityTypeDataBuilder');
             templateListFactory = $injector.get('templateListFactory');
+            facilityTypeService = $injector.get('facilityTypeService');
+            $q = $injector.get('$q');
+            $rootScope = $injector.get('$rootScope');
         });
 
         program = new ProgramDataBuilder().withId('program-1').build();
@@ -35,55 +37,48 @@ describe('TemplateListAdminController', function() {
 
         districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital().build();
         healthCenter = new FacilityTypeDataBuilder().build();
+        districtStore = new FacilityTypeDataBuilder().buildDistrictStore().build();
 
         template = new TemplateDataBuilder()
             .withFacilityTypes([healthCenter, districtHospital])
             .build();
 
         templateTwo = new TemplateDataBuilder()
+            .withProgram(program)
             .withFacilityTypes([healthCenter])
             .build();
 
-        vm = $controller('TemplateListAdminController', {
-            programs: [program, programTwo],
-            templates: [template, templateTwo]
+        templateThree = new TemplateDataBuilder()
+            .withProgram(programTwo)
+            .withFacilityTypes([districtStore])
+            .build();
+
+        templates = [template, templateTwo, templateThree];
+    });
+
+    describe('getProgramTemplates', function() {
+
+        it('should return programs with its templates', function() {
+            result = templateListFactory.getProgramTemplates(templates, [program, programTwo]);
+
+            expect(result[program.id]).toEqual([template, templateTwo]);
+            expect(result[programTwo.id]).toEqual([templateThree]);
         });
     });
 
-    describe('init', function() {
+    describe('getTemplateFacilityTypes', function() {
 
-        it('should set programs', function() {
-            vm.$onInit();
-            expect(vm.programs).toEqual([program, programTwo]);
-        });
+        it('should return templates with its facility types', function() {
+            spyOn(facilityTypeService, 'query').andReturn($q.when([districtHospital, districtStore, healthCenter]));
 
-        it('should set templates', function() {
-            vm.$onInit();
-            expect(vm.templates).toEqual([template, templateTwo]);
-        });
+            templateListFactory.getTemplateFacilityTypes(templates).then(function(response) {
+                result = response;
+            });
+            $rootScope.$apply();
 
-        it('should set programTemplates', function() {
-            result = {};
-            result[program.id] = [template];
-            result[programTwo.id] = [templateTwo];
-
-            spyOn(templateListFactory, 'getProgramTemplates').andReturn(result);
-
-            vm.$onInit();
-            expect(vm.programTemplates[program.id]).toEqual([template]);
-            expect(vm.programTemplates[programTwo.id]).toEqual([templateTwo]);
-        });
-
-        it('should set templateFacilityTypes', function() {
-            result = {};
-            result[template.id] = [healthCenter, districtHospital];
-            result[templateTwo.id] = [healthCenter];
-
-            spyOn(templateListFactory, 'getTemplateFacilityTypes').andReturn(result);
-
-            vm.$onInit();
-            expect(vm.templateFacilityTypes[template.id]).toEqual([healthCenter, districtHospital]);
-            expect(vm.templateFacilityTypes[templateTwo.id]).toEqual([healthCenter]);
+            expect(result[template.id]).toEqual([healthCenter, districtHospital]);
+            expect(result[templateTwo.id]).toEqual([healthCenter]);
+            expect(result[templateThree.id]).toEqual([districtStore]);
         });
     });
 

@@ -13,8 +13,8 @@
             <tbody>
                 <tr ng-repeat="template in vm.programTemplates[program.id] | orderBy: 'name'">
                     <td>{{template.name}}</td>
-                    <td ng-show="template.facilityTypes.length > 1">{{'adminTemplateList.facilityTypes' | message: {'number': template.facilityTypes.length } }}</td>
-                    <td ng-hide="template.facilityTypes.length > 1">{{vm.templateFacilityTypes[template.id][0].name}}</td>
+                    <td ng-if="template.facilityTypes.length > 1">{{'adminTemplateList.facilityTypes' | message: {'number': template.facilityTypes.length } }}</td>
+                    <td ng-if="!(template.facilityTypes.length > 1)">{{vm.templateFacilityTypes[template.id][0].name}}</td>
                     <td>
                         <button ui-sref="openlmis.administration.templates.configure.columns({id: template.id})">{{'adminTemplateList.configure' | message}}</button>
                     </td>

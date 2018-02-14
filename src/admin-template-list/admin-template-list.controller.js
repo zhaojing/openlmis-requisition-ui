@@ -28,9 +28,9 @@
         .module('admin-template-list')
         .controller('TemplateListAdminController', TemplateListAdminController);
 
-    TemplateListAdminController.$inject = ['templates', 'programs', '$filter', 'facilityTypes', 'templateListFactory'];
+    TemplateListAdminController.$inject = ['templates', 'programs', '$filter', 'templateListFactory'];
 
-    function TemplateListAdminController(templates, programs, $filter, facilityTypes, templateListFactory) {
+    function TemplateListAdminController(templates, programs, $filter, templateListFactory) {
 
         var vm = this;
 
@@ -43,7 +43,7 @@
          * @description
          * Holds template.
          */
-        vm.templates = templates;
+        vm.templates = undefined;
 
         /**
          * @ngdoc property
@@ -54,18 +54,7 @@
          * @description
          * Holds program.
          */
-        vm.programs = programs;
-
-        /**
-         * @ngdoc property
-         * @propertyOf admin-template-list.controller:TemplateListAdminController
-         * @name facilityTypes
-         * @type {Array}
-         *
-         * @description
-         * Holds facility types.
-         */
-        vm.facilityTypes = facilityTypes;
+        vm.programs = undefined;
 
         /**
          * @ngdoc property
@@ -102,6 +91,8 @@
          * @return {Array}  Programs with templates.
          */
         function onInit() {
+            vm.templates = templates;
+            vm.programs = programs;
             vm.programTemplates = templateListFactory.getProgramTemplates(vm.templates, vm.programs);
             vm.templateFacilityTypes = templateListFactory.getTemplateFacilityTypes(vm.templates, vm.facilityTypes);
         }

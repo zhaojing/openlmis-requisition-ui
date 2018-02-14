@@ -31,6 +31,7 @@
         TemplateDataBuilder.prototype.withColumn = withColumn;
         TemplateDataBuilder.prototype.withFacilityTypes = withFacilityTypes;
         TemplateDataBuilder.prototype.withPopulateStockOnHandFromStockCards = withPopulateStockOnHandFromStockCards;
+        TemplateDataBuilder.prototype.withProgram = withProgram;
 
         return TemplateDataBuilder;
 
@@ -66,6 +67,11 @@
 
         function withPopulateStockOnHandFromStockCards(column) {
             this.populateStockOnHandFromStockCards = true;
+            return this;
+        }
+
+        function withProgram(program) {
+            this.program = program;
             return this;
         }
     }

@@ -28,16 +28,16 @@
         .module('admin-template-list')
         .factory('templateListFactory', factory);
 
-    factory.$inject = ['$filter'];
+    factory.$inject = ['$filter', 'facilityTypeService', '$q'];
 
-    function factory($filter) {
+    function factory($filter, facilityTypeService, $q) {
 
-        var validator = {
+        var factory = {
                 getProgramTemplates: getProgramTemplates,
                 getTemplateFacilityTypes: getTemplateFacilityTypes
             };
 
-        return validator;
+        return factory;
 
         /**
          * @ngdoc method
@@ -53,7 +53,7 @@
          */
         function getProgramTemplates(templates, programs) {
             var programTemplates = {};
-            angular.forEach(programs, function(program) {
+            programs.forEach(function(program) {
                 programTemplates[program.id] = [];
                 templates.filter(function(template) {
                     if (template.program.id == program.id) {
@@ -73,22 +73,37 @@
          * Returns templates with its facility types.
          *
          * @param   {Array} templates       all templates
-         * @param   {Array} facilityTypes   all facility types
          * @return  {Array}                 array of templates with its facility types
          */
-        function getTemplateFacilityTypes(templates, facilityTypes) {
-            var templateTypes = {};
-            angular.forEach(templates, function(template) {
-                templateTypes[template.id] = [];
-                angular.forEach(template.facilityTypes, function(type) {
-                    angular.forEach(facilityTypes, function(facilityType) {
-                        if (facilityType.id == type.id) {
-                            templateTypes[template.id].push(facilityType);
-                        }
+        function getTemplateFacilityTypes(templates) {
+            return getFacilityTypes(templates).then(function(facilityTypes) {
+                var templateTypes = {};
+
+                templates.forEach(function(template) {
+                    templateTypes[template.id] = [];
+                    template.facilityTypes.forEach(function(type) {
+                        facilityTypes.forEach(function(facilityType) {
+                            if (facilityType.id == type.id) {
+                                templateTypes[template.id].push(facilityType);
+                            }
+                        });
                     });
                 });
+
+                return templateTypes;
             });
-            return templateTypes;
+        }
+
+        function getFacilityTypes(templates) {
+            var ids = [];
+
+            templates.forEach(function(template) {
+                template.facilityTypes.forEach(function(facilityType) {
+                    ids.push(facilityType.id);
+                });
+            });
+
+            return facilityTypeService.query({id: ids});
         }
     }
 })();

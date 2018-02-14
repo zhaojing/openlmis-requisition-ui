@@ -36,15 +36,6 @@
 	            templates: function(requisitionTemplateService) {
 	                return requisitionTemplateService.getAll();
                 },
-                facilityTypes: function(templates, facilityTypeService) {
-	                var ids = [];
-	                angular.forEach(templates, function(template) {
-                        angular.forEach(template.facilityTypes, function(facilityType) {
-                            ids.push(facilityType.id);
-                        });
-	                });
-	                return facilityTypeService.query({id: ids});
-                },
                 programs: function(programService) {
                     return programService.getAll();
                 }
