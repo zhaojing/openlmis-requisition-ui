@@ -35,12 +35,18 @@
 	            facilityTypes: function(facilityTypeService) {
 	                return facilityTypeService.query();
                 },
-                templateFacilityTypes: function(template, facilityTypeService, $q) {
-                    var ids = [];
-                    angular.forEach(template.facilityTypes, function(type) {
-                        ids.push(type.id);
-                    });
-                    return ids.length ? facilityTypeService.query({id: ids}) : $q.resolve([]);
+                templates: function(requisitionTemplateService) {
+                    return requisitionTemplateService.getAll();
+                },
+                programTemplates: function(template, templates, templateListFactory) {
+                    return templateListFactory.getProgramTemplates(templates, [template.program]);
+                },
+                templateFacilityTypes: function(template, facilityTypes, templateListFactory) {
+                    return templateListFactory.getTemplateFacilityTypes([template], facilityTypes);
+                },
+                availableFacilityTypes: function(programTemplates, facilityTypes, template, templateFacilityTypeFactory) {
+                    return templateFacilityTypeFactory.getAvailableFacilityTypesForProgram(
+                        programTemplates[template.program.id], facilityTypes);
                 }
             }
         });

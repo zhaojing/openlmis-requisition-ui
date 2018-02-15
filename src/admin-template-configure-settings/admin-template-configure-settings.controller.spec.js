@@ -17,7 +17,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
 
     var vm, template, loadingModalService, $q, $state, notificationService, rootScope,
         FacilityTypeDataBuilder, $controller, confirmService, requisitionTemplateService,
-        TemplateDataBuilder, districtHospital, healthCenter, districtStore;
+        TemplateDataBuilder, districtHospital, healthCenter, districtStore, templateFacilityTypes;
 
     beforeEach(function() {
         module('admin-template-configure-settings');
@@ -40,6 +40,9 @@ describe('AdminTemplateConfigureSettingsController', function() {
         districtStore = new FacilityTypeDataBuilder().buildDistrictStore();
 
         template = new TemplateDataBuilder().withFacilityTypes([healthCenter]).build();
+
+        templateFacilityTypes = {};
+        templateFacilityTypes[template.id] = [healthCenter];
     });
 
     describe('$onInit', function() {
@@ -147,7 +150,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
             vm.add();
             rootScope.$apply();
 
-            expect(vm.facilityTypes).toEqual([districtStore]);
+            expect(vm.facilityTypes).toEqual([]);
         });
     });
 
@@ -169,7 +172,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
             vm.remove(healthCenter);
             rootScope.$apply();
 
-            expect(vm.facilityTypes).toEqual([districtHospital, districtStore, healthCenter]);
+            expect(vm.facilityTypes).toEqual([districtHospital, healthCenter]);
         });
     });
 
@@ -191,8 +194,8 @@ describe('AdminTemplateConfigureSettingsController', function() {
     function initController() {
         vm = $controller('AdminTemplateConfigureSettingsController', {
             template: template,
-            facilityTypes: [districtHospital, districtStore, healthCenter],
-            templateFacilityTypes: [healthCenter]
+            availableFacilityTypes: [districtHospital],
+            templateFacilityTypes: templateFacilityTypes
         });
 
         vm.$onInit();

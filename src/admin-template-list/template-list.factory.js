@@ -73,37 +73,21 @@
          * Returns templates with its facility types.
          *
          * @param   {Array} templates       all templates
+         * @param   {Array} facilityTypes   all facility types
          * @return  {Array}                 array of templates with its facility types
          */
-        function getTemplateFacilityTypes(templates) {
-            return getFacilityTypes(templates).then(function(facilityTypes) {
-                var templateTypes = {};
-
-                templates.forEach(function(template) {
-                    templateTypes[template.id] = [];
-                    template.facilityTypes.forEach(function(type) {
-                        facilityTypes.forEach(function(facilityType) {
-                            if (facilityType.id == type.id) {
-                                templateTypes[template.id].push(facilityType);
-                            }
-                        });
-                    });
-                });
-
-                return templateTypes;
-            });
-        }
-
-        function getFacilityTypes(templates) {
-            var ids = [];
-
+        function getTemplateFacilityTypes(templates, facilityTypes) {
+            var templateTypes = {};
             templates.forEach(function(template) {
-                template.facilityTypes.forEach(function(facilityType) {
-                    ids.push(facilityType.id);
+                templateTypes[template.id] = [];
+                template.facilityTypes.forEach(function(type) {
+                    var filtered = facilityTypes.filter(function(facilityType) {
+                        return facilityType.id == type.id;
+                    });
+                    templateTypes[template.id].push(filtered[0]);
                 });
             });
-
-            return facilityTypeService.query({id: ids});
+            return templateTypes;
         }
     }
 })();

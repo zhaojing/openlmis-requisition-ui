@@ -39,8 +39,11 @@
                 programs: function(programService) {
                     return programService.getAll();
                 },
-                templateFacilityTypes: function(templates, templateListFactory) {
-                    return templateListFactory.getTemplateFacilityTypes(templates);
+                facilityTypes: function(facilityTypeService) {
+                    return facilityTypeService.query();
+                },
+                templateFacilityTypes: function(templates, facilityTypes, templateListFactory) {
+                    return templateListFactory.getTemplateFacilityTypes(templates, facilityTypes);
                 }
             }
         });

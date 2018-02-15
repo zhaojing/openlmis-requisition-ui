@@ -17,7 +17,7 @@ describe('templateListFactory', function() {
 
     var template, program, ProgramDataBuilder, TemplateDataBuilder, FacilityTypeDataBuilder,
         programTwo, templateTwo, templateThree, districtHospital, healthCenter, districtStore,
-        templateListFactory, facilityTypeService, templates, $q, $rootScope, result;
+        templateListFactory, templates, facilityTypes, result;
 
     beforeEach(function() {
         module('admin-template-list');
@@ -27,9 +27,6 @@ describe('templateListFactory', function() {
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
             FacilityTypeDataBuilder = $injector.get('FacilityTypeDataBuilder');
             templateListFactory = $injector.get('templateListFactory');
-            facilityTypeService = $injector.get('facilityTypeService');
-            $q = $injector.get('$q');
-            $rootScope = $injector.get('$rootScope');
         });
 
         program = new ProgramDataBuilder().withId('program-1').build();
@@ -38,6 +35,8 @@ describe('templateListFactory', function() {
         districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder();
         districtStore = new FacilityTypeDataBuilder().buildDistrictStore();
+
+        facilityTypes = [districtHospital, districtStore, healthCenter];
 
         template = new TemplateDataBuilder()
             .withFacilityTypes([healthCenter, districtHospital])
@@ -69,12 +68,7 @@ describe('templateListFactory', function() {
     describe('getTemplateFacilityTypes', function() {
 
         it('should return templates with its facility types', function() {
-            spyOn(facilityTypeService, 'query').andReturn($q.when([districtHospital, districtStore, healthCenter]));
-
-            templateListFactory.getTemplateFacilityTypes(templates).then(function(response) {
-                result = response;
-            });
-            $rootScope.$apply();
+            result = templateListFactory.getTemplateFacilityTypes(templates, facilityTypes);
 
             expect(result[template.id]).toEqual([healthCenter, districtHospital]);
             expect(result[templateTwo.id]).toEqual([healthCenter]);

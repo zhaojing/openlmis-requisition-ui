@@ -28,13 +28,11 @@
         .module('admin-template-configure-settings')
         .controller('AdminTemplateConfigureSettingsController', AdminTemplateConfigureSettingsController);
 
-    AdminTemplateConfigureSettingsController.$inject = ['template', 'facilityTypes', 'loadingModalService',
-        'notificationService', '$state', 'confirmService', 'requisitionTemplateService', 'facilityTypeService',
-        'templateFacilityTypes'];
+    AdminTemplateConfigureSettingsController.$inject = ['template', 'availableFacilityTypes', 'loadingModalService',
+        'notificationService', '$state', 'confirmService', 'requisitionTemplateService', 'templateFacilityTypes'];
 
-    function AdminTemplateConfigureSettingsController(template, facilityTypes, loadingModalService,
-        notificationService, $state, confirmService, requisitionTemplateService, facilityTypeService,
-        templateFacilityTypes) {
+    function AdminTemplateConfigureSettingsController(template, availableFacilityTypes, loadingModalService,
+        notificationService, $state, confirmService, requisitionTemplateService, templateFacilityTypes) {
 
         var vm = this;
 
@@ -157,19 +155,8 @@
          */
         function onInit() {
             vm.template = template;
-            vm.facilityTypes = facilityTypes;
-            vm.template.facilityTypes = templateFacilityTypes;
-            removeAssignedFacilityTypes();
-        }
-
-        function removeAssignedFacilityTypes() {
-            vm.template.facilityTypes.forEach(function(type) {
-                var filtered = vm.facilityTypes.filter(function(facilityType) {
-                    return facilityType.id == type.id;
-                });
-                var index = vm.facilityTypes.indexOf(filtered[0]);
-                vm.facilityTypes.splice(index, 1);
-            });
+            vm.facilityTypes = availableFacilityTypes;
+            vm.template.facilityTypes = templateFacilityTypes[template.id];
         }
     }
 })();
