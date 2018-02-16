@@ -139,13 +139,14 @@
 
             function canNotSkip() {
                 return !requisition.$isInitiated() && !requisition.$isRejected() &&
-                    !(hasAuthorizeRightForProgram() && requisition.$isSubmitted()) ||
+                    !(hasAuthorizeRight() && requisition.$isSubmitted()) ||
                     !lineItem.canBeSkipped(scope.requisition);
             }
 
-            function hasAuthorizeRightForProgram() {
+            function hasAuthorizeRight() {
                 return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
-                    programCode: requisition.program.code
+                    programId: requisition.program.id,
+                    facilityId: requisition.facility.id
                 });
             }
 

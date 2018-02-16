@@ -221,15 +221,15 @@
                 return true;
             }
             if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                if (hasApproveRightForProgram(requisition) && isApprovalColumn(column)) {
+                if (hasApproveRight(requisition) && isApprovalColumn(column)) {
                     return false;
                 }
             }
             if (column.source === COLUMN_SOURCES.USER_INPUT) {
-                if (hasAuthorizeRightForProgram(requisition) && requisition.$isSubmitted()) {
+                if (hasAuthorizeRight(requisition) && requisition.$isSubmitted()) {
                     return false;
                 }
-                if (hasCreateRightForProgram(requisition) && (requisition.$isInitiated() || requisition.$isRejected())) {
+                if (hasCreateRight(requisition) && (requisition.$isInitiated() || requisition.$isRejected())) {
                     return false;
                 }
             }
@@ -239,21 +239,24 @@
         }
 
 
-        function hasApproveRightForProgram(requisition) {
+        function hasApproveRight(requisition) {
             return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_APPROVE, {
-                programCode: requisition.program.code
+                programId: requisition.program.id,
+                facilityId: requisition.facility.id
             });
         }
 
-        function hasAuthorizeRightForProgram(requisition) {
+        function hasAuthorizeRight(requisition) {
             return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
-                programCode: requisition.program.code
+                programId: requisition.program.id,
+                facilityId: requisition.facility.id
             });
         }
 
-        function hasCreateRightForProgram(requisition) {
+        function hasCreateRight(requisition) {
             return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, {
-                programCode: requisition.program.code
+                programId: requisition.program.id,
+                facilityId: requisition.facility.id
             });
         }
 

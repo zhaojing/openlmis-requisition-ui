@@ -15,7 +15,7 @@
 
 describe('LineItem', function() {
 
-    var LineItem, requisitionLineItem, authorizationServiceSpy, requisition, program,
+    var LineItem, requisitionLineItem, authorizationServiceSpy, requisition, program, facility,
         calculationFactory, column, lineItem, TEMPLATE_COLUMNS, REQUISITION_RIGHTS,
         userAlwaysHasRight, userHasCreateRight, userHasAuthorizedRight, userHasApprovedRight;
 
@@ -117,6 +117,11 @@ describe('LineItem', function() {
             id: '1',
             name: 'program1'
         };
+        facility = {
+            id: '2',
+            name: 'facility2'
+        };
+
         requisitionLineItem = {
             $program: {
                 fullSupply: true
@@ -143,6 +148,7 @@ describe('LineItem', function() {
         requisition.$isRejected.andReturn(false);
         requisition.requisitionLineItems = [requisitionLineItem];
         requisition.program = program;
+        requisition.facility = facility;
         requisition.status = 'SUBMITTED';
         requisition.template = template;
         requisition.processingPeriod = {

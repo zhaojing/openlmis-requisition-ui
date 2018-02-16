@@ -91,7 +91,10 @@ describe('ProductGridCell', function() {
                 return nonFullSupply ? nonFullSupplyColumns : fullSupplyColumns;
             });
             requisition.program = {
-                code: 'CODE'
+                id: '1'
+            };
+            requisition.facility = {
+                id: '2'
             };
 
             scope.requisition = requisition;
