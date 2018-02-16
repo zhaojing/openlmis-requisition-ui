@@ -28,9 +28,9 @@
         .module('requisition-full-supply')
         .controller('FullSupplyController', controller);
 
-    controller.$inject = ['$controller', 'requisitionValidator', 'TEMPLATE_COLUMNS', 'requisition', 'columns', 'lineItems', 'authorizationService', 'REQUISITION_RIGHTS'];
+    controller.$inject = ['$controller', 'requisitionValidator', 'TEMPLATE_COLUMNS', 'requisition', 'columns', 'lineItems', 'REQUISITION_RIGHTS', 'canAuthorize'];
 
-    function controller($controller, requisitionValidator, TEMPLATE_COLUMNS, requisition, columns, lineItems, authorizationService, REQUISITION_RIGHTS) {
+    function controller($controller, requisitionValidator, TEMPLATE_COLUMNS, requisition, columns, lineItems, REQUISITION_RIGHTS, canAuthorize) {
 
         var vm = this;
 
@@ -127,7 +127,7 @@
          */
         function areSkipControlsVisible() {
             if (!requisition.$isInitiated() && !requisition.$isRejected() &&
-                !(hasAuthorizeRightForProgram() && requisition.$isSubmitted())) {
+                !(canAuthorize && requisition.$isSubmitted())) {
                 return false;
             }
 
@@ -185,12 +185,6 @@
                 }
             });
             vm.skippedAll = value;
-        }
-
-        function hasAuthorizeRightForProgram() {
-            return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
-                programCode: requisition.program.code
-            });
         }
     }
 

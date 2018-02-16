@@ -17,7 +17,7 @@ describe('NonFullSupplyController', function() {
 
     var vm, RequisitionCategory, addProductModalService, requisition, $q, requisitionValidator,
         lineItems, $rootScope, $controller, LineItem, stateParams, $state, alertService,
-        authorizationServiceSpy, REQUISITION_RIGHTS;
+        REQUISITION_RIGHTS, canSubmit, canAuthorize;
 
     beforeEach(function(){
         module('requisition-non-full-supply');
@@ -57,8 +57,6 @@ describe('NonFullSupplyController', function() {
         requisition.program = {
             code: 'P01'
         };
-
-        authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight']);
     });
 
     describe('initialization', function() {
@@ -89,82 +87,56 @@ describe('NonFullSupplyController', function() {
 
         it('should display add product button if requisition is initiated and user has create right', function() {
             requisition.$isInitiated.andReturn(true);
-            authorizationServiceSpy.hasRight.andReturn(true);
+            canSubmit = true;
 
             initController();
 
             expect(vm.displayAddProductButton).toBe(true);
-            expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
-               REQUISITION_RIGHTS.REQUISITION_CREATE,
-               { programCode: requisition.program.code }
-           );
         });
 
         it('should not display add product button if requisition is initiated and user has no create right', function() {
             requisition.$isInitiated.andReturn(true);
-            authorizationServiceSpy.hasRight.andReturn(false);
+            canSubmit = false;
 
             initController();
 
             expect(vm.displayAddProductButton).toBe(false);
-            expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
-               REQUISITION_RIGHTS.REQUISITION_CREATE,
-               { programCode: requisition.program.code }
-           );
         });
 
-       it('should display add product button if requisition is rejected and user has create right', function() {
-              requisition.$isRejected.andReturn(true);
-              authorizationServiceSpy.hasRight.andReturn(true);
+        it('should display add product button if requisition is rejected and user has create right', function() {
+            requisition.$isRejected.andReturn(true);
+            canSubmit = true;
 
-              initController();
+            initController();
 
-              expect(vm.displayAddProductButton).toBe(true);
-              expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
-                 REQUISITION_RIGHTS.REQUISITION_CREATE,
-                 { programCode: requisition.program.code }
-             );
-          });
+            expect(vm.displayAddProductButton).toBe(true);
+        });
 
-          it('should not display add product button if requisition is rejected and user has no create right', function() {
-              requisition.$isRejected.andReturn(true);
-              authorizationServiceSpy.hasRight.andReturn(false);
+        it('should not display add product button if requisition is rejected and user has no create right', function() {
+            requisition.$isRejected.andReturn(true);
+            canSubmit = false;
 
-              initController();
+            initController();
 
-              expect(vm.displayAddProductButton).toBe(false);
-              expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
-                 REQUISITION_RIGHTS.REQUISITION_CREATE,
-                 { programCode: requisition.program.code }
-             );
-          });
+            expect(vm.displayAddProductButton).toBe(false);
+        });
 
         it('should display add product button if requisition is submitted and user has authorize rights', function() {
-           requisition.$isSubmitted.andReturn(true);
+            requisition.$isSubmitted.andReturn(true);
+            canAuthorize = true;
 
-           authorizationServiceSpy.hasRight.andReturn(true);
+            initController();
 
-           initController();
-
-           expect(vm.displayAddProductButton).toBe(true);
-           expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
-               REQUISITION_RIGHTS.REQUISITION_AUTHORIZE,
-               { programCode: requisition.program.code }
-           );
+            expect(vm.displayAddProductButton).toBe(true);
         });
 
         it('should not display add product button if requisition is submitted and user has no authorize rights', function() {
-             requisition.$isSubmitted.andReturn(true);
+            requisition.$isSubmitted.andReturn(true);
+            canAuthorize = false;
 
-             authorizationServiceSpy.hasRight.andReturn(false);
+            initController();
 
-             initController();
-
-             expect(vm.displayAddProductButton).toBe(false);
-             expect(authorizationServiceSpy.hasRight).toHaveBeenCalledWith(
-                 REQUISITION_RIGHTS.REQUISITION_AUTHORIZE,
-                 { programCode: requisition.program.code }
-             );
+            expect(vm.displayAddProductButton).toBe(false);
         });
 
         it('should not display add product button if requisition is authorized', function() {
@@ -363,7 +335,8 @@ describe('NonFullSupplyController', function() {
             requisition: requisition,
             addProductModalService: addProductModalService,
             requisitionValidator: requisitionValidator,
-            authorizationService: authorizationServiceSpy,
+            canSubmit: canSubmit,
+            canAuthorize: canAuthorize
         });
     }
 

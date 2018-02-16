@@ -31,12 +31,12 @@
     nonFullSupplyController.$inject = [
         '$filter', 'addProductModalService', 'LineItem', 'requisitionValidator',
         'requisition', 'columns', 'lineItems', '$state', '$stateParams', 'alertService',
-        'authorizationService', 'REQUISITION_RIGHTS'
+        'REQUISITION_RIGHTS', 'canSubmit', 'canAuthorize'
     ];
 
     function nonFullSupplyController($filter, addProductModalService, LineItem, requisitionValidator,
                                     requisition, columns, lineItems, $state, $stateParams,
-                                    alertService, authorizationService, REQUISITION_RIGHTS) {
+                                    alertService, REQUISITION_RIGHTS, canSubmit, canAuthorize) {
 
         var vm = this;
 
@@ -225,14 +225,10 @@
             if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
                 // only people with create rights should be able to edit new/rejected
                 // requisitions
-                return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, {
-                   programCode: requisition.program.code
-                });
+                return canSubmit;
             } else if (vm.requisition.$isSubmitted()) {
                 // only authorizers should be able to edit submitted requisitions
-                return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
-                    programCode: vm.requisition.program.code
-                });
+                return canAuthorize;
             } else {
                 return false;
             }

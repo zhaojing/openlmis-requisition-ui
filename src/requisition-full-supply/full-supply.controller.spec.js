@@ -19,8 +19,8 @@ describe('FullSupplyController', function() {
     var vm;
 
     //mocks
-    var requisition, requisitionValidator, lineItems, paginatedListFactory, columns, authorizationService, REQUISITION_RIGHTS,
-        requisitionStatus, stateParams;
+    var requisition, requisitionValidator, lineItems, paginatedListFactory, columns, REQUISITION_RIGHTS,
+        requisitionStatus, stateParams, canAuthorize;
 
     beforeEach(module('requisition-full-supply'));
 
@@ -82,30 +82,20 @@ describe('FullSupplyController', function() {
         }
     });
 
-    beforeEach(inject(function($controller, $injector) {
-        authorizationService = $injector.get('authorizationService');
+    beforeEach(inject(function($injector) {
         REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
 
-        vm = $controller('FullSupplyController', {
-            totalItems: 4,
-            columns: columns,
-            lineItems: lineItems,
-            stateParams: stateParams,
-            requisition: requisition,
-            requisitionValidator: requisitionValidator,
-            paginatedListFactory: paginatedListFactory
-        });
-        vm.items = [
-            lineItems[0],
-            lineItems[1]
-        ];
+        $controller = $injector.get('$controller');
     }));
 
     it('should expose requisitionValidator.isLineItemValid method', function() {
+        initController();
+
         expect(vm.isLineItemValid).toBe(requisitionValidator.isLineItemValid);
     });
 
     it('should mark all full supply line items as skipped', function() {
+        initController();
         vm.$onInit();
 
         vm.skipAll();
@@ -119,6 +109,7 @@ describe('FullSupplyController', function() {
     });
 
     it('should mark all full supply line items as not skipped', function() {
+        initController();
         vm.$onInit();
 
         vm.unskipAll();
@@ -133,21 +124,26 @@ describe('FullSupplyController', function() {
     describe('$onInit', function() {
 
         it('should not show skip controls', function(){
+            initController();
+
             vm.$onInit();
 
             expect(vm.areSkipControlsVisible).toBe(false);
         });
 
         it('should show skip controls if the requisition status is INITIATED', function(){
+            initController();
             requisition.$isInitiated.andReturn(true);
+
             vm.$onInit();
 
             expect(vm.areSkipControlsVisible).toBe(true);
         });
 
         it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function(){
+            canAuthorize = true;
+            initController();
             requisition.$isSubmitted.andReturn(true);
-            spyOn(authorizationService, 'hasRight').andReturn(true);
 
             vm.$onInit();
 
@@ -155,13 +151,16 @@ describe('FullSupplyController', function() {
         });
 
         it('should show skip controls if the requisition status is REJECTED', function(){
+            initController();
             requisition.$isRejected.andReturn(true);
+
             vm.$onInit();
 
             expect(vm.areSkipControlsVisible).toBe(true);
         });
 
         it('should show skip controls if the requisition template has a skip columm', function(){
+            initController();
             requisition.$isInitiated.andReturn(true);
             columns[0].name = 'skipped';
 
@@ -172,6 +171,7 @@ describe('FullSupplyController', function() {
 
 
         it('should not show skip controls if the requisition template doesnt have a skip columm', function(){
+            initController();
             requisition.$isInitiated.andReturn(true);
             columns[0].name = 'foo';
 
@@ -181,18 +181,31 @@ describe('FullSupplyController', function() {
         });
 
         it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
+            canAuthorize = false;
+            initController();
             requisition.$isSubmitted.andReturn(true);
-            spyOn(authorizationService, 'hasRight').andReturn(false);
 
             vm.$onInit();
 
             expect(vm.areSkipControlsVisible).toBe(false);
-            expect(authorizationService.hasRight).toHaveBeenCalledWith(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
-                programCode: requisition.program.code
-            });
         });
 
     });
 
-
+    function initController() {
+        vm = $controller('FullSupplyController', {
+            totalItems: 4,
+            columns: columns,
+            lineItems: lineItems,
+            stateParams: stateParams,
+            requisition: requisition,
+            requisitionValidator: requisitionValidator,
+            canAuthorize: canAuthorize,
+            paginatedListFactory: paginatedListFactory
+        });
+        vm.items = [
+            lineItems[0],
+            lineItems[1]
+        ];
+    }
 });
