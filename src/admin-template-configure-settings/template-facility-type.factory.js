@@ -51,18 +51,25 @@
          * @return  {Array}                         array of available facility types
          */
         function getAvailableFacilityTypesForProgram(programTemplates, facilityTypes) {
-            var availableFacilityTypes = facilityTypes;
             programTemplates.forEach(function(template) {
-                template.facilityTypes.forEach(function(type) {
-                    var filtered = availableFacilityTypes.filter(function(facilityType) {
-                        return facilityType.id == type.id;
-                    });
-                    var index = availableFacilityTypes.indexOf(filtered[0]);
-                    availableFacilityTypes.splice(index, 1);
-                });
+                removeAssignedFacilityTypes(facilityTypes, template.facilityTypes);
             });
 
-            return availableFacilityTypes;
+            return facilityTypes;
+        }
+
+        function removeAssignedFacilityTypes(facilityTypes, templateFacilityTypes) {
+            templateFacilityTypes.forEach(function(type) {
+                var filtered = getFacilityTypeById(facilityTypes, type.id);
+                var index = facilityTypes.indexOf(filtered);
+                facilityTypes.splice(index, 1);
+            });
+        }
+
+        function getFacilityTypeById(facilityTypes, id) {
+            return facilityTypes.filter(function(facilityType) {
+                return facilityType.id == id;
+            })[0];
         }
     }
 })();

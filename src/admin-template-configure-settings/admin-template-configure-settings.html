@@ -6,11 +6,11 @@
         <label for="name">{{'adminTemplateConfigureSettings.templateName' | message}}</label>
         <input id="name" class="form-control" ng-model="vm.template.name" required/>
       </div>
-      <form class="form-inline" ng-submit="vm.add()">
+      <form class="form-inline" ng-submit="vm.add()" reload-form>
         <div class="form-group">
           <label for="facilityTypeSelect">{{'adminTemplateConfigureSettings.facilityType' | message}}</label>
           <select id="facilityTypeSelect" ng-model="vm.facilityType"
-                  ng-options="facilityType.name for facilityType in vm.facilityTypes">
+                  ng-options="facilityType.name for facilityType in vm.facilityTypes" required>
           </select>
         </div>
         <button class="add" type="submit">
@@ -29,7 +29,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr ng-repeat="facilityType in vm.template.facilityTypes | orderBy: 'name'">
+      <tr ng-repeat="facilityType in vm.template.facilityTypes">
         <td>{{facilityType.name}}</td>
         <td>
           <button ng-click="vm.remove(facilityType)">

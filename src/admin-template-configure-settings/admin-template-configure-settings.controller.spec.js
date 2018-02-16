@@ -35,14 +35,14 @@ describe('AdminTemplateConfigureSettingsController', function() {
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
         });
 
-        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital();
-        healthCenter = new FacilityTypeDataBuilder();
-        districtStore = new FacilityTypeDataBuilder().buildDistrictStore();
+        districtHospital = FacilityTypeDataBuilder.buildDistrictHospital();
+        healthCenter = new FacilityTypeDataBuilder().build();
+        districtStore = FacilityTypeDataBuilder.buildDistrictStore();
 
-        template = new TemplateDataBuilder().withFacilityTypes([healthCenter]).build();
+        template = new TemplateDataBuilder().withFacilityTypes([healthCenter, districtHospital]).build();
 
         templateFacilityTypes = {};
-        templateFacilityTypes[template.id] = [healthCenter];
+        templateFacilityTypes[template.id] = [healthCenter, districtHospital];
     });
 
     describe('$onInit', function() {
@@ -56,7 +56,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
         });
 
         it('should set template facility types', function() {
-            expect(vm.template.facilityTypes).toEqual([healthCenter]);
+            expect(vm.template.facilityTypes).toEqual([districtHospital, healthCenter]);
         });
 
     });
@@ -136,14 +136,14 @@ describe('AdminTemplateConfigureSettingsController', function() {
 
         beforeEach(function() {
             initController();
-            vm.facilityType = districtHospital;
+            vm.facilityType = districtStore;
         });
 
         it('should add facility type to template facility types', function() {
             vm.add();
             rootScope.$apply();
 
-            expect(vm.template.facilityTypes).toEqual([healthCenter, districtHospital]);
+            expect(vm.template.facilityTypes).toEqual([districtHospital, districtStore, healthCenter]);
         });
 
         it('should remove facility type from available facility types', function() {
@@ -165,14 +165,14 @@ describe('AdminTemplateConfigureSettingsController', function() {
             vm.remove(healthCenter);
             rootScope.$apply();
 
-            expect(vm.template.facilityTypes).toEqual([]);
+            expect(vm.template.facilityTypes).toEqual([districtHospital]);
         });
 
         it('should add facility type to available facility types', function() {
-            vm.remove(healthCenter);
+            vm.remove(districtHospital);
             rootScope.$apply();
 
-            expect(vm.facilityTypes).toEqual([districtHospital, healthCenter]);
+            expect(vm.facilityTypes).toEqual([districtHospital, districtStore]);
         });
     });
 
@@ -194,7 +194,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
     function initController() {
         vm = $controller('AdminTemplateConfigureSettingsController', {
             template: template,
-            availableFacilityTypes: [districtHospital],
+            availableFacilityTypes: [districtStore],
             templateFacilityTypes: templateFacilityTypes
         });
 

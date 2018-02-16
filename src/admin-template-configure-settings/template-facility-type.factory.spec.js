@@ -27,9 +27,9 @@ describe('templateFacilityTypeFactory', function() {
             templateFacilityTypeFactory = $injector.get('templateFacilityTypeFactory');
         });
 
-        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital();
+        districtHospital = FacilityTypeDataBuilder.buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder();
-        districtStore = new FacilityTypeDataBuilder().buildDistrictStore();
+        districtStore = FacilityTypeDataBuilder.buildDistrictStore();
 
         facilityTypes = [districtHospital, districtStore, healthCenter];
 

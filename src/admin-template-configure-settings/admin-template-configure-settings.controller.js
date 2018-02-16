@@ -29,10 +29,10 @@
         .controller('AdminTemplateConfigureSettingsController', AdminTemplateConfigureSettingsController);
 
     AdminTemplateConfigureSettingsController.$inject = ['template', 'availableFacilityTypes', 'loadingModalService',
-        'notificationService', '$state', 'confirmService', 'requisitionTemplateService', 'templateFacilityTypes'];
+        'notificationService', '$state', 'confirmService', 'requisitionTemplateService', 'templateFacilityTypes', '$q'];
 
     function AdminTemplateConfigureSettingsController(template, availableFacilityTypes, loadingModalService,
-        notificationService, $state, confirmService, requisitionTemplateService, templateFacilityTypes) {
+        notificationService, $state, confirmService, requisitionTemplateService, templateFacilityTypes, $q) {
 
         var vm = this;
 
@@ -88,6 +88,9 @@
 
             var index = vm.facilityTypes.indexOf(vm.facilityType);
             vm.facilityTypes.splice(index, 1);
+            sortByName(vm.template.facilityTypes);
+
+            return $q.resolve();
         }
 
         /**
@@ -105,6 +108,9 @@
             vm.template.facilityTypes.splice(index, 1);
 
             vm.facilityTypes.push(facilityType);
+            sortByName(vm.facilityTypes);
+
+            $q.resolve();
         };
 
         /**
@@ -156,7 +162,13 @@
         function onInit() {
             vm.template = template;
             vm.facilityTypes = availableFacilityTypes;
-            vm.template.facilityTypes = templateFacilityTypes[template.id];
+            vm.template.facilityTypes = sortByName(templateFacilityTypes[template.id]);
+        }
+
+        function sortByName(facilityTypes) {
+            return facilityTypes.sort(function(left, right) {
+                return left.name.localeCompare(right.name);
+            });
         }
     }
 })();

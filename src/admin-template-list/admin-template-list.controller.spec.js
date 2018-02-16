@@ -33,8 +33,8 @@ describe('TemplateListAdminController', function() {
         program = new ProgramDataBuilder().withId('program-1').build();
         programTwo = new ProgramDataBuilder().withId('program-2').build();
 
-        districtHospital = new FacilityTypeDataBuilder().buildDistrictHospital();
-        healthCenter = new FacilityTypeDataBuilder();
+        districtHospital = FacilityTypeDataBuilder.buildDistrictHospital();
+        healthCenter = new FacilityTypeDataBuilder().build();
 
         template = new TemplateDataBuilder()
             .withFacilityTypes([healthCenter, districtHospital])
