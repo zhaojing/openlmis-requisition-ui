@@ -17,7 +17,7 @@ describe('templateListFactory', function() {
 
     var template, program, ProgramDataBuilder, TemplateDataBuilder, FacilityTypeDataBuilder,
         programTwo, templateTwo, templateThree, districtHospital, healthCenter, districtStore,
-        templateListFactory, templates, facilityTypes, result;
+        templateListFactory, templates, facilityTypes, result, templateFour, programThree;
 
     beforeEach(function() {
         module('admin-template-list');
@@ -31,6 +31,7 @@ describe('templateListFactory', function() {
 
         program = new ProgramDataBuilder().withId('program-1').build();
         programTwo = new ProgramDataBuilder().withId('program-2').build();
+        programThree = new ProgramDataBuilder().withId('program-3').build();
 
         districtHospital = FacilityTypeDataBuilder.buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder();
@@ -63,6 +64,12 @@ describe('templateListFactory', function() {
             expect(result[program.id]).toEqual([template, templateTwo]);
             expect(result[programTwo.id]).toEqual([templateThree]);
         });
+
+        it('should return empty list if templates are empty list', function() {
+            result = templateListFactory.getProgramTemplates(templates, [programThree]);
+
+            expect(result[programThree.id]).toEqual([]);
+        });
     });
 
     describe('getTemplateFacilityTypes', function() {
@@ -73,6 +80,16 @@ describe('templateListFactory', function() {
             expect(result[template.id]).toEqual([healthCenter, districtHospital]);
             expect(result[templateTwo.id]).toEqual([healthCenter]);
             expect(result[templateThree.id]).toEqual([districtStore]);
+        });
+
+        it('should return empty list if facilityTypes are empty list', function() {
+            templateFour = new TemplateDataBuilder()
+                .withProgram(programTwo)
+                .withFacilityTypes([])
+                .build();
+            result = templateListFactory.getTemplateFacilityTypes([templateFour], facilityTypes);
+
+            expect(result[templateFour.id]).toEqual([]);
         });
     });
 
