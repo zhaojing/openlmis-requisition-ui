@@ -454,4 +454,75 @@ describe('calculationFactory', function() {
 
     });
 
+    describe('calculatedOrderQuantityIsa', function() {
+
+        var stockOnHandColumn, isaColumn, COLUMN_SOURCES;
+
+        beforeEach(function() {
+            spyOn(calculationFactory, 'stockOnHand');
+
+            inject(function(_COLUMN_SOURCES_) {
+                COLUMN_SOURCES = _COLUMN_SOURCES_;
+            });
+
+            stockOnHandColumn = {
+                name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
+                source: COLUMN_SOURCES.USER_INPUT
+            };
+
+            isaColumn = {
+                name: TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT,
+                source: COLUMN_SOURCES.REFERENCE_DATA
+            };
+
+            requisitionMock = {
+                template: templateMock
+            };
+
+            templateMock.getColumn.andCallFake(function(name) {
+                if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) return stockOnHandColumn;
+                if (name === TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT) return isaColumn;
+            });
+        });
+
+        it('should return null if isa column is not present', function() {
+            templateMock.getColumn.andCallFake(function(name) {
+                if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) return stockOnHandColumn;
+            });
+            expect(calculationFactory.calculatedOrderQuantityIsa(lineItem, requisitionMock)).toBe(null);
+        });
+
+        it('should not call calculation if the stockOnHand is not calculated', function() {
+            calculationFactory.calculatedOrderQuantityIsa(lineItem, requisitionMock);
+
+            expect(calculationFactory.stockOnHand).not.toHaveBeenCalled();
+        });
+
+        it('should call calculation if stockOnHand is calculated', function() {
+            stockOnHandColumn.source = COLUMN_SOURCES.CALCULATED;
+
+            calculationFactory.calculatedOrderQuantityIsa(lineItem, requisitionMock);
+
+            expect(calculationFactory.stockOnHand).toHaveBeenCalledWith(lineItem, requisitionMock);
+        });
+
+        it('should calculate properly if both fields are user inputs', function() {
+            lineItem.stockOnHand = 5;
+            lineItem.idealStockAmount = 12;
+
+            result = calculationFactory.calculatedOrderQuantityIsa(lineItem, requisitionMock);
+
+            expect(result).toBe(7);
+        });
+
+        it('should calculate properly if both fields are calculated', function() {
+            stockOnHandColumn.source = COLUMN_SOURCES.CALCULATED;
+            calculationFactory.stockOnHand.andReturn(6);
+            lineItem.idealStockAmount = 14;
+
+            result = calculationFactory.calculatedOrderQuantityIsa(lineItem, requisitionMock);
+
+            expect(result).toBe(8);
+        });
+    });
 });

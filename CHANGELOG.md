@@ -6,6 +6,7 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-2666:](https://openlmis.atlassian.net/browse/OLMIS-2666) Added create program modal.
 * [OLMIS-3917](https://openlmis.atlassian.net/browse/OLMIS-3917): Added stock based configuration to template screen.
 * [OLMIS-4087](https://openlmis.atlassian.net/browse/OLMIS-4087): Moved template screen to separate tab and support multiple templates per program.
+* [OLMIS-4161](https://openlmis.atlassian.net/browse/OLMIS-4161): Added calculation and validations for calculated order quantity isa column.
 
 Improvements:
 * [OLMIS-3876:](https://openlmis.atlassian.net/browse/OLMIS-3876) Split navigation and filter logic on requisition approve and view requisitions pages

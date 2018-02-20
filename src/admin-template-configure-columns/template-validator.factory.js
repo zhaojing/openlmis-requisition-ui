@@ -41,7 +41,8 @@
                 requestedQuantity: validateRequestedQuantity,
                 requestedQuantityExplanation: validateRequestedQuantityExplanation,
                 totalStockoutDays: validateTotalStockoutDays,
-                calculatedOrderQuantity: validateCalculatedOrderQuantity
+                calculatedOrderQuantity: validateCalculatedOrderQuantity,
+                calculatedOrderQuantityIsa: validateCalculatedOrderQuantityIsa
             },
             validator = {
                 getColumnError: getColumnError,
@@ -211,6 +212,12 @@
                     requestedQuantity: requestedQuantityColumn.label,
                     requestedQuantityExplanation: requestedQuantityExplanationColumn.label
                 });
+            }
+        }
+
+        function validateCalculatedOrderQuantityIsa(column, template) {
+            if (column.isDisplayed && !template.populateStockOnHandFromStockCards) {
+                return messageService.get('adminProgramTemplate.calculatedOrderQuantityIsaCannotBeDisplayed');
             }
         }
 

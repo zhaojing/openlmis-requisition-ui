@@ -37,5 +37,6 @@
     "adminProgramTemplate.templateSave.description": "All changes to the requisition template columns and settings will only affect future initiated requisitions.",
     "adminProgramTemplate.template.invalid": "Requisition Template is invalid",
     "adminProgramTemplate.templateColumns": "Template Columns",
-    "adminProgramTemplate.templateSettings": "Template Settings"
+    "adminProgramTemplate.templateSettings": "Template Settings",
+    "adminProgramTemplate.calculatedOrderQuantityIsaCannotBeDisplayed": "Calculated Order Quantity cannot be displayed if Populate Stock On Hand From Stock Cards is not checked."
 }

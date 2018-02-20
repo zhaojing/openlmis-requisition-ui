@@ -36,7 +36,9 @@
         C = TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY,
         D = TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS,
         E = TEMPLATE_COLUMNS.STOCK_ON_HAND,
+        G = TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT,
         H = TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY,
+        I = TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY,
         J = TEMPLATE_COLUMNS.REQUESTED_QUANTITY,
         K = TEMPLATE_COLUMNS.APPROVED_QUANTITY,
         N = TEMPLATE_COLUMNS.ADJUSTED_CONSUMPTION,
@@ -57,7 +59,8 @@
             totalCost: calculateTotalCost,
             adjustedConsumption: calculateAdjustedConsumption,
             maximumStockQuantity: calculateMaximumStockQuantity,
-            averageConsumption: calculateAverageConsumption
+            averageConsumption: calculateAverageConsumption,
+            calculatedOrderQuantityIsa: calculatedOrderQuantityIsa
         };
         return calculationFactory;
 
@@ -338,6 +341,34 @@
             stockOnHand = stockOnHand === undefined ? 0 : stockOnHand;
 
             return Math.max(maximumStockQuantity - stockOnHand, 0);
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-calculations.calculationFactory
+         * @name calculatedOrderQuantityIsa
+         *
+         * @description
+         * Calculates the value of the Calculated Order Quantity ISA column.
+         *
+         * @param  {Object} lineItem    the line item to calculate the value for
+         * @param  {Object} requisition the requisition used with calculation
+         * @return {Number}             the calculated order quantity
+         */
+        function calculatedOrderQuantityIsa(lineItem, requisition) {
+            var eColumn = requisition.template.getColumn(E),
+                gColumn = requisition.template.getColumn(G);
+
+            if (!gColumn) {
+                return null;
+            }
+
+            var isa = getColumnValue(lineItem, requisition, gColumn),
+                stockOnHand = getColumnValue(lineItem, requisition, eColumn);
+
+            stockOnHand = stockOnHand === undefined ? 0 : stockOnHand;
+
+            return Math.max(0, isa - stockOnHand);
         }
 
         function getColumnValue(lineItem, requisition, column) {

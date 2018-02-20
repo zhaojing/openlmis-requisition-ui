@@ -53,6 +53,8 @@
             AVERAGE_CONSUMPTION: 'averageConsumption',
             MAXIMUM_STOCK_QUANTITY: 'maximumStockQuantity',
             CALCULATED_ORDER_QUANTITY: 'calculatedOrderQuantity',
+            CALCULATED_ORDER_QUANTITY_ISA: 'calculatedOrderQuantityIsa',
+            IDEAL_STOCK_AMOUNT: 'idealStockAmount',
             getStockDisabledColumns: getStockDisabledColumns
         };
 
