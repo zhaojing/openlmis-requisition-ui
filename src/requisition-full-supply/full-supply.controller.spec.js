@@ -19,21 +19,25 @@ describe('FullSupplyController', function() {
     var vm;
 
     //mocks
-    var requisition, requisitionValidator, lineItems, paginatedListFactory, columns, REQUISITION_RIGHTS,
-        requisitionStatus, stateParams, canAuthorize;
-
-    beforeEach(module('requisition-full-supply'));
+    var requisition, requisitionValidator, lineItems, paginatedListFactory, columns,
+        REQUISITION_RIGHTS, stateParams, canAuthorize, $controller, RequisitionColumnDataBuilder;
 
     beforeEach(function() {
+        module('requisition-full-supply');
+
+        inject(function($injector) {
+            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+            $controller = $injector.get('$controller');
+            RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
+        });
+
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
 
         paginatedListFactory = jasmine.createSpyObj('paginatedListFactory', ['getPaginatedItems']);
         paginatedListFactory.getPaginatedItems.andCallFake(function(lineItems) {
             return [lineItems];
         });
-    });
 
-    beforeEach(function($rootScope) {
         requisition = jasmine.createSpyObj('requisition', ['$isInitiated', '$isSubmitted','$isRejected']);
         requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns']);
         requisition.requisitionLineItems = [
@@ -59,9 +63,7 @@ describe('FullSupplyController', function() {
             code: 'program-code'
         }
 
-        columns = [{
-            name: 'skipped'
-        }];
+        columns = [new RequisitionColumnDataBuilder().buildSkipColumn()];
 
         stateParams = {
             page: 0,
@@ -81,12 +83,6 @@ describe('FullSupplyController', function() {
             return lineItem;
         }
     });
-
-    beforeEach(inject(function($injector) {
-        REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
-
-        $controller = $injector.get('$controller');
-    }));
 
     it('should expose requisitionValidator.isLineItemValid method', function() {
         initController();

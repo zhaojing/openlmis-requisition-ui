@@ -130,6 +130,8 @@
 
         RequisitionColumn.columnDependencies = columnDependencies;
 
+        RequisitionColumn.prototype.isSkipColumn = isSkipColumn;
+
         return RequisitionColumn;
 
         /**
@@ -176,6 +178,18 @@
 
         function columnDependencies(column) {
             return dependencies[column.name];
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-template.RequisitionColumn
+         * @name isSkipColumn
+         *
+         * @description
+         * Checks whether the columns is a 'Skip' column.
+         */
+        function isSkipColumn() {
+            return this.name === TEMPLATE_COLUMNS.SKIPPED;
         }
     }
 })();

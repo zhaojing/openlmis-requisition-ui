@@ -37,7 +37,6 @@
         vm.$onInit = onInit;
         vm.skipAll = skipAll;
         vm.unskipAll = unskipAll;
-        vm.isSkipColumn = isSkipColumn;
 
         /**
          * @ngdoc property
@@ -133,7 +132,7 @@
 
             var hasSkipColumn = false;
             columns.forEach(function(column){
-                if(isSkipColumn(column)){
+                if (column.isSkipColumn()){
                     hasSkipColumn = true;
                 }
             });
@@ -162,20 +161,6 @@
          */
         function unskipAll() {
             setSkipAll(false);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-full-supply.controller:FullSupplyController
-         * @name isSkipColumn
-         *
-         * @description
-         * Determines whether column name is 'skipped'.
-         *
-         * @return {Boolean} true if column name is 'skipped'
-         */
-        function isSkipColumn(column) {
-            return column.name === TEMPLATE_COLUMNS.SKIPPED;
         }
 
         function setSkipAll(value) {

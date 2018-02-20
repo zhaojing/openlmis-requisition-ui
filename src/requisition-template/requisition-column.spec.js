@@ -15,23 +15,21 @@
 
 describe('RequisitionColumn', function() {
 
-    var RequisitionColumn, REQUISITION_STATUS, TEMPLATE_COLUMNS, COLUMN_SOURCES, COLUMN_TYPES;
-
-    var columnDef, requisition;
-
-    beforeEach(module('requisition-template'));
-
-    beforeEach(inject(function(_RequisitionColumn_, _REQUISITION_STATUS_, _TEMPLATE_COLUMNS_,
-                               _COLUMN_SOURCES_, _COLUMN_TYPES_) {
-
-        RequisitionColumn = _RequisitionColumn_;
-        REQUISITION_STATUS = _REQUISITION_STATUS_;
-        TEMPLATE_COLUMNS = _TEMPLATE_COLUMNS_;
-        COLUMN_SOURCES = _COLUMN_SOURCES_;
-        COLUMN_TYPES = _COLUMN_TYPES_;
-    }));
+    var RequisitionColumn, REQUISITION_STATUS, TEMPLATE_COLUMNS, COLUMN_SOURCES, COLUMN_TYPES,
+        columnDef, requisition, RequisitionColumnDataBuilder;
 
     beforeEach(function() {
+        module('requisition-template');
+
+        inject(function($injector) {
+            RequisitionColumn = $injector.get('RequisitionColumn');
+            REQUISITION_STATUS = $injector.get('REQUISITION_STATUS');
+            TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
+            COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
+            COLUMN_TYPES = $injector.get('COLUMN_TYPES');
+            RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
+        });
+
         columnDef = {
             name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
             source: COLUMN_SOURCES.CALCULATED,
@@ -142,4 +140,25 @@ describe('RequisitionColumn', function() {
             expect(column.$display).toBe(testCase.result);
         });
     });
+
+    describe('isSkipColumn', function() {
+
+        it('should return true if column is Skip column', function() {
+            var column = new RequisitionColumnDataBuilder().buildSkipColumn();
+
+            var result = column.isSkipColumn();
+
+            expect(result).toBe(true);
+        });
+
+        it('should return false if column is any other column', function() {
+            var column = new RequisitionColumnDataBuilder().buildProductCodeColumn();
+
+            var result = column.isSkipColumn();
+
+            expect(result).toBe(false);
+        });
+
+    });
+
 });
