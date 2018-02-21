@@ -31,6 +31,9 @@
         RequisitionLineItemDataBuilder.prototype.buildForProgram = buildForProgram;
         RequisitionLineItemDataBuilder.prototype.buildNonFullSupplyForProgram =
             buildNonFullSupplyForProgram;
+        RequisitionLineItemDataBuilder.prototype.nonFullSupplyForProgram = nonFullSupplyForProgram;
+        RequisitionLineItemDataBuilder.prototype.fullSupplyForProgram = fullSupplyForProgram;
+        RequisitionLineItemDataBuilder.prototype.asSkipped = asSkipped;
 
         return RequisitionLineItemDataBuilder;
 
@@ -100,35 +103,43 @@
         }
 
         function buildForProgram(program) {
-            var instanceNumber = RequisitionLineItemDataBuilder.instanceNumber;
-            this.orderable = new OrderableDataBuilder()
-                .withPrograms([{
-                    programId: program.id,
-                    orderableDisplayCategoryId: 'orderable-display-category-id-' + instanceNumber,
-                    orderableCategoryDisplayName: 'Category ' + instanceNumber,
-                    orderableCategoryDisplayOrder: instanceNumber,
-                    fullSupply: true,
-                    displayOrder: 5,
-                    pricePerPack: 4.34
-                }])
-                .buildJson();
+            this.orderable = buildOrderable(program, true);
             return this.build();
         }
 
         function buildNonFullSupplyForProgram(program) {
+            this.orderable = buildOrderable(program, false);
+            return this.build();
+        }
+
+        function fullSupplyForProgram(program) {
+            this.orderable = buildOrderable(program, true);
+            return this;
+        }
+
+        function nonFullSupplyForProgram(program) {
+            this.orderable = buildOrderable(program, false);
+            return this;
+        }
+
+        function asSkipped() {
+            this.skipped = true;
+            return this;
+        }
+
+        function buildOrderable(program, fullSupply) {
             var instanceNumber = RequisitionLineItemDataBuilder.instanceNumber;
-            this.orderable = new OrderableDataBuilder()
+            return new OrderableDataBuilder()
                 .withPrograms([{
                     programId: program.id,
                     orderableDisplayCategoryId: 'orderable-display-category-id-' + instanceNumber,
                     orderableCategoryDisplayName: 'Category ' + instanceNumber,
                     orderableCategoryDisplayOrder: instanceNumber,
-                    fullSupply: false,
+                    fullSupply: fullSupply,
                     displayOrder: 6,
                     pricePerPack: 20.00
                 }])
                 .buildJson();
-            return this.build();
         }
     }
 

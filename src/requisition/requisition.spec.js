@@ -17,9 +17,10 @@
 describe('Requisition', function() {
 
     var $rootScope, $httpBackend, REQUISITION_STATUS, requisitionUrlFactory, sourceRequisition,
-        LineItemSpy, offlineRequisitions, authorizationServiceSpy, userHasApproveRight,
-        userHasAuthorizeRight, userHasCreateRight, userHasDeleteRight, REQUISITION_RIGHTS,
-        Requisition, RequisitionDataBuilder, requisition, calculatedOrderQuantity;
+        offlineRequisitions, authorizationServiceSpy, userHasApproveRight, userHasAuthorizeRight,
+        userHasCreateRight, userHasDeleteRight, REQUISITION_RIGHTS, Requisition,
+        RequisitionDataBuilder, requisition, calculatedOrderQuantity,
+        RequisitionLineItemDataBuilder;
 
     beforeEach(module('requisition'));
 
@@ -72,16 +73,6 @@ describe('Requisition', function() {
         });
     }));
 
-    beforeEach(module(function($provide){
-        LineItemSpy = jasmine.createSpy().andCallFake(function(lineItem) {
-            return lineItem;
-        });
-
-        $provide.service('LineItem', function(){
-            return LineItemSpy;
-        });
-    }));
-
     beforeEach(function() {
         inject(function($injector) {
             $httpBackend = $injector.get('$httpBackend');
@@ -91,6 +82,7 @@ describe('Requisition', function() {
             REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
             Requisition = $injector.get('Requisition');
             RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
         });
 
         sourceRequisition = new RequisitionDataBuilder().buildJson()
@@ -742,7 +734,91 @@ describe('Requisition', function() {
 
     describe('skipAllFullSupplyLineItems', function() {
 
+        beforeEach(function() {
+            var builder = new RequisitionDataBuilder(),
+                program = builder.program;
 
+            requisition = builder.withRequistionLineItems([
+                new RequisitionLineItemDataBuilder()
+                    .asSkipped()
+                    .fullSupplyForProgram(program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .asSkipped()
+                    .nonFullSupplyForProgram(program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .nonFullSupplyForProgram(program)
+                    .buildJson()
+            ])
+            .build();
+        });
+
+        it('should skip all full supply line items', function() {
+            requisition.skipAllFullSupplyLineItems();
+
+            expect(requisition.requisitionLineItems[0].skipped).toBe(true);
+            expect(requisition.requisitionLineItems[1].skipped).toBe(true);
+        });
+
+        it('should not touch non full supply line items', function() {
+            requisition.skipAllFullSupplyLineItems();
+
+            expect(requisition.requisitionLineItems[2].skipped).toBe(true);
+            expect(requisition.requisitionLineItems[3].skipped).toBe(false);
+        });
+
+        it('should respect line items ability to skip', function() {
+            spyOn(requisition.requisitionLineItems[1], 'canBeSkipped').andReturn(false);
+
+            requisition.skipAllFullSupplyLineItems();
+
+            expect(requisition.requisitionLineItems[1].skipped).toBe(false);
+        });
+
+    });
+
+    describe('unskipAppFullSupplyLineItems', function() {
+
+        beforeEach(function() {
+            var builder = new RequisitionDataBuilder(),
+                program = builder.program;
+
+            requisition = builder.withRequistionLineItems([
+                new RequisitionLineItemDataBuilder()
+                    .asSkipped()
+                    .fullSupplyForProgram(program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .asSkipped()
+                    .nonFullSupplyForProgram(program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .nonFullSupplyForProgram(program)
+                    .buildJson()
+            ])
+            .build();
+        });
+
+        it('should skip all full supply line items', function() {
+            requisition.unskipAppFullSupplyLineItems();
+
+            expect(requisition.requisitionLineItems[0].skipped).toBe(false);
+            expect(requisition.requisitionLineItems[1].skipped).toBe(false);
+        });
+
+        it('should not touch non full supply line items', function() {
+            requisition.unskipAppFullSupplyLineItems();
+
+            expect(requisition.requisitionLineItems[2].skipped).toBe(true);
+            expect(requisition.requisitionLineItems[3].skipped).toBe(false);
+        });
 
     });
 

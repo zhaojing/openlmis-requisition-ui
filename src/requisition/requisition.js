@@ -84,6 +84,8 @@
         Requisition.prototype.$isSkipped = isSkipped;
         Requisition.prototype.$isAfterAuthorize = isAfterAuthorize;
         Requisition.prototype.$getProducts = getProducts;
+        Requisition.prototype.skipAllFullSupplyLineItems = skipAllFullSupplyLineItems;
+        Requisition.prototype.unskipAppFullSupplyLineItems = unskipAppFullSupplyLineItems;
 
         return Requisition;
 
@@ -424,6 +426,45 @@
                 $program: {
                     fullSupply: !nonFullSupply
                 }
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name skipAllFullSupplyLineItems
+         *
+         * @description
+         * Skips all full supply line items.
+         */
+        function skipAllFullSupplyLineItems() {
+            var requisition = this,
+                fullSupplyLineItems = getFullSupplyLineItems(this.requisitionLineItems);
+
+            fullSupplyLineItems.forEach(function(lineItem) {
+                if (lineItem.canBeSkipped(requisition)) {
+                    lineItem.skipped = true;
+                }
+            });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name skipAllFullSupplyLineItems
+         *
+         * @description
+         * Unskips all full supply line items.
+         */
+        function unskipAppFullSupplyLineItems() {
+            getFullSupplyLineItems(this.requisitionLineItems).forEach(function(lineItem) {
+                lineItem.skipped = false;
+            });
+        }
+
+        function getFullSupplyLineItems(lineItems) {
+            return lineItems.filter(function(lineItem) {
+                return lineItem.$program.fullSupply;
             });
         }
 

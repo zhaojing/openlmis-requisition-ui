@@ -34,6 +34,7 @@
 
         RequisitionDataBuilder.prototype.build = build;
         RequisitionDataBuilder.prototype.buildJson = buildJson;
+        RequisitionDataBuilder.prototype.withRequistionLineItems = withRequistionLineItems;
 
         return RequisitionDataBuilder;
 
@@ -48,8 +49,12 @@
             this.modifiedDate = '2016-06-14T12:00:00Z';
             this.program = new ProgramDataBuilder().build();
             this.requisitionLineItems = [
-                new RequisitionLineItemDataBuilder().buildForProgram(this.program),
-                new RequisitionLineItemDataBuilder().buildNonFullSupplyForProgram(this.program)
+                new RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(this.program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .nonFullSupplyForProgram(this.program)
+                    .buildJson()
             ];
             this.draftStatusMessage = 'Requisition ' + instanceNumber + 'status message draft';
             this.facility = new FacilityDataBuilder().build();
@@ -114,6 +119,11 @@
 
         function build() {
             return new Requisition(this.buildJson());
+        }
+
+        function withRequistionLineItems(requisitionLineItems) {
+            this.requisitionLineItems = requisitionLineItems;
+            return this;
         }
     }
 

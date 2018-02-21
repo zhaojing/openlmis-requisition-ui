@@ -56,7 +56,7 @@ describe('FullSupplyController', function() {
 
         requisition.program = {
             code: 'program-code'
-        }
+        };
 
         columns = [new RequisitionColumnDataBuilder().buildSkipColumn()];
 
@@ -83,33 +83,6 @@ describe('FullSupplyController', function() {
         initController();
 
         expect(vm.isLineItemValid).toBe(requisitionValidator.isLineItemValid);
-    });
-
-    it('should mark all full supply line items as skipped', function() {
-        initController();
-        vm.$onInit();
-
-        vm.skipAll();
-
-        expect(requisition.requisitionLineItems[0].skipped).toBe(true);
-        expect(requisition.requisitionLineItems[2].skipped).toBe(true);
-
-        expect(requisition.requisitionLineItems[1].skipped).toBe(false);
-        expect(requisition.requisitionLineItems[3].skipped).toBe(false);
-        expect(requisition.requisitionLineItems[4].skipped).toBe(false);
-    });
-
-    it('should mark all full supply line items as not skipped', function() {
-        initController();
-        vm.$onInit();
-
-        vm.unskipAll();
-
-        expect(requisition.requisitionLineItems[0].skipped).toBe(false);
-        expect(requisition.requisitionLineItems[1].skipped).toBe(false);
-        expect(requisition.requisitionLineItems[2].skipped).toBe(false);
-        expect(requisition.requisitionLineItems[3].skipped).toBe(false);
-        expect(requisition.requisitionLineItems[4].skipped).toBe(false);
     });
 
     describe('$onInit', function() {

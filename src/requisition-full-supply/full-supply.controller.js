@@ -35,8 +35,6 @@
         var vm = this;
 
         vm.$onInit = onInit;
-        vm.skipAll = skipAll;
-        vm.unskipAll = unskipAll;
 
         /**
          * @ngdoc property
@@ -97,7 +95,6 @@
             vm.lineItems = lineItems;
             vm.requisition = requisition;
             vm.columns = columns;
-            vm.skippedAll = false;
             vm.areSkipControlsVisible = areSkipControlsVisible();
         }
 
@@ -131,39 +128,6 @@
             }
 
             return requisition.template.hasSkipColumn();
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-full-supply.controller:FullSupplyController
-         * @name skipAll
-         *
-         * @description
-         * Sets all line items that are skippable from a requisition as skipped.
-         */
-        function skipAll() {
-            setSkipAll(true);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-full-supply.controller:FullSupplyController
-         * @name unskipAll
-         *
-         * @description
-         * Sets all line items from a requisition as not skipped.
-         */
-        function unskipAll() {
-            setSkipAll(false);
-        }
-
-        function setSkipAll(value) {
-            angular.forEach(vm.lineItems, function(lineItem) {
-                if (lineItem.canBeSkipped(vm.requisition)) {
-                    lineItem.skipped = value;
-                }
-            });
-            vm.skippedAll = value;
         }
     }
 
