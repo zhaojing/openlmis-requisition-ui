@@ -455,7 +455,7 @@
             if (requisition.$isAuthorized()) {
                 populateApprovedQuantity(requisition);
             }
-            
+
             saveToStorage(requisition, availableOffline);
         }
 

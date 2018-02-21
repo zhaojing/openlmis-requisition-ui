@@ -38,6 +38,11 @@
         'openlmis-urls',
         'openlmis-auth',
         'openlmis-main-state',
+        'referencedata-facility',
+        'referencedata-program',
+        'referencedata-period',
+        'referencedata-orderable',
+        'referencedata',
         'ui.router',
         'openlmis-database'
     ]);

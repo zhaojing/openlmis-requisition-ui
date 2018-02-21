@@ -14,76 +14,12 @@
  */
 
 
-describe('Requisition', function() {
+ddescribe('Requisition', function() {
 
-    var $rootScope, $httpBackend, q, REQUISITION_STATUS, requisitionUrlFactory,
+    var $rootScope, $httpBackend, REQUISITION_STATUS, requisitionUrlFactory, sourceRequisition,
         LineItemSpy, offlineRequisitions, authorizationServiceSpy, userHasApproveRight,
         userHasAuthorizeRight, userHasCreateRight, userHasDeleteRight, REQUISITION_RIGHTS,
-        Requisition;
-
-    var requisition,
-        facility = {
-            id: '1',
-            name: 'facility'
-        },
-        program = {
-            id: '1',
-            name: 'program'
-        },
-        lineItem1 = {
-            calculatedOrderQuantity: 100,
-            requestedQuantity: 90,
-            approvedQuantity: null,
-            skipped: false
-        },
-        lineItem2 = {
-            calculatedOrderQuantity: 100,
-            requestedQuantity: null,
-            approvedQuantity: null,
-            skipped: false
-        },
-        sourceRequisition = {
-            id: '1',
-            modifiedDate: [2016, 4, 30, 16, 21, 33],
-            name: 'requisition',
-            status: 'INITIATED',
-            facility: facility,
-            program: program,
-            supplyingFacility: facility,
-            requisitionLineItems: [lineItem1, lineItem2],
-            template: {
-                id: '1',
-                programId: '1',
-                columnsMap : {
-                beginningBalance : beginningBalance,
-                calculatedOrderQuantity: calculatedOrderQuantity
-                }},
-            processingPeriod: {
-                startDate: new Date(2017, 0, 1),
-                endDate: new Date(2017, 0, 31)
-            }
-        },
-        stockAdjustmentReason = {
-            program: program,
-            id: '1'
-        },
-        columnDefinition = {
-            id: '1',
-            name: 'beginningBalance',
-            label: 'BG',
-            sources: ['USER_INPUT'],
-            columnType: 'NUMERIC',
-            mandatory: true
-        },
-        beginningBalance = {
-            name: 'beginningBalance',
-            label: 'BG',
-            source: 'USER_INPUT',
-            columnDefinition: columnDefinition
-        },
-        calculatedOrderQuantity = {
-            isDisplayed: true
-        };
+        Requisition, RequisitionDataBuilder, requisition, calculatedOrderQuantity;
 
     beforeEach(module('requisition'));
 
@@ -95,6 +31,9 @@ describe('Requisition', function() {
             return nonFullSupply ? nonFullSupplyColumns() : fullSupplyColumns();
         });
 
+        calculatedOrderQuantity = {
+            isDisplayed: true
+        };
         template.getColumn.andReturn(calculatedOrderQuantity);
 
         offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy']);
@@ -143,17 +82,20 @@ describe('Requisition', function() {
         });
     }));
 
-    beforeEach(inject(function($injector) {
-        $httpBackend = $injector.get('$httpBackend');
-        $rootScope = $injector.get('$rootScope');
-        requisitionUrlFactory = $injector.get('requisitionUrlFactory');
-        REQUISITION_STATUS = $injector.get('REQUISITION_STATUS');
-        REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
-        $q = $injector.get('$q');
-        Requisition = $injector.get('Requisition');
+    beforeEach(function() {
+        inject(function($injector) {
+            $httpBackend = $injector.get('$httpBackend');
+            $rootScope = $injector.get('$rootScope');
+            requisitionUrlFactory = $injector.get('requisitionUrlFactory');
+            REQUISITION_STATUS = $injector.get('REQUISITION_STATUS');
+            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+            Requisition = $injector.get('Requisition');
+            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+        });
 
+        sourceRequisition = new RequisitionDataBuilder().buildJson()
         requisition = new Requisition(sourceRequisition);
-    }));
+    });
 
     it('should submit requisition that is available offline', function() {
         var storedRequisition;
@@ -487,7 +429,7 @@ describe('Requisition', function() {
         $httpBackend.flush();
         $rootScope.$apply();
 
-        expect(offlineRequisitions.removeBy).toHaveBeenCalledWith('id', '1');
+        expect(offlineRequisitions.removeBy).toHaveBeenCalledWith('id', requisition.id);
     });
 
     it('should remove offline when 409', function() {
@@ -499,7 +441,7 @@ describe('Requisition', function() {
         $httpBackend.flush();
         $rootScope.$apply();
 
-        expect(offlineRequisitions.removeBy).toHaveBeenCalledWith('id', '1');
+        expect(offlineRequisitions.removeBy).toHaveBeenCalledWith('id', requisition.id);
     });
 
     it('should return true if requisition status is initiated', function() {
@@ -798,21 +740,6 @@ describe('Requisition', function() {
         });
     });
 
-
-    function fullSupplyCategories() {
-        return [
-            category('CategoryOne', [lineItemSpy('One'), lineItemSpy('Two')]),
-            category('CategoryTwo', [lineItemSpy('Three'), lineItemSpy('Four')])
-        ];
-    }
-
-    function nonFullSupplyCategories() {
-        return [
-            category('CategoryThree', [lineItemSpy('Five'), lineItemSpy('Six')]),
-            category('CategoryFour', [lineItemSpy('Seven'), lineItemSpy('Eight')])
-        ];
-    }
-
     function nonFullSupplyColumns() {
         return [
             column('Three'),
@@ -833,16 +760,4 @@ describe('Requisition', function() {
         };
     }
 
-    function category(name, lineItems) {
-        return {
-            name: name,
-            lineItems: lineItems
-        };
-    }
-
-    function lineItemSpy(suffix) {
-        var lineItemSpy = jasmine.createSpyObj('lineItem' + suffix, ['areColumnsValid']);
-        lineItemSpy.areColumnsValid.andReturn(true);
-        return lineItemSpy;
-    }
 });
