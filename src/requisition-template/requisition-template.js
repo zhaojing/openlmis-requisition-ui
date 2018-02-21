@@ -34,6 +34,7 @@
 
         RequisitionTemplate.prototype.getColumns = getColumns;
         RequisitionTemplate.prototype.getColumn = getColumn;
+        RequisitionTemplate.prototype.hasSkipColumn = hasSkipColumn;
 
         return RequisitionTemplate;
 
@@ -93,6 +94,26 @@
          */
         function getColumn(name) {
             return this.columnsMap[name];
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-template.RequisitionTemplate
+         * @name hasSkipColumn
+         *
+         * @description
+         * Return true if template has Skip column or false if it doesnt.
+         *
+         * @return  {boolean}   true if template has Skip column, false otherwise
+         */
+        function hasSkipColumn() {
+            var hasSkipColumn = false;
+
+            for (var column in this.columnsMap) {
+                hasSkipColumn = hasSkipColumn || this.columnsMap[column].isSkipColumn();
+            }
+
+            return hasSkipColumn;
         }
     }
 

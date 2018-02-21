@@ -15,18 +15,13 @@
 
 describe('FullSupplyController', function() {
 
-    //tested
-    var vm;
-
-    //mocks
-    var requisition, requisitionValidator, lineItems, paginatedListFactory, columns,
-        REQUISITION_RIGHTS, stateParams, canAuthorize, $controller, RequisitionColumnDataBuilder;
+    var vm, requisition, requisitionValidator, lineItems, paginatedListFactory, columns,
+        stateParams, canAuthorize, $controller, RequisitionColumnDataBuilder;
 
     beforeEach(function() {
         module('requisition-full-supply');
 
         inject(function($injector) {
-            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
             $controller = $injector.get('$controller');
             RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
         });
@@ -39,7 +34,7 @@ describe('FullSupplyController', function() {
         });
 
         requisition = jasmine.createSpyObj('requisition', ['$isInitiated', '$isSubmitted','$isRejected']);
-        requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns']);
+        requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns', 'hasSkipColumn']);
         requisition.requisitionLineItems = [
             lineItem('One', true),
             lineItem('Two', true),
@@ -129,6 +124,7 @@ describe('FullSupplyController', function() {
 
         it('should show skip controls if the requisition status is INITIATED', function(){
             initController();
+            requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isInitiated.andReturn(true);
 
             vm.$onInit();
@@ -139,6 +135,7 @@ describe('FullSupplyController', function() {
         it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function(){
             canAuthorize = true;
             initController();
+            requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isSubmitted.andReturn(true);
 
             vm.$onInit();
@@ -148,6 +145,7 @@ describe('FullSupplyController', function() {
 
         it('should show skip controls if the requisition status is REJECTED', function(){
             initController();
+            requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isRejected.andReturn(true);
 
             vm.$onInit();
@@ -157,6 +155,7 @@ describe('FullSupplyController', function() {
 
         it('should show skip controls if the requisition template has a skip columm', function(){
             initController();
+            requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isInitiated.andReturn(true);
             columns[0].name = 'skipped';
 
@@ -168,6 +167,7 @@ describe('FullSupplyController', function() {
 
         it('should not show skip controls if the requisition template doesnt have a skip columm', function(){
             initController();
+            requisition.template.hasSkipColumn.andReturn(false);
             requisition.$isInitiated.andReturn(true);
             columns[0].name = 'foo';
 
@@ -179,6 +179,7 @@ describe('FullSupplyController', function() {
         it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
             canAuthorize = false;
             initController();
+            requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isSubmitted.andReturn(true);
 
             vm.$onInit();

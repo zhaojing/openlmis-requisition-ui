@@ -130,13 +130,7 @@
                 return false;
             }
 
-            var hasSkipColumn = false;
-            columns.forEach(function(column){
-                if (column.isSkipColumn()){
-                    hasSkipColumn = true;
-                }
-            });
-            return hasSkipColumn;
+            return requisition.template.hasSkipColumn();
         }
 
         /**
