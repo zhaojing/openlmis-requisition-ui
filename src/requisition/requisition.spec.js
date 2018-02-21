@@ -781,7 +781,7 @@ describe('Requisition', function() {
 
     });
 
-    describe('unskipAppFullSupplyLineItems', function() {
+    describe('unskipAllFullSupplyLineItems', function() {
 
         beforeEach(function() {
             var builder = new RequisitionDataBuilder(),
@@ -807,14 +807,14 @@ describe('Requisition', function() {
         });
 
         it('should skip all full supply line items', function() {
-            requisition.unskipAppFullSupplyLineItems();
+            requisition.unskipAllFullSupplyLineItems();
 
             expect(requisition.requisitionLineItems[0].skipped).toBe(false);
             expect(requisition.requisitionLineItems[1].skipped).toBe(false);
         });
 
         it('should not touch non full supply line items', function() {
-            requisition.unskipAppFullSupplyLineItems();
+            requisition.unskipAllFullSupplyLineItems();
 
             expect(requisition.requisitionLineItems[2].skipped).toBe(true);
             expect(requisition.requisitionLineItems[3].skipped).toBe(false);

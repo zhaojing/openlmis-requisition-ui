@@ -85,7 +85,7 @@
         Requisition.prototype.$isAfterAuthorize = isAfterAuthorize;
         Requisition.prototype.$getProducts = getProducts;
         Requisition.prototype.skipAllFullSupplyLineItems = skipAllFullSupplyLineItems;
-        Requisition.prototype.unskipAppFullSupplyLineItems = unskipAppFullSupplyLineItems;
+        Requisition.prototype.unskipAllFullSupplyLineItems = unskipAllFullSupplyLineItems;
 
         return Requisition;
 
@@ -456,7 +456,7 @@
          * @description
          * Unskips all full supply line items.
          */
-        function unskipAppFullSupplyLineItems() {
+        function unskipAllFullSupplyLineItems() {
             getFullSupplyLineItems(this.requisitionLineItems).forEach(function(lineItem) {
                 lineItem.skipped = false;
             });
