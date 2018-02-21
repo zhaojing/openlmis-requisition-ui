@@ -365,6 +365,10 @@
             var isa = getColumnValue(lineItem, requisition, gColumn),
                 stockOnHand = getColumnValue(lineItem, requisition, eColumn);
 
+            if (!isa && isa !== 0) {
+                return null;
+            }
+
             stockOnHand = stockOnHand === undefined ? 0 : stockOnHand;
 
             return Math.max(0, isa - stockOnHand);

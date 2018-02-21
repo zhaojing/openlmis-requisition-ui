@@ -524,5 +524,14 @@ describe('calculationFactory', function() {
 
             expect(result).toBe(8);
         });
+
+        it('should calculate properly if both fields are user inputs', function() {
+            lineItem.stockOnHand = 5;
+            lineItem.idealStockAmount = null;
+
+            result = calculationFactory.calculatedOrderQuantityIsa(lineItem, requisitionMock);
+
+            expect(result).toBe(null);
+        });
     });
 });
