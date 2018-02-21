@@ -14,7 +14,7 @@
  */
 
 
-ddescribe('Requisition', function() {
+describe('Requisition', function() {
 
     var $rootScope, $httpBackend, REQUISITION_STATUS, requisitionUrlFactory, sourceRequisition,
         LineItemSpy, offlineRequisitions, authorizationServiceSpy, userHasApproveRight,
@@ -738,6 +738,12 @@ ddescribe('Requisition', function() {
 
             expect(requisition.$isEditable).toBe(false);
         });
+    });
+
+    describe('skipAllFullSupplyLineItems', function() {
+
+
+
     });
 
     function nonFullSupplyColumns() {
