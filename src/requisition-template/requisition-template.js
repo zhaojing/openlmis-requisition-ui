@@ -110,7 +110,9 @@
             var hasSkipColumn = false;
 
             for (var column in this.columnsMap) {
-                hasSkipColumn = hasSkipColumn || this.columnsMap[column].isSkipColumn();
+                if (this.columnsMap.hasOwnProperty(column)) {
+                    hasSkipColumn = hasSkipColumn || this.columnsMap[column].isSkipColumn();
+                }
             }
 
             return hasSkipColumn;
