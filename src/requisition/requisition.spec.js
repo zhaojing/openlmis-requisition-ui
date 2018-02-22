@@ -19,8 +19,8 @@ describe('Requisition', function() {
     var $rootScope, $httpBackend, REQUISITION_STATUS, requisitionUrlFactory, sourceRequisition,
         offlineRequisitions, authorizationServiceSpy, userHasApproveRight, userHasAuthorizeRight,
         userHasCreateRight, userHasDeleteRight, REQUISITION_RIGHTS, Requisition,
-        RequisitionDataBuilder, requisition, calculatedOrderQuantity,
-        RequisitionLineItemDataBuilder;
+        RequisitionDataBuilder, requisition, calculatedOrderQuantity, OrderableDataBuilder,
+        RequisitionLineItemDataBuilder, LineItem;
 
     beforeEach(module('requisition'));
 
@@ -83,6 +83,8 @@ describe('Requisition', function() {
             Requisition = $injector.get('Requisition');
             RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
             RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
+            OrderableDataBuilder = $injector.get('OrderableDataBuilder');
+            LineItem = $injector.get('LineItem');
         });
 
         sourceRequisition = new RequisitionDataBuilder().buildJson()
@@ -818,6 +820,109 @@ describe('Requisition', function() {
 
             expect(requisition.requisitionLineItems[2].skipped).toBe(true);
             expect(requisition.requisitionLineItems[3].skipped).toBe(false);
+        });
+
+    });
+
+    describe('addLineItem', function() {
+
+        var requisition, orderable;
+
+        beforeEach(function() {
+            orderable = new OrderableDataBuilder().build();
+        });
+
+        it('should throw exception if status is AUTHORIZED', function() {
+            requisition = new RequisitionDataBuilder().buildAuthorized();
+
+            expect(function() {
+                requisition.addLineItem(orderable, 10, 'explanation');
+            }).toThrow('Can not add line items past SUBMITTED status');
+        });
+
+        it('should throw exception if status is IN_APPROVAL', function() {
+            requisition = new RequisitionDataBuilder().buildInApproval();
+
+            expect(function() {
+                requisition.addLineItem(orderable, 10, 'explanation');
+            }).toThrow('Can not add line items past SUBMITTED status');
+        });
+
+        it('should throw exception if status is APPROVED', function() {
+            requisition = new RequisitionDataBuilder().buildApproved();
+
+            expect(function() {
+                requisition.addLineItem(orderable, 10, 'explanation');
+            }).toThrow('Can not add line items past SUBMITTED status');
+        });
+
+        it('should throw exception if status is SKIPPED', function() {
+            requisition = new RequisitionDataBuilder().buildSkipped();
+
+            expect(function() {
+                requisition.addLineItem(orderable, 10, 'explanation');
+            }).toThrow('Can not add line items past SUBMITTED status');
+        });
+
+        it('should throw exception if status is RELEASED', function() {
+            requisition = new RequisitionDataBuilder().buildReleased();
+
+            expect(function() {
+                requisition.addLineItem(orderable, 10, 'explanation');
+            }).toThrow('Can not add line items past SUBMITTED status');
+        });
+
+        it('should throw exception if line item for the given orderable already exist', function() {
+            requisition = new RequisitionDataBuilder().buildRejected();
+
+            var lineItemOrderable = requisition.requisitionLineItems[0].orderable;
+
+            expect(function() {
+                requisition.addLineItem(lineItemOrderable, 10, 'explanation');
+            }).toThrow('Line item for the given orderable already exist');
+        });
+
+        it('should throw exception if trying to add product that is not avaialble for the requisition', function() {
+            requisition = new RequisitionDataBuilder().buildSubmitted();
+
+            expect(function() {
+                requisition.addLineItem(orderable, 10, 'explanation');
+            }).toThrow('The given product is not available for this requisition');
+        });
+
+        it('should add new line item', function() {
+            requisition = new RequisitionDataBuilder().build();
+
+            var orderable = requisition.availableNonFullSupplyProducts[0];
+
+            requisition.addLineItem(orderable, 16, 'explanation');
+
+            expect(requisition.requisitionLineItems.length).toBe(3);
+            expect(requisition.requisitionLineItems[2].orderable).toEqual(orderable);
+            expect(requisition.requisitionLineItems[2].requestedQuantity).toEqual(16);
+            expect(requisition.requisitionLineItems[2].requestedQuantityExplanation)
+                .toEqual('explanation');
+        });
+
+        it('should add instance of the LineItem class', function() {
+            requisition = new RequisitionDataBuilder().buildSubmitted();
+
+            var orderable = requisition.availableNonFullSupplyProducts[0];
+
+            requisition.addLineItem(orderable, 16, 'explanation');
+
+            expect(requisition.requisitionLineItems[2] instanceof LineItem).toBe(true);
+        });
+
+        it('should set correct pricePerPack based on program', function() {
+            requisition = new RequisitionDataBuilder().buildRejected();
+
+            var orderable = requisition.availableNonFullSupplyProducts[0];
+
+            requisition.addLineItem(orderable, 16, 'explanation');
+
+            expect(requisition.requisitionLineItems[2].pricePerPack)
+                .toBe(orderable.programs[1].pricePerPack);
         });
 
     });

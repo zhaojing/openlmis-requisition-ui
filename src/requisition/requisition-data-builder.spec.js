@@ -35,6 +35,13 @@
         RequisitionDataBuilder.prototype.build = build;
         RequisitionDataBuilder.prototype.buildJson = buildJson;
         RequisitionDataBuilder.prototype.withRequistionLineItems = withRequistionLineItems;
+        RequisitionDataBuilder.prototype.buildSubmitted = buildSubmitted;
+        RequisitionDataBuilder.prototype.buildAuthorized = buildAuthorized;
+        RequisitionDataBuilder.prototype.buildInApproval = buildInApproval;
+        RequisitionDataBuilder.prototype.buildApproved = buildApproved;
+        RequisitionDataBuilder.prototype.buildReleased = buildReleased;
+        RequisitionDataBuilder.prototype.buildSkipped = buildSkipped;
+        RequisitionDataBuilder.prototype.buildRejected = buildRejected;
 
         return RequisitionDataBuilder;
 
@@ -65,10 +72,30 @@
             this.supervisoryNode = 'supervisory-node-id-' + instanceNumber;
             this.template = new RequisitionTemplateDataBuilder().build();
             this.availableFullSupplyProducts = [];
+
+
+            var programs = [{
+                programId: 'program-id-1' + instanceNumber,
+                orderableDisplayCategoryId: 'orderable-display-category-id-1' + instanceNumber,
+                orderableCategoryDisplayName: 'Category 1' + instanceNumber,
+                orderableCategoryDisplayOrder: 2,
+                fullSupply: true,
+                displayOrder: 6,
+                pricePerPack: 4.34
+            }, {
+                programId: this.program.id,
+                orderableDisplayCategoryId: 'orderable-display-category-id-2' + instanceNumber,
+                orderableCategoryDisplayName: 'Category 2' + instanceNumber,
+                orderableCategoryDisplayOrder: 1,
+                fullSupply: false,
+                displayOrder: 6,
+                pricePerPack: 20.77
+            }];
+
             this.availableNonFullSupplyProducts = [
-                new OrderableDataBuilder().buildJson(),
-                new OrderableDataBuilder().buildJson(),
-                new OrderableDataBuilder().buildJson()
+                new OrderableDataBuilder().withPrograms(programs).buildJson(),
+                new OrderableDataBuilder().withPrograms(programs).buildJson(),
+                new OrderableDataBuilder().withPrograms(programs).buildJson(),
             ];
             this.statusChange = {
                 INITIATED: {
@@ -115,6 +142,41 @@
                 datePhysicalStockCountCompleted: builder.datePhysicalStockCountCompleted,
                 stockAdjustmentReasons: builder.stockAdjustmentReasons
             };
+        }
+
+        function buildSubmitted() {
+            this.status = REQUISITION_STATUS.SUBMITTED;
+            return this.build();
+        }
+
+        function buildAuthorized() {
+            this.status = REQUISITION_STATUS.AUTHORIZED;
+            return this.build();
+        }
+
+        function buildInApproval() {
+            this.status = REQUISITION_STATUS.IN_APPROVAL;
+            return this.build();
+        }
+
+        function buildApproved() {
+            this.status = REQUISITION_STATUS.APPROVED;
+            return this.build();
+        }
+
+        function buildReleased() {
+            this.status = REQUISITION_STATUS.RELEASED;
+            return this.build();
+        }
+
+        function buildSkipped() {
+            this.status = REQUISITION_STATUS.SKIPPED;
+            return this.build();
+        }
+
+        function buildRejected() {
+            this.status = REQUISITION_STATUS.REJECTED;
+            return this.build();
         }
 
         function build() {

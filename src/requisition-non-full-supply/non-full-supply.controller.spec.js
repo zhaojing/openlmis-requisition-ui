@@ -15,9 +15,8 @@
 
 describe('NonFullSupplyController', function() {
 
-    var vm, RequisitionCategory, addProductModalService, requisition, $q, requisitionValidator,
-        lineItems, $rootScope, $controller, LineItem, stateParams, $state, alertService,
-        REQUISITION_RIGHTS, canSubmit, canAuthorize;
+    var vm, addProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
+        LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder;
 
     beforeEach(function(){
         module('requisition-non-full-supply');
@@ -28,7 +27,7 @@ describe('NonFullSupplyController', function() {
             $q = $injector.get('$q');
             $state = $injector.get('$state');
             alertService = $injector.get('alertService');
-            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+            OrderableDataBuilder = $injector.get('OrderableDataBuilder');
         });
 
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
@@ -36,7 +35,7 @@ describe('NonFullSupplyController', function() {
 
         requisition = jasmine.createSpyObj('requisition', ['$isInitiated' , '$isRejected', '$isApproved',
             '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased', '$isAfterAuthorize',
-            '$getProducts']);
+            '$getProducts', 'addLineItem']);
         requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns']);
         requisition.requisitionLineItems = [
             lineItemSpy(0, 'One', true),
@@ -45,12 +44,6 @@ describe('NonFullSupplyController', function() {
             lineItemSpy(3, 'Two', true),
             lineItemSpy(4, 'Three', false)
         ];
-        lineItems = [requisition.requisitionLineItems];
-
-        stateParams = {
-            page: 0,
-            size: 10
-        };
 
         requisition.$getProducts.andReturn([]);
 
@@ -235,13 +228,21 @@ describe('NonFullSupplyController', function() {
         });
 
         it('should add product', function() {
-            addProductModalService.show.andReturn($q.when(lineItemSpy(5, 'Three', false)));
+            var orderable = new OrderableDataBuilder().build();
+
+            addProductModalService.show.andReturn($q.resolve({
+                orderable: orderable,
+                requestedQuantity: 16,
+                requestedQuantityExplanation: 'explanation'
+            }));
 
             vm.addProduct();
             $rootScope.$apply();
 
             expect(addProductModalService.show).toHaveBeenCalled();
-            expect(requisition.requisitionLineItems.length).toBe(6);
+            expect(requisition.addLineItem).toHaveBeenCalledWith(
+                orderable,16, 'explanation'
+            );
         });
 
         it('should not add product if modal was dismissed', function() {
@@ -254,8 +255,7 @@ describe('NonFullSupplyController', function() {
             $rootScope.$apply();
 
             expect(addProductModalService.show).toHaveBeenCalled();
-            expect(requisition.requisitionLineItems.length).toBe(5);
-            expect(requisition.requisitionLineItems.push).not.toHaveBeenCalled();
+            expect(requisition.addLineItem).not.toHaveBeenCalled();
         });
 
         it('should open modal if $visible is undefined', function() {
@@ -269,6 +269,7 @@ describe('NonFullSupplyController', function() {
             $rootScope.$apply();
 
             expect(addProductModalService.show).toHaveBeenCalled();
+            expect(requisition.addLineItem).not.toHaveBeenCalled();
         });
 
         it('should not open add product modal if there are no products to add', function() {
@@ -278,6 +279,7 @@ describe('NonFullSupplyController', function() {
             $rootScope.$apply();
 
             expect(addProductModalService.show).not.toHaveBeenCalled();
+            expect(requisition.addLineItem).not.toHaveBeenCalled();
         });
 
         it('should not open add product modal if there are no additional products to add', function() {
@@ -289,6 +291,7 @@ describe('NonFullSupplyController', function() {
             $rootScope.$apply();
 
             expect(addProductModalService.show).not.toHaveBeenCalled();
+            expect(requisition.addLineItem).not.toHaveBeenCalled();
         });
 
         it('should open alert if there are no products to add', function() {
@@ -297,6 +300,7 @@ describe('NonFullSupplyController', function() {
             vm.addProduct();
             $rootScope.$apply();
 
+            expect(requisition.addLineItem).not.toHaveBeenCalled();
             expect(alertService.error).toHaveBeenCalledWith(
                 'requisitionNonFullSupply.noProductsToAdd.label',
                 'requisitionNonFullSupply.noProductsToAdd.message'

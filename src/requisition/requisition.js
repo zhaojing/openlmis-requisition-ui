@@ -86,6 +86,8 @@
         Requisition.prototype.$getProducts = getProducts;
         Requisition.prototype.skipAllFullSupplyLineItems = skipAllFullSupplyLineItems;
         Requisition.prototype.unskipAllFullSupplyLineItems = unskipAllFullSupplyLineItems;
+        Requisition.prototype.getAvailableNonFullSupplyProducts = getAvailableNonFullSupplyProducts;
+        Requisition.prototype.addLineItem = addLineItem;
 
         return Requisition;
 
@@ -407,6 +409,81 @@
                 || hasRight(REQUISITION_RIGHTS.REQUISITION_DELETE, requisition) && hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, requisition) && (requisition.$isInitiated() || requisition.$isRejected())
                 || hasRight(REQUISITION_RIGHTS.REQUISITION_DELETE, requisition) && hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition) && requisition.$isSubmitted()
                 || hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition) && (requisition.$isInitiated() || requisition.$isRejected() || requisition.$isSubmitted());
+        }
+
+        function getAvailableNonFullSupplyProducts() {
+            return filterOutOrderablesWithLineItems(
+                this.availableNonFullSupplyProducts,
+                this.requisitionLineItems
+            );
+        }
+
+        function addLineItem(orderable, requestedQuantity, requestedQuantityExplanation) {
+
+            validateStatusForAddingLineItem(this.status);
+            validateLineItemDoesNotExist(this.requisitionLineItems, orderable);
+            validateOrderableIsAvailable(this.availableNonFullSupplyProducts, orderable);
+
+            var orderableProgram = getOrderableProgramById(orderable.programs, this.program.id);
+
+            this.requisitionLineItems.push(new LineItem({
+                orderable: orderable,
+                requestedQuantity: requestedQuantity,
+                requestedQuantityExplanation: requestedQuantityExplanation,
+                pricePerPack: orderableProgram.pricePerPack
+            }, this));
+        }
+
+        function validateStatusForAddingLineItem(status) {
+            if (REQUISITION_STATUS.INITIATED === status) {
+                return;
+            }
+
+            if (REQUISITION_STATUS.SUBMITTED === status) {
+                return;
+            }
+
+            if (REQUISITION_STATUS.REJECTED === status) {
+                return;
+            }
+
+            throw 'Can not add line items past SUBMITTED status';
+        }
+
+        function validateLineItemDoesNotExist(lineItems, orderable) {
+            var orderableLineItems = lineItems.filter(function(lineItem) {
+                return lineItem.orderable.id === orderable.id;
+            });
+
+            if (orderableLineItems.length > 0) {
+                throw 'Line item for the given orderable already exist';
+            }
+        }
+
+        function validateOrderableIsAvailable(availableProducts, orderable) {
+            var availableOrderables = availableProducts.filter(function(product) {
+                return product.id === orderable.id;
+            });
+
+            if (!availableOrderables.length) {
+                throw 'The given product is not available for this requisition';
+            }
+        }
+
+        function getOrderableProgramById(programs, programId) {
+            return programs.filter(function(program) {
+                return program.programId === programId;
+            })[0];
+        }
+
+        function filterOutOrderablesWithLineItems(orderables, lineItems) {
+            return orderables.filter(function(orderable) {
+                var orderableLineItems = lineItems.filter(function(lineItem) {
+                    return lineItem.orderable.id === orderable.id;
+                });
+
+                return orderableLineItems.length === 0;
+            })
         }
 
         /**
