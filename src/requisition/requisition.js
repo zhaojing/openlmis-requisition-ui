@@ -418,6 +418,22 @@
             );
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name addLineItem
+         *
+         * @description
+         * Creates a new line item based on the given orderable, requested quantity and explanation.
+         * If requisition status does not allow for adding line items an exception will be thrown.
+         * If a line item for the given orderable exists an exception will be thrown.
+         * If the given orderable is not on the list of available non full supply products an
+         * exception will be thrown.
+         *
+         * @param   {Object}    orderable                       the orderable
+         * @param   {integer}   requestedQuantity               the requested quantity
+         * @param   {string}    requestedQuantityExplanation    the explanation
+         */
         function addLineItem(orderable, requestedQuantity, requestedQuantityExplanation) {
 
             validateStatusForAddingLineItem(this.status);
@@ -432,58 +448,6 @@
                 requestedQuantityExplanation: requestedQuantityExplanation,
                 pricePerPack: orderableProgram.pricePerPack
             }, this));
-        }
-
-        function validateStatusForAddingLineItem(status) {
-            if (REQUISITION_STATUS.INITIATED === status) {
-                return;
-            }
-
-            if (REQUISITION_STATUS.SUBMITTED === status) {
-                return;
-            }
-
-            if (REQUISITION_STATUS.REJECTED === status) {
-                return;
-            }
-
-            throw 'Can not add line items past SUBMITTED status';
-        }
-
-        function validateLineItemDoesNotExist(lineItems, orderable) {
-            var orderableLineItems = lineItems.filter(function(lineItem) {
-                return lineItem.orderable.id === orderable.id;
-            });
-
-            if (orderableLineItems.length > 0) {
-                throw 'Line item for the given orderable already exist';
-            }
-        }
-
-        function validateOrderableIsAvailable(availableProducts, orderable) {
-            var availableOrderables = availableProducts.filter(function(product) {
-                return product.id === orderable.id;
-            });
-
-            if (!availableOrderables.length) {
-                throw 'The given product is not available for this requisition';
-            }
-        }
-
-        function getOrderableProgramById(programs, programId) {
-            return programs.filter(function(program) {
-                return program.programId === programId;
-            })[0];
-        }
-
-        function filterOutOrderablesWithLineItems(orderables, lineItems) {
-            return orderables.filter(function(orderable) {
-                var orderableLineItems = lineItems.filter(function(lineItem) {
-                    return lineItem.orderable.id === orderable.id;
-                });
-
-                return orderableLineItems.length === 0;
-            })
         }
 
         /**
@@ -543,6 +507,51 @@
             return lineItems.filter(function(lineItem) {
                 return lineItem.$program.fullSupply;
             });
+        }
+
+        function validateStatusForAddingLineItem(status) {
+            if (REQUISITION_STATUS.INITIATED !== status &&
+                REQUISITION_STATUS.SUBMITTED !== status &&
+                REQUISITION_STATUS.REJECTED != status
+            ) {
+                throw 'Can not add line items past SUBMITTED status';
+            }
+        }
+
+        function validateLineItemDoesNotExist(lineItems, orderable) {
+            var orderableLineItems = lineItems.filter(function(lineItem) {
+                return lineItem.orderable.id === orderable.id;
+            });
+
+            if (orderableLineItems.length > 0) {
+                throw 'Line item for the given orderable already exist';
+            }
+        }
+
+        function validateOrderableIsAvailable(availableProducts, orderable) {
+            var availableOrderables = availableProducts.filter(function(product) {
+                return product.id === orderable.id;
+            });
+
+            if (!availableOrderables.length) {
+                throw 'The given product is not available for this requisition';
+            }
+        }
+
+        function getOrderableProgramById(programs, programId) {
+            return programs.filter(function(program) {
+                return program.programId === programId;
+            })[0];
+        }
+
+        function filterOutOrderablesWithLineItems(orderables, lineItems) {
+            return orderables.filter(function(orderable) {
+                var orderableLineItems = lineItems.filter(function(lineItem) {
+                    return lineItem.orderable.id === orderable.id;
+                });
+
+                return orderableLineItems.length === 0;
+            })
         }
 
         function handlePromise(promise, success, failure) {
