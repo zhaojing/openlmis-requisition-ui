@@ -437,7 +437,7 @@
         function addLineItem(orderable, requestedQuantity, requestedQuantityExplanation) {
 
             validateStatusForAddingLineItem(this.status);
-            validateLineItemDoesNotExist(this.requisitionLineItems, orderable);
+            validateOrderableDoesNotHaveLineItem(this.requisitionLineItems, orderable);
             validateOrderableIsAvailable(this.availableNonFullSupplyProducts, orderable);
 
             var orderableProgram = getOrderableProgramById(orderable.programs, this.program.id);
@@ -518,7 +518,7 @@
             }
         }
 
-        function validateLineItemDoesNotExist(lineItems, orderable) {
+        function validateOrderableDoesNotHaveLineItem(lineItems, orderable) {
             var orderableLineItems = lineItems.filter(function(lineItem) {
                 return lineItem.orderable.id === orderable.id;
             });
