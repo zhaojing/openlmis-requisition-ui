@@ -108,7 +108,7 @@
                 statusMessages;
 
             if (offlineService.isOffline()) {
-                requisition = getOfflineRequisition('id', id);
+                requisition = getOfflineRequisition(id);
 
                 if (!requisition) {
                     error();

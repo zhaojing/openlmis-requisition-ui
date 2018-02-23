@@ -20,7 +20,7 @@ describe('requisitionService', function() {
         endDate, startDate1, endDate1, modifiedDate, createdDate, processingSchedule, facility,
         program, period, emergency, requisition, requisitionDto, requisitionDto2, createdDate2,
         requisitionToConvert, templateOffline, statusMessage, statusMessagesStorage,
-        reasonWithoutHidden, reasonNotHidden, reasonHidden;
+        reasonWithoutHidden, reasonNotHidden, reasonHidden, offlineService;
 
     beforeEach(function() {
         module('requisition');
@@ -146,7 +146,7 @@ describe('requisitionService', function() {
 
         inject(function(_$httpBackend_, _$rootScope_, _requisitionService_, _requisitionUrlFactory_,
                         openlmisUrlFactory, REQUISITION_STATUS, _dateUtils_, $q,
-                        $templateCache) {
+                        $templateCache, _offlineService_) {
 
             httpBackend = _$httpBackend_;
             $rootScope = _$rootScope_;
@@ -156,9 +156,12 @@ describe('requisitionService', function() {
             q = $q;
             requisitionUrlFactory = _requisitionUrlFactory_;
             openlmisUrl = openlmisUrlFactory;
+            offlineService = _offlineService_;
 
             $templateCache.put('common/notification-modal.html', "something");
         });
+
+        spyOn(offlineService, 'isOffline').andReturn(false);
     });
 
     describe('get', function () {
@@ -182,6 +185,28 @@ describe('requisitionService', function() {
             expect(data.id).toBe(requisition.id);
             expect(requisitionsStorage.put).toHaveBeenCalled();
             expect(statusMessagesStorage.put).toHaveBeenCalled();
+        });
+
+        it('should get requisition by id from offline resources', function() {
+            offlineService.isOffline.andReturn(true);
+            requisitionsStorage.getBy.andCallFake(function(param, value) {
+              if (param === 'id' && value === requisition.id) {
+                return requisition;
+              }
+
+              return undefined;
+            });
+
+            var data = {};
+            requisitionService.get('1').then(function(response) {
+                data = response;
+            });
+
+            $rootScope.$apply();
+
+            expect(data.id).toBe(requisition.id);
+            expect(requisitionsStorage.put).not.toHaveBeenCalled();
+            expect(statusMessagesStorage.put).not.toHaveBeenCalled();
         });
 
         it('should filter out hidden reasons', function() {
