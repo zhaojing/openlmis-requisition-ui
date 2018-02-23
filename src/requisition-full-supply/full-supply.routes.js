@@ -27,7 +27,7 @@
         $stateProvider.state('openlmis.requisitions.requisition.fullSupply', {
             url: '/fullSupply?page&size',
             templateUrl: 'requisition-full-supply/full-supply.html',
-            controller: 'FullSupplyController',
+            controller: 'NonFullSupplyController',
             controllerAs: 'vm',
             isOffline: true,
             nonTrackable: true,

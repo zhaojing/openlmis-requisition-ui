@@ -16,7 +16,8 @@
 describe('NonFullSupplyController', function() {
 
     var vm, addProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
-        LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder;
+        LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
+        RequisitionColumnDataBuilder;
 
     beforeEach(function(){
         module('requisition-non-full-supply');
@@ -28,6 +29,7 @@ describe('NonFullSupplyController', function() {
             $state = $injector.get('$state');
             alertService = $injector.get('alertService');
             OrderableDataBuilder = $injector.get('OrderableDataBuilder');
+            RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
         });
 
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
@@ -36,7 +38,8 @@ describe('NonFullSupplyController', function() {
         requisition = jasmine.createSpyObj('requisition', ['$isInitiated' , '$isRejected',
             '$isApproved', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased',
             '$isAfterAuthorize', '$getProducts', 'addLineItem', 'deleteLineItem']);
-        requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns']);
+        requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns',
+            'hasSkipColumn']);
         requisition.requisitionLineItems = [
             lineItemSpy(0, 'One', true),
             lineItemSpy(1, 'Two', true),
@@ -44,6 +47,8 @@ describe('NonFullSupplyController', function() {
             lineItemSpy(3, 'Two', true),
             lineItemSpy(4, 'Three', false)
         ];
+
+        columns = [new RequisitionColumnDataBuilder().buildSkipColumn()];
 
         requisition.$getProducts.andReturn([]);
 
@@ -166,6 +171,83 @@ describe('NonFullSupplyController', function() {
             initController();
 
             expect(vm.displayAddProductButton).toBe(false);
+        });
+
+    });
+
+    describe('$onInit', function() {
+
+        it('should not show skip controls', function(){
+            initController();
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(false);
+        });
+
+        it('should show skip controls if the requisition status is INITIATED', function(){
+            initController();
+            requisition.template.hasSkipColumn.andReturn(true);
+            requisition.$isInitiated.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(true);
+        });
+
+        it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function(){
+            canAuthorize = true;
+            initController();
+            requisition.template.hasSkipColumn.andReturn(true);
+            requisition.$isSubmitted.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(true);
+        });
+
+        it('should show skip controls if the requisition status is REJECTED', function(){
+            initController();
+            requisition.template.hasSkipColumn.andReturn(true);
+            requisition.$isRejected.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(true);
+        });
+
+        it('should show skip controls if the requisition template has a skip columm', function(){
+            initController();
+            requisition.template.hasSkipColumn.andReturn(true);
+            requisition.$isInitiated.andReturn(true);
+            columns[0].name = 'skipped';
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(true);
+        });
+
+
+        it('should not show skip controls if the requisition template doesnt have a skip columm', function(){
+            initController();
+            requisition.template.hasSkipColumn.andReturn(false);
+            requisition.$isInitiated.andReturn(true);
+            columns[0].name = 'foo';
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(false);
+        });
+
+        it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
+            canAuthorize = false;
+            initController();
+            requisition.template.hasSkipColumn.andReturn(true);
+            requisition.$isSubmitted.andReturn(true);
+
+            vm.$onInit();
+
+            expect(vm.areSkipControlsVisible).toBe(false);
         });
 
     });
@@ -322,6 +404,7 @@ describe('NonFullSupplyController', function() {
             canSubmit: canSubmit,
             canAuthorize: canAuthorize
         });
+        vm.$onInit();
     }
 
     function lineItemSpy(id, category, fullSupply) {

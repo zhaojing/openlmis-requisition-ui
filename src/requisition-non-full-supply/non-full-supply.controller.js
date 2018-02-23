@@ -40,23 +40,10 @@
 
         var vm = this;
 
+        vm.$onInit = onInit;
         vm.deleteLineItem = deleteLineItem;
         vm.addProduct = addProduct;
         vm.displayDeleteColumn = displayDeleteColumn;
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
-         * @name isLineItemValid
-         * @type {Array}
-         *
-         * @description
-         * Checks whether any field of the given line item has any error. It does not perform any
-         * validation. It is an exposure of the isLineItemValid method of the requisitionValidator.
-         *
-         * @param  {Object}  lineItem the line item to be checked
-         * @return {Boolean}          true if any of the fields has error, false otherwise
-         */
         vm.isLineItemValid = requisitionValidator.isLineItemValid;
 
         /**
@@ -68,7 +55,7 @@
          * @description
          * Holds all requisition line items.
          */
-        vm.lineItems = lineItems;
+        vm.lineItems = undefined;
 
         /**
          * @ngdoc property
@@ -90,7 +77,7 @@
          * @description
          * Holds requisition. This object is shared with the parent and fullSupply states.
          */
-        vm.requisition = requisition;
+        vm.requisition = undefined;
 
         /**
          * @ngdoc property
@@ -102,7 +89,7 @@
          * Method responsible for hiding/showing the Add Product button based on the requisition status
          * and user rights.
          */
-        vm.displayAddProductButton = displayAddProductButton();
+        vm.displayAddProductButton = undefined;
 
         /**
          * @ngdoc property
@@ -113,7 +100,15 @@
          * @description
          * Holds the list of columns visible on this screen.
          */
-        vm.columns = columns;
+        vm.columns = undefined;
+
+        function onInit() {
+            vm.lineItems = lineItems;
+            vm.requisition = requisition;
+            vm.columns = columns;
+            vm.displayAddProductButton = displayAddProductButton();
+            vm.areSkipControlsVisible = areSkipControlsVisible();
+        }
 
         /**
          * @ngdoc method
@@ -177,6 +172,24 @@
                 display = display || lineItem.$deletable;
             });
             return display;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @name areSkipControlsVisible
+         *
+         * @description
+         * Checks if the current requisition template has a skip column, and if the requisition
+         * state allows for skipping.
+         */
+        function areSkipControlsVisible() {
+            if (!requisition.$isInitiated() && !requisition.$isRejected() &&
+                !(canAuthorize && requisition.$isSubmitted())) {
+                return false;
+            }
+
+            return requisition.template.hasSkipColumn();
         }
 
         function filterRequisitionLineItems() {
