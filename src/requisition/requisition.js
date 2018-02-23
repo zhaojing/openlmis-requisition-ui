@@ -88,6 +88,7 @@
         Requisition.prototype.unskipAllFullSupplyLineItems = unskipAllFullSupplyLineItems;
         Requisition.prototype.getAvailableNonFullSupplyProducts = getAvailableNonFullSupplyProducts;
         Requisition.prototype.addLineItem = addLineItem;
+        Requisition.prototype.deleteLineItem = deleteLineItem;
 
         return Requisition;
 
@@ -436,7 +437,7 @@
          */
         function addLineItem(orderable, requestedQuantity, requestedQuantityExplanation) {
 
-            validateStatusForAddingLineItem(this.status);
+            validateStatusForManipulatingLineItems(this.status);
             validateOrderableDoesNotHaveLineItem(this.requisitionLineItems, orderable);
             validateOrderableIsAvailable(this.availableNonFullSupplyProducts, orderable);
 
@@ -448,6 +449,15 @@
                 requestedQuantityExplanation: requestedQuantityExplanation,
                 pricePerPack: orderableProgram.pricePerPack
             }, this));
+        }
+
+        function deleteLineItem(lineItem) {
+
+            validateStatusForManipulatingLineItems(this.status);
+            validateLineItemIsPartOfRequisition(this, lineItem);
+            validateLineItemIsNotFullSupply(lineItem);
+
+            this.requisitionLineItems.splice(lineItemIndex, 1);
         }
 
         /**
@@ -509,7 +519,7 @@
             });
         }
 
-        function validateStatusForAddingLineItem(status) {
+        function validateStatusForManipulatingLineItems(status) {
             if (REQUISITION_STATUS.INITIATED !== status &&
                 REQUISITION_STATUS.SUBMITTED !== status &&
                 REQUISITION_STATUS.REJECTED != status
@@ -552,6 +562,19 @@
 
                 return orderableLineItems.length === 0;
             })
+        }
+
+        function validateLineItemIsPartOfRequisition(requistition, lineItem) {
+            var lineItemIndex = requisition.requisitionLineItems.indexOf(lineItem);
+            if (lineItemIndex === -1) {
+                throw 'The given line item is not part of this requisition';
+            }
+        }
+
+        function validateLineItemIsNotFullSupply(lineItem) {
+            if (lineItem.$program.fullSupply) {
+                throw 'Can not delete full supply line items';
+            }
         }
 
         function handlePromise(promise, success, failure) {

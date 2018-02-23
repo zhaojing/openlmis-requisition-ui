@@ -837,7 +837,7 @@ describe('Requisition', function() {
 
             expect(function() {
                 requisition.addLineItem(orderable, 10, 'explanation');
-            }).toThrow('Can not add line items past SUBMITTED status');
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
         });
 
         it('should throw exception if status is IN_APPROVAL', function() {
@@ -845,7 +845,7 @@ describe('Requisition', function() {
 
             expect(function() {
                 requisition.addLineItem(orderable, 10, 'explanation');
-            }).toThrow('Can not add line items past SUBMITTED status');
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
         });
 
         it('should throw exception if status is APPROVED', function() {
@@ -853,7 +853,7 @@ describe('Requisition', function() {
 
             expect(function() {
                 requisition.addLineItem(orderable, 10, 'explanation');
-            }).toThrow('Can not add line items past SUBMITTED status');
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
         });
 
         it('should throw exception if status is SKIPPED', function() {
@@ -861,7 +861,7 @@ describe('Requisition', function() {
 
             expect(function() {
                 requisition.addLineItem(orderable, 10, 'explanation');
-            }).toThrow('Can not add line items past SUBMITTED status');
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
         });
 
         it('should throw exception if status is RELEASED', function() {
@@ -869,7 +869,7 @@ describe('Requisition', function() {
 
             expect(function() {
                 requisition.addLineItem(orderable, 10, 'explanation');
-            }).toThrow('Can not add line items past SUBMITTED status');
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
         });
 
         it('should throw exception if line item for the given orderable already exist', function() {
@@ -923,6 +923,78 @@ describe('Requisition', function() {
 
             expect(requisition.requisitionLineItems[2].pricePerPack)
                 .toBe(orderable.programs[1].pricePerPack);
+        });
+
+    });
+
+    describe('deleteLineItem', function() {
+
+        var requisition;
+
+        it('should throw exception if status is AUTHORIZED', function() {
+            requisition = new RequisitionDataBuilder().buildAuthorized();
+
+            expect(function() {
+                requisition.deleteLineItem(requisition.requisitionLineItems[1]);
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
+        });
+
+        it('should throw exception if status is IN_APPROVAL', function() {
+            requisition = new RequisitionDataBuilder().buildInApproval();
+
+            expect(function() {
+                requisition.deleteLineItem(requisition.requisitionLineItems[1]);
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
+        });
+
+        it('should throw exception if status is APPROVED', function() {
+            requisition = new RequisitionDataBuilder().buildApproved();
+
+            expect(function() {
+                requisition.deleteLineItem(requisition.requisitionLineItems[1]);
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
+        });
+
+        it('should throw exception if status is SKIPPED', function() {
+            requisition = new RequisitionDataBuilder().buildSkipped();
+
+            expect(function() {
+                requisition.deleteLineItem(requisition.requisitionLineItems[1]);
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
+        });
+
+        it('should throw exception if status is RELEASED', function() {
+            requisition = new RequisitionDataBuilder().buildReleased();
+
+            expect(function() {
+                requisition.deleteLineItem(requisition.requisitionLineItems[1]);
+            }).toThrow('Can not add or remove line items past SUBMITTED status');
+        });
+
+        it('should throw exception if trying to remove non existent line item', function() {
+            requisition = new RequisitionDataBuilder().build();
+
+            var otherRequisition = new RequisitionDataBuilder().build();
+
+            expect(function() {
+                requisition.deleteLineItem(otherRequisition.requisitionLineItems[0]);
+            }).toThrow('The given line item is not part of this requisition');
+        });
+
+        it('should throw exception if trying to remove full supply line item', function() {
+            requisition = new RequisitionDataBuilder().buildRejected();
+
+            expect(function() {
+                requisition.deleteLineItem(requisition.requisitionLineItems[0]);
+            }).toThrow('Can not delete full supply line items');
+        });
+
+        it('should remove valid line item', function() {
+            requisition = new RequisitionDataBuilder().buildRejected();
+
+            requisition.deleteLineItem(requisition.requisitionLineItems[1]);
+
+            expect(requisition.requisitionLineItems.length).toBe(1);
         });
 
     });
