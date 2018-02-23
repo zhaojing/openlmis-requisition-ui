@@ -12,7 +12,7 @@
     "requisitionSearch.period": "Period",
     "requisitionSearch.program": "Program",
     "requisitionSearch.removeOfflineRequisition.confirm": "Are you sure you want to remove this requisition from offline storage?",
-    "requisitionSearch.removeOfflineRequisition.label": "Remove Requisition Offline",
+    "requisitionSearch.removeOfflineRequisition.label": "Remove Offline Requisition",
     "requisitionSearch.search": "Search",
     "requisitionSearch.selectFacility": "Select facility",
     "requisitionSearch.selectProgram": "Select program",
