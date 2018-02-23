@@ -453,7 +453,7 @@
         }
 
         /**
-         * @ngodc method
+         * @ngdoc method
          * @methodOf requisition.Requisition
          * @name deleteLineItem
          *
