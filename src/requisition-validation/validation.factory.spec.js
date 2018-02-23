@@ -86,7 +86,7 @@ describe('validationFactory', function() {
 
     describe('requestedQuantityExplanation', function() {
 
-        var jColumn, iColumn;
+        var jColumn, iColumn, sColumn;
 
         beforeEach(function() {
             jColumn = {
@@ -99,10 +99,16 @@ describe('validationFactory', function() {
                 $display: true
             };
 
+            sColumn = {
+                name: TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA,
+                $display: true
+            };
+
             messageServiceMock.get.andReturn('required');
             requisitionMock.template.getColumn.andCallFake(function(name) {
                 if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) return jColumn;
                 if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) return iColumn;
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) return sColumn;
             });
         });
 
@@ -120,11 +126,32 @@ describe('validationFactory', function() {
                 .toBeUndefined();
         });
 
-        it('should return undefined if calculatedOrderQuantity column is not displayed', function() {
+        it('should return undefined if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not displayed', function() {
+            lineItem.requestedQuantity = 10;
+            lineItem.requestedQuantityExplanation = undefined;
             iColumn.$display = false;
+            sColumn.$display = false;
 
             expect(validationFactory.requestedQuantityExplanation(lineItem, requisitionMock))
                 .toBeUndefined();
+        });
+
+        it('should return error if only calculatedOrderQuantity column is displayed', function() {
+            lineItem.requestedQuantity = 10;
+            lineItem.requestedQuantityExplanation = undefined;
+            sColumn.$display = false;
+
+            expect(validationFactory.requestedQuantityExplanation(lineItem, requisitionMock))
+                .toEqual('required');
+        });
+
+        it('should return error if only calculatedOrderQuantityIsa column is displayed', function() {
+            lineItem.requestedQuantity = 10;
+            lineItem.requestedQuantityExplanation = undefined;
+            iColumn.$display = false;
+
+            expect(validationFactory.requestedQuantityExplanation(lineItem, requisitionMock))
+                .toEqual('required');
         });
 
         it('should return undefined if requestedQuantity is null', function() {

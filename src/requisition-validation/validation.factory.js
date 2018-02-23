@@ -89,12 +89,15 @@
         function validateRequestedQuantityExplanation(lineItem, requisition) {
             var requestedQuantityColumn = requisition.template.getColumn(TEMPLATE_COLUMNS.REQUESTED_QUANTITY),
                 calculatedOrderQuantityColumn = requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY),
+                calculatedOrderQuantityColumnIsa = requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA),
                 requestedQuantityExplanation = lineItem.requestedQuantityExplanation,
                 requestedQuantity = lineItem.requestedQuantity;
 
-            if (!lineItem.isNonFullSupply() && isDisplayed(requestedQuantityColumn)
-                && isDisplayed(calculatedOrderQuantityColumn) && isFilled(requestedQuantity)
-                && !requestedQuantityExplanation) {
+            if (!lineItem.isNonFullSupply() &&
+                isDisplayed(requestedQuantityColumn) &&
+                (isDisplayed(calculatedOrderQuantityColumn) || isDisplayed(calculatedOrderQuantityColumnIsa)) &&
+                isFilled(requestedQuantity) &&
+                !requestedQuantityExplanation) {
                 return messageService.get('requisitionValidation.required');
             }
             return;
