@@ -88,6 +88,7 @@
         Requisition.prototype.unskipAllFullSupplyLineItems = unskipAllFullSupplyLineItems;
         Requisition.prototype.getAvailableNonFullSupplyProducts = getAvailableNonFullSupplyProducts;
         Requisition.prototype.addLineItem = addLineItem;
+        Requisition.prototype.deleteLineItem = deleteLineItem;
 
         return Requisition;
 
@@ -436,7 +437,7 @@
          */
         function addLineItem(orderable, requestedQuantity, requestedQuantityExplanation) {
 
-            validateStatusForAddingLineItem(this.status);
+            validateStatusForManipulatingLineItems(this.status);
             validateOrderableDoesNotHaveLineItem(this.requisitionLineItems, orderable);
             validateOrderableIsAvailable(this.availableNonFullSupplyProducts, orderable);
 
@@ -446,8 +447,32 @@
                 orderable: orderable,
                 requestedQuantity: requestedQuantity,
                 requestedQuantityExplanation: requestedQuantityExplanation,
-                pricePerPack: orderableProgram.pricePerPack
+                pricePerPack: orderableProgram.pricePerPack,
+                $deletable: true
             }, this));
+        }
+
+        /**
+         * @ngodc method
+         * @methodOf requisition.Requisition
+         * @name deleteLineItem
+         *
+         * @description
+         * Removes the given line item from the requisition.
+         * If requisition status does not allow for removing line items an exception will be thrown.
+         * If line item is not part of the requisition an exception will be thrown.
+         * If line item is full supply an exception will be thrown.
+         *
+         * @param   {LineItem}  lineItem    the line item to be deleted
+         */
+        function deleteLineItem(lineItem) {
+
+            validateStatusForManipulatingLineItems(this.status);
+            validateLineItemIsPartOfRequisition(this, lineItem);
+            validateLineItemIsNotFullSupply(lineItem);
+
+            var lineItemIndex = this.requisitionLineItems.indexOf(lineItem);
+            this.requisitionLineItems.splice(lineItemIndex, 1);
         }
 
         /**
@@ -509,12 +534,12 @@
             });
         }
 
-        function validateStatusForAddingLineItem(status) {
+        function validateStatusForManipulatingLineItems(status) {
             if (REQUISITION_STATUS.INITIATED !== status &&
                 REQUISITION_STATUS.SUBMITTED !== status &&
                 REQUISITION_STATUS.REJECTED != status
             ) {
-                throw 'Can not add line items past SUBMITTED status';
+                throw 'Can not add or remove line items past SUBMITTED status';
             }
         }
 
@@ -552,6 +577,19 @@
 
                 return orderableLineItems.length === 0;
             })
+        }
+
+        function validateLineItemIsPartOfRequisition(requisition, lineItem) {
+            var lineItemIndex = requisition.requisitionLineItems.indexOf(lineItem);
+            if (lineItemIndex === -1) {
+                throw 'The given line item is not part of this requisition';
+            }
+        }
+
+        function validateLineItemIsNotFullSupply(lineItem) {
+            if (lineItem.$program.fullSupply) {
+                throw 'Can not delete full supply line items';
+            }
         }
 
         function handlePromise(promise, success, failure) {

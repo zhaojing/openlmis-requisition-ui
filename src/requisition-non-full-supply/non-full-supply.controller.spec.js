@@ -33,9 +33,9 @@ describe('NonFullSupplyController', function() {
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
         addProductModalService = jasmine.createSpyObj('addProductModalService', ['show']);
 
-        requisition = jasmine.createSpyObj('requisition', ['$isInitiated' , '$isRejected', '$isApproved',
-            '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased', '$isAfterAuthorize',
-            '$getProducts', 'addLineItem']);
+        requisition = jasmine.createSpyObj('requisition', ['$isInitiated' , '$isRejected',
+            '$isApproved', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased',
+            '$isAfterAuthorize', '$getProducts', 'addLineItem', 'deleteLineItem']);
         requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns']);
         requisition.requisitionLineItems = [
             lineItemSpy(0, 'One', true),
@@ -181,30 +181,10 @@ describe('NonFullSupplyController', function() {
 
         it('should delete line item if it exist', function() {
             var lineItem = requisition.requisitionLineItems[2];
-            var product = lineItem.orderable;
 
             vm.deleteLineItem(lineItem);
 
-            expect(requisition.requisitionLineItems.length).toBe(4);
-            expect(requisition.requisitionLineItems.indexOf(lineItem)).toBe(-1);
-        });
-
-        it('should not delete lineItem if it doesn\'t exist', function() {
-            spyOn(requisition.requisitionLineItems, 'splice');
-
-            vm.deleteLineItem(lineItemSpy(5, 'Three', false));
-
-            expect(requisition.requisitionLineItems.length).toBe(5);
-            expect(requisition.requisitionLineItems.splice).not.toHaveBeenCalled();
-        });
-
-        it('should not make the product visible if the item wasn\'t removed', function() {
-            var lineItem = lineItemSpy(5, 'Three', false);
-            var product = lineItem.orderable;
-
-            vm.deleteLineItem(lineItem);
-
-            expect(product.$visible).toBe(false);
+            expect(requisition.deleteLineItem).toHaveBeenCalledWith(lineItem);
         });
 
     });

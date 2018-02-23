@@ -127,11 +127,8 @@
          * @param {Object} lineItem the line item to be deleted
          */
         function deleteLineItem(lineItem) {
-            var id = vm.requisition.requisitionLineItems.indexOf(lineItem);
-            if (id > -1) {
-                vm.requisition.requisitionLineItems.splice(id, 1);
-                reload();
-            }
+            vm.requisition.deleteLineItem(lineItem);
+            reload();
         }
 
         /**
