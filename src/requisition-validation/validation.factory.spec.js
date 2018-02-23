@@ -15,7 +15,7 @@
 
 describe('validationFactory', function() {
 
-    var validationFactory, TEMPLATE_COLUMNS, messageServiceMock, columnUtilsMock,
+    var validationFactory, TEMPLATE_COLUMNS, messageServiceMock,
         calculationFactoryMock, requisitionMock, lineItem;
 
     beforeEach(function() {
@@ -197,7 +197,7 @@ describe('validationFactory', function() {
     describe('requestedQuantity', function() {
 
         var calculatedOrderQuantityColumn,
-            calculatedOrderQuantityColumnIsa;
+            calculatedOrderQuantityIsaColumn;
 
         beforeEach(function() {
 
@@ -206,7 +206,7 @@ describe('validationFactory', function() {
                 $display: true
             };
 
-            calculatedOrderQuantityColumnIsa = {
+            calculatedOrderQuantityIsaColumn = {
                 name: TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA,
                 $display: true
             };
@@ -214,14 +214,14 @@ describe('validationFactory', function() {
             messageServiceMock.get.andReturn('required');
             requisitionMock.template.getColumn.andCallFake(function(name) {
                 if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) return calculatedOrderQuantityColumn;
-                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) return calculatedOrderQuantityColumnIsa;
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) return calculatedOrderQuantityIsaColumn;
             });
 
             lineItem.requestedQuantity = null;
         });
 
         it('should return undefined if calculatedOrderQuantity column is present and displayed', function() {
-            calculatedOrderQuantityColumnIsa.$display = false;
+            calculatedOrderQuantityIsaColumn.$display = false;
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
         });
 
@@ -231,21 +231,21 @@ describe('validationFactory', function() {
         });
 
         it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not displayed and requestedQuantity is null', function() {
-            calculatedOrderQuantityColumnIsa.$display = false;
+            calculatedOrderQuantityIsaColumn.$display = false;
             calculatedOrderQuantityColumn.$display = false;
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
         it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not displayed and requestedQuantity is undefined', function() {
             lineItem.requestedQuantity = undefined;
-            calculatedOrderQuantityColumnIsa.$display = false;
+            calculatedOrderQuantityIsaColumn.$display = false;
             calculatedOrderQuantityColumn.$display = false;
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
         it('should return undefined if calculatedOrderQuantity column is displayed and requestedQuantity is undefined', function() {
             lineItem.requestedQuantity = undefined;
-            calculatedOrderQuantityColumnIsa.$display = false;
+            calculatedOrderQuantityIsaColumn.$display = false;
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
         });
 
