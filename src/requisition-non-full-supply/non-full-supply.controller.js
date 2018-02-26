@@ -29,21 +29,22 @@
         .controller('NonFullSupplyController', nonFullSupplyController);
 
     nonFullSupplyController.$inject = [
-        '$filter', 'addProductModalService', 'LineItem', 'requisitionValidator',
-        'requisition', 'columns', 'lineItems', '$state', '$stateParams', 'alertService',
-        'REQUISITION_RIGHTS', 'canSubmit', 'canAuthorize'
+        '$filter', 'addProductModalService', 'requisitionValidator',
+        'requisition', 'columns', 'lineItems', 'alertService', 'canSubmit', 'canAuthorize',
+        'getAvailableProducts', 'fullSupply', 'categoryFactory'
     ];
 
-    function nonFullSupplyController($filter, addProductModalService, LineItem, requisitionValidator,
-                                    requisition, columns, lineItems, $state, $stateParams,
-                                    alertService, REQUISITION_RIGHTS, canSubmit, canAuthorize) {
+    function nonFullSupplyController($filter, addProductModalService, requisitionValidator,
+                                    requisition, columns, lineItems,
+                                    alertService, canSubmit, canAuthorize,
+                                    getAvailableProducts, fullSupply, categoryFactory) {
 
         var vm = this;
 
         vm.$onInit = onInit;
         vm.deleteLineItem = deleteLineItem;
         vm.addProduct = addProduct;
-        vm.displayDeleteColumn = displayDeleteColumn;
+        vm.showDeleteColumn = showDeleteColumn;
         vm.isLineItemValid = requisitionValidator.isLineItemValid;
 
         /**
@@ -82,14 +83,14 @@
         /**
          * @ngdoc property
          * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
-         * @name displayAddProductButton
+         * @name showAddProductButton
          * @type {Boolean}
          *
          * @description
-         * Method responsible for hiding/showing the Add Product button based on the requisition status
-         * and user rights.
+         * Flag defining whether to show or hide the Add Product button based on the requisition
+         * status and user rights.
          */
-        vm.displayAddProductButton = undefined;
+        vm.showAddProductButton = undefined;
 
         /**
          * @ngdoc property
@@ -106,8 +107,8 @@
             vm.lineItems = lineItems;
             vm.requisition = requisition;
             vm.columns = columns;
-            vm.displayAddProductButton = displayAddProductButton();
-            vm.areSkipControlsVisible = areSkipControlsVisible();
+            vm.showAddProductButton = showAddProductButton();
+            vm.showSkipControls = showSkipControls();
         }
 
         /**
@@ -123,7 +124,24 @@
          */
         function deleteLineItem(lineItem) {
             vm.requisition.deleteLineItem(lineItem);
-            reload();
+            refreshLineItems();
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @name showDeleteColumn
+         *
+         * @description
+         * Checks whether the delete column should be displayed. The column is visible only if any
+         * of the line items is deletable.
+         *
+         * @return {Boolean} true if the delete column should be displayed, false otherwise
+         */
+        function showDeleteColumn() {
+            return !fullSupply &&
+                hasRightToEdit() &&
+                hasDeletableLineItems();
         }
 
         /**
@@ -136,16 +154,22 @@
          * be added an alert will be shown.
          */
         function addProduct() {
-            if (hasProductsToAdd(vm.requisition)) {
-                addProductModalService.show(
-                    vm.requisition
-                ).then(function(lineItem) {
+            var availableProducts = getAvailableProducts();
+
+            if (availableProducts.length) {
+                var categories = categoryFactory.groupProducts(
+                    availableProducts,
+                    requisition.program.id
+                );
+
+                addProductModalService.show(categories)
+                .then(function(lineItem) {
                     vm.requisition.addLineItem(
                         lineItem.orderable,
                         lineItem.requestedQuantity,
                         lineItem.requestedQuantityExplanation
                     );
-                    reload();
+                    refreshLineItems();
                 });
             } else {
                 alertService.error(
@@ -155,51 +179,14 @@
             }
         }
 
-        /**
-         * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
-         * @name displayDeleteColumn
-         *
-         * @description
-         * Checks whether the delete column should be displayed. The column is visible only if any
-         * of the line items is deletable.
-         *
-         * @return {Boolean} true if the delete column should be displayed, false otherwise
-         */
-        function displayDeleteColumn() {
-            var display = false;
-            vm.requisition.requisitionLineItems.forEach(function(lineItem) {
-                display = display || lineItem.$deletable;
-            });
-            return display;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
-         * @name areSkipControlsVisible
-         *
-         * @description
-         * Checks if the current requisition template has a skip column, and if the requisition
-         * state allows for skipping.
-         */
-        function areSkipControlsVisible() {
-            if (!requisition.$isInitiated() && !requisition.$isRejected() &&
-                !(canAuthorize && requisition.$isSubmitted())) {
-                return false;
-            }
-
-            return requisition.template.hasSkipColumn();
-        }
-
-        function filterRequisitionLineItems() {
-            var nonFullSupplyLineItems = $filter('filter')(vm.requisition.requisitionLineItems, {
+        function refreshLineItems() {
+            var lineItems = $filter('filter')(vm.requisition.requisitionLineItems, {
                 $program: {
-                    fullSupply:false
+                    fullSupply: fullSupply
                 }
             });
 
-            return $filter('orderBy')(nonFullSupplyLineItems, [
+            vm.lineItems = $filter('orderBy')(lineItems, [
                 '$program.orderableCategoryDisplayOrder',
                 '$program.orderableCategoryDisplayName',
                 '$program.displayOrder',
@@ -207,36 +194,40 @@
             ]);
         }
 
-        function reload() {
-            vm.lineItems = filterRequisitionLineItems();
+        function showSkipControls() {
+            return fullSupply &&
+                !requisition.emergency &&
+                hasRightToEdit() &&
+                requisition.template.hasSkipColumn();
         }
 
-        function hasProductsToAdd(requisition) {
-            var hasProducts = false;
-
-            angular.forEach(requisition.availableNonFullSupplyProducts, function(product) {
-                hasProducts = hasProducts || ((product.$visible || product.$visible === undefined)
-                && $filter('filter')(requisition.$getProducts(true), {
-                    orderable: {
-                        id: product.id
-                    }
-                }).length === 0);
-            });
-
-            return hasProducts;
+        function showAddProductButton() {
+            return hasRightToEdit() &&
+                (!fullSupply || requisition.emergency);
         }
 
-        function displayAddProductButton() {
+        function hasRightToEdit() {
             if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
                 // only people with create rights should be able to edit new/rejected
                 // requisitions
                 return canSubmit;
-            } else if (vm.requisition.$isSubmitted()) {
+            }
+
+            if (vm.requisition.$isSubmitted()) {
                 // only authorizers should be able to edit submitted requisitions
                 return canAuthorize;
-            } else {
-                return false;
             }
+            return false;
+        }
+
+        function hasDeletableLineItems() {
+            var hasDeletableLineItems = false;
+
+            vm.requisition.requisitionLineItems.forEach(function(lineItem) {
+                hasDeletableLineItems = hasDeletableLineItems || lineItem.$deletable;
+            });
+
+            return hasDeletableLineItems;
         }
     }
 

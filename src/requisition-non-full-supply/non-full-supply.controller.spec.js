@@ -17,9 +17,9 @@ describe('NonFullSupplyController', function() {
 
     var vm, addProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
         LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
-        RequisitionColumnDataBuilder;
+        RequisitionColumnDataBuilder, getAvailableProductsSpy, fullSupply, categoryFactory;
 
-    beforeEach(function(){
+    beforeEach(function() {
         module('requisition-non-full-supply');
 
         inject(function($injector) {
@@ -30,6 +30,7 @@ describe('NonFullSupplyController', function() {
             alertService = $injector.get('alertService');
             OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
+            categoryFactory = $injector.get('categoryFactory');
         });
 
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
@@ -48,28 +49,35 @@ describe('NonFullSupplyController', function() {
             lineItemSpy(4, 'Three', false)
         ];
 
+        getAvailableProductsSpy = jasmine.createSpy('getAvailableProducts');
+
         columns = [new RequisitionColumnDataBuilder().buildSkipColumn()];
 
         requisition.$getProducts.andReturn([]);
+        fullSupply = false;
 
         requisition.program = {
             code: 'P01'
         };
+
+        canSubmit = false;
+        canAuthorize = false;
+
+        requisition.$isInitiated.andReturn(false);
+        requisition.$isRejected.andReturn(false);
+        requisition.$isSubmitted.andReturn(false);
+        requisition.$isAuthorized.andReturn(false);
+        requisition.$isInApproval.andReturn(false);
+        requisition.$isApproved.andReturn(false);
+        requisition.$isReleased.andReturn(false);
+        requisition.$isAfterAuthorize.andReturn(false);
+
+        spyOn(categoryFactory, 'groupProducts');
+
+        vm = undefined;
     });
 
     describe('initialization', function() {
-
-        beforeEach(function() {
-            requisition.$isInitiated.andReturn(false);
-            requisition.$isRejected.andReturn(false);
-            requisition.$isSubmitted.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
-            requisition.$isInApproval.andReturn(false);
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isAfterAuthorize.andReturn(false);
-        });
-
 
         it('should bind requisitionValidator.isLineItemValid method to vm', function() {
             initController();
@@ -89,7 +97,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(true);
+            expect(vm.showAddProductButton).toBe(true);
         });
 
         it('should not display add product button if requisition is initiated and user has no create right', function() {
@@ -98,7 +106,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.showAddProductButton).toBe(false);
         });
 
         it('should display add product button if requisition is rejected and user has create right', function() {
@@ -107,7 +115,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(true);
+            expect(vm.showAddProductButton).toBe(true);
         });
 
         it('should not display add product button if requisition is rejected and user has no create right', function() {
@@ -116,7 +124,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.showAddProductButton).toBe(false);
         });
 
         it('should display add product button if requisition is submitted and user has authorize rights', function() {
@@ -125,7 +133,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(true);
+            expect(vm.showAddProductButton).toBe(true);
         });
 
         it('should not display add product button if requisition is submitted and user has no authorize rights', function() {
@@ -134,7 +142,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.showAddProductButton).toBe(false);
         });
 
         it('should not display add product button if requisition is authorized', function() {
@@ -143,7 +151,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.showAddProductButton).toBe(false);
         });
 
         it('should not display add product button if requisition is approved', function() {
@@ -152,7 +160,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.showAddProductButton).toBe(false);
         });
 
         it('should not display add product button if requisition is in approval', function() {
@@ -161,7 +169,7 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.showAddProductButton).toBe(false);
         });
 
         it('should not display add product button if requisition is released', function() {
@@ -170,84 +178,102 @@ describe('NonFullSupplyController', function() {
 
             initController();
 
-            expect(vm.displayAddProductButton).toBe(false);
+            expect(vm.showAddProductButton).toBe(false);
         });
 
     });
 
     describe('$onInit', function() {
 
-        it('should not show skip controls', function(){
-            initController();
-
-            vm.$onInit();
-
-            expect(vm.areSkipControlsVisible).toBe(false);
+        beforeEach(function() {
+            fullSupply = true;
         });
 
-        it('should show skip controls if the requisition status is INITIATED', function(){
+        it('should not show skip controls', function() {
             initController();
+
+            expect(vm.showSkipControls).toBe(false);
+        });
+
+        it('should show skip controls if the requisition status is INITIATED', function() {
+            requisition.template.hasSkipColumn.andReturn(true);
+            requisition.$isInitiated.andReturn(true);
+            canSubmit = true;
+
+            initController();
+
+            expect(vm.showSkipControls).toBe(true);
+        });
+
+        it('should not show skip controls if requisition status is INITIATED but user does not have right to submit', function() {
             requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isInitiated.andReturn(true);
 
-            vm.$onInit();
+            initController();
 
-            expect(vm.areSkipControlsVisible).toBe(true);
+            expect(vm.showSkipControls).toBe(false);
         });
 
-        it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function(){
+        it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function() {
             canAuthorize = true;
-            initController();
             requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isSubmitted.andReturn(true);
 
-            vm.$onInit();
+            initController();
 
-            expect(vm.areSkipControlsVisible).toBe(true);
+            expect(vm.showSkipControls).toBe(true);
         });
 
-        it('should show skip controls if the requisition status is REJECTED', function(){
+        it('should show skip controls if the requisition status is REJECTED', function() {
+            requisition.template.hasSkipColumn.andReturn(true);
+            requisition.$isRejected.andReturn(true);
+            canSubmit = true;
+
             initController();
+
+            expect(vm.showSkipControls).toBe(true);
+        });
+
+        it('should not show skip controls if the requisition status is REJECTED and user can not submit', function() {
             requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isRejected.andReturn(true);
 
-            vm.$onInit();
+            initController();
 
-            expect(vm.areSkipControlsVisible).toBe(true);
+            expect(vm.showSkipControls).toBe(false);
         });
 
-        it('should show skip controls if the requisition template has a skip columm', function(){
-            initController();
+        it('should show skip controls if the requisition template has a skip column', function() {
             requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isInitiated.andReturn(true);
+            canSubmit = true;
             columns[0].name = 'skipped';
 
-            vm.$onInit();
+            initController();
 
-            expect(vm.areSkipControlsVisible).toBe(true);
+            expect(vm.showSkipControls).toBe(true);
         });
 
 
-        it('should not show skip controls if the requisition template doesnt have a skip columm', function(){
-            initController();
+        it('should not show skip controls if the requisition template does not have a skip column', function() {
             requisition.template.hasSkipColumn.andReturn(false);
             requisition.$isInitiated.andReturn(true);
             columns[0].name = 'foo';
+            canSubmit = true;
 
-            vm.$onInit();
+            initController();
 
-            expect(vm.areSkipControlsVisible).toBe(false);
+            expect(vm.showSkipControls).toBe(false);
         });
 
         it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
             canAuthorize = false;
-            initController();
             requisition.template.hasSkipColumn.andReturn(true);
             requisition.$isSubmitted.andReturn(true);
 
-            vm.$onInit();
+            initController();
 
-            expect(vm.areSkipControlsVisible).toBe(false);
+            expect(vm.showSkipControls).toBe(false);
         });
 
     });
@@ -284,7 +310,14 @@ describe('NonFullSupplyController', function() {
                 $visible: true
             }];
 
+            getAvailableProductsSpy.andReturn(requisition.availableNonFullSupplyProducts);
+
             spyOn(alertService, 'error');
+
+            categoryFactory.groupProducts.andReturn([{
+                name: 'Group 1',
+                products: requisition.availableNonFullSupplyProducts
+            }]);
 
             initController();
         });
@@ -320,34 +353,8 @@ describe('NonFullSupplyController', function() {
             expect(requisition.addLineItem).not.toHaveBeenCalled();
         });
 
-        it('should open modal if $visible is undefined', function() {
-            addProductModalService.show.andReturn($q.when());
-
-            requisition.availableNonFullSupplyProducts = [{
-                $visible: undefined
-            }];
-
-            vm.addProduct();
-            $rootScope.$apply();
-
-            expect(addProductModalService.show).toHaveBeenCalled();
-            expect(requisition.addLineItem).not.toHaveBeenCalled();
-        });
-
         it('should not open add product modal if there are no products to add', function() {
-            requisition.availableNonFullSupplyProducts = [];
-
-            vm.addProduct();
-            $rootScope.$apply();
-
-            expect(addProductModalService.show).not.toHaveBeenCalled();
-            expect(requisition.addLineItem).not.toHaveBeenCalled();
-        });
-
-        it('should not open add product modal if there are no additional products to add', function() {
-            requisition.availableNonFullSupplyProducts = [{
-                $visible: false
-            }];
+            getAvailableProductsSpy.andReturn([]);
 
             vm.addProduct();
             $rootScope.$apply();
@@ -357,7 +364,7 @@ describe('NonFullSupplyController', function() {
         });
 
         it('should open alert if there are no products to add', function() {
-            requisition.availableNonFullSupplyProducts = [];
+            getAvailableProductsSpy.andReturn([]);
 
             vm.addProduct();
             $rootScope.$apply();
@@ -371,24 +378,94 @@ describe('NonFullSupplyController', function() {
 
     });
 
-    describe('displayDeleteColumn', function() {
+    describe('showDeleteColumn', function() {
 
         beforeEach(function() {
-            initController();
-        });
-
-        it('should return true if any line item is deletable', function() {
+            fullSupply = false;
+            requisition.$isInitiated.andReturn(true);
+            canSubmit = true;
+            canAuthorize = true;
             requisition.requisitionLineItems[1].$deletable = true;
 
-            var result = vm.displayDeleteColumn();
-
-            expect(result).not.toBe(false);
         });
 
-        it('should return false if none of the line items is deletable', function() {
-            var result = vm.displayDeleteColumn();
+        it('should return false if viewing full supply tab', function() {
+            fullSupply = true;
 
-            expect(result).not.toBe(true);
+            initController();
+
+            expect(vm.showDeleteColumn()).toBe(false);
+        });
+
+        it('should return false if user has no right to submit initiated requisition', function() {
+            canSubmit = false;
+
+            initController();
+
+            expect(vm.showDeleteColumn()).toBe(false);
+        });
+
+        it('should return false if user has not right to submit rejected requisition', function() {
+            canSubmit = false;
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isRejected.andReturn(true);
+
+            initController();
+
+            expect(vm.showDeleteColumn()).toBe(false);
+        });
+
+        it('should return false if user has no right to authorize submitted requisition', function() {
+            canAuthorize = false;
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isSubmitted.andReturn(true);
+
+            initController();
+
+            expect(vm.showDeleteColumn()).toBe(false);
+        });
+
+        it('should return false if there is no deletable line items', function() {
+            requisition.requisitionLineItems[1].$deletable = false;
+
+            initController();
+
+            expect(vm.showDeleteColumn()).toBeFalsy();
+        });
+
+        it('should return false if there is no line items', function() {
+            requisition.requisitionLineItems = [];
+
+            initController();
+
+            expect(vm.showDeleteColumn()).toBe(false);
+        });
+
+        it('should return false if requisition status is after authorized', function() {
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isInApproval.andReturn(true);
+
+            initController();
+
+            expect(vm.showDeleteColumn()).toBe(false);
+        });
+
+        it('should return true if user has right to authorize submitted requisition', function() {
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isSubmitted.andReturn(true);
+
+            initController();
+
+            expect(vm.showDeleteColumn()).toBe(true);
+        });
+
+        it('should return true if use has right to submit rejected requisition', function() {
+            requisition.$isInitiated.andReturn(false);
+            requisition.$isRejected.andReturn(true);
+
+            initController();
+
+            expect(vm.showDeleteColumn()).toBe(true);
         });
 
     });
@@ -402,7 +479,9 @@ describe('NonFullSupplyController', function() {
             addProductModalService: addProductModalService,
             requisitionValidator: requisitionValidator,
             canSubmit: canSubmit,
-            canAuthorize: canAuthorize
+            canAuthorize: canAuthorize,
+            getAvailableProducts: getAvailableProductsSpy,
+            fullSupply: fullSupply
         });
         vm.$onInit();
     }

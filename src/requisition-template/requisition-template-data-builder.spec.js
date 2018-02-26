@@ -32,6 +32,7 @@
 
         RequisitionTemplateDataBuilder.prototype.build = build;
         RequisitionTemplateDataBuilder.prototype.buildJson = buildJson;
+        RequisitionTemplateDataBuilder.prototype.withSkipColumn = withSkipColumn;
         RequisitionTemplateDataBuilder.prototype.buildWithSkipColumn = buildWithSkipColumn;
 
         return RequisitionTemplateDataBuilder;
@@ -64,7 +65,9 @@
                 'requestedQuantity': new RequisitionColumnDataBuilder()
                     .buildRequestedQuantityColumn(),
                 'requestedQuantityExplanation': new RequisitionColumnDataBuilder()
-                    .buildRequestedQuantityExplanationColumn()
+                    .buildRequestedQuantityExplanationColumn(),
+                'beginningBalance': new RequisitionColumnDataBuilder()
+                    .buildBeginningBalanceColumn()
             };
         }
 
@@ -85,9 +88,13 @@
             }
         }
 
-        function buildWithSkipColumn() {
+        function withSkipColumn() {
             this.columnsMap.skipped = new RequisitionColumnDataBuilder().buildSkipColumn();
-            return this.build();
+            return this;
+        }
+
+        function buildWithSkipColumn() {
+            return this.withSkipColumn().build();
         }
     }
 

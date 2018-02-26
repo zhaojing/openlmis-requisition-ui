@@ -44,6 +44,14 @@
 				},
                 columns: function(requisition) {
                     return requisition.template.getColumns(true);
+                },
+                getAvailableProducts: function(requisition) {
+                    return function() {
+                        return requisition.getAvailableNonFullSupplyProducts();
+                    };
+                },
+                fullSupply: function() {
+                    return false;
                 }
             }
         });

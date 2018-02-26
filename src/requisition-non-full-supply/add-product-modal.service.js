@@ -30,10 +30,10 @@
         .service('addProductModalService', service);
 
     service.$inject = [
-        'categoryFactory', 'openlmisModalService'
+        'openlmisModalService'
     ];
 
-    function service(categoryFactory, openlmisModalService) {
+    function service(openlmisModalService) {
         var dialog;
 
         this.show = show;
@@ -49,7 +49,7 @@
          * @param  {Object} requisition the requisition containing list of available products
          * @return {Object}             the new product
          */
-        function show(requisition) {
+        function show(categories) {
             if (dialog) return dialog.promise;
 
             dialog = openlmisModalService.createDialog({
@@ -59,10 +59,7 @@
                 show: true,
                 resolve: {
                     categories: function() {
-                        return categoryFactory.groupProducts(requisition);
-                    },
-                    programId: function() {
-                        return requisition.program.id;
+                        return categories;
                     }
                 }
             });

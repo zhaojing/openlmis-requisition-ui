@@ -53,6 +53,8 @@
         function RequisitionTemplate(template, requisition) {
             angular.copy(template, this);
 
+            this.emergency = requisition.emergency;
+
             var columnsMap = {};
             angular.forEach(template.columnsMap, function(column) {
                 columnsMap[column.name] = new RequisitionColumn(column, requisition);
@@ -73,11 +75,21 @@
          */
         function getColumns(nonFullSupply) {
             var columns = [];
-            angular.forEach(this.columnsMap, function(column) {
-                if (column.$display && (!nonFullSupply || !column.$fullSupplyOnly)) {
-                    columns.push(column);
-                }
-            });
+
+            if (nonFullSupply || this.emergency) {
+                angular.forEach(this.columnsMap, function(column) {
+                    if (column.$display && !column.$fullSupplyOnly) {
+                        columns.push(column);
+                    }
+                });
+            } else {
+                angular.forEach(this.columnsMap, function(column) {
+                    if (column.$display) {
+                        columns.push(column);
+                    }
+                });
+            }
+
             return columns;
         }
 

@@ -42,6 +42,7 @@
         RequisitionDataBuilder.prototype.buildReleased = buildReleased;
         RequisitionDataBuilder.prototype.buildSkipped = buildSkipped;
         RequisitionDataBuilder.prototype.buildRejected = buildRejected;
+        RequisitionDataBuilder.prototype.buildEmergency = buildEmergency;
 
         return RequisitionDataBuilder;
 
@@ -70,9 +71,7 @@
             this.emergency = false;
             this.supplyingFacility = 'supplying-facility-id-' + instanceNumber;
             this.supervisoryNode = 'supervisory-node-id-' + instanceNumber;
-            this.template = new RequisitionTemplateDataBuilder().build();
-            this.availableFullSupplyProducts = [];
-
+            this.template = new RequisitionTemplateDataBuilder().buildJson();
 
             var programs = [{
                 programId: 'program-id-1' + instanceNumber,
@@ -95,7 +94,31 @@
             this.availableNonFullSupplyProducts = [
                 new OrderableDataBuilder().withPrograms(programs).buildJson(),
                 new OrderableDataBuilder().withPrograms(programs).buildJson(),
+                new OrderableDataBuilder().withPrograms(programs).buildJson()
+            ];
+
+            programs = [{
+                programId: 'program-id-1' + instanceNumber,
+                orderableDisplayCategoryId: 'orderable-display-category-id-1' + instanceNumber,
+                orderableCategoryDisplayName: 'Category 1' + instanceNumber,
+                orderableCategoryDisplayOrder: 2,
+                fullSupply: false,
+                displayOrder: 6,
+                pricePerPack: 4.34
+            }, {
+                programId: this.program.id,
+                orderableDisplayCategoryId: 'orderable-display-category-id-2' + instanceNumber,
+                orderableCategoryDisplayName: 'Category 2' + instanceNumber,
+                orderableCategoryDisplayOrder: 1,
+                fullSupply: true,
+                displayOrder: 6,
+                pricePerPack: 20.77
+            }];
+
+            this.availableFullSupplyProducts = [
                 new OrderableDataBuilder().withPrograms(programs).buildJson(),
+                new OrderableDataBuilder().withPrograms(programs).buildJson(),
+                new OrderableDataBuilder().withPrograms(programs).buildJson()
             ];
             this.statusChange = {
                 INITIATED: {
@@ -176,6 +199,11 @@
 
         function buildRejected() {
             this.status = REQUISITION_STATUS.REJECTED;
+            return this.build();
+        }
+
+        function buildEmergency() {
+            this.emergency = true;
             return this.build();
         }
 

@@ -34,6 +34,8 @@
             buildRequestedQuantityColumn;
         RequisitionColumnDataBuilder.prototype.buildRequestedQuantityExplanationColumn =
             buildRequestedQuantityExplanationColumn;
+        RequisitionColumnDataBuilder.prototype.buildBeginningBalanceColumn =
+            buildBeginningBalanceColumn;
 
         return RequisitionColumnDataBuilder;
 
@@ -150,6 +152,24 @@
             builder.source = 'CALCULATED';
             builder.option = null;
             builder.definition = 'Current physical count of stock on hand. This is quantified in dispensing units.';
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: COLUMN_TYPES.NUMERIC
+            };
+            return builder.build();
+        }
+
+        function buildBeginningBalanceColumn() {
+            var builder = this;
+
+            builder.name = "beginningBalance",
+            builder.label = "Beginning balance",
+            builder.indicator = "A",
+            builder.displayOrder = 4,
+            builder.isDisplayed = true,
+            builder.source = "USER_INPUT",
+            builder.option = null,
+            builder.definition = "Based on the Stock On Hand from the previous period. This is quantified in dispensing units.",
             builder.columnDefinition = {
                 canChangeOrder: true,
                 columnType: COLUMN_TYPES.NUMERIC

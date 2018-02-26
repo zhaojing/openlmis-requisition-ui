@@ -15,27 +15,97 @@
 
 describe('RequisitionTemplate', function() {
 
-    var requisitionTemplate, RequisitionTemplateDataBuilder;
+    var requisitionTemplate, RequisitionDataBuilder, RequisitionTemplateDataBuilder,
+        RequisitionTemplate, requisition, json, TEMPLATE_COLUMNS;
 
     beforeEach(function() {
-        module('referencedata');
+        module('requisition');
         module('requisition-template');
 
         inject(function($injector) {
             RequisitionTemplateDataBuilder = $injector.get('RequisitionTemplateDataBuilder');
+            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            RequisitionTemplate = $injector.get('RequisitionTemplate');
+            TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
         });
+
+        json = new RequisitionTemplateDataBuilder().buildJson();
+        requisition = new RequisitionDataBuilder().build();
+    });
+
+    describe('getColumns', function() {
+
+        beforeEach(function() {
+            requisitionTemplate = new RequisitionTemplate(
+                new RequisitionTemplateDataBuilder().buildJson(),
+                new RequisitionDataBuilder().buildJson()
+            );
+        });
+
+        it('should respect $display', function() {
+            requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.BEGINNING_BALANCE].$display = false;
+
+            expect(requisitionTemplate.getColumns(false)).toEqual([
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.PRODUCT_CODE],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.PRODUCT_NAME],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION]
+            ]);
+        });
+
+        it('should return all columns for full supply columns', function() {
+            expect(requisitionTemplate.getColumns(false)).toEqual([
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.PRODUCT_CODE],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.PRODUCT_NAME],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.BEGINNING_BALANCE]
+            ]);
+        });
+
+        it('should return non reporting columns only for non full supply', function() {
+            expect(requisitionTemplate.getColumns(true)).toEqual([
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.PRODUCT_CODE],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.PRODUCT_NAME],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION]
+            ]);
+        });
+
+        it('should return non reporting columns only for emergence full supply', function() {
+            requisitionTemplate = new RequisitionTemplate(
+                new RequisitionTemplateDataBuilder().buildJson(),
+                new RequisitionDataBuilder().buildEmergency()
+            );
+
+            expect(requisitionTemplate.getColumns(true)).toEqual([
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.PRODUCT_CODE],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.PRODUCT_NAME],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY],
+                requisitionTemplate.columnsMap[TEMPLATE_COLUMNS.REQUESTED_QUANTITY_EXPLANATION]
+            ]);
+        });
+
     });
 
     describe('hasSkipColumn', function() {
 
         it('should return true if template has skip column', function() {
-            requisitionTemplate = new RequisitionTemplateDataBuilder().buildWithSkipColumn();
+            requisitionTemplate = new RequisitionTemplate(
+                new RequisitionTemplateDataBuilder().withSkipColumn().buildJson(),
+                new RequisitionDataBuilder().buildJson()
+            );
 
             expect(requisitionTemplate.hasSkipColumn()).toBe(true);
         });
 
         it('should return false if template does not have skip column', function() {
-            var requisitionTemplate = new RequisitionTemplateDataBuilder().build();
+            requisitionTemplate = new RequisitionTemplate(
+                new RequisitionTemplateDataBuilder().buildJson(),
+                new RequisitionDataBuilder().buildJson()
+            );
 
             expect(requisitionTemplate.hasSkipColumn()).toBe(false);
         });

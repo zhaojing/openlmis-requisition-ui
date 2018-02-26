@@ -26,7 +26,7 @@
     function routes($stateProvider) {
         $stateProvider.state('openlmis.requisitions.requisition.fullSupply', {
             url: '/fullSupply?page&size',
-            templateUrl: 'requisition-full-supply/full-supply.html',
+            templateUrl: 'requisition-non-full-supply/non-full-supply.html',
             controller: 'NonFullSupplyController',
             controllerAs: 'vm',
             isOffline: true,
@@ -49,7 +49,15 @@
 					});
 				},
                 columns: function(requisition) {
-                    return requisition.template.getColumns();
+                    return requisition.template.getColumns(requisition.emergency);
+                },
+                getAvailableProducts: function(requisition) {
+                    return function() {
+                        return requisition.getAvailableFullSupplyProducts();
+                    };
+                },
+                fullSupply: function() {
+                    return true;
                 }
             }
         });

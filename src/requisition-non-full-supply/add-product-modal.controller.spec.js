@@ -15,128 +15,77 @@
 
 describe('AddProductModalController', function() {
 
-    var vm, $controller, $q, programId, categories, modalDeferred;
+    var vm, $controller, OrderableDataBuilder, $q, $rootScope, modalDeferred, categories;
 
     beforeEach(function() {
         module('requisition-non-full-supply');
 
         inject(function($injector) {
             $controller = $injector.get('$controller');
+            OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             $q = $injector.get('$q');
+            $rootScope = $injector.get('$rootScope');
         });
 
-        programId = 'some-program-id';
-
-        deferredMock = jasmine.createSpyObj('deferred', ['reject', 'resolve']);
-
         categories = [{
-            name: 'Category One'
+            category: 'Category One',
+            products: [
+                new OrderableDataBuilder().build(),
+                new OrderableDataBuilder().build()
+            ]
         }, {
-            name: 'Category Two'
+            category: 'Category Two',
+            products: [
+                new OrderableDataBuilder().build(),
+                new OrderableDataBuilder().build()
+            ]
         }];
 
         modalDeferred = $q.defer();
 
         vm = $controller('AddProductModalController', {
-            categories: categories,
-            programId: programId,
-            modalDeferred: modalDeferred
+            modalDeferred: modalDeferred,
+            categories: categories
         });
     });
 
-    it('initialization should expose categories', function() {
-        expect(vm.categories).toEqual(categories);
-    });
+    describe('$onInit', function() {
 
-    describe('categoryVisible', function() {
+        it('should expose categories', function() {
+            vm.$onInit();
 
-        var category;
-
-        beforeEach(function() {
-            category = {
-                name: 'Category One',
-                products: [{
-                    $visible: true
-                }, {
-                    $visible: false
-                }]
-            };
+            expect(vm.categories).toEqual(categories);
         });
 
-        it('should return true if at least one product is visible', function() {
-            expect(vm.categoryVisible(category)).toEqual(true);
-        });
+        it('should expose modalDeferred.reject method', function() {
+            vm.$onInit();
 
-        it('should return false if all the products are invisible', function() {
-            category.products[0].$visible = false;
-
-            expect(vm.categoryVisible(category)).toEqual(false);
-        });
-
-    });
-
-    describe('productVisible', function() {
-
-        var product;
-
-        beforeEach(function() {
-            product = {};
-        });
-
-        it('should return true if product is visible', function() {
-            product.$visible = true;
-
-            expect(vm.productVisible(product)).toEqual(true);
-        });
-
-        it('should return false if product is not visible', function() {
-            product.$visible = false;
-
-            expect(vm.productVisible(product)).toEqual(false);
+            expect(vm.close).toBe(modalDeferred.reject);
         });
 
     });
 
     describe('addProduct', function() {
 
-        beforeEach(function() {
-            vm.requestedQuantity = 100;
-            vm.requestedQuantityExplanation = 'some explanation';
-            vm.selectedProduct = {
-                programs: [{
-                    programId: 'some-program-id',
-                    pricePerPack: 10
-                }, {
-                    programId: 'some-other-program',
-                    pricePerPack: 20
-                }]
-            };
+        it('should resolve modal deferred with selected product', function() {
+            vm.selectedProduct = categories[0].products[0];
+            vm.requestedQuantity = 125;
+            vm.requestedQuantityExplanation = 'Some test explanation';
 
-            spyOn(modalDeferred, 'resolve').andCallThrough();
-        });
-
-        it('should resolve to new line item', function() {
-            vm.addProduct();
-
-            expect(modalDeferred.resolve).toHaveBeenCalledWith({
-                requestedQuantity: 100,
-                requestedQuantityExplanation: 'some explanation',
-                pricePerPack: 10,
-                orderable: vm.selectedProduct,
-                $deletable: true
+            var result;
+            modalDeferred.promise
+            .then(function(response) {
+                result = response;
             });
-        });
 
-        it('should mark the product as not visible', function() {
             vm.addProduct();
+            $rootScope.$apply();
 
-            expect(vm.selectedProduct.$visible).toEqual(false);
+            expect(result.orderable).toEqual(categories[0].products[0]);
+            expect(result.requestedQuantity).toEqual(125);
+            expect(result.requestedQuantityExplanation).toEqual('Some test explanation');
         });
 
-    });
-
-    it('close should expose modal promise reject', function() {
-        expect(vm.close).toBe(modalDeferred.reject);
     });
 
 });

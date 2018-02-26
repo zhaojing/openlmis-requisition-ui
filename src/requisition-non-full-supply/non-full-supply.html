@@ -1,22 +1,28 @@
 <div class="non-full-supply openlmis-table-container">
-	<button class="add" ng-show="vm.displayAddProductButton" ng-click="vm.addProduct()" >{{'requisitionNonFullSupply.addProduct' | message}}</button>
+	<h4 ng-show="vm.showSkipControls">{{'requisitionFullSupply.skip' | message}}</h4>
+	<ul ng-show="vm.showSkipControls">
+		<li><a ng-click="vm.requisition.skipAllFullSupplyLineItems()">{{'requisitionFullSupply.all' | message}}</a></li>
+		<li><a ng-click="vm.requisition.unskipAllFullSupplyLineItems()">{{'requisitionFullSupply.none' | message}}</a></li>
+	</ul>
+	<button class="add" ng-show="vm.showAddProductButton" ng-click="vm.addProduct()" >{{'requisitionNonFullSupply.addProduct' | message}}</button>
 	<saving-indicator ng-show="vm.requisition.$isEditable" class="requisition-indicator" object="vm.requisition.requisitionLineItems"/>
 	<table>
 		<caption ng-if="!vm.items.length">{{'requisitionNonFullSupply.noProducts' | message}}</caption>
 		<thead>
 			<tr>
 				<th class="col-{{column.name}}" ng-repeat="column in vm.columns | orderBy : 'displayOrder'" ng-class="{'col-sticky': !column.$canChangeOrder}" popover="{{column.definition}}" popover-trigger-area="element">{{column.label}}</th>
-				<th class="col-sticky sticky-right" ng-if="vm.displayDeleteColumn()"></th>
+				<th class="col-sticky sticky-right" ng-if="vm.showDeleteColumn()"></th>
 			</tr>
 		</thead>
 		<tbody ng-repeat="(category, lineItems) in vm.items | groupBy:'$program.orderableCategoryDisplayName'" tbody-title="{{category}}">
-			<tr ng-repeat="lineItem in lineItems | orderBy : '$program.displayOrder'">
+			<tr ng-repeat="lineItem in lineItems | orderBy : '$program.displayOrder'" ng-class="{'skipped-line-item' : lineItem.skipped}">
 				<td ng-repeat="column in vm.columns | orderBy : 'displayOrder'"
 					product-grid-cell
 					requisition="vm.requisition"
 					column="column"
-					line-item="lineItem" ></td>
-				<td ng-if="vm.displayDeleteColumn()">
+					line-item="lineItem">
+				</td>
+				<td ng-if="vm.showDeleteColumn()">
 					<button class="hide-line-item"
 						ng-click="vm.deleteLineItem(lineItem)"
 						ng-if="lineItem.$deletable">
@@ -28,6 +34,5 @@
 	</table>
 	<openlmis-pagination
 		list="vm.lineItems"
-		paged-list="vm.items">
-	<openlmis-pagination/>
+		paged-list="vm.items"/>
 </div>

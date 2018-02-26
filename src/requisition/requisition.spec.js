@@ -829,7 +829,7 @@ describe('Requisition', function() {
         var requisition, orderable;
 
         beforeEach(function() {
-            orderable = new OrderableDataBuilder().build();
+            orderable = new OrderableDataBuilder().buildJson();
         });
 
         it('should throw exception if status is AUTHORIZED', function() {
@@ -882,15 +882,51 @@ describe('Requisition', function() {
             }).toThrow('Line item for the given orderable already exist');
         });
 
-        it('should throw exception if trying to add product that is not avaialble for the requisition', function() {
+        it('should throw exception if trying to add product that is not available for the requisition', function() {
             requisition = new RequisitionDataBuilder().buildSubmitted();
+
+            orderable = new OrderableDataBuilder()
+                .withPrograms(requisition.availableFullSupplyProducts[0].programs)
+                .buildJson();
 
             expect(function() {
                 requisition.addLineItem(orderable, 10, 'explanation');
             }).toThrow('The given product is not available for this requisition');
         });
 
-        it('should add new line item', function() {
+        it('should throw exception if orderable is not part of the requisition program', function() {
+            requisition = new RequisitionDataBuilder().build();
+
+            expect(function() {
+                requisition.addLineItem(orderable, 10, 'explanation');
+            }).toThrow('The given product is not available for this requisition');
+        });
+
+        it('should throw exception if trying to add full supply product to regular requisition', function() {
+            requisition = new RequisitionDataBuilder().build();
+
+            orderable = requisition.availableFullSupplyProducts[0];
+
+            expect(function() {
+                requisition.addLineItem(orderable, 10, 'explanation');
+            }).toThrow('Can not add full supply line items to regular requisition');
+        });
+
+        it('should add new available full supply line item to emergency requisition', function() {
+            requisition = new RequisitionDataBuilder().buildEmergency();
+
+            var orderable = requisition.availableFullSupplyProducts[0];
+
+            requisition.addLineItem(orderable, 16, 'explanation');
+
+            expect(requisition.requisitionLineItems.length).toBe(3);
+            expect(requisition.requisitionLineItems[2].orderable).toEqual(orderable);
+            expect(requisition.requisitionLineItems[2].requestedQuantity).toEqual(16);
+            expect(requisition.requisitionLineItems[2].requestedQuantityExplanation)
+                .toEqual('explanation');
+        });
+
+        it('should add new available non full supply line item', function() {
             requisition = new RequisitionDataBuilder().build();
 
             var orderable = requisition.availableNonFullSupplyProducts[0];

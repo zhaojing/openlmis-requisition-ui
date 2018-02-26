@@ -29,17 +29,26 @@
         .module('requisition-non-full-supply')
         .controller('AddProductModalController', controller);
 
-    controller.$inject = ['$filter', 'modalDeferred', 'categories', 'programId'];
+    controller.$inject = ['modalDeferred', 'categories'];
 
-    function controller($filter, modalDeferred, categories, programId) {
+    function controller(modalDeferred, categories) {
         var vm = this;
 
-        vm.categoryVisible = categoryVisible;
-        vm.productVisible = productVisible;
+        vm.$onInit = onInit;
         vm.addProduct = addProduct;
         vm.close = modalDeferred.reject;
 
-        vm.categories = categories;
+        /**
+         * @ngdoc method
+         * @methodOf requisition-non-full-supply.controller:AddProductModalController
+         * @name $onInit
+         *
+         * @description
+         * Initialization method of the AddProductModalController.
+         */
+        function onInit() {
+            vm.categories = categories;
+        }
 
         /**
          * @ngdoc method
@@ -50,68 +59,11 @@
          * Resolves promise with line item created from parameters.
          */
         function addProduct() {
-            vm.selectedProduct.$visible = false;
-
             modalDeferred.resolve({
                 requestedQuantity: vm.requestedQuantity,
                 requestedQuantityExplanation: vm.requestedQuantityExplanation,
-                pricePerPack: getProgram(vm.selectedProduct, programId).pricePerPack,
-                orderable: vm.selectedProduct,
-                $deletable: true
+                orderable: vm.selectedProduct
             });
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:AddProductModalController
-         * @name categoryVisible
-         *
-         * @description
-         * Indicates if category should be displayed on modal.
-         *
-         * @param   {Object}  category One of categories on the list
-         * @return {Boolean}          if category is visible
-         */
-        function categoryVisible(category) {
-            var visible = false;
-            angular.forEach(category.products, function(product) {
-                visible = visible || product.$visible === undefined || product.$visible;
-            });
-            return visible;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:AddProductModalController
-         * @name productVisible
-         *
-         * @description
-         * Indicates if product should be displayed on modal.
-         *
-         * @param   {Object}  category One of products on the list
-         * @return {Boolean}          if product is visible
-         */
-        function productVisible(product) {
-            return product.$visible;
-        }
-
-        function convertToOrderableProduct(product) {
-            return {
-                id: product.id,
-                fullProductName: product.fullProductName,
-                productCode: product.productCode,
-                netContent: product.netContent,
-                $program: {
-                    orderableCategoryDisplayName: getProgram(product, programId).orderableCategoryDisplayName,
-                    fullSupply: product.fullSupply
-                }
-            };
-        }
-
-        function getProgram(product, programId) {
-            return $filter('filter')(product.programs, {
-                programId: programId
-            }, true)[0];
         }
     }
 

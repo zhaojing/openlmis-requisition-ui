@@ -87,6 +87,7 @@
         Requisition.prototype.skipAllFullSupplyLineItems = skipAllFullSupplyLineItems;
         Requisition.prototype.unskipAllFullSupplyLineItems = unskipAllFullSupplyLineItems;
         Requisition.prototype.getAvailableNonFullSupplyProducts = getAvailableNonFullSupplyProducts;
+        Requisition.prototype.getAvailableFullSupplyProducts = getAvailableFullSupplyProducts;
         Requisition.prototype.addLineItem = addLineItem;
         Requisition.prototype.deleteLineItem = deleteLineItem;
 
@@ -402,7 +403,7 @@
          * @description
          * Checks if this requisition is editable based on its status and user rights.
          *
-         * @return {Boolean} true if this requisition' is editable, false otherwise
+         * @return {Boolean} true if this requisition is editable, false otherwise
          */
         function isEditable(requisition) {
             return hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, requisition) && (requisition.$isInitiated() || requisition.$isRejected())
@@ -412,9 +413,37 @@
                 || hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition) && (requisition.$isInitiated() || requisition.$isRejected() || requisition.$isSubmitted());
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name getAvailableNonFullSupplyProducts
+         *
+         * @description
+         * Returns a list of available non full supply products that does not have a line item
+         * added.
+         *
+         * @return  {Array} the array of available non full supply line items
+         */
         function getAvailableNonFullSupplyProducts() {
             return filterOutOrderablesWithLineItems(
                 this.availableNonFullSupplyProducts,
+                this.requisitionLineItems
+            );
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name getAvailableFullSupplyProducts
+         *
+         * @description
+         * Returns a list of available full supply products that does not have a line item added.
+         *
+         * @return  {Array} the array of available full supply line items
+         */
+        function getAvailableFullSupplyProducts() {
+            return filterOutOrderablesWithLineItems(
+                this.availableFullSupplyProducts,
                 this.requisitionLineItems
             );
         }
@@ -439,7 +468,8 @@
 
             validateStatusForManipulatingLineItems(this.status);
             validateOrderableDoesNotHaveLineItem(this.requisitionLineItems, orderable);
-            validateOrderableIsAvailable(this.availableNonFullSupplyProducts, orderable);
+            validateOrderableIsAvailable(this, orderable);
+            validateNotAddingFullSupplyLineItemToRegularRequisition(this, orderable);
 
             var orderableProgram = getOrderableProgramById(orderable.programs, this.program.id);
 
@@ -553,13 +583,34 @@
             }
         }
 
-        function validateOrderableIsAvailable(availableProducts, orderable) {
-            var availableOrderables = availableProducts.filter(function(product) {
+        function validateOrderableIsAvailable(requisition, orderable) {
+            var program = getOrderableProgramById(orderable.programs, requisition.program.id);
+
+            if(!program) {
+                throw 'The given product is not available for this requisition';
+            }
+
+            var availableProducts;
+            if (program.fullSupply) {
+                availableProducts = requisition.availableFullSupplyProducts;
+            } else {
+                availableProducts = requisition.availableNonFullSupplyProducts;
+            }
+
+            var matchingAvailableOrderables = availableProducts.filter(function(product) {
                 return product.id === orderable.id;
             });
 
-            if (!availableOrderables.length) {
+            if (!matchingAvailableOrderables.length) {
                 throw 'The given product is not available for this requisition';
+            }
+        }
+
+        function validateNotAddingFullSupplyLineItemToRegularRequisition(requisition, orderable) {
+            var program = getOrderableProgramById(orderable.programs, requisition.program.id);
+
+            if (program.fullSupply && !requisition.emergency) {
+                throw 'Can not add full supply line items to regular requisition';
             }
         }
 

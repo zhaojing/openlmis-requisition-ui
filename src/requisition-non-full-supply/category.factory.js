@@ -49,23 +49,14 @@
          * @param  {String} programId the ID of the program
          * @return {Array}            the list of categories with related products
          */
-        function groupProducts(requisition) {
+        function groupProducts(products, programId) {
             var categories = {};
-            angular.forEach(requisition.availableNonFullSupplyProducts, function(product) {
-                var category = getProgram(
-                    product,
-                    requisition.program.id
-                ).orderableCategoryDisplayName;
+            products.forEach(function(product) {
+                var category = getProgram(product, programId).orderableCategoryDisplayName;
 
                 if (!categories[category]) {
                     categories[category] = [];
                 }
-
-                product.$visible = $filter('filter')(requisition.$getProducts(true), {
-                    orderable: {
-                        id: product.id
-                    }
-                }).length === 0;
 
                 categories[category].push(product);
             });
@@ -84,9 +75,9 @@
         }
 
         function getProgram(product, programId) {
-            return $filter('filter')(product.programs, {
-                programId: programId
-            }, true)[0];
+            return product.programs.filter(function(program) {
+                return program.programId === programId;
+            })[0];
         }
     }
 
