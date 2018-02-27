@@ -19,21 +19,21 @@
 
     /**
      * @ngdoc controller
-     * @name requisition-non-full-supply.controller:NonFullSupplyController
+     * @name requisition-view-tab.controller:ViewTabController
      *
      * @description
      * Responsible for managing product grid for non full supply products.
      */
     angular
-        .module('requisition-non-full-supply')
-        .controller('NonFullSupplyController', nonFullSupplyController);
+        .module('requisition-view-tab')
+        .controller('ViewTabController', ViewTabController);
 
-    nonFullSupplyController.$inject = [
+    ViewTabController.$inject = [
         '$filter', 'addProductModalService', 'requisitionValidator', 'requisition', 'columns',
         'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory'
     ];
 
-    function nonFullSupplyController($filter, addProductModalService, requisitionValidator,
+    function ViewTabController($filter, addProductModalService, requisitionValidator,
                                      requisition, columns, lineItems, alertService, canSubmit,
                                      canAuthorize, fullSupply, categoryFactory) {
 
@@ -47,7 +47,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @propertyOf requisition-view-tab.controller:ViewTabController
          * @name lineItems
          * @type {Array}
          *
@@ -58,7 +58,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @propertyOf requisition-view-tab.controller:ViewTabController
          * @name items
          * @type {Array}
          *
@@ -69,7 +69,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @propertyOf requisition-view-tab.controller:ViewTabController
          * @name requisition
          * @type {Object}
          *
@@ -80,7 +80,7 @@
 
         /**
          * @ngdoc property
-         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @methodOf requisition-view-tab.controller:ViewTabController
          * @name showAddProductButton
          * @type {Boolean}
          *
@@ -92,7 +92,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @propertyOf requisition-view-tab.controller:ViewTabController
          * @name columns
          * @type {Array}
          *
@@ -111,7 +111,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @methodOf requisition-view-tab.controller:ViewTabController
          * @name deleteLineItem
          *
          * @description
@@ -127,7 +127,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @methodOf requisition-view-tab.controller:ViewTabController
          * @name showDeleteColumn
          *
          * @description
@@ -144,7 +144,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:NonFullSupplyController
+         * @methodOf requisition-view-tab.controller:ViewTabController
          * @name addProduct
          *
          * @description

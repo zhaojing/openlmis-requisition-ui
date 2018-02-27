@@ -19,14 +19,14 @@
 
     /**
      * @ngdoc controller
-     * @name requisition-non-full-supply.controller:AddProductModalController
+     * @name requisition-view-tab.controller:AddProductModalController
      *
      * @description
      * Manages Add Product Modal and provides method for checking categories/products visibility
      * and adding products.
      */
     angular
-        .module('requisition-non-full-supply')
+        .module('requisition-view-tab')
         .controller('AddProductModalController', controller);
 
     controller.$inject = ['modalDeferred', 'categories'];
@@ -40,7 +40,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:AddProductModalController
+         * @methodOf requisition-view-tab.controller:AddProductModalController
          * @name $onInit
          *
          * @description
@@ -52,7 +52,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-non-full-supply.controller:AddProductModalController
+         * @methodOf requisition-view-tab.controller:AddProductModalController
          * @name addProduct
          *
          * @description

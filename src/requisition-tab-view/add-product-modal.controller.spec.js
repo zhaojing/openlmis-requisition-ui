@@ -18,7 +18,7 @@ describe('AddProductModalController', function() {
     var vm, $controller, OrderableDataBuilder, $q, $rootScope, modalDeferred, categories;
 
     beforeEach(function() {
-        module('requisition-non-full-supply');
+        module('requisition-view-tab');
 
         inject(function($injector) {
             $controller = $injector.get('$controller');

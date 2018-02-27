@@ -26,8 +26,8 @@
     function routes($stateProvider) {
         $stateProvider.state('openlmis.requisitions.requisition.fullSupply', {
             url: '/fullSupply?page&size',
-            templateUrl: 'requisition-non-full-supply/non-full-supply.html',
-            controller: 'NonFullSupplyController',
+            templateUrl: 'requisition-view-tab/view-tab.html',
+            controller: 'ViewTabController',
             controllerAs: 'vm',
             isOffline: true,
             nonTrackable: true,

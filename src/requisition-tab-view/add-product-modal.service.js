@@ -19,14 +19,14 @@
 
     /**
      * @ngdoc service
-     * @name requisition-non-full-supply.addProductModalService
+     * @name requisition-view-tab.addProductModalService
      *
      * @description
      * It shows modal with possibility to add non-full supply line item
      * with one of given products.
      */
     angular
-        .module('requisition-non-full-supply')
+        .module('requisition-view-tab')
         .service('addProductModalService', service);
 
     service.$inject = [
@@ -40,7 +40,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-non-full-supply.addProductModalService
+         * @methodOf requisition-view-tab.addProductModalService
          * @name show
          *
          * @description
@@ -55,7 +55,7 @@
             dialog = openlmisModalService.createDialog({
                 controller: 'AddProductModalController',
                 controllerAs: 'vm',
-                templateUrl: 'requisition-non-full-supply/add-product-modal.html',
+                templateUrl: 'requisition-view-tab/add-product-modal.html',
                 show: true,
                 resolve: {
                     categories: function() {

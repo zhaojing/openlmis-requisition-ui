@@ -18,7 +18,7 @@ describe('categoryFactory', function() {
     var categoryFactory, products;
 
     beforeEach(function() {
-        module('requisition-non-full-supply');
+        module('requisition-view-tab');
 
         inject(function($injector) {
             categoryFactory = $injector.get('categoryFactory');

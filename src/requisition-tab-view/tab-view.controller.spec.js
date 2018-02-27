@@ -13,14 +13,14 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('NonFullSupplyController', function() {
+describe('ViewTabController', function() {
 
     var vm, addProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
         LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
         RequisitionColumnDataBuilder, fullSupply, categoryFactory;
 
     beforeEach(function() {
-        module('requisition-non-full-supply');
+        module('requisition-view-tab');
 
         inject(function($injector) {
             $controller = $injector.get('$controller');
@@ -508,7 +508,7 @@ describe('NonFullSupplyController', function() {
     });
 
     function initController() {
-        vm = $controller('NonFullSupplyController', {
+        vm = $controller('ViewTabController', {
             lineItems: [],
             columns: [],
             LineItem: LineItem,

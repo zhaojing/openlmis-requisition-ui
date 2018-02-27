@@ -18,7 +18,7 @@
     'use strict';
 
     angular
-        .module('requisition-non-full-supply')
+        .module('requisition-view-tab')
         .config(routes);
 
     routes.$inject = ['$stateProvider'];
@@ -27,8 +27,8 @@
 
         $stateProvider.state('openlmis.requisitions.requisition.nonFullSupply', {
             url: '/nonFullSupply?page&size',
-            templateUrl: 'requisition-non-full-supply/non-full-supply.html',
-            controller: 'NonFullSupplyController',
+            templateUrl: 'requisition-view-tab/view-tab.html',
+            controller: 'ViewTabController',
             controllerAs: 'vm',
             isOffline: true,
             nonTrackable: true,

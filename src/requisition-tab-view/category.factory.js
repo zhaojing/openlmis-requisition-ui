@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc service
-     * @name requisition-non-full-supply.categoryFactory
+     * @name requisition-view-tab.categoryFactory
      *
      * @description
      * Responsible for grouping products into categories to be displayed on the Add Product modal.
      */
     angular
-        .module('requisition-non-full-supply')
+        .module('requisition-view-tab')
         .factory('categoryFactory', factory);
 
     factory.$inject = ['$filter'];
@@ -38,7 +38,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-non-full-supply.categoryFactory
+         * @methodOf requisition-view-tab.categoryFactory
          * @name groupProducts
          *
          * @description

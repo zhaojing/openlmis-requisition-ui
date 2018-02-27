@@ -18,12 +18,12 @@
     'use strict';
 
     /**
-     * @module requisition-non-full-supply
+     * @module requisition-view-tab
      *
      * @description
      * Responsible for managing non full supply screen.
      */
-    angular.module('requisition-non-full-supply', [
+    angular.module('requisition-view-tab', [
         'openlmis-auth',
         'openlmis-form',
         'openlmis-pagination',
