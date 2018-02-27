@@ -111,11 +111,19 @@
         function isDateBeforeOrEqualToday(date) {
             var currentDate = new Date();
             return date.getFullYear() < currentDate.getUTCFullYear() ||
-                date.getFullYear() <= currentDate.getUTCFullYear() &&
-                date.getMonth() < currentDate.getUTCMonth() ||
-                date.getFullYear() <= currentDate.getUTCFullYear() &&
-                date.getMonth() <= currentDate.getUTCMonth() &&
-                date.getDate() <= currentDate.getUTCDate();
+                isMonthInYearBeforeOrEqualCurrentUTCMonth(date, currentDate) ||
+                isDayInYearAndMonthBeforeOrEqualCurrentUTCDay(date, currentDate);
+        }
+
+        function isMonthInYearBeforeOrEqualCurrentUTCMonth(date, currentDate) {
+            return date.getFullYear() === currentDate.getUTCFullYear() &&
+            date.getMonth() < currentDate.getUTCMonth();
+        }
+
+        function isDayInYearAndMonthBeforeOrEqualCurrentUTCDay(date, currentDate) {
+            return date.getFullYear() === currentDate.getUTCFullYear() &&
+            date.getMonth() === currentDate.getUTCMonth() &&
+            date.getDate() <= currentDate.getUTCDate();
         }
     }
 })();
