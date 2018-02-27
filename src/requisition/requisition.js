@@ -465,12 +465,6 @@
          * @param   {string}    requestedQuantityExplanation    the explanation
          */
         function addLineItem(orderable, requestedQuantity, requestedQuantityExplanation) {
-
-            validateStatusForManipulatingLineItems(this.status);
-            validateOrderableDoesNotHaveLineItem(this.requisitionLineItems, orderable);
-            validateOrderableIsAvailable(this, orderable);
-            validateNotAddingFullSupplyLineItemToRegularRequisition(this, orderable);
-
             var orderableProgram = getOrderableProgramById(orderable.programs, this.program.id);
 
             this.requisitionLineItems.push(new LineItem({
@@ -496,11 +490,6 @@
          * @param   {LineItem}  lineItem    the line item to be deleted
          */
         function deleteLineItem(lineItem) {
-
-            validateStatusForManipulatingLineItems(this.status);
-            validateLineItemIsPartOfRequisition(this, lineItem);
-            validateLineItemIsNotFullSupply(lineItem);
-
             var lineItemIndex = this.requisitionLineItems.indexOf(lineItem);
             this.requisitionLineItems.splice(lineItemIndex, 1);
         }
@@ -564,56 +553,6 @@
             });
         }
 
-        function validateStatusForManipulatingLineItems(status) {
-            if (REQUISITION_STATUS.INITIATED !== status &&
-                REQUISITION_STATUS.SUBMITTED !== status &&
-                REQUISITION_STATUS.REJECTED != status
-            ) {
-                throw 'Can not add or remove line items past SUBMITTED status';
-            }
-        }
-
-        function validateOrderableDoesNotHaveLineItem(lineItems, orderable) {
-            var orderableLineItems = lineItems.filter(function(lineItem) {
-                return lineItem.orderable.id === orderable.id;
-            });
-
-            if (orderableLineItems.length > 0) {
-                throw 'Line item for the given orderable already exist';
-            }
-        }
-
-        function validateOrderableIsAvailable(requisition, orderable) {
-            var program = getOrderableProgramById(orderable.programs, requisition.program.id);
-
-            if(!program) {
-                throw 'The given product is not available for this requisition';
-            }
-
-            var availableProducts;
-            if (program.fullSupply) {
-                availableProducts = requisition.availableFullSupplyProducts;
-            } else {
-                availableProducts = requisition.availableNonFullSupplyProducts;
-            }
-
-            var matchingAvailableOrderables = availableProducts.filter(function(product) {
-                return product.id === orderable.id;
-            });
-
-            if (!matchingAvailableOrderables.length) {
-                throw 'The given product is not available for this requisition';
-            }
-        }
-
-        function validateNotAddingFullSupplyLineItemToRegularRequisition(requisition, orderable) {
-            var program = getOrderableProgramById(orderable.programs, requisition.program.id);
-
-            if (program.fullSupply && !requisition.emergency) {
-                throw 'Can not add full supply line items to regular requisition';
-            }
-        }
-
         function getOrderableProgramById(programs, programId) {
             return programs.filter(function(program) {
                 return program.programId === programId;
@@ -628,19 +567,6 @@
 
                 return orderableLineItems.length === 0;
             })
-        }
-
-        function validateLineItemIsPartOfRequisition(requisition, lineItem) {
-            var lineItemIndex = requisition.requisitionLineItems.indexOf(lineItem);
-            if (lineItemIndex === -1) {
-                throw 'The given line item is not part of this requisition';
-            }
-        }
-
-        function validateLineItemIsNotFullSupply(lineItem) {
-            if (lineItem.$program.fullSupply) {
-                throw 'Can not delete full supply line items';
-            }
         }
 
         function handlePromise(promise, success, failure) {
