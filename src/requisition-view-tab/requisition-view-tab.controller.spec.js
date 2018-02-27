@@ -392,8 +392,8 @@ describe('ViewTabController', function() {
 
             expect(requisition.addLineItem).not.toHaveBeenCalled();
             expect(alertService.error).toHaveBeenCalledWith(
-                'requisitionNonFullSupply.noProductsToAdd.label',
-                'requisitionNonFullSupply.noProductsToAdd.message'
+                'requisitionViewTab.noProductsToAdd.label',
+                'requisitionViewTab.noProductsToAdd.message'
             );
         });
 

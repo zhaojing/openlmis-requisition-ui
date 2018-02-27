@@ -171,8 +171,8 @@
                 });
             } else {
                 alertService.error(
-                    'requisitionNonFullSupply.noProductsToAdd.label',
-                    'requisitionNonFullSupply.noProductsToAdd.message'
+                    'requisitionViewTab.noProductsToAdd.label',
+                    'requisitionViewTab.noProductsToAdd.message'
                 );
             }
         }

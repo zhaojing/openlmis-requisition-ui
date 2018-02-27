@@ -1,11 +1,14 @@
 {
-    "requisitionNonFullSupply.addProduct": "Add Product",
-    "requisitionNonFullSupply.category": "Category",
-    "requisitionNonFullSupply.product": "Product",
-    "requisitionNonFullSupply.quantity": "Quantity",
-    "requisitionNonFullSupply.explanation": "Explanation",
-    "requisitionNonFullSupply.cancel": "Cancel",
-    "requisitionNonFullSupply.noProducts": "No non-full supply items have been added.",
-    "requisitionNonFullSupply.noProductsToAdd.label": "Warning",
-    "requisitionNonFullSupply.noProductsToAdd.message": "There are no more products to add. All available products have already been added into this requisition."
+    "requisitionViewTab.addProduct": "Add Product",
+    "requisitionViewTab.category": "Category",
+    "requisitionViewTab.product": "Product",
+    "requisitionViewTab.quantity": "Quantity",
+    "requisitionViewTab.explanation": "Explanation",
+    "requisitionViewTab.cancel": "Cancel",
+    "requisitionViewTab.noProducts": "No non-full supply items have been added.",
+    "requisitionViewTab.noProductsToAdd.label": "Warning",
+    "requisitionViewTab.noProductsToAdd.message": "There are no more products to add. All available products have already been added into this requisition.",
+    "requisitionViewTab.all": "All",
+    "requisitionViewTab.none": "None",
+    "requisitionViewTab.skip": "Skip"
 }

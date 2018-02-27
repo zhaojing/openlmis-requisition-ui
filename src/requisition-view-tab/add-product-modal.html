@@ -2,14 +2,14 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4>{{'requisitionNonFullSupply.addProduct' | message}}</h4>
+				<h4>{{'requisitionViewTab.addProduct' | message}}</h4>
 			</div>
 			<div class="modal-body">
 				<form id="productForm" class="add-product-modal" ng-submit="vm.addProduct()">
 
 					<fieldset class="form-group">
 						<label for="category">
-							{{'requisitionNonFullSupply.category' | message}}
+							{{'requisitionViewTab.category' | message}}
 						</label>
 						<select id="category" ng-model="vm.selectedCategory" ng-disabled="!vm.categories.length" ng-options="category.name for category in vm.categories" required>
 						</select>
@@ -17,7 +17,7 @@
 
 					<fieldset class="form-group">
 						<label for="product">
-							{{'requisitionNonFullSupply.product' | message}}
+							{{'requisitionViewTab.product' | message}}
 						</label>
 						<select id="product" ng-model="vm.selectedProduct" ng-disabled="!vm.selectedCategory" ng-options="product.fullProductName for product in vm.selectedCategory.products" required>
 						</select>
@@ -25,14 +25,14 @@
 
 					<fieldset class="form-group">
 						<label for="requestedQuantity">
-							{{'requisitionNonFullSupply.quantity' | message}}
+							{{'requisitionViewTab.quantity' | message}}
 						</label>
 						<input id="requestedQuantity" ng-model="vm.requestedQuantity" required positive-integer>
 					</fieldset>
 
 					<fieldset class="form-group">
 						<label for="requestedQuantityExplanation">
-							{{'requisitionNonFullSupply.explanation' | message}}
+							{{'requisitionViewTab.explanation' | message}}
 						</label>
 						<input id="requestedQuantityExplanation" type="text" ng-required="vm.fullSupply" ng-model="vm.requestedQuantityExplanation">
 					</fieldset>
@@ -42,10 +42,10 @@
 			<div class="modal-footer">
 				<div class="button-group">
 					<button class="primary" type="submit" form="productForm">
-						{{'requisitionNonFullSupply.addProduct' | message}}
+						{{'requisitionViewTab.addProduct' | message}}
 					</button>
 					<button type="button" class="cancel" ng-click="vm.close()">
-						{{'requisitionNonFullSupply.cancel' | message}}
+						{{'requisitionViewTab.cancel' | message}}
 					</button>
 				</div>
 			</div>
