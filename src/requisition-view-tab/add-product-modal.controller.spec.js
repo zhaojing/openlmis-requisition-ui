@@ -15,7 +15,8 @@
 
 describe('AddProductModalController', function() {
 
-    var vm, $controller, OrderableDataBuilder, $q, $rootScope, modalDeferred, categories;
+    var vm, $controller, OrderableDataBuilder, $q, $rootScope, modalDeferred, categories,
+        fullSupply;
 
     beforeEach(function() {
         module('requisition-view-tab');
@@ -43,9 +44,12 @@ describe('AddProductModalController', function() {
 
         modalDeferred = $q.defer();
 
+        fullSupply = true;
+
         vm = $controller('AddProductModalController', {
             modalDeferred: modalDeferred,
-            categories: categories
+            categories: categories,
+            fullSupply: fullSupply
         });
     });
 
@@ -61,6 +65,12 @@ describe('AddProductModalController', function() {
             vm.$onInit();
 
             expect(vm.close).toBe(modalDeferred.reject);
+        });
+
+        it('should expose fullSupply', function() {
+            vm.$onInit();
+
+            expect(vm.fullSupply).toBe(fullSupply);
         });
 
     });

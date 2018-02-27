@@ -49,7 +49,7 @@
          * @param  {Object} requisition the requisition containing list of available products
          * @return {Object}             the new product
          */
-        function show(categories) {
+        function show(categories, fullSupply) {
             if (dialog) return dialog.promise;
 
             dialog = openlmisModalService.createDialog({
@@ -60,6 +60,9 @@
                 resolve: {
                     categories: function() {
                         return categories;
+                    },
+                    fullSupply: function() {
+                        return fullSupply;
                     }
                 }
             });

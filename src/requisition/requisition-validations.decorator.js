@@ -33,9 +33,9 @@
         $provide.decorator('Requisition', decorate);
     }
 
-    decorate.$inject = ['$delegate'];
+    decorate.$inject = ['$delegate', 'REQUISITION_STATUS'];
 
-    function decorate($delegate) {
+    function decorate($delegate, REQUISITION_STATUS) {
         var originalAddLineItem = $delegate.prototype.addLineItem,
             originalDeleteLineItem = $delegate.prototype.deleteLineItem;
 

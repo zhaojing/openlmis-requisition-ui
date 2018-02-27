@@ -160,7 +160,7 @@
                     requisition.program.id
                 );
 
-                addProductModalService.show(categories)
+                addProductModalService.show(categories, fullSupply)
                 .then(function(lineItem) {
                     vm.requisition.addLineItem(
                         lineItem.orderable,

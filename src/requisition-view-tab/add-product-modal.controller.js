@@ -29,9 +29,9 @@
         .module('requisition-view-tab')
         .controller('AddProductModalController', controller);
 
-    controller.$inject = ['modalDeferred', 'categories'];
+    controller.$inject = ['modalDeferred', 'categories', 'fullSupply'];
 
-    function controller(modalDeferred, categories) {
+    function controller(modalDeferred, categories, fullSupply) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -48,6 +48,7 @@
          */
         function onInit() {
             vm.categories = categories;
+            vm.fullSupply = fullSupply;
         }
 
         /**

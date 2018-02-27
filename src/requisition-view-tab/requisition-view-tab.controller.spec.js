@@ -298,7 +298,7 @@ describe('ViewTabController', function() {
 
     describe('addProduct', function() {
 
-        var orderable;
+        var orderable, categories;
 
         beforeEach(function() {
             LineItem = jasmine.createSpy();
@@ -324,10 +324,12 @@ describe('ViewTabController', function() {
 
             spyOn(alertService, 'error');
 
-            categoryFactory.groupProducts.andReturn([{
+            categories = [{
                 name: 'Group 1',
                 products: requisition.availableNonFullSupplyProducts
-            }]);
+            }];
+
+            categoryFactory.groupProducts.andReturn(categories);
 
             orderable = new OrderableDataBuilder().build();
 
@@ -344,7 +346,10 @@ describe('ViewTabController', function() {
             vm.addProduct();
             $rootScope.$apply();
 
-            expect(addProductModalService.show).toHaveBeenCalled();
+            expect(addProductModalService.show).toHaveBeenCalledWith(
+                categories,
+                fullSupply
+            );
             expect(requisition.addLineItem).toHaveBeenCalledWith(
                 orderable, 16, 'explanation'
             );
@@ -360,7 +365,10 @@ describe('ViewTabController', function() {
             deferred.reject();
             $rootScope.$apply();
 
-            expect(addProductModalService.show).toHaveBeenCalled();
+            expect(addProductModalService.show).toHaveBeenCalledWith(
+                categories,
+                fullSupply
+            );
             expect(requisition.addLineItem).not.toHaveBeenCalled();
         });
 
