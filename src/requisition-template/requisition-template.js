@@ -74,20 +74,23 @@
          * @return {Array}                 the matching columns
          */
         function getColumns(nonFullSupply) {
-            var columns = [];
+            var columns = [],
+                columnsMap = this.columnsMap;
 
             if (nonFullSupply || this.emergency) {
-                angular.forEach(this.columnsMap, function(column) {
-                    if (column.$display && !column.$fullSupplyOnly) {
-                        columns.push(column);
-                    }
-                });
+                for (var columnName in columnsMap) {
+                    if (columnsMap.hasOwnProperty(columnName) &&
+                        columnsMap[columnName].$display && !columnsMap[columnName].$fullSupplyOnly) {
+                            columns.push(columnsMap[columnName]);
+                        }
+                }
             } else {
-                angular.forEach(this.columnsMap, function(column) {
-                    if (column.$display) {
-                        columns.push(column);
-                    }
-                });
+                for (var columnName in columnsMap) {
+                    if (columnsMap.hasOwnProperty(columnName) &&
+                        columnsMap[columnName].$display) {
+                            columns.push(columnsMap[columnName]);
+                        }
+                }
             }
 
             return columns;

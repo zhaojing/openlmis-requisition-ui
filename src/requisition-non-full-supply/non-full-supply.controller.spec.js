@@ -17,7 +17,7 @@ describe('NonFullSupplyController', function() {
 
     var vm, addProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
         LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
-        RequisitionColumnDataBuilder, getAvailableProductsSpy, fullSupply, categoryFactory;
+        RequisitionColumnDataBuilder, fullSupply, categoryFactory;
 
     beforeEach(function() {
         module('requisition-non-full-supply');
@@ -38,7 +38,8 @@ describe('NonFullSupplyController', function() {
 
         requisition = jasmine.createSpyObj('requisition', ['$isInitiated' , '$isRejected',
             '$isApproved', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased',
-            '$isAfterAuthorize', '$getProducts', 'addLineItem', 'deleteLineItem']);
+            '$isAfterAuthorize', '$getProducts', 'addLineItem', 'deleteLineItem',
+            'getAvailableFullSupplyProducts', 'getAvailableNonFullSupplyProducts']);
         requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns',
             'hasSkipColumn']);
         requisition.requisitionLineItems = [
@@ -48,8 +49,6 @@ describe('NonFullSupplyController', function() {
             lineItemSpy(3, 'Two', true),
             lineItemSpy(4, 'Three', false)
         ];
-
-        getAvailableProductsSpy = jasmine.createSpy('getAvailableProducts');
 
         columns = [new RequisitionColumnDataBuilder().buildSkipColumn()];
 
@@ -299,18 +298,29 @@ describe('NonFullSupplyController', function() {
 
     describe('addProduct', function() {
 
+        var orderable;
+
         beforeEach(function() {
             LineItem = jasmine.createSpy();
             requisition.program = {
                 id: 'program-id'
             };
 
-            requisition.availableNonFullSupplyProducts = [{
-                name: 'Column One',
-                $visible: true
-            }];
+            requisition.availableNonFullSupplyProducts = [
+                new OrderableDataBuilder().build(),
+                new OrderableDataBuilder().build()
+            ];
 
-            getAvailableProductsSpy.andReturn(requisition.availableNonFullSupplyProducts);
+            requisition.availableFullSupplyProducts = [
+                new OrderableDataBuilder().build(),
+                new OrderableDataBuilder().build()
+            ];
+
+            requisition.getAvailableNonFullSupplyProducts
+                .andReturn(requisition.availableNonFullSupplyProducts);
+
+            requisition.getAvailableFullSupplyProducts
+                .andReturn(requisition.availableFullSupplyProducts);
 
             spyOn(alertService, 'error');
 
@@ -319,24 +329,24 @@ describe('NonFullSupplyController', function() {
                 products: requisition.availableNonFullSupplyProducts
             }]);
 
-            initController();
-        });
-
-        it('should add product', function() {
-            var orderable = new OrderableDataBuilder().build();
+            orderable = new OrderableDataBuilder().build();
 
             addProductModalService.show.andReturn($q.resolve({
                 orderable: orderable,
                 requestedQuantity: 16,
                 requestedQuantityExplanation: 'explanation'
             }));
+        });
 
+        it('should add product', function() {
+
+            initController();
             vm.addProduct();
             $rootScope.$apply();
 
             expect(addProductModalService.show).toHaveBeenCalled();
             expect(requisition.addLineItem).toHaveBeenCalledWith(
-                orderable,16, 'explanation'
+                orderable, 16, 'explanation'
             );
         });
 
@@ -345,6 +355,7 @@ describe('NonFullSupplyController', function() {
             spyOn(requisition.requisitionLineItems, 'push');
             addProductModalService.show.andReturn(deferred.promise);
 
+            initController();
             vm.addProduct();
             deferred.reject();
             $rootScope.$apply();
@@ -354,8 +365,9 @@ describe('NonFullSupplyController', function() {
         });
 
         it('should not open add product modal if there are no products to add', function() {
-            getAvailableProductsSpy.andReturn([]);
+            requisition.getAvailableNonFullSupplyProducts.andReturn([]);
 
+            initController();
             vm.addProduct();
             $rootScope.$apply();
 
@@ -364,8 +376,9 @@ describe('NonFullSupplyController', function() {
         });
 
         it('should open alert if there are no products to add', function() {
-            getAvailableProductsSpy.andReturn([]);
+            requisition.getAvailableNonFullSupplyProducts.andReturn([]);
 
+            initController();
             vm.addProduct();
             $rootScope.$apply();
 
@@ -373,6 +386,30 @@ describe('NonFullSupplyController', function() {
             expect(alertService.error).toHaveBeenCalledWith(
                 'requisitionNonFullSupply.noProductsToAdd.label',
                 'requisitionNonFullSupply.noProductsToAdd.message'
+            );
+        });
+
+        it('should use non full supply products', function() {
+            fullSupply = false;
+
+            initController();
+            vm.addProduct();
+
+            expect(categoryFactory.groupProducts).toHaveBeenCalledWith(
+                requisition.availableNonFullSupplyProducts,
+                requisition.program.id
+            );
+        });
+
+        it('should use full supply products', function() {
+            fullSupply = true;
+
+            initController();
+            vm.addProduct();
+
+            expect(categoryFactory.groupProducts).toHaveBeenCalledWith(
+                requisition.availableFullSupplyProducts,
+                requisition.program.id
             );
         });
 
@@ -480,7 +517,6 @@ describe('NonFullSupplyController', function() {
             requisitionValidator: requisitionValidator,
             canSubmit: canSubmit,
             canAuthorize: canAuthorize,
-            getAvailableProducts: getAvailableProductsSpy,
             fullSupply: fullSupply
         });
         vm.$onInit();

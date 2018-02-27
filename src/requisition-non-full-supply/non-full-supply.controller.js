@@ -29,15 +29,13 @@
         .controller('NonFullSupplyController', nonFullSupplyController);
 
     nonFullSupplyController.$inject = [
-        '$filter', 'addProductModalService', 'requisitionValidator',
-        'requisition', 'columns', 'lineItems', 'alertService', 'canSubmit', 'canAuthorize',
-        'getAvailableProducts', 'fullSupply', 'categoryFactory'
+        '$filter', 'addProductModalService', 'requisitionValidator', 'requisition', 'columns',
+        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory'
     ];
 
     function nonFullSupplyController($filter, addProductModalService, requisitionValidator,
-                                    requisition, columns, lineItems,
-                                    alertService, canSubmit, canAuthorize,
-                                    getAvailableProducts, fullSupply, categoryFactory) {
+                                     requisition, columns, lineItems, alertService, canSubmit,
+                                     canAuthorize, fullSupply, categoryFactory) {
 
         var vm = this;
 
@@ -208,15 +206,13 @@
 
         function hasRightToEdit() {
             if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
-                // only people with create rights should be able to edit new/rejected
-                // requisitions
                 return canSubmit;
             }
 
             if (vm.requisition.$isSubmitted()) {
-                // only authorizers should be able to edit submitted requisitions
                 return canAuthorize;
             }
+
             return false;
         }
 
@@ -228,6 +224,13 @@
             });
 
             return hasDeletableLineItems;
+        }
+
+        function getAvailableProducts() {
+            if (fullSupply) {
+                return requisition.getAvailableFullSupplyProducts();
+            }
+            return requisition.getAvailableNonFullSupplyProducts();
         }
     }
 

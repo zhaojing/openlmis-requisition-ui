@@ -403,7 +403,7 @@
          * @description
          * Checks if this requisition is editable based on its status and user rights.
          *
-         * @return {Boolean} true if this requisition is editable, false otherwise
+         * @return {boolean} true if this requisition is editable, false otherwise
          */
         function isEditable(requisition) {
             return hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, requisition) && (requisition.$isInitiated() || requisition.$isRejected())

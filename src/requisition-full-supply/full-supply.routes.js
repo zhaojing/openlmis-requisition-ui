@@ -51,11 +51,6 @@
                 columns: function(requisition) {
                     return requisition.template.getColumns(requisition.emergency);
                 },
-                getAvailableProducts: function(requisition) {
-                    return function() {
-                        return requisition.getAvailableFullSupplyProducts();
-                    };
-                },
                 fullSupply: function() {
                     return true;
                 }
