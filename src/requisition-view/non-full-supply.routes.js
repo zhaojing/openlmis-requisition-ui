@@ -18,7 +18,7 @@
     'use strict';
 
     angular
-        .module('requisition-view-tab')
+        .module('requisition-view')
         .config(routes);
 
     routes.$inject = ['$stateProvider'];

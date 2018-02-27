@@ -18,7 +18,7 @@
     'use strict';
 
     angular
-        .module('requisition-full-supply')
+        .module('requisition-view')
         .config(routes);
 
     routes.$inject = ['$stateProvider'];
