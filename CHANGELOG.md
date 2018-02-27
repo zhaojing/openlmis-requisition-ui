@@ -19,6 +19,7 @@ Bug fixes:
 * [OLMIS-4004](https://openlmis.atlassian.net/browse/OLMIS-4004): Fix action button permission criteria to check by both program and facility.
 * [OLMIS-3527](https://openlmis.atlassian.net/browse/OLMIS-3527): Fix add comment button permission criteria, from certain statuses, to if requisition is editable.
 * [OLMIS-4164](https://openlmis.atlassian.net/browse/OLMIS-4164): Fix permission issues in skip controls, product grid inputs, and the add product button.
+* [OLMIS-3983](https://openlmis.atlassian.net/browse/OLMIS-3983): Fix problem with accessing offline requisitions
 
 5.2.2 / 2017-11-23
 ==================
