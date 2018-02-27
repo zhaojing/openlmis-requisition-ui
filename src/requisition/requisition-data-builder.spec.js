@@ -24,13 +24,14 @@
     RequisitionDataBuilder.$inject = [
         'RequisitionLineItemDataBuilder', 'FacilityDataBuilder', 'ProgramDataBuilder',
         'PeriodDataBuilder', 'RequisitionTemplateDataBuilder', 'OrderableDataBuilder',
-        'REQUISITION_STATUS', 'ReasonDataBuilder', 'Requisition'
+        'REQUISITION_STATUS', 'ReasonDataBuilder', 'Requisition', 'ProgramOrderableDataBuilder'
     ];
 
     function RequisitionDataBuilder(RequisitionLineItemDataBuilder, FacilityDataBuilder,
                                     ProgramDataBuilder, PeriodDataBuilder,
                                     RequisitionTemplateDataBuilder, OrderableDataBuilder,
-                                    REQUISITION_STATUS, ReasonDataBuilder, Requisition) {
+                                    REQUISITION_STATUS, ReasonDataBuilder, Requisition,
+                                    ProgramOrderableDataBuilder) {
 
         RequisitionDataBuilder.prototype.build = build;
         RequisitionDataBuilder.prototype.buildJson = buildJson;
@@ -73,23 +74,16 @@
             this.supervisoryNode = 'supervisory-node-id-' + instanceNumber;
             this.template = new RequisitionTemplateDataBuilder().buildJson();
 
-            var programs = [{
-                programId: 'program-id-1' + instanceNumber,
-                orderableDisplayCategoryId: 'orderable-display-category-id-1' + instanceNumber,
-                orderableCategoryDisplayName: 'Category 1' + instanceNumber,
-                orderableCategoryDisplayOrder: 2,
-                fullSupply: true,
-                displayOrder: 6,
-                pricePerPack: 4.34
-            }, {
-                programId: this.program.id,
-                orderableDisplayCategoryId: 'orderable-display-category-id-2' + instanceNumber,
-                orderableCategoryDisplayName: 'Category 2' + instanceNumber,
-                orderableCategoryDisplayOrder: 1,
-                fullSupply: false,
-                displayOrder: 6,
-                pricePerPack: 20.77
-            }];
+            var programs = [
+                new ProgramOrderableDataBuilder()
+                    .withFullSupply()
+                    .buildJson(),
+                new ProgramOrderableDataBuilder()
+                    .withProgramId(this.program.id)
+                    .withOrderableCategoryDisplayOrder(1)
+                    .withPricePerPack(20.77)
+                    .buildJson()
+            ];
 
             this.availableNonFullSupplyProducts = [
                 new OrderableDataBuilder().withPrograms(programs).buildJson(),
@@ -97,23 +91,21 @@
                 new OrderableDataBuilder().withPrograms(programs).buildJson()
             ];
 
-            programs = [{
-                programId: 'program-id-1' + instanceNumber,
-                orderableDisplayCategoryId: 'orderable-display-category-id-1' + instanceNumber,
-                orderableCategoryDisplayName: 'Category 1' + instanceNumber,
-                orderableCategoryDisplayOrder: 2,
-                fullSupply: false,
-                displayOrder: 6,
-                pricePerPack: 4.34
-            }, {
-                programId: this.program.id,
-                orderableDisplayCategoryId: 'orderable-display-category-id-2' + instanceNumber,
-                orderableCategoryDisplayName: 'Category 2' + instanceNumber,
-                orderableCategoryDisplayOrder: 1,
-                fullSupply: true,
-                displayOrder: 6,
-                pricePerPack: 20.77
-            }];
+            programs = [
+                new ProgramOrderableDataBuilder()
+                    .withProgramId('program-id-1' + instanceNumber)
+                    .withOrderableDisplayCategoryId('orderable-display-category-id-1' + instanceNumber)
+                    .withOrderableCategoryDisplayName('Category 1' + instanceNumber)
+                    .buildJson(),
+                new ProgramOrderableDataBuilder()
+                    .withProgramId(this.program.id)
+                    .withOrderableDisplayCategoryId('orderable-display-category-id-2' + instanceNumber)
+                    .withOrderableCategoryDisplayName('Category 2' + instanceNumber)
+                    .withOrderableCategoryDisplayOrder(1)
+                    .withPricePerPack(20.77)
+                    .withFullSupply()
+                    .buildJson()
+            ];
 
             this.availableFullSupplyProducts = [
                 new OrderableDataBuilder().withPrograms(programs).buildJson(),
