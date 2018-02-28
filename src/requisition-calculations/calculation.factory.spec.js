@@ -219,6 +219,21 @@ describe('calculationFactory', function() {
             expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(0);
         });
 
+        it('should use always use requested quantity column if requistiion is emergency', function() {
+            requisitionMock.emergency = true;
+
+            lineItem.requestedQuantity = undefined;
+            lineItem.stockOnHand = 55;
+            lineItem.maximumStockQuantity = 100;
+            lineItem.orderable.netContent = 10;
+            lineItem.orderable.packRoundingThreshold = 4;
+
+            var result = calculationFactory.packsToShip(lineItem, requisitionMock);
+
+            expect(result).not.toBe(5);
+            expect(result).toBe(0);
+        });
+
     });
 
     describe('Calculate total losses and adjustments', function() {
