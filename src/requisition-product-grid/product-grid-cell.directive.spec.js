@@ -16,7 +16,8 @@ describe('ProductGridCell', function() {
 
     var $compile, scope, requisition, directiveElem, requisitionValidatorMock,
         authorizationServiceSpy, fullSupplyColumns, nonFullSupplyColumns,
-        REQUISITION_RIGHTS, userAlwaysHasRight, userHasAuthorizedRight;
+        REQUISITION_RIGHTS, userAlwaysHasRight, userHasAuthorizedRight,
+        RequisitionColumnDataBuilder;
 
     beforeEach(function() {
         module('requisition-product-grid', function($compileProvider) {
@@ -61,6 +62,7 @@ describe('ProductGridCell', function() {
         inject(function($injector) {
             $compile = $injector.get('$compile');
             scope = $injector.get('$rootScope').$new();
+            RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
 
             REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
 
@@ -177,8 +179,61 @@ describe('ProductGridCell', function() {
             scope.column, requisition);
     });
 
+    describe('Skip Column', function() {
+
+        var skipColumn, element;
+
+        beforeEach(function() {
+            skipColumn = new RequisitionColumnDataBuilder().buildSkipColumn();
+            scope.column = skipColumn;
+        });
+
+        iit('should be always disabled if user can not edit', function() {
+            scope.userCanEdit = false;
+            scope.lineItem.canBeSkipped.andReturn(true);
+
+            element = getCompiledElement();
+
+            expect(getSkipInput().attr('disabled')).toBe('disabled');
+
+            scope.lineItem.canBeSkipped.andReturn(false);
+            scope.$digest();
+
+            expect(getSkipInput().attr('disabled')).toBe('disabled');
+
+            scope.lineItem.canBeSkipped.andReturn(true);
+            scope.$digest();
+
+            expect(getSkipInput().attr('disabled')).toBe('disabled');
+        });
+
+        iit('should change disabled state if lineItem changes its skipability and user has right to edit', function() {
+            scope.userCanEdit = true;
+            scope.lineItem.canBeSkipped.andReturn(true);
+
+            element = getCompiledElement();
+
+            expect(getSkipInput().attr('disabled')).toBe(undefined);
+
+            scope.lineItem.canBeSkipped.andReturn(false);
+            scope.$digest();
+
+            expect(getSkipInput().attr('disabled')).toBe('disabled');
+
+            scope.lineItem.canBeSkipped.andReturn(true);
+            scope.$digest();
+
+            expect(getSkipInput().attr('disabled')).toBe(undefined);
+        });
+
+        function getSkipInput() {
+            return element.find('input.skip');
+        }
+
+    });
+
     function getCompiledElement() {
-        var rootElement = angular.element('<div><div product-grid-cell requisition="requisition" column="column" line-item="lineItem"></div></div>');
+        var rootElement = angular.element('<div><div product-grid-cell requisition="requisition" column="column" line-item="lineItem" user-can-edit="userCanEdit"></div></div>');
         var compiledElement = $compile(rootElement)(scope);
         angular.element('body').append(compiledElement);
         scope.$digest();
