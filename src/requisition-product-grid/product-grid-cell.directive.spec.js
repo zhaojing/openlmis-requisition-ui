@@ -188,7 +188,7 @@ describe('ProductGridCell', function() {
             scope.column = skipColumn;
         });
 
-        iit('should be always disabled if user can not edit', function() {
+        it('should be always disabled if user can not edit', function() {
             scope.userCanEdit = false;
             scope.lineItem.canBeSkipped.andReturn(true);
 
@@ -207,7 +207,7 @@ describe('ProductGridCell', function() {
             expect(getSkipInput().attr('disabled')).toBe('disabled');
         });
 
-        iit('should change disabled state if lineItem changes its skipability and user has right to edit', function() {
+        it('should change disabled state if lineItem changes its skipability and user has right to edit', function() {
             scope.userCanEdit = true;
             scope.lineItem.canBeSkipped.andReturn(true);
 
