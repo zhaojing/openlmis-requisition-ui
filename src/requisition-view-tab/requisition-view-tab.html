@@ -7,7 +7,7 @@
 	<button class="add" ng-show="vm.showAddProductButton" ng-click="vm.addProduct()" >{{'requisitionViewTab.addProduct' | message}}</button>
 	<saving-indicator ng-show="vm.requisition.$isEditable" class="requisition-indicator" object="vm.requisition.requisitionLineItems"/>
 	<table>
-		<caption ng-if="!vm.items.length">{{'requisitionViewTab.noProducts' | message}}</caption>
+		<caption ng-if="!vm.items.length">{{vm.noProductsMessage | message}}</caption>
 		<thead>
 			<tr>
 				<th class="col-{{column.name}}" ng-repeat="column in vm.columns | orderBy : 'displayOrder'" ng-class="{'col-sticky': !column.$canChangeOrder}" popover="{{column.definition}}" popover-trigger-area="element">{{column.label}}</th>

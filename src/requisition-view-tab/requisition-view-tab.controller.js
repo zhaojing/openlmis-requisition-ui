@@ -107,6 +107,7 @@
             vm.columns = columns;
             vm.showAddProductButton = showAddProductButton();
             vm.showSkipControls = showSkipControls();
+            vm.noProductsMessage = getNoProductsMessage();
         }
 
         /**
@@ -231,6 +232,12 @@
                 return requisition.getAvailableFullSupplyProducts();
             }
             return requisition.getAvailableNonFullSupplyProducts();
+        }
+
+        function getNoProductsMessage() {
+            return fullSupply ?
+                'requisitionViewTab.noFullSupplyProducts' :
+                'requisitionViewTab.noNonFullSupplyProducts';
         }
     }
 

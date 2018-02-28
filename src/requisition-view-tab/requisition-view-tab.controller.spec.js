@@ -180,6 +180,22 @@ describe('ViewTabController', function() {
             expect(vm.showAddProductButton).toBe(false);
         });
 
+        it('should set correct noProductsMessage for full supply tab', function() {
+            fullSupply = true;
+
+            initController();
+
+            expect(vm.noProductsMessage).toBe('requisitionViewTab.noFullSupplyProducts');
+        });
+
+        it('should set correct noProductsMessage for non full supply tab', function() {
+            fullSupply = false;
+
+            initController();
+
+            expect(vm.noProductsMessage).toBe('requisitionViewTab.noNonFullSupplyProducts');
+        });
+
     });
 
     describe('$onInit', function() {

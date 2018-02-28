@@ -278,7 +278,7 @@
                 var jColumn = requisition.template.getColumn(J),
                     mColumn = requisition.template.getColumn(M);
 
-                if (shouldReturnRequestedQuantity(lineItem, jColumn)) {
+                if (shouldReturnRequestedQuantity(lineItem, jColumn, requisition)) {
                     orderQuantity = lineItem[J];
                 } else if (mColumn) {
                     orderQuantity = calculateOrderQuantity(lineItem, requisition);
@@ -385,8 +385,10 @@
             return lineItem[name] === undefined ? 0 : lineItem[name];
         }
 
-        function shouldReturnRequestedQuantity(lineItem, jColumn) {
-            return lineItem.isNonFullSupply() || (isDisplayed(jColumn) && isFilled(lineItem[J]));
+        function shouldReturnRequestedQuantity(lineItem, jColumn, requisition) {
+            return lineItem.isNonFullSupply() ||
+                (isDisplayed(jColumn) && isFilled(lineItem[J])) ||
+                requisition.emergency;
         }
 
         function isFilled(value) {
