@@ -219,7 +219,7 @@ describe('calculationFactory', function() {
             expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(0);
         });
 
-        it('should always use requested quantity column if requistiion is emergency', function() {
+        it('should always use requested quantity column if requisition is emergency', function() {
             requisitionMock.emergency = true;
 
             lineItem.requestedQuantity = undefined;
