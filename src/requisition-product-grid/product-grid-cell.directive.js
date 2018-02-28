@@ -37,11 +37,11 @@
         .directive('productGridCell', productGridCell);
 
     productGridCell.$inject = [
-        '$q', '$timeout', '$templateRequest', '$compile', 'requisitionValidator', 'authorizationService',
+        '$q', '$timeout', '$templateRequest', '$compile', 'requisitionValidator',
         'TEMPLATE_COLUMNS', 'COLUMN_TYPES', 'REQUISITION_RIGHTS'
     ];
 
-    function productGridCell($q, $timeout, $templateRequest, $compile, requisitionValidator, authorizationService,
+    function productGridCell($q, $timeout, $templateRequest, $compile, requisitionValidator,
                             TEMPLATE_COLUMNS, COLUMN_TYPES, REQUISITION_RIGHTS) {
 
         return {
@@ -50,7 +50,8 @@
             scope: {
                 requisition: '=',
                 column: '=',
-                lineItem: '='
+                lineItem: '=',
+                userCanEdit: '='
             }
         };
 
@@ -64,7 +65,7 @@
             scope.validate = validate;
             scope.update = update;
             scope.isReadOnly = isReadOnly();
-            scope.canNotSkip = canNotSkip();
+            scope.canSkip = canSkip;
 
             if(!scope.isReadOnly){
                 scope.$watch(function(){
@@ -137,17 +138,8 @@
                 return lineItem.isReadOnly(requisition, column);
             }
 
-            function canNotSkip() {
-                return !requisition.$isInitiated() && !requisition.$isRejected() &&
-                    !(hasAuthorizeRight() && requisition.$isSubmitted()) ||
-                    !lineItem.canBeSkipped(scope.requisition);
-            }
-
-            function hasAuthorizeRight() {
-                return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
-                    programId: requisition.program.id,
-                    facilityId: requisition.facility.id
-                });
+            function canSkip() {
+                return scope.userCanEdit && lineItem.canBeSkipped(scope.requisition);
             }
 
         }

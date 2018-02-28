@@ -177,34 +177,6 @@ describe('ProductGridCell', function() {
             scope.column, requisition);
     });
 
-    it('should call authorizationService only during linking for total losses and adjustments column', function() {
-        scope.column.name = "totalLossesAndAdjustments";
-
-        directiveElem = getCompiledElement();
-
-        expect(authorizationServiceSpy.hasRight.calls.length).toBe(1);
-
-        scope.$digest();
-        scope.$digest();
-        scope.$digest();
-
-        expect(authorizationServiceSpy.hasRight.calls.length).toBe(1);
-    });
-
-    it('should call authorizationService only during linking for Skip column', function() {
-        scope.column.name = "skipped";
-
-        directiveElem = getCompiledElement();
-
-        expect(authorizationServiceSpy.hasRight.calls.length).toBe(1);
-
-        scope.$digest();
-        scope.$digest();
-        scope.$digest();
-
-        expect(authorizationServiceSpy.hasRight.calls.length).toBe(1);
-    });
-
     function getCompiledElement() {
         var rootElement = angular.element('<div><div product-grid-cell requisition="requisition" column="column" line-item="lineItem"></div></div>');
         var compiledElement = $compile(rootElement)(scope);

@@ -4,9 +4,9 @@
 New functionality added in a backwards-compatible manner:
 * [OLMIS-3108:](https://openlmis.atlassian.net/browse/OLMIS-3108) Updated to use dev-ui v7 transifex build process
 * [OLMIS-2666:](https://openlmis.atlassian.net/browse/OLMIS-2666) Added create program modal.
-* [OLMIS-3917](https://openlmis.atlassian.net/browse/OLMIS-3917): Added stock based configuration to template screen.
-* [OLMIS-4087](https://openlmis.atlassian.net/browse/OLMIS-4087): Moved template screen to separate tab and support multiple templates per program.
-* [OLMIS-4161](https://openlmis.atlassian.net/browse/OLMIS-4161): Added calculation and validations for calculated order quantity isa column.
+* [OLMIS-3917:](https://openlmis.atlassian.net/browse/OLMIS-3917) Added stock based configuration to template screen.
+* [OLMIS-4087:](https://openlmis.atlassian.net/browse/OLMIS-4087) Moved template screen to separate tab and support multiple templates per program.
+* [OLMIS-4161:](https://openlmis.atlassian.net/browse/OLMIS-4161) Added calculation and validations for calculated order quantity isa column.
 
 Improvements:
 * [OLMIS-3876:](https://openlmis.atlassian.net/browse/OLMIS-3876) Split navigation and filter logic on requisition approve and view requisitions pages
@@ -15,11 +15,12 @@ Improvements:
 * [OLMIS-3782:](https://openlmis.atlassian.net/browse/OLMIS-3782) New option in the program settings to skip authorization step and button rename on the product grid if that setting is enabled.
 
 Bug fixes:
-* [OLMIS-3492](https://openlmis.atlassian.net/browse/OLMIS-3492): Allow to save comment in requisition longer than 255 characters
-* [OLMIS-4004](https://openlmis.atlassian.net/browse/OLMIS-4004): Fix action button permission criteria to check by both program and facility.
-* [OLMIS-3527](https://openlmis.atlassian.net/browse/OLMIS-3527): Fix add comment button permission criteria, from certain statuses, to if requisition is editable.
-* [OLMIS-4164](https://openlmis.atlassian.net/browse/OLMIS-4164): Fix permission issues in skip controls, product grid inputs, and the add product button.
-* [OLMIS-3983](https://openlmis.atlassian.net/browse/OLMIS-3983): Fix problem with accessing offline requisitions
+* [OLMIS-3492:](https://openlmis.atlassian.net/browse/OLMIS-3492) Allow to save comment in requisition longer than 255 characters
+* [OLMIS-4004:](https://openlmis.atlassian.net/browse/OLMIS-4004) Fix action button permission criteria to check by both program and facility.
+* [OLMIS-3527:](https://openlmis.atlassian.net/browse/OLMIS-3527) Fix add comment button permission criteria, from certain statuses, to if requisition is editable.
+* [OLMIS-4164:](https://openlmis.atlassian.net/browse/OLMIS-4164) Fix permission issues in skip controls, product grid inputs, and the add product button.
+* [OLMIS-3983:](https://openlmis.atlassian.net/browse/OLMIS-3983) Fix problem with accessing offline requisitions
+* [OLMIS-4126:](https://openlmis.atlassian.net/browse/OLMIS-4126) Fixed line item skipping on the requisition product grid
 
 5.2.2 / 2017-11-23
 ==================

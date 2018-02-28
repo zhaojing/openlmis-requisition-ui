@@ -105,6 +105,7 @@
             vm.lineItems = lineItems;
             vm.requisition = requisition;
             vm.columns = columns;
+            vm.userCanEdit = canAuthorize || canSubmit;
             vm.showAddProductButton = showAddProductButton();
             vm.showSkipControls = showSkipControls();
             vm.noProductsMessage = getNoProductsMessage();
@@ -139,7 +140,7 @@
          */
         function showDeleteColumn() {
             return !fullSupply &&
-                hasRightToEdit() &&
+                vm.userCanEdit &&
                 hasDeletableLineItems();
         }
 
@@ -196,25 +197,13 @@
         function showSkipControls() {
             return fullSupply &&
                 !requisition.emergency &&
-                hasRightToEdit() &&
+                vm.userCanEdit &&
                 requisition.template.hasSkipColumn();
         }
 
         function showAddProductButton() {
-            return hasRightToEdit() &&
+            return vm.userCanEdit &&
                 (!fullSupply || requisition.emergency);
-        }
-
-        function hasRightToEdit() {
-            if (vm.requisition.$isInitiated() || vm.requisition.$isRejected()) {
-                return canSubmit;
-            }
-
-            if (vm.requisition.$isSubmitted()) {
-                return canAuthorize;
-            }
-
-            return false;
         }
 
         function hasDeletableLineItems() {

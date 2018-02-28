@@ -62,15 +62,6 @@ describe('ViewTabController', function() {
         canSubmit = false;
         canAuthorize = false;
 
-        requisition.$isInitiated.andReturn(false);
-        requisition.$isRejected.andReturn(false);
-        requisition.$isSubmitted.andReturn(false);
-        requisition.$isAuthorized.andReturn(false);
-        requisition.$isInApproval.andReturn(false);
-        requisition.$isApproved.andReturn(false);
-        requisition.$isReleased.andReturn(false);
-        requisition.$isAfterAuthorize.andReturn(false);
-
         spyOn(categoryFactory, 'groupProducts');
 
         vm = undefined;
@@ -91,7 +82,6 @@ describe('ViewTabController', function() {
         });
 
         it('should display add product button if requisition is initiated and user has create right', function() {
-            requisition.$isInitiated.andReturn(true);
             canSubmit = true;
 
             initController();
@@ -100,7 +90,6 @@ describe('ViewTabController', function() {
         });
 
         it('should not display add product button if requisition is initiated and user has no create right', function() {
-            requisition.$isInitiated.andReturn(true);
             canSubmit = false;
 
             initController();
@@ -109,7 +98,6 @@ describe('ViewTabController', function() {
         });
 
         it('should display add product button if requisition is rejected and user has create right', function() {
-            requisition.$isRejected.andReturn(true);
             canSubmit = true;
 
             initController();
@@ -118,7 +106,6 @@ describe('ViewTabController', function() {
         });
 
         it('should not display add product button if requisition is rejected and user has no create right', function() {
-            requisition.$isRejected.andReturn(true);
             canSubmit = false;
 
             initController();
@@ -127,7 +114,6 @@ describe('ViewTabController', function() {
         });
 
         it('should display add product button if requisition is submitted and user has authorize rights', function() {
-            requisition.$isSubmitted.andReturn(true);
             canAuthorize = true;
 
             initController();
@@ -136,7 +122,6 @@ describe('ViewTabController', function() {
         });
 
         it('should not display add product button if requisition is submitted and user has no authorize rights', function() {
-            requisition.$isSubmitted.andReturn(true);
             canAuthorize = false;
 
             initController();
@@ -145,8 +130,6 @@ describe('ViewTabController', function() {
         });
 
         it('should not display add product button if requisition is authorized', function() {
-            requisition.$isAuthorized.andReturn(true);
-            requisition.$isAfterAuthorize.andReturn(true);
 
             initController();
 
@@ -154,8 +137,6 @@ describe('ViewTabController', function() {
         });
 
         it('should not display add product button if requisition is approved', function() {
-            requisition.$isApproved.andReturn(true);
-            requisition.$isAfterAuthorize.andReturn(true);
 
             initController();
 
@@ -163,8 +144,6 @@ describe('ViewTabController', function() {
         });
 
         it('should not display add product button if requisition is in approval', function() {
-            requisition.$isInApproval.andReturn(true);
-            requisition.$isAfterAuthorize.andReturn(true);
 
             initController();
 
@@ -172,8 +151,6 @@ describe('ViewTabController', function() {
         });
 
         it('should not display add product button if requisition is released', function() {
-            requisition.$isReleased.andReturn(true);
-            requisition.$isAfterAuthorize.andReturn(true);
 
             initController();
 
@@ -196,6 +173,28 @@ describe('ViewTabController', function() {
             expect(vm.noProductsMessage).toBe('requisitionViewTab.noNonFullSupplyProducts');
         });
 
+        it('should set userCanEdit if canAuthorize is true', function() {
+            canAuthorize = true;
+
+            initController();
+
+            expect(vm.userCanEdit).toBe(true);
+        });
+
+        it('should set userCanEdit if canSubmit is true', function() {
+            canSubmit = true;
+
+            initController();
+
+            expect(vm.userCanEdit).toBe(true);
+        });
+
+        it('should set userCanEdit to false if canAuthorize and canSubmit are false', function() {
+            initController();
+
+            expect(vm.userCanEdit).toBe(false);
+        });
+
     });
 
     describe('$onInit', function() {
@@ -212,7 +211,6 @@ describe('ViewTabController', function() {
 
         it('should show skip controls if the requisition status is INITIATED', function() {
             requisition.template.hasSkipColumn.andReturn(true);
-            requisition.$isInitiated.andReturn(true);
             canSubmit = true;
 
             initController();
@@ -222,7 +220,6 @@ describe('ViewTabController', function() {
 
         it('should not show skip controls if requisition status is INITIATED but user does not have right to submit', function() {
             requisition.template.hasSkipColumn.andReturn(true);
-            requisition.$isInitiated.andReturn(true);
 
             initController();
 
@@ -232,7 +229,6 @@ describe('ViewTabController', function() {
         it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function() {
             canAuthorize = true;
             requisition.template.hasSkipColumn.andReturn(true);
-            requisition.$isSubmitted.andReturn(true);
 
             initController();
 
@@ -241,7 +237,6 @@ describe('ViewTabController', function() {
 
         it('should show skip controls if the requisition status is REJECTED', function() {
             requisition.template.hasSkipColumn.andReturn(true);
-            requisition.$isRejected.andReturn(true);
             canSubmit = true;
 
             initController();
@@ -251,7 +246,6 @@ describe('ViewTabController', function() {
 
         it('should not show skip controls if the requisition status is REJECTED and user can not submit', function() {
             requisition.template.hasSkipColumn.andReturn(true);
-            requisition.$isRejected.andReturn(true);
 
             initController();
 
@@ -260,7 +254,6 @@ describe('ViewTabController', function() {
 
         it('should show skip controls if the requisition template has a skip column', function() {
             requisition.template.hasSkipColumn.andReturn(true);
-            requisition.$isInitiated.andReturn(true);
             canSubmit = true;
             columns[0].name = 'skipped';
 
@@ -272,7 +265,6 @@ describe('ViewTabController', function() {
 
         it('should not show skip controls if the requisition template does not have a skip column', function() {
             requisition.template.hasSkipColumn.andReturn(false);
-            requisition.$isInitiated.andReturn(true);
             columns[0].name = 'foo';
             canSubmit = true;
 
@@ -284,7 +276,6 @@ describe('ViewTabController', function() {
         it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
             canAuthorize = false;
             requisition.template.hasSkipColumn.andReturn(true);
-            requisition.$isSubmitted.andReturn(true);
 
             initController();
 
@@ -296,8 +287,6 @@ describe('ViewTabController', function() {
     describe('deleteLineItem', function() {
 
         beforeEach(function() {
-            requisition.$isApproved.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
             initController();
             spyOn($state, 'go').andReturn();
         });
@@ -443,9 +432,8 @@ describe('ViewTabController', function() {
 
         beforeEach(function() {
             fullSupply = false;
-            requisition.$isInitiated.andReturn(true);
-            canSubmit = true;
-            canAuthorize = true;
+            canSubmit = false;
+            canAuthorize = false;
             requisition.requisitionLineItems[1].$deletable = true;
 
         });
@@ -458,35 +446,8 @@ describe('ViewTabController', function() {
             expect(vm.showDeleteColumn()).toBe(false);
         });
 
-        it('should return false if user has no right to submit initiated requisition', function() {
-            canSubmit = false;
-
-            initController();
-
-            expect(vm.showDeleteColumn()).toBe(false);
-        });
-
-        it('should return false if user has not right to submit rejected requisition', function() {
-            canSubmit = false;
-            requisition.$isInitiated.andReturn(false);
-            requisition.$isRejected.andReturn(true);
-
-            initController();
-
-            expect(vm.showDeleteColumn()).toBe(false);
-        });
-
-        it('should return false if user has no right to authorize submitted requisition', function() {
-            canAuthorize = false;
-            requisition.$isInitiated.andReturn(false);
-            requisition.$isSubmitted.andReturn(true);
-
-            initController();
-
-            expect(vm.showDeleteColumn()).toBe(false);
-        });
-
         it('should return false if there is no deletable line items', function() {
+            canSubmit = true;
             requisition.requisitionLineItems[1].$deletable = false;
 
             initController();
@@ -502,27 +463,8 @@ describe('ViewTabController', function() {
             expect(vm.showDeleteColumn()).toBe(false);
         });
 
-        it('should return false if requisition status is after authorized', function() {
-            requisition.$isInitiated.andReturn(false);
-            requisition.$isInApproval.andReturn(true);
-
-            initController();
-
-            expect(vm.showDeleteColumn()).toBe(false);
-        });
-
         it('should return true if user has right to authorize submitted requisition', function() {
-            requisition.$isInitiated.andReturn(false);
-            requisition.$isSubmitted.andReturn(true);
-
-            initController();
-
-            expect(vm.showDeleteColumn()).toBe(true);
-        });
-
-        it('should return true if use has right to submit rejected requisition', function() {
-            requisition.$isInitiated.andReturn(false);
-            requisition.$isRejected.andReturn(true);
+            canSubmit = true;
 
             initController();
 
