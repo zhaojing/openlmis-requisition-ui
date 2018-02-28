@@ -29,10 +29,10 @@
         .controller('RequisitionStockCountDateModalController', controller);
 
     controller.$inject = [
-        'requisition', 'modalDeferred', 'messageService', 'alertService'
+        'requisition', 'modalDeferred', 'messageService', 'alertService', 'dateUtils'
     ];
 
-    function controller(requisition, modalDeferred, messageService, alertService) {
+    function controller(requisition, modalDeferred, messageService, alertService, dateUtils) {
 
         var vm = this;
 
@@ -83,8 +83,7 @@
         function onInit() {
             vm.requisition = requisition;
             if (vm.requisition.datePhysicalStockCountCompleted) {
-                vm.datePhysicalStockCountCompleted =
-                    new Date(vm.requisition.datePhysicalStockCountCompleted);
+                vm.datePhysicalStockCountCompleted = vm.requisition.datePhysicalStockCountCompleted;
             }
         }
 
@@ -94,18 +93,29 @@
          * @name submit
          *
          * @description
-         * validate date and resolve modal.
+         * validate date and resolve modal. Date must not be after current UTC date.
          *
          * @return {Promise} resolves if date is not after today.
          */
         function submit() {
-            if (vm.datePhysicalStockCountCompleted <= new Date()) {
+            if (isDateBeforeOrEqualToday(dateUtils.toDate(vm.datePhysicalStockCountCompleted))) {
                 vm.requisition.datePhysicalStockCountCompleted = vm.datePhysicalStockCountCompleted;
                 modalDeferred.resolve();
             } else {
-                vm.invalidMessage = messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
+                vm.invalidMessage =
+                    messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
                 alertService.error(vm.invalidMessage);
             }
+        }
+
+        function isDateBeforeOrEqualToday(date) {
+            var currentDate = new Date();
+            return date.getFullYear() < currentDate.getUTCFullYear() ||
+                date.getFullYear() <= currentDate.getUTCFullYear() &&
+                date.getMonth() < currentDate.getUTCMonth() ||
+                date.getFullYear() <= currentDate.getUTCFullYear() &&
+                date.getMonth() <= currentDate.getUTCMonth() &&
+                date.getDate() <= currentDate.getUTCDate();
         }
     }
 })();

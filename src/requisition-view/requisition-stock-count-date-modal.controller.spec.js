@@ -15,7 +15,7 @@
 
 describe('RequisitionStockCountDateModalController', function() {
 
-    var $controller, $q, $rootScope, messageService, vm, requisition, modalDeferred;
+    var $controller, $q, $rootScope, messageService, vm, requisition, modalDeferred, $filter;
 
     beforeEach(function() {
         module('requisition-view');
@@ -26,6 +26,7 @@ describe('RequisitionStockCountDateModalController', function() {
             $rootScope = $injector.get('$rootScope');
             messageService = $injector.get('messageService');
             alertService = $injector.get('alertService');
+            $filter = $injector.get('$filter');
         });
 
         message = 'some-message';
@@ -56,37 +57,49 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should set datePhysicalStockCountCompleted', function() {
-            expect(vm.datePhysicalStockCountCompleted).toEqual(new Date("2017-08-11"));
+            expect(vm.datePhysicalStockCountCompleted).toEqual("2017-08-11");
         });
     });
 
     describe('submit', function() {
+        beforeEach(function() {
+            var date = new Date();
+            date.setDate(date.getDate() + 1);
+            vm.datePhysicalStockCountCompleted = $filter('isoDate')(date);
+        });
 
-        it('should set invalidMessage if date is after now', function () {
-            vm.datePhysicalStockCountCompleted = new Date();
-            vm.datePhysicalStockCountCompleted
-                .setDate(vm.datePhysicalStockCountCompleted.getDate() + 1);
-
+        it('should set invalidMessage if date is after UTC current date', function () {
             vm.submit();
             $rootScope.$apply();
 
             expect(vm.invalidMessage).toEqual(message);
         });
 
-        it('should call alertService error with proper parameter if date is after now', function () {
-            vm.datePhysicalStockCountCompleted = new Date();
-            vm.datePhysicalStockCountCompleted
-                .setDate(vm.datePhysicalStockCountCompleted.getDate() + 1);
-
+        it('should call alertService error with proper parameter if date is after UTC current date', function () {
             vm.submit();
             $rootScope.$apply();
 
             expect(alertService.error).toHaveBeenCalledWith(message);
         });
 
-        it('should resolve modalDeffered if date is today', function () {
-            vm.datePhysicalStockCountCompleted = new Date();
-            vm.datePhysicalStockCountCompleted.setHours(0,0,0,0)
+        it('should resolve modalDeffered if date is at UTC current date', function () {
+            vm.datePhysicalStockCountCompleted = $filter('isoDate')(new Date());
+
+            var isDeffered = false;
+            modalDeferred.promise.then(function () {
+                isDeffered = true;
+            });
+
+            vm.submit();
+            $rootScope.$apply();
+
+            expect(isDeffered).toBe(true);
+        });
+
+        it('should resolve modalDeffered if date is before UTC current date', function () {
+            var date = new Date();
+            date.setDate(date.getDate() - 31);
+            vm.datePhysicalStockCountCompleted = $filter('isoDate')(date);
 
             var isDeffered = false;
             modalDeferred.promise.then(function () {
@@ -100,7 +113,7 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should resolve modalDeffered if date is in past', function () {
-            vm.datePhysicalStockCountCompleted = new Date("2017-08-10");
+            vm.datePhysicalStockCountCompleted = '2017-08-10';
 
             var isDeffered = false;
             modalDeferred.promise.then(function () {
