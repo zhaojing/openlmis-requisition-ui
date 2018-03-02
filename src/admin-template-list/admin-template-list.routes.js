@@ -40,7 +40,10 @@
                     return programService.getAll();
                 },
                 facilityTypes: function(facilityTypeService) {
-                    return facilityTypeService.query();
+                    return facilityTypeService.query()
+                    .then(function(response) {
+                        return response.content;
+                    });
                 },
                 templateFacilityTypes: function(templates, facilityTypes, templateListFactory) {
                     return templateListFactory.getTemplateFacilityTypes(templates, facilityTypes);

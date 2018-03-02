@@ -33,7 +33,10 @@
 	        accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
 	        resolve: {
 	            facilityTypes: function(facilityTypeService) {
-	                return facilityTypeService.query();
+                    return facilityTypeService.query(response)
+                    .then(function() {
+                        return response.content;
+                    });
                 },
                 templates: function(requisitionTemplateService) {
                     return requisitionTemplateService.getAll();
