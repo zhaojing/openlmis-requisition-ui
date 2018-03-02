@@ -15,7 +15,8 @@
 
 describe('RequisitionStockCountDateModalController', function() {
 
-    var $controller, $q, $rootScope, messageService, vm, requisition, modalDeferred, $filter;
+    var $controller, $q, $rootScope, messageService, vm, requisition, modalDeferred,
+    alertService, message;
 
     beforeEach(function() {
         module('requisition-view');
@@ -26,7 +27,6 @@ describe('RequisitionStockCountDateModalController', function() {
             $rootScope = $injector.get('$rootScope');
             messageService = $injector.get('messageService');
             alertService = $injector.get('alertService');
-            $filter = $injector.get('$filter');
         });
 
         message = 'some-message';
@@ -63,9 +63,10 @@ describe('RequisitionStockCountDateModalController', function() {
 
     describe('submit', function() {
         beforeEach(function() {
-            var date = new Date();
-            date.setDate(date.getDate() + 1);
-            vm.datePhysicalStockCountCompleted = $filter('isoDate')(date);
+            var currentDate = new Date();
+            var date = new Date(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate() + 1, 0, 0, 0, 0);
+
+            vm.datePhysicalStockCountCompleted = convertToISOLocalDateString(date);
         });
 
         it('should set invalidMessage if date is after UTC current date', function () {
@@ -83,7 +84,10 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should resolve modalDeffered if date is at UTC current date', function () {
-            vm.datePhysicalStockCountCompleted = $filter('isoDate')(new Date());
+            var currentDate = new Date();
+            var date = new Date(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 0, 0, 0, 0);
+
+            vm.datePhysicalStockCountCompleted = convertToISOLocalDateString(date);
 
             var isDeffered = false;
             modalDeferred.promise.then(function () {
@@ -97,9 +101,10 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should resolve modalDeffered if date is before UTC current date', function () {
-            var date = new Date();
-            date.setDate(date.getDate() - 31);
-            vm.datePhysicalStockCountCompleted = $filter('isoDate')(date);
+            var currentDate = new Date();
+            var date = new Date(currentDate.getUTCFullYear(), currentDate.getUTCMonth() - 1, currentDate.getUTCDate(), 0, 0, 0, 0);
+
+            vm.datePhysicalStockCountCompleted = convertToISOLocalDateString(date);
 
             var isDeffered = false;
             modalDeferred.promise.then(function () {
@@ -126,5 +131,9 @@ describe('RequisitionStockCountDateModalController', function() {
             expect(isDeffered).toBe(true);
         });
     });
+
+    function convertToISOLocalDateString(date) {
+        return date.toISOString().slice(0, 10);
+    }
 
 });
