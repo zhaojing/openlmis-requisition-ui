@@ -33,7 +33,9 @@
 	        accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
 	        resolve: {
 	            facilityTypes: function(facilityTypeService) {
-                    return facilityTypeService.query()
+                    return facilityTypeService.query({
+                        active: true
+                    })
                     .then(function(response) {
                         return response.content;
                     });
