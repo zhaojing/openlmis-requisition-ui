@@ -21,6 +21,7 @@ Bug fixes:
 * [OLMIS-4164:](https://openlmis.atlassian.net/browse/OLMIS-4164) Fix permission issues in skip controls, product grid inputs, and the add product button.
 * [OLMIS-3983:](https://openlmis.atlassian.net/browse/OLMIS-3983) Fix problem with accessing offline requisitions
 * [OLMIS-4126:](https://openlmis.atlassian.net/browse/OLMIS-4126) Fixed line item skipping on the requisition product grid
+* [OLMIS-3182:](https://openlmis.atlassian.net/browse/OLMIS-3182) Added virtual scrolling to the requisition batch approval screen
 
 5.2.2 / 2017-11-23
 ==================
