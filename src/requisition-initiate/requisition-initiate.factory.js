@@ -34,7 +34,7 @@
 
         var factory = {
             canInitiate: canInitiate
-        }
+        };
         return factory;
 
         /**
@@ -47,7 +47,6 @@
          *
          * @param {programId} UUID of the program to search permissions for
          * @param {facilityId} UUID of the facility to search permissions for
-         *
          * @return {boolean} supervised facilities based on given rights
          */
         function canInitiate(programId, facilityId) {
@@ -56,9 +55,9 @@
             return permissionService.load(user.user_id)
             .then(function(permissionStrings) {
                 var filteredPermissionString = permissionStrings.filter(function(permissionString) {
-                    return permissionString.right == REQUISITION_RIGHTS.REQUISITION_CREATE &&
-                        permissionString.programId == programId &&
-                        permissionString.facilityId == facilityId;
+                    return permissionString.right === REQUISITION_RIGHTS.REQUISITION_CREATE &&
+                        permissionString.programId === programId &&
+                        permissionString.facilityId === facilityId;
                 })[0];
 
                 return filteredPermissionString ? $q.resolve(true) : $q.reject(false);
