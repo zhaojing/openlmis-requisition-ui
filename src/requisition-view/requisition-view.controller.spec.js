@@ -588,7 +588,7 @@ describe('RequisitionViewController', function() {
 
         beforeEach(function() {
             spyOn($window, 'open').andCallThrough();
-            vm.displaySyncButton = true;
+            vm.$onInit();
         });
 
         it('should open window with report when sync succeeded', function() {
