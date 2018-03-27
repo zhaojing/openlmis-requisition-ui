@@ -45,22 +45,17 @@
          * @description
          * Returns true if user can initiate requisition for the provided facility and program.
          *
-         * @param {programId} UUID of the program to search permissions for
-         * @param {facilityId} UUID of the facility to search permissions for
-         * @return {boolean} supervised facilities based on given rights
+         * @param  {string}  programId  UUID of the program to search permissions for
+         * @param  {string}  facilityId UUID of the facility to search permissions for
+         * @return {Promise} supervised facilities based on given rights
          */
         function canInitiate(programId, facilityId) {
             var user = authorizationService.getUser();
 
-            return permissionService.load(user.user_id)
-            .then(function(permissionStrings) {
-                var filteredPermissionString = permissionStrings.filter(function(permissionString) {
-                    return permissionString.right === REQUISITION_RIGHTS.REQUISITION_CREATE &&
-                        permissionString.programId === programId &&
-                        permissionString.facilityId === facilityId;
-                })[0];
-
-                return filteredPermissionString ? $q.resolve(true) : $q.reject(false);
+            return permissionService.hasPermission(user.user_id, {
+                right: REQUISITION_RIGHTS.REQUISITION_CREATE,
+                programId: programId,
+                facilityId: facilityId
             });
         }
     }

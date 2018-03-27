@@ -16,8 +16,7 @@
 describe('requisitionInitiateFactory', function() {
 
     var requisitionInitiateFactory, $q, permissionService, $rootScope, authorizationService,
-        REQUISITION_RIGHTS, FacilityDataBuilder, PermissionDataBuilder, ProgramDataBuilder,
-        facility, program, permissions;
+        REQUISITION_RIGHTS, FacilityDataBuilder, ProgramDataBuilder, facility, program;
 
     beforeEach(function() {
         module('requisition-initiate');
@@ -31,27 +30,11 @@ describe('requisitionInitiateFactory', function() {
             REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
 
             FacilityDataBuilder = $injector.get('FacilityDataBuilder');
-            PermissionDataBuilder = $injector.get('PermissionDataBuilder');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
         });
 
         facility = new FacilityDataBuilder().build();
         program = new ProgramDataBuilder().build();
-
-        permissions = [
-            new PermissionDataBuilder()
-                .withRight(REQUISITION_RIGHTS.REQUISITION_CREATE)
-                .withFacilityId(facility.id)
-                .withProgramId(program.id).build(),
-            new PermissionDataBuilder()
-                .withRight(REQUISITION_RIGHTS.REQUISITION_DELETE)
-                .withFacilityId(facility.id)
-                .withProgramId(program.id).build(),
-            new PermissionDataBuilder()
-                .withRight(REQUISITION_RIGHTS.REQUISITION_CREATE)
-                .withFacilityId(facility.id)
-                .withProgramId('invalid-id').build()
-        ];
     });
 
     describe('canInitiate', function() {
@@ -62,7 +45,7 @@ describe('requisitionInitiateFactory', function() {
         });
 
         it('should return true if permission was found', function() {
-            spyOn(permissionService, 'load').andReturn($q.resolve(permissions));
+            spyOn(permissionService, 'hasPermission').andReturn($q.resolve(true));
             var result;
 
             requisitionInitiateFactory.canInitiate(program.id, facility.id).then(function() {
@@ -71,26 +54,32 @@ describe('requisitionInitiateFactory', function() {
             $rootScope.$apply();
 
             expect(result).toBe(true);
+            expect(permissionService.hasPermission).toHaveBeenCalledWith('user-id', {
+                right: REQUISITION_RIGHTS.REQUISITION_CREATE,
+                programId: program.id,
+                facilityId: facility.id
+            });
         });
 
-        it('should return false if rights in permission string are different', function() {
-            spyOn(permissionService, 'load').andReturn($q.resolve([permissions[1]]));
+        it('should call permissionService with proper values', function() {
+            spyOn(permissionService, 'hasPermission').andReturn($q.resolve(true));
+
+            requisitionInitiateFactory.canInitiate(program.id, facility.id);
+            $rootScope.$apply();
+
+            expect(permissionService.hasPermission).toHaveBeenCalledWith('user-id', {
+                right: REQUISITION_RIGHTS.REQUISITION_CREATE,
+                programId: program.id,
+                facilityId: facility.id
+            });
+        });
+
+        it('should return false if permission was not found', function() {
+            spyOn(permissionService, 'hasPermission').andReturn($q.reject(false));
             var result;
 
             requisitionInitiateFactory.canInitiate(program.id, facility.id).catch(function() {
                 result = false;
-            });
-            $rootScope.$apply();
-
-            expect(result).toBe(false);
-        });
-
-        it('should return false if permission was not found', function() {
-            spyOn(permissionService, 'load').andReturn($q.resolve([permissions[2]]));
-            var result;
-
-            requisitionInitiateFactory.canInitiate(program.id, facility.id).catch(function() {
-                result = false
             });
             $rootScope.$apply();
 
