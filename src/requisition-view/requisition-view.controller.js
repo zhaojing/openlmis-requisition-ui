@@ -271,7 +271,7 @@
          * indicates a version conflict.
          */
         function syncRnrAndPrint() {
-            if (vm.canSync) {
+            if (vm.displaySyncButton) {
                 var popup = $window.open('', '_blank');
                 popup.document.write(messageService.get('requisitionView.sync.pending'));
                 var loadingPromise = loadingModalService.open();

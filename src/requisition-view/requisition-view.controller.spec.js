@@ -19,7 +19,7 @@ describe('RequisitionViewController', function() {
     var $scope, $q, $state, notificationService, alertService, confirmService, vm, requisition,
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
-        REQUISITION_RIGHTS, accessTokenFactorySpy, $window, stateTrackerService, messageService,
+        accessTokenFactorySpy, $window, stateTrackerService, messageService,
         RequisitionStockCountDateModal, RequisitionWatcher, watcher;
 
     beforeEach(function() {
@@ -85,7 +85,6 @@ describe('RequisitionViewController', function() {
             alertService = $injector.get('alertService');
             confirmService = $injector.get('confirmService');
             loadingModalService = $injector.get('loadingModalService');
-            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
             stateTrackerService = $injector.get('stateTrackerService');
             messageService = $injector.get('messageService');
 
@@ -115,12 +114,12 @@ describe('RequisitionViewController', function() {
             requisition.$authorize.andReturn(deferred.promise);
             spyOn(stateTrackerService, 'goToPreviousState');
 
-            canSubmit = true;
-            canAuthorize = false;
-            canApproveAndReject = false;
-            canDelete = true;
-            canSkip = true;
-            canSync = true;
+            var canSubmit = true,
+                canAuthorize = false,
+                canApproveAndReject = false,
+                canDelete = true,
+                canSkip = true,
+                canSync = true;
 
             vm = $injector.get('$controller')('RequisitionViewController', {
                 $scope: $scope,
@@ -589,7 +588,7 @@ describe('RequisitionViewController', function() {
 
         beforeEach(function() {
             spyOn($window, 'open').andCallThrough();
-            vm.canSync = true;
+            vm.displaySyncButton = true;
         });
 
         it('should open window with report when sync succeeded', function() {
@@ -625,7 +624,7 @@ describe('RequisitionViewController', function() {
 
         it('should open window with report when has no right for sync', function() {
             accessTokenFactorySpy.addAccessToken.andReturn('token');
-            vm.canSync = false;
+            vm.displaySyncButton = false;
 
             vm.syncRnrAndPrint();
 
