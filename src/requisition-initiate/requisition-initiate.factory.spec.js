@@ -54,11 +54,6 @@ describe('requisitionInitiateFactory', function() {
             $rootScope.$apply();
 
             expect(result).toBe(true);
-            expect(permissionService.hasPermission).toHaveBeenCalledWith('user-id', {
-                right: REQUISITION_RIGHTS.REQUISITION_CREATE,
-                programId: program.id,
-                facilityId: facility.id
-            });
         });
 
         it('should call permissionService with proper values', function() {
