@@ -38,8 +38,7 @@
         alertService, offlineService, localStorageFactory) {
 
         var vm = this,
-            offlineRequisitions = localStorageFactory('requisitions'),
-            offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions');
+            offlineRequisitions = localStorageFactory('requisitions');
 
         vm.$onInit = onInit;
         vm.search = search;

@@ -28,9 +28,9 @@
         .module('requisition-batch-approval')
         .factory('requisitionBatchValidationFactory', factory);
 
-    factory.$inject = ['$q', 'messageService', 'MAX_INTEGER_VALUE', 'TEMPLATE_COLUMNS'];
+    factory.$inject = ['$q', 'messageService', 'MAX_INTEGER_VALUE'];
 
-    function factory($q, messageService, MAX_INTEGER_VALUE, TEMPLATE_COLUMNS) {
+    function factory($q, messageService, MAX_INTEGER_VALUE) {
 
         var factory = {
             validateRequisitions: validateRequisitions
@@ -75,8 +75,7 @@
         }
 
         function validateApprovedQuantity(lineItem) {
-            var column = TEMPLATE_COLUMNS.APPROVED_QUANTITY,
-                error;
+            var error;
 
             if (lineItem.skipped) return true;
             if (isEmpty(lineItem.approvedQuantity)) {

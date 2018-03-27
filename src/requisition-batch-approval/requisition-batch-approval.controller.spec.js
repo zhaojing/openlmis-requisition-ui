@@ -13,14 +13,13 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('RequisitionBatchApprovalController', function () {
+describe('RequisitionBatchApprovalController', function() {
 
     //injects
     var vm, $stateParams, $rootScope, $q, confirmService, $controller, calculationFactory,
         confirmDeferred, $scope, requisitionService, requisitionStatus, alertService, $state,
-        localStorageFactory, requisitionsStorage, batchRequisitionsStorage, requisitionBatchApprovalService,
-        notificationService, requisitionBatchSaveFactory, notificationServiceSpy,
-        requisitionBatchApproveFactory, loadingModalService, batchDeferred;
+        requisitionsStorage, batchRequisitionsStorage, notificationService, requisitionBatchSaveFactory,
+        notificationServiceSpy, requisitionBatchApproveFactory, loadingModalService, batchDeferred;
 
     //variables
     var requisitions, products, lineItems;
@@ -91,9 +90,11 @@ describe('RequisitionBatchApprovalController', function () {
         lineItems[requisition.id][requisitionLineItems[1].orderable.id] = requisitionLineItems[1];
 
         var requisitionWatcherMock = jasmine.createSpy('RequisitionWatcher');
-        module(function($provide){
+        module(function($provide) {
             $provide.factory('RequisitionWatcher', function() {
-                return requisitionWatcherMock;
+                return function() {
+                    this.enableWatcher = requisitionWatcherMock;
+                };
             });
 
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
@@ -112,7 +113,7 @@ describe('RequisitionBatchApprovalController', function () {
             });
         });
 
-        inject(function ($injector) {
+        inject(function($injector) {
             $controller = $injector.get('$controller');
             confirmService = $injector.get('confirmService');
             $rootScope = $injector.get('$rootScope');
@@ -260,7 +261,7 @@ describe('RequisitionBatchApprovalController', function () {
             spyOn($state, 'reload');
             spyOn(alertService, 'error');
 
-            spyOn(vm, 'isOffline').andCallFake(function(){
+            spyOn(vm, 'isOffline').andCallFake(function() {
                 return isOffline;
             });
 

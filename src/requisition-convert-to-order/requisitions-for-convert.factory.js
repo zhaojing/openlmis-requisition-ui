@@ -144,7 +144,7 @@
                     size: parseInt(params.size),
                     totalPages: Math.ceil(parseInt(page.totalElements) / parseInt(params.size)),
                     totalElements: parseInt(page.totalElements),
-                    content: page.content.slice(offset, offset + parseInt(params.size)),
+                    content: page.content.slice(offset, offset + parseInt(params.size))
 
                 };
 

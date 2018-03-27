@@ -352,7 +352,8 @@
                     requisition.$error = $stateParams.errors[requisition.id];
                 }
 
-                new RequisitionWatcher($scope, requisition, localStorageFactory('batchApproveRequisitions'));
+                new RequisitionWatcher($scope, requisition, localStorageFactory('batchApproveRequisitions'))
+                .enableWatcher();
             });
         }
 
