@@ -23,6 +23,7 @@ Bug fixes:
 * [OLMIS-4126:](https://openlmis.atlassian.net/browse/OLMIS-4126) Fixed line item skipping on the requisition product grid
 * [OLMIS-3182:](https://openlmis.atlassian.net/browse/OLMIS-3182) Added virtual scrolling to the requisition batch approval screen
 * [OLMIS-4401](https://openlmis.atlassian.net/browse/OLMIS-4401): Fixed requisition sync before generating report
+* [OLMIS-4395](https://openlmis.atlassian.net/browse/OLMIS-4395): Hide proceed button if the user has no permission to initiate.
 
 5.2.2 / 2017-11-23
 ==================
