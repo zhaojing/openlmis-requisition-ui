@@ -32,13 +32,14 @@
 
     RequisitionInitiateController.$inject = [
         'messageService', 'requisitionService', '$state', 'loadingModalService',
-        'notificationService', 'REQUISITION_RIGHTS', 'permissionService', 'authorizationService', '$stateParams', 'periods'
+        'notificationService', 'REQUISITION_RIGHTS', 'permissionService', 'authorizationService',
+        '$stateParams', 'periods', 'canInitiateRnr'
     ];
 
-    function RequisitionInitiateController(
-        messageService, requisitionService, $state, loadingModalService, notificationService,
-        REQUISITION_RIGHTS, permissionService, authorizationService, $stateParams, periods
-    ) {
+    function RequisitionInitiateController(messageService, requisitionService, $state,
+        loadingModalService, notificationService, REQUISITION_RIGHTS, permissionService,
+        authorizationService, $stateParams, periods, canInitiateRnr) {
+
         var vm = this;
 
         vm.$onInit = onInit;
@@ -70,6 +71,17 @@
         vm.periods = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf requisition-initiate.controller:RequisitionInitiateController
+         * @name canInitiateRnr
+         * @type {boolean}
+         *
+         * @description
+         * True if user has permission to initiate requisition.
+         */
+        vm.canInitiateRnr = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf requisition-initiate.controller:RequisitionInitiateController
          * @name $onInit
@@ -80,6 +92,7 @@
         function onInit() {
             vm.emergency = $stateParams.emergency === 'true';
             vm.periods = periods;
+            vm.canInitiateRnr = canInitiateRnr;
         }
 
         /**

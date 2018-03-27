@@ -15,9 +15,9 @@
 
 describe("RequisitionInitiateController", function(){
 
-    var $q, programs, $rootScope, requisitionService, authorizationService, facilityService, $state,
-        period, facility, REQUISITION_RIGHTS, hasRight, loadingModalService, permissionService,
-        periods, $stateParams;
+    var vm, $q, programs, $rootScope, requisitionService, authorizationService, $state, facility,
+        REQUISITION_RIGHTS, loadingModalService, permissionService, periods, $stateParams,
+        canInitiateRnr, user;
 
     beforeEach(function() {
         module('requisition-initiate');
@@ -27,15 +27,12 @@ describe("RequisitionInitiateController", function(){
             $state = $injector.get('$state');
             requisitionService = $injector.get('requisitionService');
             authorizationService = $injector.get('authorizationService');
-            facilityService = $injector.get('facilityService');
             $q = $injector.get('$q');
             REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
             loadingModalService = $injector.get('loadingModalService');
 
             user = {"user_id": "user_id"};
-            right = {"id": "right_id"};
             programs = [{"code": "HIV", "id": 1}, {"code": "programCode", "id": 2}];
-            period = [{"id": 1, "rnrId": 123, "startDate": "01-01-2016", "endDate": "02-02-2016"}];
             facility = {
                 "id": "10134",
                 "name": "National Warehouse",
@@ -48,6 +45,8 @@ describe("RequisitionInitiateController", function(){
                 facility: facility.id
             };
 
+            canInitiateRnr = true;
+
             permissionService = $injector.get('permissionService');
             spyOn(permissionService, 'hasPermission').andReturn($q.resolve());
 
@@ -55,7 +54,8 @@ describe("RequisitionInitiateController", function(){
 
             vm = $injector.get('$controller')('RequisitionInitiateController', {
                 periods: periods,
-                $stateParams: $stateParams
+                $stateParams: $stateParams,
+                canInitiateRnr: canInitiateRnr
             });
         });
     });
@@ -73,7 +73,6 @@ describe("RequisitionInitiateController", function(){
         vm.$onInit();
         spyOn($state, 'go');
         spyOn(requisitionService, 'initiate').andReturn($q.when({"id": 1}));
-        hasRight = true;
         vm.program = programs[0];
         vm.facility = facility;
 
@@ -96,7 +95,6 @@ describe("RequisitionInitiateController", function(){
         vm.$onInit();
         spyOn($state, 'go');
         spyOn(requisitionService, 'initiate');
-        hasRight = false;
         vm.program = programs[0];
         vm.facility = facility;
 
