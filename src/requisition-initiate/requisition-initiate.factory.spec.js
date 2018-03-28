@@ -48,8 +48,9 @@ describe('requisitionInitiateFactory', function() {
             spyOn(permissionService, 'hasPermission').andReturn($q.resolve(true));
             var result;
 
-            requisitionInitiateFactory.canInitiate(program.id, facility.id).then(function() {
-                result = true;
+            requisitionInitiateFactory.canInitiate(program.id, facility.id)
+            .then(function(response) {
+                result = response;
             });
             $rootScope.$apply();
 
@@ -73,8 +74,9 @@ describe('requisitionInitiateFactory', function() {
             spyOn(permissionService, 'hasPermission').andReturn($q.reject(false));
             var result;
 
-            requisitionInitiateFactory.canInitiate(program.id, facility.id).catch(function() {
-                result = false;
+            requisitionInitiateFactory.canInitiate(program.id, facility.id)
+            .then(function(response) {
+                result = response;
             });
             $rootScope.$apply();
 
