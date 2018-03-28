@@ -135,7 +135,7 @@ describe('openlmis.requisitions.initRnr state', function() {
         });
 
         it('should return false if user can not initiate requisitions', function() {
-            requisitionInitiateFactory.canInitiate.andReturn($q.reject(false));
+            requisitionInitiateFactory.canInitiate.andReturn($q.resolve(false));
 
             goToState();
 

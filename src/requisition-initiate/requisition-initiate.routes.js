@@ -53,9 +53,7 @@
                     if ($stateParams.program && $stateParams.facility) {
                         return requisitionInitiateFactory.canInitiate(
                             $stateParams.program, $stateParams.facility
-                        ).catch(function(response) {
-                            return response;
-                        });
+                        );
                     }
                     return false;
                 }
