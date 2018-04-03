@@ -24,6 +24,7 @@ Bug fixes:
 * [OLMIS-3182:](https://openlmis.atlassian.net/browse/OLMIS-3182) Added virtual scrolling to the requisition batch approval screen
 * [OLMIS-4401](https://openlmis.atlassian.net/browse/OLMIS-4401): Fixed requisition sync before generating report
 * [OLMIS-4395](https://openlmis.atlassian.net/browse/OLMIS-4395): Hide proceed button if the user has no permission to initiate.
+* [OLMIS-4420](https://openlmis.atlassian.net/browse/OLMIS-4420): Requisitions View screen now displays initiated date from the createdDate property.
 
 5.2.2 / 2017-11-23
 ==================

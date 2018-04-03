@@ -60,11 +60,11 @@
         <tbody>
             <tr ng-repeat="requisition in vm.requisitions">
                 <td>{{requisition.program.name}}</td>
-                <td>{{requisition.facility.code}} - {{requisition.facility.name}}</th>
+                <td>{{requisition.facility.code}} - {{requisition.facility.name}}</td>
                 <td>{{requisition.processingPeriod.name}}</td>
                 <td>{{requisition.processingPeriod.startDate | openlmisDate}}</td>
                 <td>{{requisition.processingPeriod.endDate | openlmisDate}}</td>
-                <td>{{requisition.statusChanges.INITIATED.changeDate | openlmisDate}}</td>
+                <td>{{requisition.createdDate | openlmisDate}}</td>
                 <td>{{requisition.status}}</td>
                 <td class="col-emergency">
                     <i ng-class="{'icon-ok': requisition.emergency}"></i>
