@@ -33,7 +33,7 @@
             accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
             resolve: {
                 programList: function(programService) {
-                    return programService.getAllProgramsWithTemplates();
+                    return programService.getAll();
                 }
             }
         });
