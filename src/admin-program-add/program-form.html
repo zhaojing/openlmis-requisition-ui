@@ -1,6 +1,6 @@
 <form id="program-form" ng-submit="vm.saveProgram()">
     <label for="code">{{'adminProgramAdd.programCode' | message}}</label>
-    <input id="code" class="form-control" ng-model="vm.program.code" required/>
+    <input id="code" class="form-control" ng-model="vm.program.code" ng-disabled="vm.program.id" required/>
     <label for="name">{{'adminProgramAdd.programName' | message}}</label>
     <input id="name" class="form-control" ng-model="vm.program.name" required/>
     <label for="description">{{'adminProgramAdd.description' | message}}</label>
