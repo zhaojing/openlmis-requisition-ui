@@ -61,8 +61,10 @@
         function removeAssignedFacilityTypes(facilityTypes, templateFacilityTypes) {
             templateFacilityTypes.forEach(function(type) {
                 var filtered = getFacilityTypeById(facilityTypes, type.id);
-                var index = facilityTypes.indexOf(filtered);
-                facilityTypes.splice(index, 1);
+                if (filtered) {
+                    var index = facilityTypes.indexOf(filtered);
+                    facilityTypes.splice(index, 1);
+                }
             });
         }
 
