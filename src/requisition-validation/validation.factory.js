@@ -151,6 +151,7 @@
 
         function isRequestedQuantityRequired(lineItem, requisition) {
             return lineItem.isNonFullSupply() ||
+            requisition.emergency || 
             (!isDisplayed(requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY)) &&
             !isDisplayed(requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA)));
         }

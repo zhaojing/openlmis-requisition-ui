@@ -27,6 +27,7 @@ Bug fixes:
 * [OLMIS-4395](https://openlmis.atlassian.net/browse/OLMIS-4395): Hide proceed button if the user has no permission to initiate.
 * [OLMIS-4420](https://openlmis.atlassian.net/browse/OLMIS-4420): Requisitions View screen now displays initiated date from the createdDate property.
 * [OLMIS-4547](https://openlmis.atlassian.net/browse/OLMIS-4547): Fixed incorrect number of Requisition Template facility types
+* [OLMIS-4530](https://openlmis.atlassian.net/browse/OLMIS-4530): Requested quantity is required for emergency requisitions.
 
 5.2.2 / 2017-11-23
 ==================
