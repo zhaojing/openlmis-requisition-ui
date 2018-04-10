@@ -15,7 +15,7 @@
                     <td>{{template.name}}</td>
                     <td ng-if="template.facilityTypes.length > 1"
                         popover-template="admin-template-list/facility-types-popover.html">
-                        {{'adminTemplateList.facilityTypes' | message: {'number': template.facilityTypes.length } }}</td>
+                        {{'adminTemplateList.facilityTypes' | message: {'number': vm.templateFacilityTypes[template.id].length } }}</td>
                     <td ng-if="!(template.facilityTypes.length > 1)">{{vm.templateFacilityTypes[template.id][0].name}}</td>
                     <td>
                         <button ui-sref="openlmis.administration.requisitionTemplates.configure.columns({id: template.id})">{{'adminTemplateList.configure' | message}}</button>
