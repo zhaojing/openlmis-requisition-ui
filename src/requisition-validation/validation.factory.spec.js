@@ -285,7 +285,7 @@ describe('validationFactory', function() {
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
-        it('should return required if calculatedOrderQuantity column is present and displayed', function() {
+        it('should return required for emergency requisition', function() {
             calculatedOrderQuantityIsaColumn.$display = false;
             requisitionMock.emergency = true;
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
