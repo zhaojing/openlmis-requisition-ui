@@ -17,7 +17,8 @@ describe('templateListFactory', function() {
 
     var template, program, ProgramDataBuilder, TemplateDataBuilder, FacilityTypeDataBuilder,
         programTwo, templateTwo, templateThree, districtHospital, healthCenter, districtStore,
-        templateListFactory, templates, facilityTypes, result, templateFour, programThree;
+        templateListFactory, templates, facilityTypes, result, templateFour, programThree,
+        inactiveType;
 
     beforeEach(function() {
         module('admin-template-list');
@@ -36,6 +37,7 @@ describe('templateListFactory', function() {
         districtHospital = FacilityTypeDataBuilder.buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder();
         districtStore = FacilityTypeDataBuilder.buildDistrictStore();
+        inactiveType = FacilityTypeDataBuilder.buildAsInactive();
 
         facilityTypes = [districtHospital, districtStore, healthCenter];
 
@@ -80,6 +82,17 @@ describe('templateListFactory', function() {
             expect(result[template.id]).toEqual([healthCenter, districtHospital]);
             expect(result[templateTwo.id]).toEqual([healthCenter]);
             expect(result[templateThree.id]).toEqual([districtStore]);
+        });
+
+        it('should not return inactive facility types', function() {
+            templateTwo = new TemplateDataBuilder()
+                .withProgram(program)
+                .withFacilityTypes([healthCenter, inactiveType])
+                .build();
+
+            result = templateListFactory.getTemplateFacilityTypes([templateTwo], facilityTypes);
+
+            expect(result[templateTwo.id]).toEqual([healthCenter]);
         });
 
         it('should return empty list if facilityTypes are empty list', function() {

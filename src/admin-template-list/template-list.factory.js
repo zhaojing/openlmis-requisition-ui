@@ -84,7 +84,9 @@
                     var filtered = facilityTypes.filter(function(facilityType) {
                         return facilityType.id == type.id;
                     });
-                    templateTypes[template.id].push(filtered[0]);
+                    if (filtered[0]) {
+                        templateTypes[template.id].push(filtered[0]);
+                    }
                 });
             });
             return templateTypes;
