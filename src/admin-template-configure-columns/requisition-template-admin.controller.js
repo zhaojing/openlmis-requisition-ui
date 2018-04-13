@@ -90,7 +90,7 @@
          * Redirects user to template list view page.
          */
         function goToTemplateList() {
-            $state.go('openlmis.administration.requisitionTemplates');
+            $state.go('openlmis.administration.requisitionTemplates', {}, {reload: true});
         }
 
         /**

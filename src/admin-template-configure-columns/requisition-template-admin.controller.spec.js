@@ -83,6 +83,17 @@ describe('RequisitionTemplateAdminController', function() {
         expect(vm.template).toEqual(template);
     });
 
+    describe('goToTemplateList', function() {
+
+        it('should reload state', function() {
+            spyOn(state, 'go');
+            vm.goToTemplateList();
+
+            expect(state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates',
+                {}, {reload: true});
+        });
+    });
+
     describe('save template', function() {
 
         var stateGoSpy = jasmine.createSpy(),
