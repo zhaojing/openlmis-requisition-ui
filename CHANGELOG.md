@@ -1,3 +1,9 @@
+5.3.1 / Work in Progress
+========================
+
+Improvements:
+* Reduced payload size when synchronizing requisition.
+
 5.3.0 / 2018-04-24
 ==================
 

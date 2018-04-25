@@ -644,6 +644,9 @@
                 requestBody.processingPeriod.endDate
             );
 
+            delete requestBody.availableNonFullSupplyProducts;
+            delete requestBody.availableFullSupplyProducts;
+
             return angular.toJson(requestBody);
         }
 
