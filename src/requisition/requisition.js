@@ -652,11 +652,11 @@
 
             requestBody.program = {
                 id: requestBody.program.id
-            }
+            };
 
             requestBody.facility = {
                 id: requestBody.facility.id
-            }
+            };
 
             delete requestBody.availableNonFullSupplyProducts;
             delete requestBody.availableFullSupplyProducts;
