@@ -635,6 +635,12 @@
 
             angular.forEach(requestBody.requisitionLineItems, function(lineItem) {
                 transformLineItem(lineItem, columns);
+                delete lineItem.$program;
+                delete lineItem.$errors;
+
+                lineItem.orderable = {
+                    id: lineItem.orderable.id
+                };
             });
 
             requestBody.processingPeriod.startDate = dateUtils.toStringDate(
@@ -644,8 +650,18 @@
                 requestBody.processingPeriod.endDate
             );
 
+            requestBody.program = {
+                id: requestBody.program.id
+            }
+
+            requestBody.facility = {
+                id: requestBody.facility.id
+            }
+
             delete requestBody.availableNonFullSupplyProducts;
             delete requestBody.availableFullSupplyProducts;
+            delete requestBody.stockAdjustmentReasons;
+            delete requestBody.template;
 
             return angular.toJson(requestBody);
         }
