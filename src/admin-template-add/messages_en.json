@@ -19,5 +19,6 @@
     "adminTemplateAdd.createTemplate.success": "New Requisition Template created successfully",
     "adminTemplateAdd.createTemplate.failure": "Failed to save Requisition Template",
     "adminTemplateAdd.requisitionColumn": "Requisition Column",
-    "adminTemplateAdd.display": "Display"
+    "adminTemplateAdd.display": "Display",
+    "adminTemplateAdd.name": "Name"
 }
