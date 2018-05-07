@@ -29,10 +29,10 @@
         .controller('TemplateAddController', TemplateAddController);
 
     TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService', 'requisitionTemplateService',
-        'notificationService', 'loadingModalService', 'messageService'];
+        'notificationService', 'loadingModalService', 'messageService', '$state'];
 
     function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService, requisitionTemplateService,
-        notificationService, loadingModalService, messageService) {
+        notificationService, loadingModalService, messageService, $state) {
 
         var vm = this;
 
@@ -165,18 +165,15 @@
             });
             confirmService.confirm(confirmMessage, 'adminProgramAdd.create')
             .then(function() {
-                var loadingPromise = loadingModalService.open();
+                loadingModalService.open();
                 buildTemplate();
 
                 requisitionTemplateService.create(vm.template)
                 .then(function() {
-                    loadingPromise
-                    .then(function() {
-                        notificationService.success('adminTemplateAdd.createTemplate.success');
-                    });
-                    $state.go('openlmis.administration.requisitionTemplates', $stateParams, {
+                    notificationService.success('adminTemplateAdd.createTemplate.success');
+                    $state.go('openlmis.administration.requisitionTemplates', {}, {
                         reload: true
-                    });
+                    });   
                 })
                 .catch(function() {
                     notificationService.error('adminTemplateAdd.createTemplate.failure');

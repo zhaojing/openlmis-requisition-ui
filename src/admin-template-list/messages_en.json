@@ -5,6 +5,6 @@
     "adminTemplateList.facilityTypes": "${number} Facility Types",
     "adminTemplateList.action": "Action",
     "adminTemplateList.configure": "Configure",
-    "adminTemplateList.addNewRequisitionTemplate": "Add New Requisition Template",
+    "adminTemplateList.addNewRequisitionTemplate": "Add Requisition Template",
     "adminTemplateList.noRequisitionTemplates": "No Requisition Templates for ${program} program"
 }
