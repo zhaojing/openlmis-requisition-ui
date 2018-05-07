@@ -1,0 +1,22 @@
+{
+    "adminTemplateAdd.addRequisitionTemplate": "Add Requisition Template",
+    "adminTemplateAdd.program": "Program",
+    "adminTemplateAdd.facilityType": "Facility Type",
+    "adminTemplateAdd.facilityTypeName": "Facility Type Name",
+    "adminTemplateAdd.columnName": "Column Name",
+    "adminTemplateAdd.add": "Add",
+    "adminTemplateAdd.addFacilityType": "Add Facility Type",
+    "adminTemplateAdd.addColumn": "Add Column",
+    "adminTemplateAdd.noFacilityTypesAdded": "No Facility Types added yet",
+    "adminTemplateAdd.noColumnsAdded": "No columns added yet",
+    "adminTemplateAdd.actions": "Actions",
+    "adminTemplateAdd.remove": "Remove",
+    "adminTemplateAdd.cancel": "Cancel",
+    "adminTemplateAdd.createTemplate": "Create Template",
+    "adminTemplateAdd.facilityTypeAlreadyAdded": "Facility Type already added",
+    "adminTemplateAdd.columnAlreadyAdded": "Requisition Column already added",
+    "adminTemplateAdd.createTemplate.confirm": "Do you want to create new Requisition Template for ${program} program?",
+    "adminTemplateAdd.createTemplate.success": "New Requisition Template created successfully",
+    "adminTemplateAdd.createTemplate.failure": "Failed to save Requisition Template",
+    "adminTemplateAdd.requisitionColumn": "Requisition Column"
+}

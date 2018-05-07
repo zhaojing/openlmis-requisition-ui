@@ -42,7 +42,7 @@
                 url: requisitionUrlFactory('/api/requisitionTemplates/search'),
                 method: 'GET'
             },
-            'save': {
+            'update': {
                 method: 'PUT'
             }
         });
@@ -51,6 +51,7 @@
         this.getAll = getAll;
         this.search = search;
         this.save = save;
+        this.create = create;
 
         /**
          * @ngdoc method
@@ -120,7 +121,22 @@
          * @return {Promise} Saved requisition template
          */
         function save(template) {
-            return resource.save({id: template.id}, template).$promise;
+            return resource.update({id: template.id}, template).$promise;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.requisitionTemplateService
+         * @name create
+         *
+         * @description
+         * Creates new Requisition Template.
+         *
+         * @param  {Object}  template new Requisition Template
+         * @return {Promise}          created Requisition Template
+         */
+        function create(template) {
+            return resource.save(null, template).$promise;
         }
     }
 

@@ -1,8 +1,15 @@
 <h2>{{'adminTemplateList.templates' | message}}</h2>
+<button id="add-template" class="add" ui-sref=".add">
+    {{'adminTemplateList.addNewRequisitionTemplate' | message}}
+</button>
 <div ng-repeat="program in vm.programs | orderBy: 'name'">
     <div class="openlmis-table-container">
         <h2>{{program.name}}</h2>
-        <table class="openlmis-table" ng-if="vm.programs.length">
+        
+        <table class="openlmis-table">
+            <caption ng-if="!vm.programTemplates[program.id].length">
+                {{'adminTemplateList.noRequisitionTemplates' | message: {'program': program.name} }}
+            </caption>
             <thead>
                 <tr>
                     <th>{{'adminTemplateList.templateName' | message}}</th>
@@ -10,7 +17,7 @@
                     <th>{{'adminTemplateList.action' | message}}</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody ng-if="vm.programTemplates[program.id].length">
                 <tr ng-repeat="template in vm.programTemplates[program.id] | orderBy: 'name'">
                     <td>{{template.name}}</td>
                     <td ng-if="template.facilityTypes.length > 1"
