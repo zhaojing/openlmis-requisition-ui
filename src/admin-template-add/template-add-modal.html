@@ -6,8 +6,10 @@
             </div>
             <div class="modal-body">
                 <form id="template-form" ng-submit="vm.create()">
+                    <label for="name">{{'adminTemplateAdd.name' | message}}</label>
+                    <input type="text" id="name" ng-model="vm.template.name" required/>
                     <label for="program">{{'adminTemplateAdd.program' | message}}</label>
-                    <select id="program" ng-model="vm.program" 
+                    <select id="program" ng-model="vm.selectedProgram" 
                             ng-options="program.name for program in vm.programs" required>
                     </select>
                 </form>
@@ -24,7 +26,7 @@
                 </form>
                 <section class="openlmis-table-container">
                     <table>
-                        <caption ng-if="!vm.selectedFacilityTypes.length">
+                        <caption ng-if="!vm.template.facilityTypes.length">
                             {{'adminTemplateAdd.noFacilityTypesAdded' | message}}
                         </caption>
                         <thead>
@@ -33,8 +35,8 @@
                                 <th>{{'adminTemplateAdd.actions' | message}}</th>
                             </tr>
                         </thead>
-                        <tbody ng-if="vm.selectedFacilityTypes.length">
-                            <tr ng-repeat="facilityType in vm.selectedFacilityTypes">
+                        <tbody ng-if="vm.template.facilityTypes.length">
+                            <tr ng-repeat="facilityType in vm.template.facilityTypes">
                                 <td>{{facilityType.name}}</td>
                                 <td>
                                     <button class="danger" ng-click="vm.removeFacilityType(facilityType)">{{'adminTemplateAdd.remove' | message}}</button>
@@ -48,7 +50,7 @@
                     <div class="form-group">
                         <label for="column">{{'adminTemplateAdd.requisitionColumn' | message}}</label>
                         <select id="column" ng-model="vm.selectedColumn"
-                                ng-options="availableColumn.name for availableColumn in vm.availableColumns" 
+                                ng-options="availableColumn.label for availableColumn in vm.availableColumns" 
                                 openlmis-invalid="{{vm.validateColumn() | message}}" required>
                         </select>
                     </div>
@@ -62,12 +64,16 @@
                         <thead>
                             <tr>
                                 <th>{{'adminTemplateAdd.columnName' | message}}</th>
+                                <th>{{'adminTemplateAdd.display' | message}}</th>
                                 <th>{{'adminTemplateAdd.actions' | message}}</th>
                             </tr>
                         </thead>
                         <tbody ng-if="vm.selectedColumns.length">
                             <tr ng-repeat="column in vm.selectedColumns">
-                                <td>{{column.name}}</td>
+                                <td>{{column.label}}</td>
+                                <td>
+                                    <input type="checkbox" ng-model="column.isDisplayed"/>
+                                </td>
                                 <td>
                                     <button class="danger" ng-click="vm.removeColumn(column)">{{'adminTemplateAdd.remove' | message}}</button>
                                 </td>

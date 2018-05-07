@@ -114,17 +114,6 @@
         /**
          * @ngdoc property
          * @propertyOf admin-template-add.controller:TemplateAddController
-         * @name selectedFacilityTypes
-         * @type {Array}
-         *
-         * @description
-         * Holds list of selected Facility Types for new Template.
-         */
-        vm.selectedFacilityTypes = undefined;
-
-        /**
-         * @ngdoc property
-         * @propertyOf admin-template-add.controller:TemplateAddController
          * @name selectedColumn
          * @type {Object}
          *
@@ -156,8 +145,9 @@
             vm.programs = programs;
             vm.facilityTypes = facilityTypes;
             vm.availableColumns = availableColumns;
-            vm.template = {};
-            vm.selectedFacilityTypes = [];
+            vm.template = {
+                facilityTypes: []
+            };
             vm.selectedColumns = [];
         }
 
@@ -171,19 +161,18 @@
          */
         function create() {
             var confirmMessage = messageService.get('adminTemplateAdd.createTemplate.confirm', {
-                program: vm.program.name
+                program: vm.selectedProgram.name
             });
             confirmService.confirm(confirmMessage, 'adminProgramAdd.create')
             .then(function() {
                 var loadingPromise = loadingModalService.open();
-
-                // create template
+                buildTemplate();
 
                 requisitionTemplateService.create(vm.template)
                 .then(function() {
                     loadingPromise
                     .then(function() {
-                        notificationService.success('adminTemplateAdd.createTemplate.success')
+                        notificationService.success('adminTemplateAdd.createTemplate.success');
                     });
                     $state.go('openlmis.administration.requisitionTemplates', $stateParams, {
                         reload: true
@@ -207,7 +196,7 @@
          * @return {Promise} resolved promise
          */
         function addFacilityType() {
-            vm.selectedFacilityTypes.push(vm.selectedFacilityType);
+            vm.template.facilityTypes.push(vm.selectedFacilityType);
             return $q.resolve();
         }
 
@@ -222,7 +211,7 @@
          * @param {Object} facilityType Facility Type to be removed from list
          */
         function removeFacilityType(facilityType) {
-            vm.selectedFacilityTypes.splice(vm.selectedFacilityTypes.indexOf(facilityType), 1);
+            vm.template.facilityTypes.splice(vm.template.facilityTypes.indexOf(facilityType), 1);
         }
 
         /**
@@ -236,7 +225,7 @@
          * @return {string} the validation error message
          */
         function validateFacilityType() {
-            if (vm.selectedFacilityTypes.indexOf(vm.selectedFacilityType) > -1) {
+            if (vm.template.facilityTypes.indexOf(vm.selectedFacilityType) > -1) {
                 return 'adminTemplateAdd.facilityTypeAlreadyAdded';
             }
         }
@@ -252,6 +241,7 @@
          * @return {Promise} resolved promise
          */
         function addColumn() {
+            vm.selectedColumn.isDisplayed = true;
             vm.selectedColumns.push(vm.selectedColumn);
             return $q.resolve();
         }
@@ -284,6 +274,26 @@
             if (vm.selectedColumns.indexOf(vm.selectedColumn) > -1) {
                 return 'adminTemplateAdd.columnAlreadyAdded';
             }
+        }
+
+        function buildTemplate() {
+            vm.template.columnsMap = {};
+            vm.selectedColumns.forEach(function(availableColumn, index) {
+                vm.template.columnsMap[availableColumn.name] = {
+                    name: availableColumn.name,
+                    label: availableColumn.label,
+                    indicator: availableColumn.indicator,
+                    displayOrder: index,
+                    isDisplayed: availableColumn.isDisplayed,
+                    source: availableColumn.sources[0],
+                    columnDefinition: availableColumn,
+                    option: availableColumn.options[0],
+                    definition: availableColumn.definition
+                };
+            });
+
+            vm.template.program = vm.selectedProgram;
+            vm.template.populateStockOnHandFromStockCards = false;
         }
     }
 })();

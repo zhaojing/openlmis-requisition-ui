@@ -270,6 +270,7 @@
             var dependencies = RequisitionColumn.columnDependencies(column);
             if(dependencies && dependencies.length > 0) {
                 angular.forEach(dependencies, function(dependency) {
+                    console.log(dependency);
                     if(!columns[dependency].$dependentOn) columns[dependency].$dependentOn = [];
                     columns[dependency].$dependentOn.push(column.name);
                 });

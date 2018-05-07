@@ -18,5 +18,6 @@
     "adminTemplateAdd.createTemplate.confirm": "Do you want to create new Requisition Template for ${program} program?",
     "adminTemplateAdd.createTemplate.success": "New Requisition Template created successfully",
     "adminTemplateAdd.createTemplate.failure": "Failed to save Requisition Template",
-    "adminTemplateAdd.requisitionColumn": "Requisition Column"
+    "adminTemplateAdd.requisitionColumn": "Requisition Column",
+    "adminTemplateAdd.display": "Display"
 }
