@@ -222,7 +222,7 @@
          * @return {string} the validation error message
          */
         function validateFacilityType() {
-            if (vm.template.facilityTypes.indexOf(vm.selectedFacilityType) > -1) {
+            if (vm.template && vm.template.facilityTypes.indexOf(vm.selectedFacilityType) > -1) {
                 return 'adminTemplateAdd.facilityTypeAlreadyAdded';
             }
         }
@@ -268,7 +268,7 @@
          * @return {string} the validation error message if already added
          */
         function validateColumn() {
-            if (vm.selectedColumns.indexOf(vm.selectedColumn) > -1) {
+            if (vm.selectedColumns && vm.selectedColumns.indexOf(vm.selectedColumn) > -1) {
                 return 'adminTemplateAdd.columnAlreadyAdded';
             }
         }
