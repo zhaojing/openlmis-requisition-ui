@@ -42,8 +42,6 @@ describe('TemplateAddController', function () {
         vm = $controller('TemplateAddController', {
             programs: [program],
             facilityTypes: facilityTypes,
-            selectedColumn: productNameColumn,
-            selectedFacilityType: facilityTypes[0],
             availableColumns: [productCodeColumn]
         });
         vm.$onInit();
@@ -55,6 +53,10 @@ describe('TemplateAddController', function () {
 
         it('should resolve program', function() {
             expect(vm.programs).toEqual([program]);
+        });
+
+        it('should resolve facility types', function() {
+            expect(vm.facilityTypes).toEqual(facilityTypes);
         });
 
         it('should resolve template', function() {
@@ -73,6 +75,7 @@ describe('TemplateAddController', function () {
     describe('addFacilityType', function() {
 
         it('should add facility type', function() {
+            vm.selectedFacilityType = facilityTypes[0];
             vm.addFacilityType();
 
             expect(vm.template.facilityTypes).toEqual([vm.selectedFacilityType]);
@@ -100,6 +103,10 @@ describe('TemplateAddController', function () {
 
     describe('validateFacilityType', function() {
 
+        beforeEach(function() {
+            vm.selectedFacilityType = facilityTypes[0];
+        });
+
         it('should return error if facility type is already added', function() {
             vm.template.facilityTypes = [vm.selectedFacilityType];
             var error = vm.validateFacilityType();
@@ -117,21 +124,23 @@ describe('TemplateAddController', function () {
 
     describe('addColumn', function() {
 
-        xit('should add column', function() {
+        it('should add column', function() {
+            vm.selectedColumn = productNameColumn;
             vm.addColumn();
 
             expect(vm.selectedColumn.isDisplayed).toEqual(true);
+            expect(vm.selectedColumns).toEqual([productNameColumn]);
         });
     });
 
     describe('removeColumn', function() {
 
         beforeEach(function() {
-            vm.selectedColumns = [vm.selectedColumn];
+            vm.selectedColumns = [productNameColumn];
         });
 
         it('should remove column', function() {
-            vm.removeColumn(vm.selectedColumn);
+            vm.removeColumn(productNameColumn);
 
             expect(vm.selectedColumns).toEqual([]);
         });
@@ -139,11 +148,15 @@ describe('TemplateAddController', function () {
         it('should not remove if facility type was not found', function() {
             vm.removeColumn(new RequisitionColumnDataBuilder().buildRequestedQuantityColumn());
 
-            expect(vm.selectedColumns).toEqual([vm.selectedColumn]);
+            expect(vm.selectedColumns).toEqual([productNameColumn]);
         });
     });
 
     describe('validateColumn', function() {
+
+        beforeEach(function() {
+            vm.selectedColumn = productNameColumn;
+        });
 
         it('should return error if column is already added', function() {
             vm.selectedColumns = [vm.selectedColumn];
