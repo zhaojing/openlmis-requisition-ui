@@ -34,7 +34,7 @@ services:
     volumes:
       - '/openlmis-referencedata-ui'
   stockmanagement-ui:
-    image: openlmis/stockmanagement-ui:1.1.1-SNAPSHOT
+    image: openlmis/stockmanagement-ui:1.2.0-SNAPSHOT
     volumes:
      - '/openlmis-stockmanagement-ui'
   ui-components:
