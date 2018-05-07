@@ -32,6 +32,7 @@
         TemplateDataBuilder.prototype.withFacilityTypes = withFacilityTypes;
         TemplateDataBuilder.prototype.withPopulateStockOnHandFromStockCards = withPopulateStockOnHandFromStockCards;
         TemplateDataBuilder.prototype.withProgram = withProgram;
+        TemplateDataBuilder.prototype.withoutId = withoutId;
 
         return TemplateDataBuilder;
 
@@ -72,6 +73,11 @@
 
         function withProgram(program) {
             this.program = program;
+            return this;
+        }
+
+        function withoutId() {
+            this.id = undefined;
             return this;
         }
     }

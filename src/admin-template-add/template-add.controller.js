@@ -208,7 +208,9 @@
          * @param {Object} facilityType Facility Type to be removed from list
          */
         function removeFacilityType(facilityType) {
-            vm.template.facilityTypes.splice(vm.template.facilityTypes.indexOf(facilityType), 1);
+            if (vm.template.facilityTypes.indexOf(facilityType) > -1) {
+                vm.template.facilityTypes.splice(vm.template.facilityTypes.indexOf(facilityType), 1);
+            }
         }
 
         /**
@@ -254,7 +256,9 @@
          * @param {Object} column Requistion Column to be removed from
          */
         function removeColumn(column) {
-            vm.selectedColumns.splice(vm.selectedColumns.indexOf(column), 1);
+            if (vm.selectedColumns.indexOf(column) > -1) {
+                vm.selectedColumns.splice(vm.selectedColumns.indexOf(column), 1);
+            }
         }
 
         /**

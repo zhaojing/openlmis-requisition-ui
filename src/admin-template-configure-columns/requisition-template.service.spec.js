@@ -15,31 +15,27 @@
 
 describe('requisitionTemplateService', function() {
 
-    var rootScope, httpBackend, requisitionTemplateService, requisitionUrlFactory, template1, template2;
+    var rootScope, httpBackend, requisitionTemplateService, requisitionUrlFactory, template1, template2,
+        TemplateDataBuilder, ProgramDataBuilder, program1, program2;
 
-    beforeEach(module('admin-template-configure-columns'));
+    beforeEach(function() {
+        module('admin-template-configure-columns');
+        module('referencedata-program');
 
-    beforeEach(inject(function($httpBackend, $rootScope, _requisitionTemplateService_,
-                               _requisitionUrlFactory_) {
+        inject(function($injector) {
+            httpBackend = $injector.get('$httpBackend');
+            rootScope = $injector.get('$rootScope');
+            requisitionTemplateService = $injector.get('requisitionTemplateService');
+            requisitionUrlFactory = $injector.get('requisitionUrlFactory');
+            TemplateDataBuilder = $injector.get('TemplateDataBuilder');
+            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+        });
 
-        httpBackend = $httpBackend;
-        rootScope = $rootScope;
-        requisitionTemplateService = _requisitionTemplateService_;
-        requisitionUrlFactory = _requisitionUrlFactory_;
-
-        template1 = {
-            id: '1',
-            program: {
-                id: '1'
-            }
-        };
-        template2 = {
-            id: '2',
-            program: {
-                id: '2'
-            }
-        };
-    }));
+        program1 = new ProgramDataBuilder().build();
+        program2 = new ProgramDataBuilder().build();
+        template1 = new TemplateDataBuilder().withProgram(program1).build();
+        template2 = new TemplateDataBuilder().withProgram(program2).build();
+    });
 
     it('should get requisition template by id', function() {
         var data;
@@ -109,5 +105,22 @@ describe('requisitionTemplateService', function() {
 
         expect(data.id).toEqual(template1.id);
         expect(data.programId).toEqual(template1.programId);
+    });
+
+    it('should create requisition template', function() {
+        var data,
+            template2 = new TemplateDataBuilder().withProgram(program2).withoutId().build();
+
+        httpBackend.when('POST', requisitionUrlFactory('/api/requisitionTemplates'))
+        .respond(201, template2);
+
+        requisitionTemplateService.create(template2).then(function(response) {
+            data = response;
+        });
+
+        httpBackend.flush();
+        rootScope.$apply();
+
+        expect(data.programId).toEqual(template2.programId);
     });
 });

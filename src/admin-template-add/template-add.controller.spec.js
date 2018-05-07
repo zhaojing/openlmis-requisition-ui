@@ -13,35 +13,38 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-xdescribe('ProgramAddController', function () {
+describe('TemplateAddController', function () {
 
-    var $q, $state, $controller, $rootScope, confirmService, loadingModalService, programService, notificationService, messageService, ProgramDataBuilder,
-        vm, program, stateParams;
+    var $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder,
+        RequisitionColumnDataBuilder, productNameColumn, facilityTypes, productCodeColumn;
 
     beforeEach(function() {
-        module('admin-program-add');
+        module('admin-template-add');
+        module('referencedata-facility-type');
+        module('requisition-template');
 
         inject(function($injector) {
-            $q = $injector.get('$q');
             $controller = $injector.get('$controller');
             $state = $injector.get('$state');
-            $rootScope = $injector.get('$rootScope');
-            confirmService = $injector.get('confirmService');
-            loadingModalService = $injector.get('loadingModalService');
-            programService = $injector.get('programService');
-            notificationService = $injector.get('notificationService');
-            messageService = $injector.get('messageService');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            FacilityTypeDataBuilder = $injector.get('FacilityTypeDataBuilder');
+            RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
         });
 
         program = new ProgramDataBuilder().build();
+        productNameColumn = new RequisitionColumnDataBuilder().buildProductNameColumn();
+        productCodeColumn = new RequisitionColumnDataBuilder().buildProductCodeColumn();
+        facilityTypes = [
+            new FacilityTypeDataBuilder().build(),
+            new FacilityTypeDataBuilder().build()
+        ];
 
-        stateParams = {
-            param: 'param'
-        };
-
-        vm = $controller('ProgramAddController', {
-            $stateParams: stateParams
+        vm = $controller('TemplateAddController', {
+            programs: [program],
+            facilityTypes: facilityTypes,
+            selectedColumn: productNameColumn,
+            selectedFacilityType: facilityTypes[0],
+            availableColumns: [productCodeColumn]
         });
         vm.$onInit();
 
@@ -50,78 +53,109 @@ xdescribe('ProgramAddController', function () {
 
     describe('onInit', function() {
 
-        it('should set active property to program object', function() {
-            expect(vm.program).toEqual({
-                active: true
-            });
+        it('should resolve program', function() {
+            expect(vm.programs).toEqual([program]);
+        });
+
+        it('should resolve template', function() {
+            expect(vm.template).toEqual({ facilityTypes: []});
+        });
+
+        it('should resolve available columns', function() {
+            expect(vm.availableColumns).toEqual([productCodeColumn]);
+        });
+
+        it('should resolve selected columns', function() {
+            expect(vm.selectedColumns).toEqual([]);
         });
     });
 
-    describe('saveProgram', function() {
+    describe('addFacilityType', function() {
+
+        it('should add facility type', function() {
+            vm.addFacilityType();
+
+            expect(vm.template.facilityTypes).toEqual([vm.selectedFacilityType]);
+        });
+    });
+
+    describe('removeFacilityType', function() {
 
         beforeEach(function() {
-            spyOn(confirmService, 'confirm').andReturn($q.resolve());
-            spyOn(loadingModalService, 'open').andReturn($q.resolve());
-            spyOn(loadingModalService, 'close').andReturn($q.resolve());
-            spyOn(programService, 'create').andReturn($q.resolve());
-            spyOn(notificationService, 'success').andReturn($q.resolve());
-            spyOn(notificationService, 'error').andReturn($q.resolve());
-            spyOn(messageService, 'get').andCallFake(function(messageKey) {
-                return messageKey;
-            });
+            vm.template.facilityTypes = [facilityTypes[0]];
         });
 
-        it('should create a program and display success notification', function() {
-            vm.program = program;
-            vm.saveProgram();
-            $rootScope.$apply();
+        it('should remove facility type', function() {
+            vm.removeFacilityType(facilityTypes[0]);
 
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
-            expect(loadingModalService.open).toHaveBeenCalled();
-            expect(programService.create).toHaveBeenCalledWith(program);
-            expect(notificationService.success).toHaveBeenCalledWith('adminProgramAdd.createProgram.success');
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs', stateParams, {
-                reload: true
-            });
+            expect(vm.template.facilityTypes).toEqual([]);
         });
 
-        it('should not call any service when confirmation fails', function() {
-            confirmService.confirm.andReturn($q.reject());
+        it('should not remove if facility type was not found', function() {
+            vm.removeFacilityType(new FacilityTypeDataBuilder().build());
 
-            vm.program = program;
-            vm.saveProgram();
-            $rootScope.$apply();
-
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
-            expect(loadingModalService.open).not.toHaveBeenCalled();
-            expect(programService.create).not.toHaveBeenCalled();
-            expect(notificationService.success).not.toHaveBeenCalled();
-            expect(notificationService.error).not.toHaveBeenCalledWith();
-            expect($state.go).not.toHaveBeenCalled();
-        });
-
-        it('should display error notification when program creation fails', function() {
-            programService.create.andReturn($q.reject());
-
-            vm.program = program;
-            vm.saveProgram();
-            $rootScope.$apply();
-
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
-            expect(loadingModalService.open).toHaveBeenCalled();
-            expect(programService.create).toHaveBeenCalledWith(program);
-            expect(notificationService.success).not.toHaveBeenCalled();
-            expect(notificationService.error).toHaveBeenCalledWith('adminProgramAdd.createProgram.failure');
-            expect(loadingModalService.close).toHaveBeenCalled();
-            expect($state.go).not.toHaveBeenCalledWith();
+            expect(vm.template.facilityTypes).toEqual([facilityTypes[0]]);
         });
     });
 
-    describe('goToPreviousState', function() {
+    describe('validateFacilityType', function() {
 
-        it('should redirects to previous state', function() {
-            vm.goToPreviousState();
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs');
+        it('should return error if facility type is already added', function() {
+            vm.template.facilityTypes = [vm.selectedFacilityType];
+            var error = vm.validateFacilityType();
+
+            expect(error).toEqual('adminTemplateAdd.facilityTypeAlreadyAdded');
+        });
+
+        it('should not return error if facility type does not exist', function() {
+            vm.template.facilityTypes = [];
+            var error = vm.validateFacilityType();
+
+            expect(error).toEqual(undefined);
+        });
+    });
+
+    describe('addColumn', function() {
+
+        xit('should add column', function() {
+            vm.addColumn();
+
+            expect(vm.selectedColumn.isDisplayed).toEqual(true);
+        });
+    });
+
+    describe('removeColumn', function() {
+
+        beforeEach(function() {
+            vm.selectedColumns = [vm.selectedColumn];
+        });
+
+        it('should remove column', function() {
+            vm.removeColumn(vm.selectedColumn);
+
+            expect(vm.selectedColumns).toEqual([]);
+        });
+
+        it('should not remove if facility type was not found', function() {
+            vm.removeColumn(new RequisitionColumnDataBuilder().buildRequestedQuantityColumn());
+
+            expect(vm.selectedColumns).toEqual([vm.selectedColumn]);
+        });
+    });
+
+    describe('validateColumn', function() {
+
+        it('should return error if column is already added', function() {
+            vm.selectedColumns = [vm.selectedColumn];
+            var error = vm.validateColumn();
+
+            expect(error).toEqual('adminTemplateAdd.columnAlreadyAdded');
+        });
+
+        it('should not return error if column does not exist', function() {
+            var error = vm.validateColumn();
+
+            expect(error).toEqual(undefined);
         });
     });
 });
