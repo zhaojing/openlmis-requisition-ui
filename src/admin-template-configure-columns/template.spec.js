@@ -74,7 +74,8 @@ describe('TemplateColumn', function() {
                             id: 'A'
                         }],
                         sources: jasmine.createSpyObj('sources', ['includes'])
-                    }
+                    },
+                    displayOrder: 0
                 }
             }
         };
@@ -343,6 +344,80 @@ describe('TemplateColumn', function() {
             template.columnsMap.column1.isStockDisabledColumn.andReturn(true);
 
             expect(template.isColumnDisabled(template.columnsMap.column1)).toBe(false);
+        });
+    });
+
+    describe('hasColumns', function() {
+
+        beforeEach(function() {
+            template = new Template(templateJson);
+        });
+
+        it('should return true if template has columns', function() {
+            expect(template.hasColumns()).toBe(true);
+        });
+
+        it('should return false if template has no columns', function() {
+            template.columnsMap = {};
+            expect(template.hasColumns()).toBe(false);
+        });
+    });
+
+    describe('removeColumn', function() {
+
+        beforeEach(function() {
+            template = new Template(templateJson);
+        });
+
+        it('should resolve if column removal was successful', function() {
+            var spy = jasmine.createSpy();
+            
+            template.removeColumn('someColumn').then(spy);
+            $rootScope.$apply();
+
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it('should reject if column removal was not successful', function() {
+            var spy = jasmine.createSpy();
+            
+            template.removeColumn('notExistingColumn').catch(spy);
+            $rootScope.$apply();
+
+            expect(spy).toHaveBeenCalled();
+        });
+    });
+
+    describe('addColumn', function() {
+
+        beforeEach(function() {
+            template = new Template(templateJson);
+        });
+
+        it('should add column', function() {
+            var spy = jasmine.createSpy(),
+                availableColumn = {
+                    name: 'newColumn',
+                    label: 'new column',
+                    indicator: 'newColumn',
+                    sources: ['USER_INPUT'],
+                    options: ['OPTION_1'],
+                    definition: 'definition'
+                };
+            
+            template.addColumn(availableColumn);
+
+            expect(template.columnsMap.newColumn).toEqual({
+                name: availableColumn.name,
+                label: availableColumn.label,
+                indicator: availableColumn.indicator,
+                displayOrder: 1,
+                isDisplayed: true,
+                source: availableColumn.sources[0],
+                columnDefinition: availableColumn,
+                option: availableColumn.options[0],
+                definition: availableColumn.definition
+            });
         });
     });
 });

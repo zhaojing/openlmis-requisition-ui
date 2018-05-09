@@ -29,10 +29,10 @@
         .controller('TemplateAddController', TemplateAddController);
 
     TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService', 'requisitionTemplateService',
-        'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'NewTemplate'];
+        'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'Template'];
 
     function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService, requisitionTemplateService,
-        notificationService, loadingModalService, messageService, $state, programTemplates, NewTemplate) {
+        notificationService, loadingModalService, messageService, $state, programTemplates, Template) {
 
         var vm = this;
 
@@ -121,7 +121,11 @@
         function onInit() {
             vm.programs = programs;
             vm.availableColumns = availableColumns;
-            vm.template = new NewTemplate();
+            vm.template = new Template({
+                populateStockOnHandFromStockCards: false,
+                columnsMap: {},
+                facilityTypes: []
+            });
         }
 
         /**

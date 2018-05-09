@@ -59,7 +59,7 @@
                 </form>
                 <section class="openlmis-table-container">
                     <table>
-                        <caption ng-if="vm.template.hasColumns()">
+                        <caption ng-if="!vm.template.hasColumns()">
                             {{'adminTemplateAdd.noColumnsAdded' | message}}
                         </caption>
                         <thead>

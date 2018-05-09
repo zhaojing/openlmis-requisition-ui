@@ -28,14 +28,17 @@
         .module('admin-template-configure-columns')
         .factory('Template', Template);
 
-    Template.$inject = ['templateValidator', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'TemplateColumn', 'RequisitionColumn'];
+    Template.$inject = ['$q', 'templateValidator', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'TemplateColumn', 'RequisitionColumn'];
 
-    function Template(templateValidator, TEMPLATE_COLUMNS, COLUMN_SOURCES, TemplateColumn, RequisitionColumn) {
+    function Template($q, templateValidator, TEMPLATE_COLUMNS, COLUMN_SOURCES, TemplateColumn, RequisitionColumn) {
         Template.prototype.moveColumn = moveColumn;
         Template.prototype.findCircularCalculatedDependencies = findCircularCalculatedDependencies;
         Template.prototype.changePopulateStockOnHandFromStockCards = changePopulateStockOnHandFromStockCards;
         Template.prototype.isColumnDisabled = isColumnDisabled;
         Template.prototype.isValid = isValid;
+        Template.prototype.hasColumns = hasColumns;
+        Template.prototype.removeColumn = removeColumn;
+        Template.prototype.addColumn = addColumn;
 
         return Template;
 
@@ -57,6 +60,74 @@
             angular.forEach(this.columnsMap, function(column) {
                 addDependentColumnValidation(column, columns);
             });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.Template
+         * @name hasColumns
+         *
+         * @description
+         * Checks if Template has any column.
+         *
+         * @return {boolean} true if Template has column, false otherwise
+         */
+        function hasColumns() {
+            for (var prop in this.columnsMap) {
+                if (this.columnsMap.hasOwnProperty(prop)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.Template
+         * @name removeColumn
+         *
+         * @description
+         * Removes column from Template based on name.
+         *
+         * @param  {string} columnName name of the column to be removed
+         * @return {Promise}           resolved if column was removed successfully, rejected otherwise
+         */
+        function removeColumn(columnName) {
+            if (this.columnsMap.hasOwnProperty(columnName)) {
+                var removedDisplayOrder = this.columnsMap[columnName].displayOrder;
+                delete this.columnsMap[columnName];
+                Object.keys(this.columnsMap).forEach(function(column) {
+                    if (this.columnsMap[column].displayOrder >= removedDisplayOrder) {
+                        this.columnsMap[column].displayOrder--;
+                    }
+                });
+                return $q.resolve();
+            }
+            return $q.reject();
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.Template
+         * @name addColumn
+         *
+         * @description
+         * Add new column to Template based on given Available Requisition Column
+         *
+         * @param  {Object} availableColumn Available Requisition Column to be added
+         */
+        function addColumn(availableColumn) {
+            this.columnsMap[availableColumn.name] = {
+                name: availableColumn.name,
+                label: availableColumn.label,
+                indicator: availableColumn.indicator,
+                displayOrder: getNewDisplayOrder(this),
+                isDisplayed: true,
+                source: availableColumn.sources[0],
+                columnDefinition: availableColumn,
+                option: availableColumn.options[0],
+                definition: availableColumn.definition
+            };
         }
 
         /**
@@ -278,6 +349,16 @@
                     }
                 });
             }
+        }
+
+        function getNewDisplayOrder(template) {
+            var newDisplayOrder = 0;
+            Object.keys(template.columnsMap).forEach(function(templateName) {
+                if (template.columnsMap[templateName].displayOrder >= newDisplayOrder) {
+                    newDisplayOrder = template.columnsMap[templateName].displayOrder + 1;
+                }
+            });
+            return newDisplayOrder;
         }
     }
 })();
