@@ -29,10 +29,10 @@
             controllerAs: 'vm',
             templateUrl: 'admin-template-add/template-add-modal.html',
             url: '/add',
-            parentResolves: ['programs', 'facilityTypes'],
+            parentResolves: ['programs', 'facilityTypes', 'programTemplates'],
             resolve: {
                 availableColumns: function(AvailableRequisitionColumnResource) {
-                    return new AvailableRequisitionColumnResource().query({})
+                    return new AvailableRequisitionColumnResource().query()
                     .then(function(response) {
                         return response.content;
                     });

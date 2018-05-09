@@ -29,10 +29,10 @@
         .controller('TemplateAddController', TemplateAddController);
 
     TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService', 'requisitionTemplateService',
-        'notificationService', 'loadingModalService', 'messageService', '$state'];
+        'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'NewTemplate'];
 
     function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService, requisitionTemplateService,
-        notificationService, loadingModalService, messageService, $state) {
+        notificationService, loadingModalService, messageService, $state, programTemplates, NewTemplate) {
 
         var vm = this;
 
@@ -40,10 +40,9 @@
         vm.create = create;
         vm.addFacilityType = addFacilityType;
         vm.removeFacilityType = removeFacilityType;
-        vm.validateFacilityType = validateFacilityType;
         vm.addColumn = addColumn;
         vm.removeColumn = removeColumn;
-        vm.validateColumn = validateColumn;
+        vm.populateFacilityTypes = populateFacilityTypes;
 
         /**
          * @ngdoc property
@@ -74,7 +73,7 @@
          * @type {Array}
          *
          * @description
-         * Holds list of available Requsition Template Columns.
+         * Holds list of available Requisition Template Columns.
          */
         vm.availableColumns = undefined;
 
@@ -88,17 +87,6 @@
          * Holds Template that will be created.
          */
         vm.template = undefined;
-
-        /**
-         * @ngdoc property
-         * @propertyOf admin-template-add.controller:TemplateAddController
-         * @name selectedProgram
-         * @type {Object}
-         *
-         * @description
-         * Holds selected Program for the new Template.
-         */
-        vm.selectedProgram = undefined;
 
         /**
          * @ngdoc property
@@ -124,17 +112,6 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-template-add.controller:TemplateAddController
-         * @name selectedColumns
-         * @type {Array}
-         *
-         * @description
-         * Holds list of selected Facility Types for new Template.
-         */
-        vm.selectedColumns = undefined;
-
-        /**
-         * @ngdoc property
          * @methodOf admin-template-add.controller:TemplateAddController
          * @name $onInit
          *
@@ -143,12 +120,8 @@
          */
         function onInit() {
             vm.programs = programs;
-            vm.facilityTypes = facilityTypes;
             vm.availableColumns = availableColumns;
-            vm.template = {
-                facilityTypes: []
-            };
-            vm.selectedColumns = [];
+            vm.template = new NewTemplate();
         }
 
         /**
@@ -161,12 +134,11 @@
          */
         function create() {
             var confirmMessage = messageService.get('adminTemplateAdd.createTemplate.confirm', {
-                program: vm.selectedProgram.name
+                program: vm.template.program.name
             });
             confirmService.confirm(confirmMessage, 'adminProgramAdd.create')
             .then(function() {
                 loadingModalService.open();
-                buildTemplate();
 
                 requisitionTemplateService.create(vm.template)
                 .then(function() {
@@ -188,12 +160,13 @@
          * @name addFacilityType
          *
          * @description
-         * Adds new Facility Type to the list.
+         * Adds new Facility Type to the Template. Removes it from the list of available Facility Types. 
          * 
          * @return {Promise} resolved promise
          */
         function addFacilityType() {
             vm.template.facilityTypes.push(vm.selectedFacilityType);
+            vm.facilityTypes.splice(vm.facilityTypes.indexOf(vm.selectedFacilityType), 1);
             return $q.resolve();
         }
 
@@ -203,29 +176,14 @@
          * @name removeFacilityType
          *
          * @description
-         * Removes new Facility Type from the list.
+         * Removes new Facility Type from the Templates. Adds if back to the list of available Facility Types.
          * 
          * @param {Object} facilityType Facility Type to be removed from list
          */
         function removeFacilityType(facilityType) {
             if (vm.template.facilityTypes.indexOf(facilityType) > -1) {
+                vm.facilityTypes.push(facilityType);
                 vm.template.facilityTypes.splice(vm.template.facilityTypes.indexOf(facilityType), 1);
-            }
-        }
-
-        /**
-         * @ngdoc property
-         * @methodOf admin-template-add.controller:TemplateAddController
-         * @name validateFacilityType
-         *
-         * @description
-         * Validates selected Facility Type, if it is already added returns error message, otherwise it returns nothing
-         * 
-         * @return {string} the validation error message
-         */
-        function validateFacilityType() {
-            if (vm.template && vm.template.facilityTypes.indexOf(vm.selectedFacilityType) > -1) {
-                return 'adminTemplateAdd.facilityTypeAlreadyAdded';
             }
         }
 
@@ -240,8 +198,8 @@
          * @return {Promise} resolved promise
          */
         function addColumn() {
-            vm.selectedColumn.isDisplayed = true;
-            vm.selectedColumns.push(vm.selectedColumn);
+            vm.template.addColumn(vm.selectedColumn);
+            vm.availableColumns.splice(vm.availableColumns.indexOf(vm.selectedColumn), 1);
             return $q.resolve();
         }
 
@@ -251,50 +209,40 @@
          * @name removeColumn
          *
          * @description
-         * Removes Requisition Column from the list of seleted columns.
+         * Removes Requisition Column from the Template and adds it back to the list of available Requisition Columns.
          * 
-         * @param {Object} column Requistion Column to be removed from
+         * @param {string} columnName name of Requisition Column to be removed from Template
          */
-        function removeColumn(column) {
-            if (vm.selectedColumns.indexOf(column) > -1) {
-                vm.selectedColumns.splice(vm.selectedColumns.indexOf(column), 1);
-            }
+        function removeColumn(columnName) {
+            vm.template.removeColumn(columnName).then(function() {
+                vm.availableColumns.push(vm.template.columnsMap[columnName].columnDefinition);
+            });
         }
 
         /**
          * @ngdoc property
          * @methodOf admin-template-add.controller:TemplateAddController
-         * @name validateColumn
+         * @name populateFacilityTypes
          *
          * @description
-         * Validates selected Requisition Column if it is already added, returns error message, otherwise it returns nothing
-         * 
-         * @return {string} the validation error message if already added
+         * Populates Facility Type list after selecting a Program.
          */
-        function validateColumn() {
-            if (vm.selectedColumns && vm.selectedColumns.indexOf(vm.selectedColumn) > -1) {
-                return 'adminTemplateAdd.columnAlreadyAdded';
+        function populateFacilityTypes() {
+            if (vm.template.program) {
+                vm.selectedFacilityType = undefined;
+                vm.template.facilityTypes = [];
+
+                vm.facilityTypes = facilityTypes
+                .filter(function(facilityType) {
+                    var isAssigned = false;
+                    programTemplates[vm.template.program.id].forEach(function(template) {
+                        template.facilityTypes.forEach(function(assignedFacilityType) {
+                            isAssigned = isAssigned || assignedFacilityType.id === facilityType.id;
+                        });
+                    });
+                    return !isAssigned;
+                });
             }
-        }
-
-        function buildTemplate() {
-            vm.template.columnsMap = {};
-            vm.selectedColumns.forEach(function(availableColumn, index) {
-                vm.template.columnsMap[availableColumn.name] = {
-                    name: availableColumn.name,
-                    label: availableColumn.label,
-                    indicator: availableColumn.indicator,
-                    displayOrder: index,
-                    isDisplayed: availableColumn.isDisplayed,
-                    source: availableColumn.sources[0],
-                    columnDefinition: availableColumn,
-                    option: availableColumn.options[0],
-                    definition: availableColumn.definition
-                };
-            });
-
-            vm.template.program = vm.selectedProgram;
-            vm.template.populateStockOnHandFromStockCards = false;
         }
     }
 })();

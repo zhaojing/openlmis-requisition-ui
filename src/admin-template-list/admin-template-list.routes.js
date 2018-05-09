@@ -49,6 +49,9 @@
                 },
                 templateFacilityTypes: function(templates, facilityTypes, templateListFactory) {
                     return templateListFactory.getTemplateFacilityTypes(templates, facilityTypes);
+                },
+                programTemplates: function(templateListFactory, templates, programs) {
+                    return templateListFactory.getProgramTemplates(templates, programs);
                 }
             }
         });

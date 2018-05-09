@@ -17,7 +17,7 @@ describe('TemplateListAdminController', function() {
 
     var vm, template, program, ProgramDataBuilder, TemplateDataBuilder, $controller,
         FacilityTypeDataBuilder, programTwo, templateTwo, districtHospital, healthCenter,
-        templateListFactory, result, templateFacilityTypes;
+        templateFacilityTypes, programTemplates;
 
     beforeEach(function() {
         module('admin-template-list');
@@ -27,7 +27,6 @@ describe('TemplateListAdminController', function() {
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
             FacilityTypeDataBuilder = $injector.get('FacilityTypeDataBuilder');
-            templateListFactory = $injector.get('templateListFactory');
         });
 
         program = new ProgramDataBuilder().withId('program-1').build();
@@ -48,38 +47,34 @@ describe('TemplateListAdminController', function() {
         templateFacilityTypes[template.id] = [healthCenter, districtHospital];
         templateFacilityTypes[templateTwo.id] = [healthCenter];
 
+        programTemplates = {};
+        programTemplates[program.id] = [template];
+        programTemplates[programTwo.id] = [templateTwo];
+
         vm = $controller('TemplateListAdminController', {
             programs: [program, programTwo],
             templates: [template, templateTwo],
-            templateFacilityTypes: templateFacilityTypes
+            templateFacilityTypes: templateFacilityTypes,
+            programTemplates: programTemplates
         });
+        vm.$onInit();
     });
 
     describe('init', function() {
 
         it('should set programs', function() {
-            vm.$onInit();
             expect(vm.programs).toEqual([program, programTwo]);
         });
 
         it('should set templates', function() {
-            vm.$onInit();
             expect(vm.templates).toEqual([template, templateTwo]);
         });
 
         it('should set templateFacilityTypes', function() {
-            vm.$onInit();
             expect(vm.templateFacilityTypes).toEqual(templateFacilityTypes);
         });
 
         it('should set programTemplates', function() {
-            result = {};
-            result[program.id] = [template];
-            result[programTwo.id] = [templateTwo];
-
-            spyOn(templateListFactory, 'getProgramTemplates').andReturn(result);
-
-            vm.$onInit();
             expect(vm.programTemplates[program.id]).toEqual([template]);
             expect(vm.programTemplates[programTwo.id]).toEqual([templateTwo]);
         });

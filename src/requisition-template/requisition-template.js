@@ -117,9 +117,9 @@
          * @name hasSkipColumn
          *
          * @description
-         * Return true if template has Skip column or false if it doesnt.
+         * Return true if template has Skip column or false if it does not.
          *
-         * @return  {boolean}   true if template has Skip column, false otherwise
+         * @return {boolean} true if template has Skip column, false otherwise
          */
         function hasSkipColumn() {
             var hasSkipColumn = false;

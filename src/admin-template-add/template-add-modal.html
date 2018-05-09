@@ -9,7 +9,7 @@
                     <label for="name">{{'adminTemplateAdd.name' | message}}</label>
                     <input type="text" id="name" ng-model="vm.template.name" required/>
                     <label for="program">{{'adminTemplateAdd.program' | message}}</label>
-                    <select id="program" ng-model="vm.selectedProgram" 
+                    <select id="program" ng-model="vm.template.program" ng-change="vm.populateFacilityTypes()"
                             ng-options="program.name for program in vm.programs" required>
                     </select>
                 </form>
@@ -18,7 +18,8 @@
                     <div class="form-group">
                         <label for="facilityType">{{'adminTemplateAdd.facilityType' | message}}</label>
                         <select id="facilityType" ng-model="vm.selectedFacilityType"
-                                ng-options="facilityType.name for facilityType in vm.facilityTypes" 
+                                ng-options="facilityType.name for facilityType in vm.facilityTypes | orderBy: 'name'" 
+                                ng-disabled="!vm.template.program"
                                 openlmis-invalid="{{vm.validateFacilityType() | message}}" required>
                         </select>
                     </div>
@@ -50,7 +51,7 @@
                     <div class="form-group">
                         <label for="column">{{'adminTemplateAdd.requisitionColumn' | message}}</label>
                         <select id="column" ng-model="vm.selectedColumn"
-                                ng-options="availableColumn.label for availableColumn in vm.availableColumns" 
+                                ng-options="availableColumn.label for availableColumn in vm.availableColumns | orderBy: 'name'" 
                                 openlmis-invalid="{{vm.validateColumn() | message}}" required>
                         </select>
                     </div>
@@ -58,24 +59,20 @@
                 </form>
                 <section class="openlmis-table-container">
                     <table>
-                        <caption ng-if="!vm.selectedColumns.length">
+                        <caption ng-if="vm.template.hasColumns()">
                             {{'adminTemplateAdd.noColumnsAdded' | message}}
                         </caption>
                         <thead>
                             <tr>
                                 <th>{{'adminTemplateAdd.columnName' | message}}</th>
-                                <th>{{'adminTemplateAdd.display' | message}}</th>
                                 <th>{{'adminTemplateAdd.actions' | message}}</th>
                             </tr>
                         </thead>
-                        <tbody ng-if="vm.selectedColumns.length">
-                            <tr ng-repeat="column in vm.selectedColumns">
+                        <tbody>
+                            <tr ng-repeat="(columnName, column) in vm.template.columnsMap">
                                 <td>{{column.label}}</td>
                                 <td>
-                                    <input type="checkbox" ng-model="column.isDisplayed"/>
-                                </td>
-                                <td>
-                                    <button class="danger" ng-click="vm.removeColumn(column)">{{'adminTemplateAdd.remove' | message}}</button>
+                                    <button class="danger" ng-click="vm.removeColumn(columnName)">{{'adminTemplateAdd.remove' | message}}</button>
                                 </td>
                             </tr>
                         </tbody>

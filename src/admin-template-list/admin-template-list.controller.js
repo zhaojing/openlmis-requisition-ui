@@ -29,12 +29,14 @@
         .controller('TemplateListAdminController', TemplateListAdminController);
 
     TemplateListAdminController.$inject = [
-        'templates', 'programs', '$filter', 'templateListFactory', 'templateFacilityTypes'
+        'templates', 'programs', 'templateFacilityTypes', 'programTemplates'
     ];
 
-    function TemplateListAdminController(templates, programs, $filter, templateListFactory, templateFacilityTypes) {
+    function TemplateListAdminController(templates, programs, templateFacilityTypes, programTemplates) {
 
         var vm = this;
+
+        vm.$onInit = onInit;
 
         /**
          * @ngdoc property
@@ -80,8 +82,6 @@
          */
         vm.templateFacilityTypes = undefined;
 
-        vm.$onInit = onInit;
-
         /**
          * @ngdoc method
          * @methodOf admin-template-list.controller:TemplateListAdminController
@@ -95,7 +95,7 @@
         function onInit() {
             vm.templates = templates;
             vm.programs = programs;
-            vm.programTemplates = templateListFactory.getProgramTemplates(vm.templates, vm.programs);
+            vm.programTemplates = programTemplates;
             vm.templateFacilityTypes = templateFacilityTypes;
         }
     }
