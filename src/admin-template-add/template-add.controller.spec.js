@@ -15,8 +15,10 @@
 
 xdescribe('TemplateAddController', function () {
 
-    var $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder,
-        RequisitionColumnDataBuilder, productNameColumn, facilityTypes, productCodeColumn;
+    var $rootScope, $q, $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder, TemplateDataBuilder,
+        RequisitionColumnDataBuilder, productNameColumn, facilityTypes, productCodeColumn,
+        confirmService, loadingModalService, requisitionTemplateService, notificationService, messageService,
+        templateOne, templateTwo, healthCenter, districtHospital, programTemplates, programTwo;
 
     beforeEach(function() {
         module('admin-template-add');
@@ -24,25 +26,52 @@ xdescribe('TemplateAddController', function () {
         module('requisition-template');
 
         inject(function($injector) {
+            $rootScope = $injector.get('$rootScope');
+            $q = $injector.get('$q');
             $controller = $injector.get('$controller');
             $state = $injector.get('$state');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
             FacilityTypeDataBuilder = $injector.get('FacilityTypeDataBuilder');
             RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
+            TemplateDataBuilder = $injector.get('TemplateDataBuilder');
+            confirmService = $injector.get('confirmService');
+            loadingModalService = $injector.get('loadingModalService');
+            requisitionTemplateService = $injector.get('requisitionTemplateService');
+            notificationService = $injector.get('notificationService');
+            messageService = $injector.get('messageService');
         });
 
-        program = new ProgramDataBuilder().build();
+        program = new ProgramDataBuilder().withId('program-1').build();
+        programTwo = new ProgramDataBuilder().withId('program-2').build();
+        
         productNameColumn = new RequisitionColumnDataBuilder().buildProductNameColumn();
         productCodeColumn = new RequisitionColumnDataBuilder().buildProductCodeColumn();
+        
+        districtHospital = new FacilityTypeDataBuilder.buildDistrictHospital();
+        healthCenter = new FacilityTypeDataBuilder().build();
+
+        templateOne = new TemplateDataBuilder()
+            .withFacilityTypes([healthCenter, districtHospital])
+            .build();
+
+        templateTwo = new TemplateDataBuilder()
+            .withFacilityTypes([healthCenter])
+            .build();
+
+        programTemplates = {};
+        programTemplates[program.id] = [templateOne];
+        programTemplates[programTwo.id] = [templateTwo];
+
         facilityTypes = [
-            new FacilityTypeDataBuilder().build(),
-            new FacilityTypeDataBuilder().build()
+            districtHospital,
+            healthCenter
         ];
 
         vm = $controller('TemplateAddController', {
-            programs: [program],
+            programs: [program, programTwo],
             facilityTypes: facilityTypes,
-            availableColumns: [productCodeColumn]
+            availableColumns: [productCodeColumn],
+            programTemplates: programTemplates
         });
         vm.$onInit();
 
@@ -169,6 +198,65 @@ xdescribe('TemplateAddController', function () {
             var error = vm.validateColumn();
 
             expect(error).toEqual(undefined);
+        });
+    });
+
+    describe('create', function() {
+
+        beforeEach(function() {
+            spyOn(confirmService, 'confirm').andReturn($q.resolve());
+            spyOn(loadingModalService, 'open').andReturn($q.resolve());
+            spyOn(loadingModalService, 'close').andReturn($q.resolve());
+            spyOn(requisitionTemplateService, 'create').andReturn($q.resolve());
+            spyOn(notificationService, 'success').andReturn($q.resolve());
+            spyOn(notificationService, 'error').andReturn($q.resolve());
+            spyOn(messageService, 'get').andCallFake(function(messageKey) {
+                return messageKey;
+            });
+
+            vm.template.program = program;
+        });
+
+        it('should create a template and display success notification', function() {
+            vm.create();
+            $rootScope.$apply();
+
+            expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
+            expect(loadingModalService.open).toHaveBeenCalled();
+            expect(requisitionTemplateService.create).toHaveBeenCalledWith(vm.template);
+            expect(notificationService.success).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.success');
+            expect($state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates', {}, {
+                reload: true
+            });
+        });
+
+        it('should not call any service when confirmation fails', function() {
+            confirmService.confirm.andReturn($q.reject());
+
+            vm.create();
+            $rootScope.$apply();
+
+            expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
+            expect(loadingModalService.open).not.toHaveBeenCalled();
+            expect(requisitionTemplateService.create).not.toHaveBeenCalled();
+            expect(notificationService.success).not.toHaveBeenCalled();
+            expect(notificationService.error).not.toHaveBeenCalledWith();
+            expect($state.go).not.toHaveBeenCalled();
+        });
+
+        it('should display error notification when template creation fails', function() {
+            requisitionTemplateService.create.andReturn($q.reject());
+
+            vm.create();
+            $rootScope.$apply();
+
+            expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
+            expect(loadingModalService.open).toHaveBeenCalled();
+            expect(requisitionTemplateService.create).toHaveBeenCalledWith(vm.template);
+            expect(notificationService.success).not.toHaveBeenCalled();
+            expect(notificationService.error).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.failure');
+            expect(loadingModalService.close).toHaveBeenCalled();
+            expect($state.go).not.toHaveBeenCalledWith();
         });
     });
 });

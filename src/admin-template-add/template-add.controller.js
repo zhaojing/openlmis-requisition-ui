@@ -140,7 +140,7 @@
             var confirmMessage = messageService.get('adminTemplateAdd.createTemplate.confirm', {
                 program: vm.template.program.name
             });
-            confirmService.confirm(confirmMessage, 'adminProgramAdd.create')
+            confirmService.confirm(confirmMessage, 'adminTemplateAdd.create')
             .then(function() {
                 loadingModalService.open();
 

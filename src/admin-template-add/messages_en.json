@@ -4,7 +4,7 @@
     "adminTemplateAdd.facilityType": "Facility Type",
     "adminTemplateAdd.facilityTypeName": "Facility Type Name",
     "adminTemplateAdd.columnName": "Column Name",
-    "adminTemplateAdd.add": "Add",
+    "adminTemplateAdd.create": "Create",
     "adminTemplateAdd.addFacilityType": "Add Facility Type",
     "adminTemplateAdd.addColumn": "Add Column",
     "adminTemplateAdd.noFacilityTypesAdded": "No Facility Types added yet",

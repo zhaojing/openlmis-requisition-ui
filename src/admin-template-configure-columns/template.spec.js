@@ -376,6 +376,7 @@ describe('TemplateColumn', function() {
             $rootScope.$apply();
 
             expect(spy).toHaveBeenCalled();
+            expect(template.columnsMap.someColumn).toBe(undefined);
         });
 
         it('should reject if column removal was not successful', function() {
@@ -385,6 +386,7 @@ describe('TemplateColumn', function() {
             $rootScope.$apply();
 
             expect(spy).toHaveBeenCalled();
+            expect(template.columnsMap.someColumn).not.toBe(undefined);
         });
     });
 
@@ -395,8 +397,7 @@ describe('TemplateColumn', function() {
         });
 
         it('should add column', function() {
-            var spy = jasmine.createSpy(),
-                availableColumn = {
+            var availableColumn = {
                     name: 'newColumn',
                     label: 'new column',
                     indicator: 'newColumn',
@@ -418,6 +419,14 @@ describe('TemplateColumn', function() {
                 option: availableColumn.options[0],
                 definition: availableColumn.definition
             });
+        });
+
+        it('should not add column if parameter is undefined', function() {
+            template.columnsMap = {};
+            
+            template.addColumn(undefined);
+
+            expect(template.columnsMap).toEqual({});
         });
     });
 });

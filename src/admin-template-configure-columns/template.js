@@ -89,7 +89,7 @@
          * @description
          * Removes column from Template based on name.
          *
-         * @param  {string} columnName name of the column to be removed
+         * @param  {String} columnName name of the column to be removed
          * @return {Promise}           resolved if column was removed successfully, rejected otherwise
          */
         function removeColumn(columnName) {
@@ -117,17 +117,19 @@
          * @param  {Object} availableColumn Available Requisition Column to be added
          */
         function addColumn(availableColumn) {
-            this.columnsMap[availableColumn.name] = {
-                name: availableColumn.name,
-                label: availableColumn.label,
-                indicator: availableColumn.indicator,
-                displayOrder: getNewDisplayOrder(this),
-                isDisplayed: true,
-                source: availableColumn.sources[0],
-                columnDefinition: availableColumn,
-                option: availableColumn.options[0],
-                definition: availableColumn.definition
-            };
+            if (availableColumn) {
+                this.columnsMap[availableColumn.name] = {
+                    name: availableColumn.name,
+                    label: availableColumn.label,
+                    indicator: availableColumn.indicator,
+                    displayOrder: getNewDisplayOrder(this),
+                    isDisplayed: true,
+                    source: availableColumn.sources[0],
+                    columnDefinition: availableColumn,
+                    option: availableColumn.options[0],
+                    definition: availableColumn.definition
+                };
+            }
         }
 
         /**
