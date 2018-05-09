@@ -13,12 +13,13 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-xdescribe('TemplateAddController', function () {
+describe('TemplateAddController', function () {
 
     var $rootScope, $q, $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder, TemplateDataBuilder,
-        RequisitionColumnDataBuilder, productNameColumn, facilityTypes, productCodeColumn,
+        TemplateColumnDataBuilder, productNameColumn, facilityTypes, productCodeColumn,
         confirmService, loadingModalService, requisitionTemplateService, notificationService, messageService,
-        templateOne, templateTwo, healthCenter, districtHospital, programTemplates, programTwo;
+        templateOne, templateTwo, healthCenter, districtHospital, programTemplates, programTwo,
+        Template;
 
     beforeEach(function() {
         module('admin-template-add');
@@ -32,20 +33,21 @@ xdescribe('TemplateAddController', function () {
             $state = $injector.get('$state');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
             FacilityTypeDataBuilder = $injector.get('FacilityTypeDataBuilder');
-            RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
+            TemplateColumnDataBuilder = $injector.get('TemplateColumnDataBuilder');
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
             confirmService = $injector.get('confirmService');
             loadingModalService = $injector.get('loadingModalService');
             requisitionTemplateService = $injector.get('requisitionTemplateService');
             notificationService = $injector.get('notificationService');
             messageService = $injector.get('messageService');
+            Template = $injector.get('Template');
         });
 
         program = new ProgramDataBuilder().withId('program-1').build();
         programTwo = new ProgramDataBuilder().withId('program-2').build();
         
-        productNameColumn = new RequisitionColumnDataBuilder().buildProductNameColumn();
-        productCodeColumn = new RequisitionColumnDataBuilder().buildProductCodeColumn();
+        productNameColumn = new TemplateColumnDataBuilder().build();
+        productCodeColumn = new TemplateColumnDataBuilder().build();
         
         districtHospital = new FacilityTypeDataBuilder.buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder().build();
@@ -70,7 +72,7 @@ xdescribe('TemplateAddController', function () {
         vm = $controller('TemplateAddController', {
             programs: [program, programTwo],
             facilityTypes: facilityTypes,
-            availableColumns: [productCodeColumn],
+            availableColumns: [productCodeColumn.columnDefinition],
             programTemplates: programTemplates
         });
         vm.$onInit();
@@ -81,29 +83,22 @@ xdescribe('TemplateAddController', function () {
     describe('onInit', function() {
 
         it('should resolve program', function() {
-            expect(vm.programs).toEqual([program]);
-        });
-
-        it('should resolve facility types', function() {
-            expect(vm.facilityTypes).toEqual(facilityTypes);
+            expect(vm.programs).toEqual([program, programTwo]);
         });
 
         it('should resolve template', function() {
-            expect(vm.template).toEqual({ facilityTypes: []});
+            expect(vm.template instanceof Template).toBe(true);
         });
 
         it('should resolve available columns', function() {
-            expect(vm.availableColumns).toEqual([productCodeColumn]);
-        });
-
-        it('should resolve selected columns', function() {
-            expect(vm.selectedColumns).toEqual([]);
+            expect(vm.availableColumns).toEqual([productCodeColumn.columnDefinition]);
         });
     });
 
     describe('addFacilityType', function() {
 
         it('should add facility type', function() {
+            vm.facilityTypes = facilityTypes;
             vm.selectedFacilityType = facilityTypes[0];
             vm.addFacilityType();
 
@@ -115,6 +110,7 @@ xdescribe('TemplateAddController', function () {
 
         beforeEach(function() {
             vm.template.facilityTypes = [facilityTypes[0]];
+            vm.facilityTypes = facilityTypes;
         });
 
         it('should remove facility type', function() {
@@ -130,74 +126,34 @@ xdescribe('TemplateAddController', function () {
         });
     });
 
-    describe('validateFacilityType', function() {
-
-        beforeEach(function() {
-            vm.selectedFacilityType = facilityTypes[0];
-        });
-
-        it('should return error if facility type is already added', function() {
-            vm.template.facilityTypes = [vm.selectedFacilityType];
-            var error = vm.validateFacilityType();
-
-            expect(error).toEqual('adminTemplateAdd.facilityTypeAlreadyAdded');
-        });
-
-        it('should not return error if facility type does not exist', function() {
-            vm.template.facilityTypes = [];
-            var error = vm.validateFacilityType();
-
-            expect(error).toEqual(undefined);
-        });
-    });
-
     describe('addColumn', function() {
 
         it('should add column', function() {
-            vm.selectedColumn = productNameColumn;
+            vm.selectedColumn = productNameColumn.columnDefinition;
             vm.addColumn();
 
-            expect(vm.selectedColumn.isDisplayed).toEqual(true);
-            expect(vm.selectedColumns).toEqual([productNameColumn]);
+            expect(vm.availableColumns.indexOf(vm.selectedColumn)).toEqual(-1);
+            expect(vm.template.columnsMap[vm.selectedColumn.name]).not.toBeUndefined();
         });
     });
 
     describe('removeColumn', function() {
 
-        beforeEach(function() {
-            vm.selectedColumns = [productNameColumn];
-        });
-
         it('should remove column', function() {
-            vm.removeColumn(productNameColumn);
+            vm.template.addColumn(productNameColumn.columnDefinition);
 
-            expect(vm.selectedColumns).toEqual([]);
+            vm.removeColumn(productNameColumn.columnDefinition.name);
+            $rootScope.$apply();
+
+            expect(vm.template.columnsMap[vm.availableColumns[0].name]).toBeUndefined();
+            expect(vm.availableColumns.length).toBe(2);
         });
 
         it('should not remove if facility type was not found', function() {
-            vm.removeColumn(new RequisitionColumnDataBuilder().buildRequestedQuantityColumn());
+            vm.removeColumn(productNameColumn.columnDefinition.name);
+            $rootScope.$apply();
 
-            expect(vm.selectedColumns).toEqual([productNameColumn]);
-        });
-    });
-
-    describe('validateColumn', function() {
-
-        beforeEach(function() {
-            vm.selectedColumn = productNameColumn;
-        });
-
-        it('should return error if column is already added', function() {
-            vm.selectedColumns = [vm.selectedColumn];
-            var error = vm.validateColumn();
-
-            expect(error).toEqual('adminTemplateAdd.columnAlreadyAdded');
-        });
-
-        it('should not return error if column does not exist', function() {
-            var error = vm.validateColumn();
-
-            expect(error).toEqual(undefined);
+            expect(vm.availableColumns.length).toBe(1);
         });
     });
 

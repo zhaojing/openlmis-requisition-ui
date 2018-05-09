@@ -218,8 +218,12 @@
          * @param {string} columnName name of Requisition Column to be removed from Template
          */
         function removeColumn(columnName) {
+            var column;
+            if (vm.template.columnsMap[columnName]) {
+                column = vm.template.columnsMap[columnName].columnDefinition;
+            }
             vm.template.removeColumn(columnName).then(function() {
-                vm.availableColumns.push(vm.template.columnsMap[columnName].columnDefinition);
+                vm.availableColumns.push(column);
             });
         }
 
