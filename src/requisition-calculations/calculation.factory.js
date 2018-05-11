@@ -44,6 +44,7 @@
         M = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY,
         P = TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION,
         //Q = TEMPLATE_COLUMNS.TOTAL_COST,
+        S = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA,
         T = TEMPLATE_COLUMNS.PRICE_PER_PACK;
         //V = TEMPLATE_COLUMNS.PACKS_TO_SHIP,
         //Y = TEMPLATE_COLUMNS.TOTAL;
@@ -59,7 +60,8 @@
             adjustedConsumption: calculateAdjustedConsumption,
             maximumStockQuantity: calculateMaximumStockQuantity,
             averageConsumption: calculateAverageConsumption,
-            calculatedOrderQuantityIsa: calculatedOrderQuantityIsa
+            calculatedOrderQuantityIsa: calculatedOrderQuantityIsa,
+            getOrderQuantity: getOrderQuantity
         };
         return calculationFactory;
 
@@ -276,12 +278,15 @@
                 orderQuantity = lineItem[K];
             } else {
                 var jColumn = requisition.template.getColumn(J),
-                    mColumn = requisition.template.getColumn(M);
+                    mColumn = requisition.template.getColumn(M),
+                    sColumn = requisition.template.getColumn(S);
 
                 if (shouldReturnRequestedQuantity(lineItem, jColumn, requisition)) {
                     orderQuantity = lineItem[J];
-                } else if (mColumn) {
+                } else if (mColumn && mColumn.isDisplayed) {
                     orderQuantity = calculateOrderQuantity(lineItem, requisition);
+                } else if (sColumn) {
+                    orderQuantity = calculatedOrderQuantityIsa(lineItem, requisition);
                 }
             }
 

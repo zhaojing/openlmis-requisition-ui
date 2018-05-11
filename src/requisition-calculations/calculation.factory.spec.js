@@ -49,7 +49,8 @@ describe('calculationFactory', function() {
             },
             calculatedOrderQuantityColumn = {
                 name: 'calculatedOrderQuantity',
-                $display: true
+                $display: true,
+                isDisplayed: true
             },
             maximumStockQuantityColumn = {
                 name: 'maximumStockQuantity',
@@ -548,5 +549,75 @@ describe('calculationFactory', function() {
 
             expect(result).toBe(null);
         });
+    });
+
+    describe('getOrderQuantity', function() {
+
+        var stockOnHandColumn, isaColumn, requestedQuantityColumn, calculatedOrderQuantityIsaColumn,
+        COLUMN_SOURCES;
+
+        beforeEach(function() {
+            spyOn(calculationFactory, 'stockOnHand');
+
+            inject(function($injector) {
+                COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
+            });
+
+            stockOnHandColumn = {
+                name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
+                source: COLUMN_SOURCES.USER_INPUT
+            };
+
+            isaColumn = {
+                name: TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT,
+                source: COLUMN_SOURCES.REFERENCE_DATA
+            };
+
+            requestedQuantityColumn = {
+                name: TEMPLATE_COLUMNS.REQUESTED_QUANTITY,
+                source: COLUMN_SOURCES.USER_INPUT,
+                $display: true
+            };
+
+            calculatedOrderQuantityIsaColumn = {
+                name: TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA,
+                source: COLUMN_SOURCES.CALCULATED
+            };
+
+            requisitionMock = {
+                template: templateMock,
+                $isAfterAuthorize: function() {
+                    return false;
+                }
+            };
+
+            templateMock.getColumn.andCallFake(function(name) {
+                if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) return stockOnHandColumn;
+                if (name === TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT) return isaColumn;
+                if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) return requestedQuantityColumn;
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) return null;
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) return calculatedOrderQuantityIsaColumn;
+            });
+
+            lineItem.stockOnHand = 5;
+            lineItem.idealStockAmount = 12;
+        });
+
+        it('should use requested quanity if not null', function() {
+            lineItem.requestedQuantity = 20;
+
+            result = calculationFactory.getOrderQuantity(lineItem, requisitionMock);
+
+            expect(result).toBe(20);
+        });
+
+        it('should use calculatedOrderQuantityIsa if requested quantity is null', function() {
+            lineItem.requestedQuantity = null;
+
+            result = calculationFactory.getOrderQuantity(lineItem, requisitionMock);
+
+            expect(result).toBe(7);
+        });
+
     });
 });
