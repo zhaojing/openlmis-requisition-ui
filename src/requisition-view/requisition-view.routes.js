@@ -40,14 +40,14 @@
                 user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-                requisition: function($state, $q, $stateParams, requisitionService) {
+                requisition: function($q, $stateParams, requisitionService, alertService) {
                     var deferred = $q.defer();
 
                     requisitionService.get($stateParams.rnr).then(function(response) {
                         deferred.resolve(response);
                     }, function() {
                         deferred.reject();
-                        $state.go('openlmis.404');
+                        alertService.error('openlmisNavigation.notAvailableOffline');
                     });
 
                     return deferred.promise;
