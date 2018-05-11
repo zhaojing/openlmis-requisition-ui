@@ -28,11 +28,11 @@
         .module('admin-template-add')
         .controller('TemplateAddController', TemplateAddController);
 
-    TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService', 'requisitionTemplateService',
-        'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'Template'];
+    TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService',
+        'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'template'];
 
-    function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService, requisitionTemplateService,
-        notificationService, loadingModalService, messageService, $state, programTemplates, Template) {
+    function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService,
+        notificationService, loadingModalService, messageService, $state, programTemplates, template) {
 
         var vm = this;
 
@@ -121,11 +121,7 @@
         function onInit() {
             vm.programs = programs;
             vm.availableColumns = availableColumns;
-            vm.template = new Template({
-                populateStockOnHandFromStockCards: false,
-                columnsMap: {},
-                facilityTypes: []
-            });
+            vm.template = template;
         }
 
         /**
@@ -142,19 +138,7 @@
             });
             confirmService.confirm(confirmMessage, 'adminTemplateAdd.create')
             .then(function() {
-                loadingModalService.open();
-
-                requisitionTemplateService.create(vm.template)
-                .then(function() {
-                    notificationService.success('adminTemplateAdd.createTemplate.success');
-                    $state.go('openlmis.administration.requisitionTemplates', {}, {
-                        reload: true
-                    });   
-                })
-                .catch(function() {
-                    notificationService.error('adminTemplateAdd.createTemplate.failure');
-                    loadingModalService.close();
-                });
+                template.create();
             });
         }
 

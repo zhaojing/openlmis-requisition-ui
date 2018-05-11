@@ -39,10 +39,23 @@
         Template.prototype.hasColumns = hasColumns;
         Template.prototype.removeColumn = removeColumn;
         Template.prototype.addColumn = addColumn;
+        Template.prototype.create = create;
 
         return Template;
 
-        function Template(template) {
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.Template
+         * @name Template
+         *
+         * @description
+         * Creates a new instance of the Template.
+         *
+         * @param  {Object}             template   the JSON representation of the Template
+         * @param  {TemplateRepository} repository the Template Repository
+         * @return {Reason}                        the Reason object
+         */
+        function Template(template, repository) {
             this.createdDate = template.createdDate;
             this.id = template.id;
             this.numberOfPeriodsToAverage = template.numberOfPeriodsToAverage;
@@ -60,6 +73,22 @@
             angular.forEach(this.columnsMap, function(column) {
                 addDependentColumnValidation(column, columns);
             });
+
+            this.repository = repository;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.Template
+         * @name create
+         * 
+         * @description
+         * Saves new Template using Template Repository.
+         * 
+         * @return {Promise} the promise resolving to created Template, rejected if save was unsuccessful
+         */
+        function create() {
+            return this.repository.create(this);
         }
 
         /**

@@ -16,10 +16,8 @@
 describe('TemplateAddController', function () {
 
     var $rootScope, $q, $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder, TemplateDataBuilder,
-        TemplateColumnDataBuilder, productNameColumn, facilityTypes, productCodeColumn,
-        confirmService, loadingModalService, requisitionTemplateService, notificationService, messageService,
-        templateOne, templateTwo, healthCenter, districtHospital, programTemplates, programTwo,
-        Template;
+        TemplateColumnDataBuilder, productNameColumn, facilityTypes, productCodeColumn, Template,
+        confirmService, messageService, templateOne, templateTwo, healthCenter, districtHospital, programTemplates, programTwo;
 
     beforeEach(function() {
         module('admin-template-add');
@@ -36,9 +34,6 @@ describe('TemplateAddController', function () {
             TemplateColumnDataBuilder = $injector.get('TemplateColumnDataBuilder');
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
             confirmService = $injector.get('confirmService');
-            loadingModalService = $injector.get('loadingModalService');
-            requisitionTemplateService = $injector.get('requisitionTemplateService');
-            notificationService = $injector.get('notificationService');
             messageService = $injector.get('messageService');
             Template = $injector.get('Template');
         });
@@ -73,7 +68,12 @@ describe('TemplateAddController', function () {
             programs: [program, programTwo],
             facilityTypes: facilityTypes,
             availableColumns: [productCodeColumn.columnDefinition],
-            programTemplates: programTemplates
+            programTemplates: programTemplates,
+            template: new Template({
+                populateStockOnHandFromStockCards: false,
+                columnsMap: {},
+                facilityTypes: []
+            })
         });
         vm.$onInit();
 
@@ -161,16 +161,12 @@ describe('TemplateAddController', function () {
 
         beforeEach(function() {
             spyOn(confirmService, 'confirm').andReturn($q.resolve());
-            spyOn(loadingModalService, 'open').andReturn($q.resolve());
-            spyOn(loadingModalService, 'close').andReturn($q.resolve());
-            spyOn(requisitionTemplateService, 'create').andReturn($q.resolve());
-            spyOn(notificationService, 'success').andReturn($q.resolve());
-            spyOn(notificationService, 'error').andReturn($q.resolve());
             spyOn(messageService, 'get').andCallFake(function(messageKey) {
                 return messageKey;
             });
 
             vm.template.program = program;
+            vm.template.create = jasmine.createSpy();
         });
 
         it('should create a template and display success notification', function() {
@@ -178,12 +174,7 @@ describe('TemplateAddController', function () {
             $rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
-            expect(loadingModalService.open).toHaveBeenCalled();
-            expect(requisitionTemplateService.create).toHaveBeenCalledWith(vm.template);
-            expect(notificationService.success).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.success');
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates', {}, {
-                reload: true
-            });
+            expect(vm.template.create).toHaveBeenCalled();
         });
 
         it('should not call any service when confirmation fails', function() {
@@ -193,26 +184,7 @@ describe('TemplateAddController', function () {
             $rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
-            expect(loadingModalService.open).not.toHaveBeenCalled();
-            expect(requisitionTemplateService.create).not.toHaveBeenCalled();
-            expect(notificationService.success).not.toHaveBeenCalled();
-            expect(notificationService.error).not.toHaveBeenCalledWith();
-            expect($state.go).not.toHaveBeenCalled();
-        });
-
-        it('should display error notification when template creation fails', function() {
-            requisitionTemplateService.create.andReturn($q.reject());
-
-            vm.create();
-            $rootScope.$apply();
-
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
-            expect(loadingModalService.open).toHaveBeenCalled();
-            expect(requisitionTemplateService.create).toHaveBeenCalledWith(vm.template);
-            expect(notificationService.success).not.toHaveBeenCalled();
-            expect(notificationService.error).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.failure');
-            expect(loadingModalService.close).toHaveBeenCalled();
-            expect($state.go).not.toHaveBeenCalledWith();
+            expect(vm.template.create).not.toHaveBeenCalled();
         });
     });
 });

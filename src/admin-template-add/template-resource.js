@@ -17,30 +17,27 @@
 
     'use strict';
 
+    /**
+     * @ngdoc service
+     * @name admin-template-add.TemplateResource
+     *
+     * @description
+     * Communicates with the /api/requisitionTemplates endpoint of the OpenLMIS server.
+     */
     angular
         .module('admin-template-add')
-        .config(routes);
+        .factory('TemplateResource', TemplateResource);
 
-    routes.$inject = ['modalStateProvider'];
+    TemplateResource.$inject = ['OpenlmisResource', 'classExtender'];
 
-    function routes(modalStateProvider) {
-        modalStateProvider.state('openlmis.administration.requisitionTemplates.add', {
-            controller: 'TemplateAddController',
-            controllerAs: 'vm',
-            templateUrl: 'admin-template-add/template-add-modal.html',
-            url: '/add',
-            parentResolves: ['programs', 'facilityTypes', 'programTemplates'],
-            resolve: {
-                availableColumns: function(AvailableRequisitionColumnResource) {
-                    return new AvailableRequisitionColumnResource().query()
-                    .then(function(response) {
-                        return response.content;
-                    });
-                },
-                template: function(TemplateAddService) {
-                    return new TemplateAddService().initiateTemplate();
-                }
-            }
-        });
+    function TemplateResource(OpenlmisResource, classExtender) {
+
+        classExtender.extend(TemplateResource, OpenlmisResource);
+
+        return TemplateResource;
+
+        function TemplateResource() {
+            this.super('/api/requisitionTemplates');
+        }
     }
 })();
