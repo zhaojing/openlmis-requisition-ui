@@ -13,7 +13,7 @@
     "adminTemplateAdd.remove": "Remove",
     "adminTemplateAdd.cancel": "Cancel",
     "adminTemplateAdd.createTemplate": "Create Template",
-    "adminTemplateAdd.createTemplate.confirm": "Do you want to create new requisition template for ${program} program?",
+    "adminTemplateAdd.createTemplate.confirm": "Do you want to create a new requisition template for the ${program} program?",
     "adminTemplateAdd.createTemplate.success": "Requisition template created successfully",
     "adminTemplateAdd.createTemplate.failure": "Failed to save the requisition template",
     "adminTemplateAdd.requisitionColumn": "Requisition Column",

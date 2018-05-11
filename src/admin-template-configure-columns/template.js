@@ -122,12 +122,13 @@
          * @return {Promise}           resolved if column was removed successfully, rejected otherwise
          */
         function removeColumn(columnName) {
-            if (this.columnsMap.hasOwnProperty(columnName)) {
-                var removedDisplayOrder = this.columnsMap[columnName].displayOrder;
-                delete this.columnsMap[columnName];
-                Object.keys(this.columnsMap).forEach(function(column) {
-                    if (this.columnsMap[column].displayOrder >= removedDisplayOrder) {
-                        this.columnsMap[column].displayOrder--;
+            var template = this;
+            if (template.columnsMap.hasOwnProperty(columnName)) {
+                var removedDisplayOrder = template.columnsMap[columnName].displayOrder;
+                delete template.columnsMap[columnName];
+                Object.keys(template.columnsMap).forEach(function(column) {
+                    if (template.columnsMap[column].displayOrder >= removedDisplayOrder) {
+                        template.columnsMap[column].displayOrder--;
                     }
                 });
                 return $q.resolve();

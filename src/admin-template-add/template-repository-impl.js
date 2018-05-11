@@ -28,9 +28,9 @@
         .module('admin-template-add')
         .factory('TemplateRepositoryImpl', TemplateRepositoryImpl);
 
-    TemplateRepositoryImpl.inject = ['TemplateResource', '$q'];
+    TemplateRepositoryImpl.inject = ['TemplateResource'];
 
-    function TemplateRepositoryImpl(TemplateResource, $q) {
+    function TemplateRepositoryImpl(TemplateResource) {
 
         TemplateRepositoryImpl.prototype.create = create;
         TemplateRepositoryImpl.prototype.update = update;
