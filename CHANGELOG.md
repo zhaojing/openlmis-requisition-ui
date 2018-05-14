@@ -8,6 +8,9 @@ Bug fixes:
 * [OLMIS-4509](https://openlmis.atlassian.net/browse/OLMIS-4509): Fixed redirect to 404 when clicking proceed for requisition while offline
 * [OLMIS-4689](https://openlmis.atlassian.net/browse/OLMIS-4689): Fixed Total Cost was not updated based on Calc Order Qty ISA column
 
+Improvements:
+* [OLMIS-4643](https://openlmis.atlassian.net/browse/OLMIS-4643): Added Jenkinsfile
+
 5.3.1 / 2018-04-27
 ==================
 
