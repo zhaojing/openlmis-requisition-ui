@@ -31,26 +31,19 @@
             controller: 'RequisitionViewController',
             controllerAs: 'vm',
             templateUrl: 'requisition-view/requisition-view.html',
-            accessRights: [REQUISITION_RIGHTS.REQUISITION_CREATE,
+            accessRights: [
+                REQUISITION_RIGHTS.REQUISITION_CREATE,
                 REQUISITION_RIGHTS.REQUISITION_DELETE,
                 REQUISITION_RIGHTS.REQUISITION_AUTHORIZE,
                 REQUISITION_RIGHTS.REQUISITION_APPROVE,
-                FULFILLMENT_RIGHTS.ORDERS_EDIT],
+                FULFILLMENT_RIGHTS.ORDERS_EDIT
+            ],
             resolve: {
                 user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-                requisition: function($q, $stateParams, requisitionService, alertService) {
-                    var deferred = $q.defer();
-
-                    requisitionService.get($stateParams.rnr).then(function(response) {
-                        deferred.resolve(response);
-                    }, function() {
-                        deferred.reject();
-                        alertService.error('openlmisNavigation.notAvailableOffline');
-                    });
-
-                    return deferred.promise;
+                requisition: function($stateParams, requisitionService) {
+                    return requisitionService.get($stateParams.rnr);
                 },
                 canSubmit: function(requisitionViewFactory, user, requisition) {
                     return requisitionViewFactory.canSubmit(user.user_id, requisition);

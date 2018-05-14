@@ -165,9 +165,13 @@ describe('requisitionService', function() {
     });
 
     describe('get', function () {
+
+        var getRequisitionUrl;
+
         beforeEach(function() {
-            var getRequisitionUrl = '/api/requisitions/' + requisition.id;
             var getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
+
+            getRequisitionUrl = '/api/requisitions/' + requisition.id;
 
             httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition);
             httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
@@ -220,6 +224,20 @@ describe('requisitionService', function() {
 
             expect(data.id).toBe(requisition.id);
             expect(data.stockAdjustmentReasons).toEqual([reasonNotHidden, reasonWithoutHidden]);
+        });
+
+        it('should try to fetch requisition from the backend if it is not stored in the local storage', function() {
+            offlineService.isOffline.andReturn(true);
+            requisitionsStorage.getBy.andReturn(undefined);
+            httpBackend
+                .expectGET(requisitionUrlFactory(getRequisitionUrl))
+                .respond(418, requisition);
+
+            requisitionService.get(requisition.id);
+            $rootScope.$apply();
+
+            expect(offlineService.isOffline).toHaveBeenCalled();
+            expect(requisitionsStorage.getBy).toHaveBeenCalledWith('id', '1');
         });
     });
 
