@@ -18,5 +18,6 @@
     "adminTemplateAdd.createTemplate.failure": "Failed to save the requisition template",
     "adminTemplateAdd.requisitionColumn": "Requisition Column",
     "adminTemplateAdd.display": "Display",
-    "adminTemplateAdd.name": "Name"
+    "adminTemplateAdd.name": "Name",
+    "adminTemplateAdd.programNeedsToBeSelected": "You need to select program first"
 }
