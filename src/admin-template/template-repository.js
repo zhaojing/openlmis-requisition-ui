@@ -19,18 +19,18 @@
 
     /**
      * @ngdoc service
-     * @name admin-template-add.TemplateRepository
+     * @name admin-template.TemplateRepository
      * 
      * @description
      * Repository for managing Stock Reasons used throughout the system.
      */
     angular
-        .module('admin-template-add')
+        .module('admin-template')
         .factory('TemplateRepository', TemplateRepository);
 
-    TemplateRepository.$inject = ['classExtender', 'OpenlmisRepository', 'Template', 'TemplateRepositoryImpl'];
+    TemplateRepository.$inject = ['classExtender', 'OpenlmisRepository', 'Template', 'TemplateResource'];
 
-    function TemplateRepository(classExtender, OpenlmisRepository, Template, TemplateRepositoryImpl) {
+    function TemplateRepository(classExtender, OpenlmisRepository, Template, TemplateResource) {
 
         classExtender.extend(TemplateRepository, OpenlmisRepository);
 
@@ -38,7 +38,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-add.TemplateRepository
+         * @methodOf admin-template.TemplateRepository
          * @name TemplateRepository
          * @constructor
          * 
@@ -49,9 +49,7 @@
          * @param {Object} impl the implementation to be used by the repository, defaults to TemplateRepositoryImpl
          */
         function TemplateRepository(impl) {
-            this.super(Template, impl || new TemplateRepositoryImpl());
+            this.super(Template, impl || new TemplateResource());
         }
-
     }
-
 })();

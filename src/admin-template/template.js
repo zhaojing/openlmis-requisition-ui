@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc service
-     * @name admin-template-configure-columns.Template
+     * @name admin-template.Template
      *
      * @description
      * Represents a single requisition template.
      */
     angular
-        .module('admin-template-configure-columns')
+        .module('admin-template')
         .factory('Template', Template);
 
     Template.$inject = ['$q', 'templateValidator', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'TemplateColumn', 'RequisitionColumn'];
@@ -45,7 +45,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name Template
          *
          * @description
@@ -79,7 +79,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name create
          * 
          * @description
@@ -93,7 +93,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name hasColumns
          *
          * @description
@@ -112,7 +112,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name removeColumn
          *
          * @description
@@ -138,7 +138,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name addColumn
          *
          * @description
@@ -164,7 +164,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name isValid
          *
          * @description
@@ -178,7 +178,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name moveColumn
          *
          * @description
@@ -268,7 +268,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name moveColumn
          *
          * @description
@@ -286,7 +286,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name changePopulateStockOnHandFromStockCards
          *
          * @description
@@ -310,7 +310,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.Template
+         * @methodOf admin-template.Template
          * @name isColumnDisabled
          *
          * @description

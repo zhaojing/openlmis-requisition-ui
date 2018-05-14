@@ -17,7 +17,7 @@ describe('templateValidator', function() {
     var templateValidator, template;
 
     beforeEach(function() {
-        module('admin-template-configure-columns');
+        module('admin-template');
 
         inject(function($injector) {
             templateValidator = $injector.get('templateValidator');

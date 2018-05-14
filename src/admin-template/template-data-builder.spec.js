@@ -18,7 +18,7 @@
     'use strict';
 
     angular
-        .module('admin-template-configure-columns')
+        .module('admin-template')
         .factory('TemplateDataBuilder', TemplateDataBuilder);
 
     TemplateDataBuilder.$inject = ['Template', 'TemplateColumnDataBuilder', 'COLUMN_SOURCES',

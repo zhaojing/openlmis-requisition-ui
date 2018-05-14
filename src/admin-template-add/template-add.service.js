@@ -30,13 +30,11 @@
         .factory('TemplateAddService', TemplateAddService);
 
     TemplateAddService.inject = [
-        'notificationService', 'loadingModalService', 'alertService', 'Template', 
-        'TemplateRepositoryImpl', 'TemplateRepository', '$state', '$q'
+        'notificationService', 'loadingModalService', 'alertService', 'Template', 'TemplateRepository', '$state', '$q'
     ];
 
     function TemplateAddService(
-        notificationService, loadingModalService, alertService, Template, 
-        TemplateRepositoryImpl, TemplateRepository, $state, $q) {
+        notificationService, loadingModalService, alertService, Template, TemplateRepository, $state, $q) {
 
         TemplateAddService.prototype.initiateTemplate = initiateTemplate;
 
@@ -52,7 +50,7 @@
          * Creates an instance of the TemplateAddService class.
          */
         function TemplateAddService() {
-            this.repository = new TemplateRepository(new TemplateRepositoryImpl());
+            this.repository = new TemplateRepository();
         }
 
         /**

@@ -18,13 +18,13 @@
     'use strict';
 
     /**
-     * @ngdoc object
-     * @name admin-template-configure-columns.ALPHA_NUMERIC_REGEX
-     *
-     * @description
-     * This is constant for alpha numeric regex.
-     */
+    * @ngdoc object
+    * @name admin-template.MAX_COLUMN_DESCRIPTION_LENGTH
+    *
+    * @description
+    * This is constant for max column description length.
+    */
     angular
-        .module('admin-template-configure-columns')
-        .constant('ALPHA_NUMERIC_REGEX', /^[a-zA-z0-9/]+[a-zA-Z0-9/ ]+$/);
+        .module('admin-template')
+        .constant('MAX_COLUMN_DESCRIPTION_LENGTH', 140);
 })();

@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc service
-     * @name admin-template-add.TemplateResource
+     * @name admin-template.TemplateResource
      *
      * @description
      * Communicates with the /api/requisitionTemplates endpoint of the OpenLMIS server.
      */
     angular
-        .module('admin-template-add')
+        .module('admin-template')
         .factory('TemplateResource', TemplateResource);
 
     TemplateResource.$inject = ['OpenlmisResource', 'classExtender'];

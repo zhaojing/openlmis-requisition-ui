@@ -15,19 +15,19 @@
 
 describe('TemplateRepository', function() {
 
-    var TemplateRepository, OpenlmisRepositoryMock, Reason, templateRepositoryImplMock;
+    var TemplateRepository, OpenlmisRepositoryMock, templateResourceMock;
 
     beforeEach(function() {
-        module('admin-template-add', function($provide) {
+        module('admin-template', function($provide) {
             OpenlmisRepositoryMock = jasmine.createSpy('OpenlmisRepository');
             $provide.factory('OpenlmisRepository', function() {
                 return OpenlmisRepositoryMock;
             });
 
-            templateRepositoryImplMock = jasmine.createSpy('TemplateRepositoryImpl');
-            $provide.factory('TemplateRepositoryImpl', function() {
+            templateResourceMock = jasmine.createSpy('TemplateResource');
+            $provide.factory('TemplateResource', function() {
                 return function() {
-                    return templateRepositoryImplMock;
+                    return templateResourceMock;
                 };
             });
         });
@@ -43,7 +43,7 @@ describe('TemplateRepository', function() {
         it('should extend OpenlmisRepository', function() {
             new TemplateRepository();
 
-            expect(OpenlmisRepositoryMock).toHaveBeenCalledWith(Template, templateRepositoryImplMock);
+            expect(OpenlmisRepositoryMock).toHaveBeenCalledWith(Template, templateResourceMock);
         });
 
         it('should pass the given implementation', function() {

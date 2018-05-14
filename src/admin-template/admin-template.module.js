@@ -18,18 +18,17 @@
     'use strict';
 
     /**
-     * @module admin-template-add
+     * @module admin-template
      *
      * @description
-     * Provides a modal for adding new programs to the OpenLMIS.
+     * Provides a repository and resource for Template class.
      */
-    angular.module('admin-template-add', [
-        'admin-template',
+    angular.module('admin-template', [
+        'openlmis-class-extender',
         'openlmis-i18n',
-        'openlmis-modal',
-        'openlmis-templates',
-        'openlmis-state-tracker',
-        'openlmis-modal-state',
-        'ui.router'
+        'openlmis-repository',
+        'referencedata',
+        'requisition',
+        'requisition-constants'
     ]);
 })();

@@ -18,18 +18,13 @@
     'use strict';
 
     /**
-     * @module admin-template-add
+     * @ngdoc object
+     * @name admin-template.ALPHA_NUMERIC_REGEX
      *
      * @description
-     * Provides a modal for adding new programs to the OpenLMIS.
+     * This is constant for alpha numeric regex.
      */
-    angular.module('admin-template-add', [
-        'admin-template',
-        'openlmis-i18n',
-        'openlmis-modal',
-        'openlmis-templates',
-        'openlmis-state-tracker',
-        'openlmis-modal-state',
-        'ui.router'
-    ]);
+    angular
+        .module('admin-template')
+        .constant('ALPHA_NUMERIC_REGEX', /^[a-zA-z0-9/]+[a-zA-Z0-9/ ]+$/);
 })();

@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc service
-     * @name admin-template-configure-columns.TemplateColumn
+     * @name admin-template.TemplateColumn
      *
      * @description
      * Represents a single requisition template column.
      */
     angular
-        .module('admin-template-configure-columns')
+        .module('admin-template')
         .factory('TemplateColumn', TemplateColumn);
 
     TemplateColumn.$inject = ['$filter', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS'];
@@ -43,7 +43,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.TemplateColumn
+         * @methodOf admin-template.TemplateColumn
          * @name disableColumnsAndChangeSource
          *
          * @description
@@ -63,7 +63,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.TemplateColumn
+         * @methodOf admin-template.TemplateColumn
          * @name isStockDisabledColumn
          *
          * @description

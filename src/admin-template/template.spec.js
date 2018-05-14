@@ -13,12 +13,12 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('TemplateColumn', function() {
+describe('Template', function() {
 
     var $rootScope, template, templateJson, Template, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS, TemplateDataBuilder, RequisitionColumnSpy;
 
     beforeEach(function() {
-        module('admin-template-configure-columns', function($provide) {
+        module('admin-template', function($provide) {
             RequisitionColumnSpy =  jasmine.createSpyObj('RequisitionColumn', [
                 'columnDependencies'
             ]);

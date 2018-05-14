@@ -18,7 +18,7 @@ describe('TemplateColumn', function() {
     var templateColumn, templateColumnJson, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS;
 
     beforeEach(function() {
-        module('admin-template-configure-columns');
+        module('admin-template');
 
         inject(function($injector) {
             TemplateColumn = $injector.get('TemplateColumn');

@@ -19,13 +19,13 @@
 
     /**
      * @ngdoc service
-     * @name admin-template-configure-columns.templateValidator
+     * @name admin-template.templateValidator
      *
      * @description
      * Provides methods for validating templates and columns.
      */
     angular
-        .module('admin-template-configure-columns')
+        .module('admin-template')
         .factory('templateValidator', factory);
 
     factory.$inject = [
@@ -53,7 +53,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.templateValidator
+         * @methodOf admin-template.templateValidator
          * @name isTemplateValid
          *
          * @description
@@ -75,7 +75,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf admin-template-configure-columns.templateValidator
+         * @methodOf admin-template.templateValidator
          * @name getColumnError
          *
          * @description

@@ -18,7 +18,7 @@ describe('TemplateResource', function() {
     var TemplateResource, OpenlmisResourceMock;
 
     beforeEach(function() {
-        module('admin-template-add', function($provide) {
+        module('admin-template', function($provide) {
             OpenlmisResourceMock = jasmine.createSpy('OpenlmisResource');
 
             $provide.factory('OpenlmisResource', function() {
