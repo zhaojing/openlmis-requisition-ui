@@ -20,8 +20,8 @@ describe('TemplateColumn', function() {
     beforeEach(function() {
         module('admin-template-configure-columns', function($provide) {
             RequisitionColumnSpy =  jasmine.createSpyObj('RequisitionColumn', [
-                    'columnDependencies'
-                ]);
+                'columnDependencies'
+            ]);
 
             RequisitionColumnSpy.columnDependencies.andCallFake(function(column) {
                 if(column.name === 'remarks') {
@@ -427,6 +427,22 @@ describe('TemplateColumn', function() {
             template.addColumn(undefined);
 
             expect(template.columnsMap).toEqual({});
+        });
+    });
+
+    describe('create', function() {
+        var repository;
+
+        beforeEach(function() {
+            repository = jasmine.createSpyObj('TemplateRepository', ['create']);
+            repository.create.andReturn(true);
+
+            template = new Template(templateJson, repository);
+        });
+
+        it('should call repository', function() {
+            template.create();
+            expect(repository.create).toHaveBeenCalledWith(template);
         });
     });
 });
