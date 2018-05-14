@@ -34,6 +34,11 @@
         RequisitionLineItemDataBuilder.prototype.nonFullSupplyForProgram = nonFullSupplyForProgram;
         RequisitionLineItemDataBuilder.prototype.fullSupplyForProgram = fullSupplyForProgram;
         RequisitionLineItemDataBuilder.prototype.asSkipped = asSkipped;
+        RequisitionLineItemDataBuilder.prototype.withTotalLossesAndAdjustments = withTotalLossesAndAdjustments;
+        RequisitionLineItemDataBuilder.prototype.withBeginningBalance = withBeginningBalance;
+        RequisitionLineItemDataBuilder.prototype.withTotalReceivedQuantity = withTotalReceivedQuantity;
+        RequisitionLineItemDataBuilder.prototype.withTotalConsumedQuantity = withTotalConsumedQuantity;
+        RequisitionLineItemDataBuilder.prototype.withStockOnHand = withStockOnHand;
 
         return RequisitionLineItemDataBuilder;
 
@@ -124,6 +129,31 @@
 
         function asSkipped() {
             this.skipped = true;
+            return this;
+        }
+
+        function withTotalLossesAndAdjustments(totalLossesAndAdjustments) {
+            this.totalLossesAndAdjustments = totalLossesAndAdjustments;
+            return this;
+        }
+
+        function withBeginningBalance(beginningBalance) {
+            this.beginningBalance = beginningBalance;
+            return this;
+        }
+
+        function withTotalConsumedQuantity(totalConsumedQuantity) {
+            this.totalConsumedQuantity = totalConsumedQuantity;
+            return this;
+        }
+
+        function withTotalReceivedQuantity(totalReceivedQuantity) {
+            this.totalReceivedQuantity = totalReceivedQuantity;
+            return this;
+        }
+
+        function withStockOnHand(stockOnHand) {
+            this.stockOnHand = stockOnHand;
             return this;
         }
 

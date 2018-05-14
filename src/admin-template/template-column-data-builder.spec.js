@@ -21,11 +21,23 @@
         .module('admin-template')
         .factory('TemplateColumnDataBuilder', TemplateColumnDataBuilder);
 
-    TemplateColumnDataBuilder.$inject = ['TemplateColumn', 'COLUMN_SOURCES'];
+    TemplateColumnDataBuilder.$inject = ['TemplateColumn', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS'];
 
-    function TemplateColumnDataBuilder(TemplateColumn, COLUMN_SOURCES) {
+    function TemplateColumnDataBuilder(TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS) {
 
         TemplateColumnDataBuilder.prototype.build = build;
+        TemplateColumnDataBuilder.prototype.withSource = withSource;
+        TemplateColumnDataBuilder.prototype.withName = withName;
+        TemplateColumnDataBuilder.prototype.visible = visible;
+        TemplateColumnDataBuilder.prototype.buildStockOnHandColumn = buildStockOnHandColumn;
+        TemplateColumnDataBuilder.prototype.buildIdealStockAmountColumn = buildIdealStockAmountColumn;
+        TemplateColumnDataBuilder.prototype.buildRequestedQuantityColumn = buildRequestedQuantityColumn;
+        TemplateColumnDataBuilder.prototype.buildAverageConsumptionColumn = buildAverageConsumptionColumn;
+        TemplateColumnDataBuilder.prototype.buildMaximumStockQuantityColumn = buildMaximumStockQuantityColumn;
+        TemplateColumnDataBuilder.prototype.buildTotalConsumedQuantityColumn = buildTotalConsumedQuantityColumn;
+        TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityColumn = buildCalculatedOrderQuantityColumn;
+        TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityIsaColumn =
+            buildCalculatedOrderQuantityIsaColumn;
 
         return TemplateColumnDataBuilder;
 
@@ -67,6 +79,73 @@
 
         function build() {
             return new TemplateColumn(this);
+        }
+
+        function withSource(source) {
+            this.source = source;
+            return this;
+        }
+
+        function withName(name) {
+            this.name = name;
+            this.columnDefinition.name = name;
+            return this;
+        }
+
+        function visible() {
+            this.$display = true;
+            this.isDisplayed = true;
+            return this;
+        }
+
+        function buildStockOnHandColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.STOCK_ON_HAND);
+            return this.build();
+        }
+
+        function buildIdealStockAmountColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT);
+            return this.build();
+        }
+
+        function buildRequestedQuantityColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.REQUESTED_QUANTITY);
+            this.visible();
+            return this.build();
+        }
+
+        function buildMaximumStockQuantityColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY);
+            return this.build();
+        }
+
+        function buildCalculatedOrderQuantityColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY);
+            this.visible();
+            return this.build();
+        }
+
+        function buildCalculatedOrderQuantityIsaColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA);
+            return this.build();
+        }
+
+        function buildAverageConsumptionColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION);
+            return this.build();
+        }
+
+        function buildTotalConsumedQuantityColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY);
+            return this.build();
         }
 
         function createOption(number) {
