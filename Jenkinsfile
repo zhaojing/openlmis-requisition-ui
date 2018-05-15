@@ -2,6 +2,7 @@ pipeline {
     agent any
     options {
         buildDiscarder(logRotator(numToKeepStr: '15'))
+        disableConcurrentBuilds()
     }
     environment {
       PATH = "/usr/local/bin/:$PATH"
@@ -99,7 +100,10 @@ pipeline {
         failure {
             slackSend color: 'danger', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} FAILED (<${env.BUILD_URL}|Open>)"
         }
-        success{
+        fixed {
+            slackSend color: 'goot', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} Back to normal"
+        }
+        success {
             build job: 'OpenLMIS-reference-ui', wait: false
         }
     }
