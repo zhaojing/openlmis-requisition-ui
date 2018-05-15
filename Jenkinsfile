@@ -40,6 +40,7 @@ pipeline {
                     sh 'docker-compose run --entrypoint /dev-ui/build.sh requisition-ui'
                     sh 'docker-compose build image'
                     sh 'docker-compose down --volumes'
+                    sh 'docker images'
                 }
             }
             post {
