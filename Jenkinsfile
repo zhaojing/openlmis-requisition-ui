@@ -91,12 +91,14 @@ pipeline {
                 }
             }
             steps {
-                sh "docker images"
                 sh "docker push openlmis/requisition-ui:${VERSION}"
             }
         }
     }
     post {
+        failure {
+            slackSend color: 'danger', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} FAILED (<${env.BUILD_URL}|Open>)"
+        }
         success{
             build job: 'OpenLMIS-reference-ui', wait: false
         }
