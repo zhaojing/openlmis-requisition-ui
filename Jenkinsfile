@@ -91,6 +91,7 @@ pipeline {
                 }
             }
             steps {
+                sh "docker tag openlmis/requisition-ui:latest openlmis/requisition-ui:${VERSION}"
                 sh "docker push openlmis/requisition-ui:${VERSION}"
             }
         }
