@@ -101,59 +101,59 @@
         }
 
         function buildStockOnHandColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.STOCK_ON_HAND);
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.STOCK_ON_HAND)
+                .build();
         }
 
         function buildIdealStockAmountColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT);
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT)
+                .build();
         }
 
         function buildRequestedQuantityColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.REQUESTED_QUANTITY);
-            this.visible();
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.REQUESTED_QUANTITY)
+                .visible()
+                .build();
         }
 
         function buildMaximumStockQuantityColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY);
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY)
+                .build();
         }
 
         function buildCalculatedOrderQuantityColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY);
-            this.visible();
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY)
+                .visible()
+                .build();
         }
 
         function buildCalculatedOrderQuantityIsaColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA);
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA)
+                .build();
         }
 
         function buildAverageConsumptionColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION);
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION)
+                .build();
         }
 
         function buildTotalConsumedQuantityColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY);
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY)
+                .build();
         }
 
         function buildBeginningBalanceColumn() {
-            this.withSource(COLUMN_SOURCES.USER_INPUT);
-            this.withName(TEMPLATE_COLUMNS.BEGINNING_BALANCE);
-            return this.build();
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.BEGINNING_BALANCE)
+                .build();
         }
 
         function createOption(number) {
