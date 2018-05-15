@@ -293,33 +293,39 @@
          * Changes stock columns display and sources based on populateStockOnHandFromStockCards flag.
          */
         function changePopulateStockOnHandFromStockCards() {
-            var columnName, column;
-
             if (this.populateStockOnHandFromStockCards) {
-                for (columnName in this.columnsMap) {
-                    if (this.columnsMap.hasOwnProperty(columnName)) {
-                        column = this.columnsMap[columnName];
-
-                        if (column.isStockBasedColumn()) {
-                            column.source = COLUMN_SOURCES.STOCK_CARDS;
-                        }
-
-                        if (column.isStockDisabledColumn()) {
-                            column.disableColumnsAndChangeSource();
-                        }
-                    }
-                }
+              setColumnsForStockBasedTemplate(this.columnsMap);
             } else {
-                for (columnName in this.columnsMap) {
-                    if (this.columnsMap.hasOwnProperty(columnName)) {
-                        column = this.columnsMap[columnName];
+              restoreStockBasedColumns(this.columnsMap);
+            }
+        }
 
-                        if (column.isStockBasedColumn()) {
-                            column.source = COLUMN_SOURCES.USER_INPUT;
-                        }
+        function setColumnsForStockBasedTemplate(columns) {
+            for (var columnName in columns) {
+                if (columns.hasOwnProperty(columnName)) {
+                    var column = columns[columnName];
+
+                    if (column.isStockBasedColumn()) {
+                        column.source = COLUMN_SOURCES.STOCK_CARDS;
+                    }
+
+                    if (column.isStockDisabledColumn()) {
+                        column.disableColumnsAndChangeSource();
                     }
                 }
             }
+        }
+
+        function restoreStockBasedColumns(columns) {
+          for (var columnName in columns) {
+              if (columns.hasOwnProperty(columnName)) {
+                  var column = columns[columnName];
+
+                  if (column.isStockBasedColumn()) {
+                      column.source = COLUMN_SOURCES.USER_INPUT;
+                  }
+              }
+          }
         }
 
         /**
