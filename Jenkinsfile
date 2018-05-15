@@ -41,7 +41,6 @@ pipeline {
                     sh 'docker-compose build image'
                     sh 'docker-compose down --volumes'
                     sh 'docker images'
-                    sh 'docker tag openlmis/requisition-ui:latest openlmis/requisition-ui:STAGING'
                 }
             }
             post {
@@ -93,9 +92,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'docker images'
-                sh 'docker tag openlmis/requisition-ui:STAGING openlmis/requisition-ui:${VERSION}'
-                sh 'docker push openlmis/requisition-ui:${VERSION}'
+                sh "docker images"
+                sh "docker push openlmis/requisition-ui:${VERSION}"
             }
         }
     }
