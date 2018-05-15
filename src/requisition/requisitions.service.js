@@ -134,10 +134,10 @@
                     }, error);
                 } else {
                     statusMessages = offlineStatusMessages.search({
-                            requisitionId: requisition[0].id
+                            requisitionId: requisition.id
                         });
 
-                    resolve(requisition[0], statusMessages);
+                    resolve(requisition, statusMessages);
                 }
             }
 

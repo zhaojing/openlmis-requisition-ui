@@ -239,6 +239,21 @@ describe('requisitionService', function() {
             expect(offlineService.isOffline).toHaveBeenCalled();
             expect(requisitionsStorage.getBy).toHaveBeenCalledWith('id', '1');
         });
+
+        it('should retrieve requisition from the local storage if it was modified locally', function() {
+            requisition.$modified = true;
+            requisitionsStorage.getBy.andReturn(requisition);
+            statusMessagesStorage.search.andReturn([statusMessage]);
+
+            var result;
+            requisitionService.get(requisition.id)
+            .then(function(response) {
+                result = response;
+            });
+            $rootScope.$apply();
+
+            expect(result.id).toEqual(requisition.id);
+        });
     });
 
     it('should initiate requisition', function() {
