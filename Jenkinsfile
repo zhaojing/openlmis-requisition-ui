@@ -101,7 +101,7 @@ pipeline {
             slackSend color: 'danger', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} FAILED (<${env.BUILD_URL}|Open>)"
         }
         fixed {
-            slackSend color: 'goot', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} Back to normal"
+            slackSend color: 'good', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} Back to normal"
         }
         success {
             build job: 'OpenLMIS-reference-ui', wait: false
