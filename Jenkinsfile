@@ -66,7 +66,6 @@ pipeline {
                             echo "SONAR_LOGIN=$SONAR_LOGIN_TEMP" >> .env
                             echo "SONAR_PASSWORD=$SONAR_PASSWORD_TEMP" >> .env
 
-                            docker-compose pull
                             docker-compose run --entrypoint ./sonar.sh requisition-ui
                             docker-compose down --volumes
                         '''
