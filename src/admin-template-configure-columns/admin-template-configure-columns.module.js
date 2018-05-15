@@ -32,6 +32,7 @@
         'referencedata-facility-type',
         'referencedata',
         'requisition',
+        'stock-reason',
         'ui.router'
     ]);
 

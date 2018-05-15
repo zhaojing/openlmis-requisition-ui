@@ -19,49 +19,16 @@ describe('RequisitionTemplateAdminController', function() {
     var vm;
 
     //mocks
-    var template, program, loadingModalService, message;
+    var template, program, tags, loadingModalService;
 
     //injects
-    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope, TEMPLATE_COLUMNS,
-        confirmService, requisitionTemplateService, TemplateColumnDataBuilder;
+    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope,
+        confirmService, requisitionTemplateService, TemplateColumnDataBuilder, TemplateDataBuilder;
 
     beforeEach(function() {
         module('admin-template-configure-columns');
 
-        template = jasmine.createSpyObj('template', ['moveColumn', 'findCircularCalculatedDependencies', 'isColumnDisabled', 'isValid']);
-        template.id = '1';
-        template.programId = '1';
-        template.columnsMap = {
-            remarks: {
-                displayOrder: 1,
-                isDisplayed: true,
-                label: 'Remarks'
-            },
-            total: {
-                displayOrder: 2,
-                isDisplayed: true,
-                label: 'Total'
-            },
-            stockOnHand: {
-                displayOrder: 3,
-                isDisplayed: true,
-                label: "Stock on Hand"
-            },
-            averageConsumption: {
-                name: 'averageConsumption',
-                displayOrder: 4,
-                isDisplayed: true,
-                label: "Average Consumption"
-            }
-        };
-        template.numberOfPeriodsToAverage = 3;
-        program = {
-            id: '1',
-            name: 'program1'
-        };
-
         inject(function($injector) {
-            TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
             q = $injector.get('$q');
             state = $injector.get('$state');
             notificationService = $injector.get('notificationService');
@@ -72,12 +39,26 @@ describe('RequisitionTemplateAdminController', function() {
             confirmService = $injector.get('confirmService');
             requisitionTemplateService = $injector.get('requisitionTemplateService');
             TemplateColumnDataBuilder = $injector.get('TemplateColumnDataBuilder');
+            TemplateDataBuilder = $injector.get('TemplateDataBuilder');
         });
+
+        template = new TemplateDataBuilder()
+            .withColumn(new TemplateColumnDataBuilder().buildTotalColumn())
+            .withColumn(new TemplateColumnDataBuilder().buildRemarksColumn())
+            .withColumn(new TemplateColumnDataBuilder().buildStockOnHandColumn())
+            .withColumn(new TemplateColumnDataBuilder().buildAverageConsumptionColumn());
+
+        tags = [
+            'tag-1',
+            'tag-2'
+        ];
 
         vm = $controller('RequisitionTemplateAdminController', {
             program: program,
-            template: template
+            template: template,
+            tags: tags
         });
+        vm.$onInit();
     });
 
     it('should set template and program', function() {
@@ -115,7 +96,7 @@ describe('RequisitionTemplateAdminController', function() {
 
             spyOn(requisitionTemplateService, 'save').andReturn(q.resolve());
 
-            template.isValid.andReturn(true);
+            template.isValid = jasmine.createSpy().andReturn(true);
         });
 
         it('should display error message when template is invalid', function() {
@@ -178,7 +159,7 @@ describe('RequisitionTemplateAdminController', function() {
     it('should call column drop method and display error notification when drop failed', function() {
         var notificationServiceSpy = jasmine.createSpy();
 
-        template.moveColumn.andReturn(false);
+        template.moveColumn = jasmine.createSpy().andReturn(false);
 
         spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
 
@@ -198,7 +179,7 @@ describe('RequisitionTemplateAdminController', function() {
         spyOn(requestedQuantityColumn, 'isStockBasedColumn').andReturn(false);
         spyOn(stockOnHandColumn, 'isStockBasedColumn').andReturn(true);
 
-        template.isColumnDisabled.andReturn(false);
+        template.isColumnDisabled = jasmine.createSpy().andReturn(false);
         expect(vm.canChangeSource(beginningBalanceColumn)).toBe(true);
         expect(vm.canChangeSource(requestedQuantityColumn)).toBe(false);
 
@@ -209,5 +190,12 @@ describe('RequisitionTemplateAdminController', function() {
         template.isColumnDisabled.andReturn(true);
         template.populateStockOnHandFromStockCards = false;
         expect(vm.canChangeSource(beginningBalanceColumn)).toBe(false);
+    });
+
+    describe('refreshAvailableTags', function() {
+        
+        beforeEach(function() {
+
+        });
     });
 });

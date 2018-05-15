@@ -29,6 +29,7 @@
         TemplateColumnDataBuilder.prototype.withSource = withSource;
         TemplateColumnDataBuilder.prototype.withName = withName;
         TemplateColumnDataBuilder.prototype.visible = visible;
+        TemplateColumnDataBuilder.prototype.withTag = withTag;
         TemplateColumnDataBuilder.prototype.buildStockOnHandColumn = buildStockOnHandColumn;
         TemplateColumnDataBuilder.prototype.buildIdealStockAmountColumn = buildIdealStockAmountColumn;
         TemplateColumnDataBuilder.prototype.buildRequestedQuantityColumn = buildRequestedQuantityColumn;
@@ -36,10 +37,10 @@
         TemplateColumnDataBuilder.prototype.buildMaximumStockQuantityColumn = buildMaximumStockQuantityColumn;
         TemplateColumnDataBuilder.prototype.buildTotalConsumedQuantityColumn = buildTotalConsumedQuantityColumn;
         TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityColumn = buildCalculatedOrderQuantityColumn;
-        TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityIsaColumn =
-            buildCalculatedOrderQuantityIsaColumn;
-        TemplateColumnDataBuilder.prototype.buildBeginningBalanceColumn =
-            buildBeginningBalanceColumn;
+        TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityIsaColumn = buildCalculatedOrderQuantityIsaColumn;
+        TemplateColumnDataBuilder.prototype.buildBeginningBalanceColumn = buildBeginningBalanceColumn;
+        TemplateColumnDataBuilder.prototype.buildRemarksColumn = buildRemarksColumn;
+        TemplateColumnDataBuilder.prototype.buildTotalColumn = buildTotalColumn;
 
         return TemplateColumnDataBuilder;
 
@@ -100,6 +101,11 @@
             return this;
         }
 
+        function withTag(tag) {
+            this.tag = tag;
+            return this;
+        }
+
         function buildStockOnHandColumn() {
             return this.withSource(COLUMN_SOURCES.USER_INPUT)
                 .withName(TEMPLATE_COLUMNS.STOCK_ON_HAND)
@@ -153,6 +159,18 @@
         function buildBeginningBalanceColumn() {
             return this.withSource(COLUMN_SOURCES.USER_INPUT)
                 .withName(TEMPLATE_COLUMNS.BEGINNING_BALANCE)
+                .build();
+        }
+
+        function buildRemarksColumn() {
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.REMARKS)
+                .build();
+        }
+
+        function buildTotalColumn() {
+            return this.withSource(COLUMN_SOURCES.REFERENCE_DATA)
+                .withName(TEMPLATE_COLUMNS.REMARKS)
                 .build();
         }
 

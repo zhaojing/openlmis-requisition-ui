@@ -60,6 +60,11 @@
                                     <select ng-model="column.option" ng-options="option as option.optionLabel for option in column.columnDefinition.options" ng-required="column.isDisplayed"></select>
                                 </div>
                             </div>
+                            <div ng-if="column.columnDefinition.supportsTag && vm.template.populateStockOnHandFromStockCards">
+                                <label for="tag">{{'adminProgramTemplate.tag' | message}}</label>
+                                <select id="tag" ng-model="column.tag" ng-options="tag for tag in column.availableTags"
+                                        ng-required="vm.template.populateStockOnHandFromStockCards" ng-change="vm.refreshAvailableTags()"></select>
+                            </div>
                             <div class="error">{{vm.getColumnError(column, vm.template)}}</div>
                         </td>
                     </dnd-nodrag>

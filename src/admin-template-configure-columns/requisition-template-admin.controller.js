@@ -29,16 +29,27 @@
         .controller('RequisitionTemplateAdminController', RequisitionTemplateAdminController);
 
     RequisitionTemplateAdminController.$inject = [
-        '$state', 'template', 'program', '$q', 'notificationService', 'messageService',
+        '$state', 'template', 'program', 'tags', '$q', 'notificationService', 'messageService',
         'templateValidator', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS',
         'loadingModalService', 'confirmService', 'requisitionTemplateService'
     ];
 
-    function RequisitionTemplateAdminController($state, template, program, $q, notificationService,
-                                                messageService, templateValidator, MAX_COLUMN_DESCRIPTION_LENGTH, COLUMN_SOURCES,
-                                                TEMPLATE_COLUMNS, loadingModalService, confirmService, requisitionTemplateService) {
+    function RequisitionTemplateAdminController(
+        $state, template, program, tags, $q, notificationService, messageService, 
+        templateValidator, MAX_COLUMN_DESCRIPTION_LENGTH, COLUMN_SOURCES, TEMPLATE_COLUMNS, 
+        loadingModalService, confirmService, requisitionTemplateService) {
 
         var vm = this;
+
+        vm.$onInit = onInit;
+        vm.goToTemplateList = goToTemplateList;
+        vm.saveTemplate = saveTemplate;
+        vm.dropCallback = dropCallback;
+        vm.canChangeSource = canChangeSource;
+        vm.sourceDisplayName = sourceDisplayName;
+        vm.getColumnError = templateValidator.getColumnError;
+        vm.isAverageConsumption = isAverageConsumption;
+        vm.refreshAvailableTags = refreshAvailableTags;
 
         /**
          * @ngdoc property
@@ -49,7 +60,7 @@
          * @description
          * Holds max column description length.
          */
-        vm.maxColumnDescriptionLength = MAX_COLUMN_DESCRIPTION_LENGTH;
+        vm.maxColumnDescriptionLength = undefined;
 
         /**
          * @ngdoc property
@@ -60,7 +71,7 @@
          * @description
          * Holds template.
          */
-        vm.template = template;
+        vm.template = undefined;
 
         /**
          * @ngdoc property
@@ -71,15 +82,33 @@
          * @description
          * Holds program.
          */
-        vm.program = program;
+        vm.program = undefined;
 
-        vm.goToTemplateList = goToTemplateList;
-        vm.saveTemplate = saveTemplate;
-        vm.dropCallback = dropCallback;
-        vm.canChangeSource = canChangeSource;
-        vm.sourceDisplayName = sourceDisplayName;
-        vm.getColumnError = templateValidator.getColumnError;
-        vm.isAverageConsumption = isAverageConsumption;
+        /**
+         * @ngdoc property
+         * @propertyOf admin-template-configure-columns.controller:RequisitionTemplateAdminController
+         * @name tags
+         * @type {Array}
+         *
+         * @description
+         * Holds list of available reason tags.
+         */
+        vm.tags = undefined;
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.controller:RequisitionTemplateAdminController
+         * @name goToTemplateList
+         *
+         * @description
+         * Redirects user to template list view page.
+         */
+        function onInit() {
+            vm.maxColumnDescriptionLength = MAX_COLUMN_DESCRIPTION_LENGTH;
+            vm.template = template;
+            vm.program = program;
+            refreshAvailableTags();
+        }
 
         /**
          * @ngdoc method
@@ -155,9 +184,9 @@
          * @return {boolean}        true if source can be changed
          */
         function canChangeSource(column) {
-            return column.columnDefinition.sources.length > 1
-                && !vm.template.isColumnDisabled(column)
-                && !(vm.template.populateStockOnHandFromStockCards && column.isStockBasedColumn());
+            return column.columnDefinition.sources.length > 1 && 
+                !vm.template.isColumnDisabled(column) && 
+                !(vm.template.populateStockOnHandFromStockCards && column.isStockBasedColumn());
         }
 
         /**
@@ -188,6 +217,32 @@
          */
         function isAverageConsumption(column) {
             return column.name === TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.controller:RequisitionTemplateAdminController
+         * @name refreshAvailableTags
+         *
+         * @description
+         * Determines whether displayed column is an average consumption.
+         */
+        function refreshAvailableTags() {
+            var filteredTags = tags.filter(function(tag) {
+                return Object.keys(vm.template.columnsMap).reduce(function(isNotSelected, columnName) {
+                    return isNotSelected && vm.template.columnsMap[columnName].tag !== tag;
+                }, true);
+            });
+
+            Object.keys(vm.template.columnsMap).forEach(function(columnName) {
+                var column = vm.template.columnsMap[columnName];
+                if (column.columnDefinition.supportsTag) {
+                    column.availableTags = angular.copy(filteredTags);
+                    if (column.tag) {
+                        column.availableTags.push(column.tag);
+                    }
+                }
+            });
         }
     }
 })();
