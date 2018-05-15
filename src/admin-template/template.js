@@ -293,18 +293,32 @@
          * Changes stock columns display and sources based on populateStockOnHandFromStockCards flag.
          */
         function changePopulateStockOnHandFromStockCards() {
+            var columnName, column;
+
             if (this.populateStockOnHandFromStockCards) {
-                this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.STOCK_CARDS;
-                for (var columnName in this.columnsMap) {
+                for (columnName in this.columnsMap) {
                     if (this.columnsMap.hasOwnProperty(columnName)) {
-                        var column = this.columnsMap[columnName];
+                        column = this.columnsMap[columnName];
+
+                        if (column.isStockBasedColumn()) {
+                            column.source = COLUMN_SOURCES.STOCK_CARDS;
+                        }
+
                         if (column.isStockDisabledColumn()) {
                             column.disableColumnsAndChangeSource();
                         }
                     }
                 }
             } else {
-                this.columnsMap[TEMPLATE_COLUMNS.STOCK_ON_HAND].source = COLUMN_SOURCES.USER_INPUT;
+                for (columnName in this.columnsMap) {
+                    if (this.columnsMap.hasOwnProperty(columnName)) {
+                        column = this.columnsMap[columnName];
+
+                        if (column.isStockBasedColumn()) {
+                            column.source = COLUMN_SOURCES.USER_INPUT;
+                        }
+                    }
+                }
             }
         }
 

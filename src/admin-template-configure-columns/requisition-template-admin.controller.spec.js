@@ -22,7 +22,8 @@ describe('RequisitionTemplateAdminController', function() {
     var template, program, loadingModalService, message;
 
     //injects
-    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope, TEMPLATE_COLUMNS, confirmService, requisitionTemplateService;
+    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope, TEMPLATE_COLUMNS,
+        confirmService, requisitionTemplateService, TemplateColumnDataBuilder;
 
     beforeEach(function() {
         module('admin-template-configure-columns');
@@ -70,6 +71,7 @@ describe('RequisitionTemplateAdminController', function() {
             $controller = $injector.get('$controller');
             confirmService = $injector.get('confirmService');
             requisitionTemplateService = $injector.get('requisitionTemplateService');
+            TemplateColumnDataBuilder = $injector.get('TemplateColumnDataBuilder');
         });
 
         vm = $controller('RequisitionTemplateAdminController', {
@@ -186,36 +188,26 @@ describe('RequisitionTemplateAdminController', function() {
     });
 
     it('can change source works correctly', function() {
-        template.isColumnDisabled.andReturn(false);
-        expect(vm.canChangeSource({
-            columnDefinition: {
-                name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-                sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
-            }
-        })).toBe(true);
+        var beginningBalanceColumn = new TemplateColumnDataBuilder().buildBeginningBalanceColumn(),
+            requestedQuantityColumn = new TemplateColumnDataBuilder().buildRequestedQuantityColumn(),
+            stockOnHandColumn = new TemplateColumnDataBuilder().buildStockOnHandColumn();
 
-        expect(vm.canChangeSource({
-            columnDefinition: {
-                sources: [COLUMN_SOURCES.USER_INPUT]
-            }
-        })).toBe(false);
+        requestedQuantityColumn.columnDefinition.sources = [COLUMN_SOURCES.USER_INPUT];
+
+        spyOn(beginningBalanceColumn, 'isStockBasedColumn').andReturn(true);
+        spyOn(requestedQuantityColumn, 'isStockBasedColumn').andReturn(false);
+        spyOn(stockOnHandColumn, 'isStockBasedColumn').andReturn(true);
+
+        template.isColumnDisabled.andReturn(false);
+        expect(vm.canChangeSource(beginningBalanceColumn)).toBe(true);
+        expect(vm.canChangeSource(requestedQuantityColumn)).toBe(false);
 
         template.populateStockOnHandFromStockCards = true;
-        expect(vm.canChangeSource({
-            name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
-            columnDefinition: {
-                name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
-                sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
-            }
-        })).toBe(false);
+        expect(vm.canChangeSource(stockOnHandColumn)).toBe(false);
+        expect(vm.canChangeSource(beginningBalanceColumn)).toBe(false);
 
         template.isColumnDisabled.andReturn(true);
         template.populateStockOnHandFromStockCards = false;
-        expect(vm.canChangeSource({
-            columnDefinition: {
-                name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-                sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.CALCULATED]
-            }
-        })).toBe(false);
+        expect(vm.canChangeSource(beginningBalanceColumn)).toBe(false);
     });
 });

@@ -38,6 +38,8 @@
         TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityColumn = buildCalculatedOrderQuantityColumn;
         TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityIsaColumn =
             buildCalculatedOrderQuantityIsaColumn;
+        TemplateColumnDataBuilder.prototype.buildBeginningBalanceColumn =
+            buildBeginningBalanceColumn;
 
         return TemplateColumnDataBuilder;
 
@@ -145,6 +147,12 @@
         function buildTotalConsumedQuantityColumn() {
             this.withSource(COLUMN_SOURCES.USER_INPUT);
             this.withName(TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY);
+            return this.build();
+        }
+
+        function buildBeginningBalanceColumn() {
+            this.withSource(COLUMN_SOURCES.USER_INPUT);
+            this.withName(TEMPLATE_COLUMNS.BEGINNING_BALANCE);
             return this.build();
         }
 

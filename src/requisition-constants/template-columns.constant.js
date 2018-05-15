@@ -55,12 +55,12 @@
             CALCULATED_ORDER_QUANTITY: 'calculatedOrderQuantity',
             CALCULATED_ORDER_QUANTITY_ISA: 'calculatedOrderQuantityIsa',
             IDEAL_STOCK_AMOUNT: 'idealStockAmount',
-            getStockDisabledColumns: getStockDisabledColumns
+            getStockDisabledColumns: getStockDisabledColumns,
+            getStockBasedColumns: getStockBasedColumns
         };
 
         function getStockDisabledColumns() {
             return [
-                this.BEGINNING_BALANCE,
                 this.TOTAL_RECEIVED_QUANTITY,
                 this.TOTAL_CONSUMED_QUANTITY,
                 this.TOTAL_STOCKOUT_DAYS,
@@ -71,6 +71,13 @@
                 this.CALCULATED_ORDER_QUANTITY,
                 this.TOTAL_LOSSES_AND_ADJUSTMENTS,
                 this.AVERAGE_CONSUMPTION
+            ];
+        }
+
+        function getStockBasedColumns() {
+            return [
+                this.BEGINNING_BALANCE,
+                this.STOCK_ON_HAND
             ];
         }
     }

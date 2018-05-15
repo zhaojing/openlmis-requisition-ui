@@ -155,9 +155,9 @@
          * @return {boolean}        true if source can be changed
          */
         function canChangeSource(column) {
-            return column.columnDefinition.sources.length > 1 &&
-                !vm.template.isColumnDisabled(column) &&
-                !(column.name === TEMPLATE_COLUMNS.STOCK_ON_HAND && vm.template.populateStockOnHandFromStockCards);
+            return column.columnDefinition.sources.length > 1
+                && !vm.template.isColumnDisabled(column)
+                && !(vm.template.populateStockOnHandFromStockCards && column.isStockBasedColumn())
         }
 
         /**

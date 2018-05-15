@@ -33,6 +33,7 @@
     function TemplateColumn($filter, COLUMN_SOURCES, TEMPLATE_COLUMNS) {
         TemplateColumn.prototype.disableColumnsAndChangeSource = disableColumnsAndChangeSource;
         TemplateColumn.prototype.isStockDisabledColumn = isStockDisabledColumn;
+        TemplateColumn.prototype.isStockBasedColumn = isStockBasedColumn;
 
         return TemplateColumn;
 
@@ -71,6 +72,18 @@
          */
         function isStockDisabledColumn() {
             return TEMPLATE_COLUMNS.getStockDisabledColumns().includes(this.name);
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template.TemplateColumn
+         * @name isStockBasedColumn
+         *
+         * @description
+         * Checks if column is on stock based columns list.
+         */
+        function isStockBasedColumn() {
+            return TEMPLATE_COLUMNS.getStockBasedColumns().includes(this.name);
         }
 
         function fixColumnOptionModelReference(column) {

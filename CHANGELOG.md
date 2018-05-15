@@ -3,6 +3,7 @@
 
 New functionality added in a backwards-compatible manner:
 * [OLMIS-4015](https://openlmis.atlassian.net/browse/OLMIS-4015): Added new screen for creating Requisition Templates.
+* [OLMIS-4053](https://openlmis.atlassian.net/browse/OLMIS-4053): Enabled beginning balance column for stock based requisition templates
 
 Bug fixes:
 * [OLMIS-4509](https://openlmis.atlassian.net/browse/OLMIS-4509): Fixed redirect to 404 when clicking proceed for requisition while offline
