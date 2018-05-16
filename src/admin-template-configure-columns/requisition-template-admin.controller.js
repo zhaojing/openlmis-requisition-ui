@@ -87,13 +87,13 @@
         /**
          * @ngdoc property
          * @propertyOf admin-template-configure-columns.controller:RequisitionTemplateAdminController
-         * @name tags
-         * @type {Array}
+         * @name availableTags
+         * @type {Object}
          *
          * @description
-         * Holds list of available reason tags.
+         * Holds lists of available reason tags for each template column that supports tag.
          */
-        vm.tags = undefined;
+        vm.availableTags = undefined;
 
         /**
          * @ngdoc method
@@ -107,6 +107,7 @@
             vm.maxColumnDescriptionLength = MAX_COLUMN_DESCRIPTION_LENGTH;
             vm.template = template;
             vm.program = program;
+            vm.availableTags = {};
             refreshAvailableTags();
         }
 
@@ -228,20 +229,24 @@
          * Determines whether displayed column is an average consumption.
          */
         function refreshAvailableTags() {
-            var filteredTags = tags.filter(function(tag) {
-                return Object.keys(vm.template.columnsMap).reduce(function(isNotSelected, columnName) {
-                    return isNotSelected && vm.template.columnsMap[columnName].tag !== tag;
-                }, true);
-            });
+            var filteredTags = filterUnusedTags();
 
             Object.keys(vm.template.columnsMap).forEach(function(columnName) {
                 var column = vm.template.columnsMap[columnName];
                 if (column.columnDefinition.supportsTag) {
-                    column.availableTags = angular.copy(filteredTags);
+                    vm.availableTags[columnName] = angular.copy(filteredTags);
                     if (column.tag) {
-                        column.availableTags.push(column.tag);
+                        vm.availableTags[columnName].push(column.tag);
                     }
                 }
+            });
+        }
+
+        function filterUnusedTags() {
+            return tags.filter(function(tag) {
+                return Object.keys(vm.template.columnsMap).reduce(function(isNotSelected, columnName) {
+                    return isNotSelected && vm.template.columnsMap[columnName].tag !== tag;
+                }, true);
             });
         }
     }

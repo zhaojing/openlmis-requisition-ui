@@ -40,6 +40,7 @@
         Template.prototype.removeColumn = removeColumn;
         Template.prototype.addColumn = addColumn;
         Template.prototype.create = create;
+        Template.prototype.canAssignTag = canAssignTag;
 
         return Template;
 
@@ -160,6 +161,26 @@
                     definition: availableColumn.definition
                 };
             }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template.Template
+         * @name canAssignTag
+         *
+         * @description
+         * Checks if template has stock based flag set to true and column supports tag.
+         * If there is no column with given name error will be thrown.
+         *
+         * @param  {String}  columnName name of the column to be verified
+         * @return {boolean}            true if template has stock based flag set to true and column supports tag 
+         */
+        function canAssignTag(columnName) {
+            if (!this.columnsMap.hasOwnProperty(columnName)) {
+                throw 'Column with name ' + columnName + ' does not exist!';
+            }
+            return this.populateStockOnHandFromStockCards && 
+                this.columnsMap[columnName].columnDefinition.supportsTag;
         }
 
         /**

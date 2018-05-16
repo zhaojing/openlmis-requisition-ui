@@ -18,8 +18,8 @@
 	'use strict';
 
 	angular
-        .module('admin-template-configure-columns')
-        .config(routes);
+		.module('admin-template-configure-columns')
+		.config(routes);
 
 	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
@@ -27,9 +27,9 @@
 		$stateProvider.state('openlmis.administration.requisitionTemplates.configure.columns', {
 			label: 'adminProgramTemplate.templateColumns',
 			url: '/columns',
-            templateUrl: 'admin-template-configure-columns/template.html',
-            controller: 'RequisitionTemplateAdminController',
-            controllerAs: 'vm',
+			templateUrl: 'admin-template-configure-columns/template.html',
+			controller: 'RequisitionTemplateAdminController',
+			controllerAs: 'vm',
 			accessRights: [REQUISITION_RIGHTS.REQUISITION_TEMPLATES_MANAGE],
 			resolve: {
 				tags: function(StockReasonTagResource) {

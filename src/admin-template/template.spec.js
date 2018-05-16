@@ -464,4 +464,33 @@ describe('Template', function() {
             expect(repository.create).toHaveBeenCalledWith(template);
         });
     });
+
+    describe('canAssignTag', function() {
+
+        beforeEach(function() {
+            templateJson.columnsMap.someColumn.columnDefinition.supportsTag = true;
+            templateJson.populateStockOnHandFromStockCards = true;
+            template = new Template(templateJson, repository);
+        });
+
+        it('should return false if template has populateStockOnHandFromStockCards set to false', function() {
+            templateJson.populateStockOnHandFromStockCards = false;
+            expect(template.canAssignTag('someColumn')).toBe(false);
+        });
+
+        it('should return false if column does not support tag', function() {
+            templateJson.columnsMap.someColumn.columnDefinition.supportsTag = false;
+            expect(template.canAssignTag('someColumn')).toBe(false);
+        });
+
+        it('should return true if template has populateStockOnHandFromStockCards set to true and column supports tag', function() {
+            expect(template.canAssignTag('someColumn')).toBe(true);
+        });
+
+        it('should throw exception if column with given name does not exist', function() {
+            expect(function() {
+                template.canAssignTag('someNotExistingColumn');
+            }).toThrow('Column with name someNotExistingColumn does not exist!');
+        });
+    });
 });

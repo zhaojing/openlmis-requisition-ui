@@ -22,7 +22,7 @@ describe('RequisitionTemplateAdminController', function() {
     var template, program, tags, loadingModalService;
 
     //injects
-    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope,
+    var q, $controller, state, notificationService, COLUMN_SOURCES, rootScope, MAX_COLUMN_DESCRIPTION_LENGTH,
         confirmService, requisitionTemplateService, TemplateColumnDataBuilder, TemplateDataBuilder;
 
     beforeEach(function() {
@@ -40,6 +40,7 @@ describe('RequisitionTemplateAdminController', function() {
             requisitionTemplateService = $injector.get('requisitionTemplateService');
             TemplateColumnDataBuilder = $injector.get('TemplateColumnDataBuilder');
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
+            MAX_COLUMN_DESCRIPTION_LENGTH = $injector.get('MAX_COLUMN_DESCRIPTION_LENGTH');
         });
 
         template = new TemplateDataBuilder()
@@ -62,9 +63,23 @@ describe('RequisitionTemplateAdminController', function() {
         vm.$onInit();
     });
 
-    it('should set template and program', function() {
-        expect(vm.program).toEqual(program);
-        expect(vm.template).toEqual(template);
+    describe('onInit', function() {
+
+        it('should set template', function() {
+            expect(vm.template).toEqual(template);
+        });
+
+        it('should set program', function() {
+            expect(vm.program).toEqual(program);
+        });
+
+        it('should set maxColumnDescriptionLength', function() {
+            expect(vm.maxColumnDescriptionLength).toEqual(MAX_COLUMN_DESCRIPTION_LENGTH);
+        });
+
+        it('should set availableTags', function() {
+            expect(vm.availableTags).toEqual({});
+        });
     });
 
     describe('goToTemplateList', function() {
@@ -207,15 +222,15 @@ describe('RequisitionTemplateAdminController', function() {
         });
 
         it('should set list of available tags to columns that suppports tags', function() {
-            expect(vm.template.columnsMap.maximumStockQuantity.availableTags).toEqual(['tag-3', 'tag-1']);
-            expect(vm.template.columnsMap.calculatedOrderQuantity.availableTags).toEqual(['tag-3', 'tag-2']);
+            expect(vm.availableTags.maximumStockQuantity).toEqual(['tag-3', 'tag-1']);
+            expect(vm.availableTags.calculatedOrderQuantity).toEqual(['tag-3', 'tag-2']);
         });
 
         iit('should not set list of available tags to columns that not suppports tags', function() {
-            expect(vm.template.columnsMap.total.availableTags).toBe(undefined);
-            expect(vm.template.columnsMap.remarks.availableTags).toBe(undefined);
-            expect(vm.template.columnsMap.stockOnHand.availableTags).toBe(undefined);
-            expect(vm.template.columnsMap.averageConsumption.availableTags).toBe(undefined);
+            expect(vm.availableTags.total).toBe(undefined);
+            expect(vm.availableTags.remarks).toBe(undefined);
+            expect(vm.availableTags.stockOnHand).toBe(undefined);
+            expect(vm.availableTags.averageConsumption).toBe(undefined);
         });
     });
 });
