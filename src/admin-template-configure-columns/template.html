@@ -62,7 +62,7 @@
                             </div>
                             <div ng-if="vm.template.canAssignTag(column.name)">
                                 <label for="tag">{{'adminProgramTemplate.tag' | message}}</label>
-                                <select id="tag" ng-model="column.tag" ng-options="tag for tag in vm.availableTags[column.name]"
+                                <select id="tag" ng-model="column.tag" ng-options="tag for tag in vm.availableTags[column.name] | orderBy:'toString()'"
                                         ng-required="vm.template.populateStockOnHandFromStockCards" ng-change="vm.refreshAvailableTags()"></select>
                             </div>
                             <div class="error">{{vm.getColumnError(column, vm.template)}}</div>

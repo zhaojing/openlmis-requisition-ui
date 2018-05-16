@@ -97,9 +97,16 @@
                 validateOption(column) ||
                 validateCalculated(column, template) ||
                 validateUserInput(column) ||
-                validateColumn(column, template);
+                validateColumn(column, template) ||
+                validateTag(column, template);
 
             return error;
+        }
+
+        function validateTag(column, template) {
+            if (isEmpty(column.tag) && 
+                template.populateStockOnHandFromStockCards &&
+                column.columnDefinition.supportsTag) return messageService.get('adminProgramTemplate.columnTagEmpty');
         }
 
         function validateLabel(label) {

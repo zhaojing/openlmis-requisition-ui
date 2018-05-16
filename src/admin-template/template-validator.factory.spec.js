@@ -172,6 +172,37 @@ describe('templateValidator', function() {
             expect(result).toBe('adminProgramTemplate.emptyColumnOption');
         });
 
+        describe('validateTag', function() {
+
+            beforeEach(function() {
+                column.tag = undefined;
+                column.columnDefinition.supportsTag = true;
+                template.populateStockOnHandFromStockCards = true;
+            });
+            
+            it('should return error if tag is required and not set', function() {
+                expect(templateValidator.getColumnError(column, template)).toBe('adminProgramTemplate.columnTagEmpty');
+            });
+
+            it('should return false if column does not supports tag', function() {
+                column.columnDefinition.supportsTag = false;
+    
+                expect(templateValidator.getColumnError(column, template)).toBeUndefined();
+            });
+
+            it('should return false if template is not stock based', function() {
+                template.populateStockOnHandFromStockCards = false;
+    
+                expect(templateValidator.getColumnError(column, template)).toBeUndefined();
+            });
+
+            it('should return false if column does not supports tag', function() {
+                column.tag = 'some-tag';
+    
+                expect(templateValidator.getColumnError(column, template)).toBeUndefined();
+            });
+        });
+
         describe('for average consumption', function() {
 
             beforeEach(function() {
