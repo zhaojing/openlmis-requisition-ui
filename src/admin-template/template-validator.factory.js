@@ -106,8 +106,9 @@
         function validateTag(column, template) {
             if (isEmpty(column.tag) && 
                 template.populateStockOnHandFromStockCards &&
-                column.columnDefinition.supportsTag) 
+                column.columnDefinition.supportsTag) {
                 return messageService.get('adminProgramTemplate.columnTagEmpty');
+            }
         }
 
         function validateLabel(label) {
