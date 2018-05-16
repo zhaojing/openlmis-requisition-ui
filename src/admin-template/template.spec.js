@@ -470,16 +470,16 @@ describe('Template', function() {
         beforeEach(function() {
             templateJson.columnsMap.someColumn.columnDefinition.supportsTag = true;
             templateJson.populateStockOnHandFromStockCards = true;
-            template = new Template(templateJson, repository);
+            template = new Template(templateJson);
         });
 
         it('should return false if template has populateStockOnHandFromStockCards set to false', function() {
-            templateJson.populateStockOnHandFromStockCards = false;
+            template.populateStockOnHandFromStockCards = false;
             expect(template.canAssignTag('someColumn')).toBe(false);
         });
 
         it('should return false if column does not support tag', function() {
-            templateJson.columnsMap.someColumn.columnDefinition.supportsTag = false;
+            template.columnsMap.someColumn.columnDefinition.supportsTag = false;
             expect(template.canAssignTag('someColumn')).toBe(false);
         });
 

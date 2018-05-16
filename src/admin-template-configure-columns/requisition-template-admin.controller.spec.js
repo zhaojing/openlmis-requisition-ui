@@ -221,12 +221,12 @@ describe('RequisitionTemplateAdminController', function() {
             vm.refreshAvailableTags();
         });
 
-        it('should set list of available tags to columns that suppports tags', function() {
+        it('should set list of available tags to columns that supports tags', function() {
             expect(vm.availableTags.maximumStockQuantity).toEqual(['tag-3', 'tag-1']);
             expect(vm.availableTags.calculatedOrderQuantity).toEqual(['tag-3', 'tag-2']);
         });
 
-        iit('should not set list of available tags to columns that not suppports tags', function() {
+        it('should not set list of available tags to columns that not supports tags', function() {
             expect(vm.availableTags.total).toBe(undefined);
             expect(vm.availableTags.remarks).toBe(undefined);
             expect(vm.availableTags.stockOnHand).toBe(undefined);
