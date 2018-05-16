@@ -31,16 +31,14 @@ describe("TEMPLATE_COLUMNS", function() {
         it('should return list of stock disabled columns', function() {
             var returnedList = TEMPLATE_COLUMNS.getStockDisabledColumns();
 
-            expect(returnedList[0]).toEqual('totalReceivedQuantity');
-            expect(returnedList[1]).toEqual('totalConsumedQuantity');
-            expect(returnedList[2]).toEqual('totalStockoutDays');
-            expect(returnedList[3]).toEqual('total');
-            expect(returnedList[4]).toEqual('numberOfNewPatientsAdded');
-            expect(returnedList[5]).toEqual('adjustedConsumption');
-            expect(returnedList[6]).toEqual('maximumStockQuantity');
-            expect(returnedList[7]).toEqual('calculatedOrderQuantity');
-            expect(returnedList[8]).toEqual('totalLossesAndAdjustments');
-            expect(returnedList[9]).toEqual('averageConsumption');
+            expect(returnedList[0]).toEqual('totalStockoutDays');
+            expect(returnedList[1]).toEqual('total');
+            expect(returnedList[2]).toEqual('numberOfNewPatientsAdded');
+            expect(returnedList[3]).toEqual('adjustedConsumption');
+            expect(returnedList[4]).toEqual('maximumStockQuantity');
+            expect(returnedList[5]).toEqual('calculatedOrderQuantity');
+            expect(returnedList[6]).toEqual('totalLossesAndAdjustments');
+            expect(returnedList[7]).toEqual('averageConsumption');
         });
     });
 

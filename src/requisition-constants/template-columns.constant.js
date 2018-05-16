@@ -61,8 +61,6 @@
 
         function getStockDisabledColumns() {
             return [
-                this.TOTAL_RECEIVED_QUANTITY,
-                this.TOTAL_CONSUMED_QUANTITY,
                 this.TOTAL_STOCKOUT_DAYS,
                 this.TOTAL,
                 this.NUMBER_OF_NEW_PATIENTS_ADDED,
