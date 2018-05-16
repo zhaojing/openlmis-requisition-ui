@@ -103,6 +103,7 @@
 
         function withTag(tag) {
             this.tag = tag;
+            this.columnDefinition.supportsTag = true;
             return this;
         }
 
@@ -170,7 +171,7 @@
 
         function buildTotalColumn() {
             return this.withSource(COLUMN_SOURCES.REFERENCE_DATA)
-                .withName(TEMPLATE_COLUMNS.REMARKS)
+                .withName(TEMPLATE_COLUMNS.TOTAL)
                 .build();
         }
 

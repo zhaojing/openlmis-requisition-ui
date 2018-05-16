@@ -50,7 +50,8 @@ describe('RequisitionTemplateAdminController', function() {
 
         tags = [
             'tag-1',
-            'tag-2'
+            'tag-2',
+            'tag-3',
         ];
 
         vm = $controller('RequisitionTemplateAdminController', {
@@ -195,7 +196,26 @@ describe('RequisitionTemplateAdminController', function() {
     describe('refreshAvailableTags', function() {
         
         beforeEach(function() {
+            vm.template.columnsMap.maximumStockQuantity = new TemplateColumnDataBuilder()
+                .withTag('tag-1')
+                .buildMaximumStockQuantityColumn();
+            vm.template.columnsMap.calculatedOrderQuantity = new TemplateColumnDataBuilder()
+                .withTag('tag-2')
+                .buildCalculatedOrderQuantityColumn();
 
+            vm.refreshAvailableTags();
+        });
+
+        it('should set list of available tags to columns that suppports tags', function() {
+            expect(vm.template.columnsMap.maximumStockQuantity.availableTags).toEqual(['tag-3', 'tag-1']);
+            expect(vm.template.columnsMap.calculatedOrderQuantity.availableTags).toEqual(['tag-3', 'tag-2']);
+        });
+
+        iit('should not set list of available tags to columns that not suppports tags', function() {
+            expect(vm.template.columnsMap.total.availableTags).toBe(undefined);
+            expect(vm.template.columnsMap.remarks.availableTags).toBe(undefined);
+            expect(vm.template.columnsMap.stockOnHand.availableTags).toBe(undefined);
+            expect(vm.template.columnsMap.averageConsumption.availableTags).toBe(undefined);
         });
     });
 });
