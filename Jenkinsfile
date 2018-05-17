@@ -29,6 +29,11 @@ pipeline {
                     currentBuild.displayName += " - " + VERSION
                 }
             }
+            post {
+                failure {
+                    slackSend color: 'danger', message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} ${env.STAGE_NAME} FAILED (<${env.BUILD_URL}|Open>)"
+                }
+            }
         }
         stage('Build') {
             steps {
@@ -46,6 +51,9 @@ pipeline {
             post {
                 success {
                     archive 'build/styleguide/*, build/styleguide/**/*, build/docs/*, build/docs/**/*, build/messages/*'
+                }
+                failure {
+                    slackSend color: 'danger', message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} ${env.STAGE_NAME} FAILED (<${env.BUILD_URL}|Open>)"
                 }
                 always {
                     junit '**/build/test/test-results/*.xml'
@@ -83,7 +91,12 @@ pipeline {
                     }
                 }
             }
+            post {
+                failure {
+                    slackSend color: 'danger', message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} ${env.STAGE_NAME} FAILED (<${env.BUILD_URL}|Open>)"
                 }
+            }
+        }
         stage('Push image') {
             when {
                 expression {
@@ -94,12 +107,14 @@ pipeline {
                 sh "docker tag openlmis/requisition-ui:latest openlmis/requisition-ui:${VERSION}"
                 sh "docker push openlmis/requisition-ui:${VERSION}"
             }
+            post {
+                failure {
+                    slackSend color: 'danger', message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} ${env.STAGE_NAME} FAILED (<${env.BUILD_URL}|Open>)"
+                }
+            }
         }
     }
     post {
-        failure {
-            slackSend color: 'danger', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} FAILED (<${env.BUILD_URL}|Open>)"
-        }
         fixed {
             slackSend color: 'good', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} Back to normal"
         }
