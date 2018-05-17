@@ -176,11 +176,10 @@
          * @return {boolean}            true if template has stock based flag set to true and column supports tag 
          */
         function canAssignTag(columnName) {
-            if (!this.columnsMap.hasOwnProperty(columnName)) {
-                throw 'Column with name ' + columnName + ' does not exist!';
+            if (this.columnsMap.hasOwnProperty(columnName)) {
+                return this.populateStockOnHandFromStockCards && 
+                    this.columnsMap[columnName].columnDefinition.supportsTag;
             }
-            return this.populateStockOnHandFromStockCards && 
-                this.columnsMap[columnName].columnDefinition.supportsTag;
         }
 
         /**

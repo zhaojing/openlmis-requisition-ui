@@ -487,10 +487,8 @@ describe('Template', function() {
             expect(template.canAssignTag('someColumn')).toBe(true);
         });
 
-        it('should throw exception if column with given name does not exist', function() {
-            expect(function() {
-                template.canAssignTag('someNotExistingColumn');
-            }).toThrow('Column with name someNotExistingColumn does not exist!');
+        it('should return undefined if column with given name does not exist', function() {
+            expect(template.canAssignTag('someNotExistingColumn')).toBeUndefined();
         });
     });
 });
