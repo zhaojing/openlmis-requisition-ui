@@ -19,7 +19,7 @@
                         <openlmis-datepicker input-id="date"
                                              value="vm.datePhysicalStockCountCompleted"
                                              required="true"
-                                             invalid-message="vm.invalidMessage"
+                                             invalid-message="{{vm.validateDate() | message}}"
                         ></openlmis-datepicker>
                     </form>
                 </div>

@@ -38,6 +38,7 @@
 
         vm.$onInit = onInit;
         vm.submit = submit;
+        vm.validateDate = validateDate;
 
         /**
          * @ngdoc property
@@ -62,17 +63,6 @@
         vm.datePhysicalStockCountCompleted = undefined;
 
         /**
-         * @ngdoc property
-         * @propertyOf requisition-view.controller:RequisitionStockCountDateModalController
-         * @name invalidMessage
-         * @type {String}
-         *
-         * @description
-         * Holds form error message.
-         */
-        vm.invalidMessage = undefined;
-
-        /**
          * @ngdoc method
          * @methodOf requisition-view.controller:RequisitionStockCountDateModalController
          * @name $onInit
@@ -93,18 +83,30 @@
          * @name submit
          *
          * @description
-         * validate date and resolve modal. Date must not be after current UTC date.
-         *
-         * @return {Promise} resolves if date is not after today.
+         * Closes the modal and and triggers requisition submit.
          */
         function submit() {
-            if (isDateBeforeOrEqualToday(dateUtils.toDate(vm.datePhysicalStockCountCompleted))) {
-                vm.requisition.datePhysicalStockCountCompleted = vm.datePhysicalStockCountCompleted;
-                modalDeferred.resolve();
-            } else {
-                vm.invalidMessage =
-                    messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
-                alertService.error(vm.invalidMessage);
+            vm.requisition.datePhysicalStockCountCompleted = vm.datePhysicalStockCountCompleted;
+            modalDeferred.resolve();
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view.controller:RequisitionStockCountDateModalController
+         * @name submit
+         * 
+         * @description
+         * Validates the date and returns a message if the date is after current date.
+         * 
+         * @return {String} the error message
+         */
+        function validateDate() {
+            if (!vm.datePhysicalStockCountCompleted) {
+                return;
+            }
+
+            if(!isDateBeforeOrEqualToday(dateUtils.toDate(vm.datePhysicalStockCountCompleted))) {
+                return messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
             }
         }
 

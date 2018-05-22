@@ -21,9 +21,9 @@
         .module('requisition-view')
         .factory('RequisitionStockCountDateModal', RequisitionStockCountDateModalFactory);
 
-    RequisitionStockCountDateModalFactory.$inject = ['openlmisModalService'];
+    RequisitionStockCountDateModalFactory.$inject = ['openlmisModalService', '$rootScope'];
 
-    function RequisitionStockCountDateModalFactory(openlmisModalService) {
+    function RequisitionStockCountDateModalFactory(openlmisModalService, $rootScope) {
 
         return StockCountDateModal;
 
@@ -36,6 +36,9 @@
                 resolve: {
                     requisition: function() {
                         return requisition;
+                    },
+                    $rootScope: function () {
+                        return $rootScope;
                     }
                 }
             }).promise;
