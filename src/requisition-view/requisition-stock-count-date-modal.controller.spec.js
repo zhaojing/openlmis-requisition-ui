@@ -15,18 +15,14 @@
 
 describe('RequisitionStockCountDateModalController', function() {
 
-    var $controller, messageService, vm, requisition, modalDeferred, message;
+    var $controller, vm, requisition, modalDeferred;
 
     beforeEach(function() {
         module('requisition-view');
 
         inject(function($injector) {
             $controller = $injector.get('$controller');
-            messageService = $injector.get('messageService');
         });
-
-        message = 'some-message';
-        spyOn(messageService, 'get').andReturn(message);
 
         requisition = {
             datePhysicalStockCountCompleted: "2017-08-11"
@@ -84,12 +80,9 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should return error if date is in the future', function() {
-            messageService.get.andReturn('You cannot record date for the future');
-
             vm.datePhysicalStockCountCompleted = moment().add(1, 'days').toISOString();
 
-            expect(vm.validateDate()).toEqual('You cannot record date for the future');
-            expect(messageService.get).toHaveBeenCalledWith('requisitionView.datePhysicalStockCountCompleted.inFuture');
+            expect(vm.validateDate()).toEqual('requisitionView.datePhysicalStockCountCompleted.inFuture');
         });
 
         it('should return undefined if date is in the past', function() {

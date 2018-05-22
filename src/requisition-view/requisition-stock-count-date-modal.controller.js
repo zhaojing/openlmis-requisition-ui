@@ -28,11 +28,9 @@
         .module('requisition-view')
         .controller('RequisitionStockCountDateModalController', controller);
 
-    controller.$inject = [
-        'requisition', 'modalDeferred', 'messageService', 'alertService', 'dateUtils'
-    ];
+    controller.$inject = ['requisition', 'modalDeferred', 'dateUtils'];
 
-    function controller(requisition, modalDeferred, messageService, alertService, dateUtils) {
+    function controller(requisition, modalDeferred, dateUtils) {
 
         var vm = this;
 
@@ -106,7 +104,7 @@
             }
 
             if(!isDateBeforeOrEqualToday(dateUtils.toDate(vm.datePhysicalStockCountCompleted))) {
-                return messageService.get('requisitionView.datePhysicalStockCountCompleted.inFuture');
+                return 'requisitionView.datePhysicalStockCountCompleted.inFuture';
             }
         }
 
