@@ -36,9 +36,6 @@
                 resolve: {
                     requisition: function() {
                         return requisition;
-                    },
-                    $rootScope: function () {
-                        return $rootScope;
                     }
                 }
             }).promise;
