@@ -47,6 +47,7 @@
         vm.dropCallback = dropCallback;
         vm.canChangeSource = canChangeSource;
         vm.sourceDisplayName = sourceDisplayName;
+        vm.translateLabel = translateLabel;
         vm.getColumnError = templateValidator.getColumnError;
         vm.isAverageConsumption = isAverageConsumption;
         vm.refreshAvailableTags = refreshAvailableTags;
@@ -203,6 +204,21 @@
          */
         function sourceDisplayName(name) {
             return messageService.get(COLUMN_SOURCES.getLabel(name));
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.controller:RequisitionTemplateAdminController
+         * @name translateLabel
+         *
+         * @description
+         * Gives display name of given additional option drop down.
+         *
+         * @param  {String} labelKey additional option display key
+         * @return {String}      translated message
+         */
+        function translateLabel(labelKey) {
+            return messageService.get(labelKey)
         }
 
         /**

@@ -3,5 +3,11 @@
     "requisitionConstants.referenceData": "Reference data",
     "requisitionConstants.userInput": "User input",
     "requisitionConstants.stockCards": "Stock cards",
-    "requisitionConstants.previousRequisition": "Previous requisition"
+    "requisitionConstants.previousRequisition": "Previous requisition",
+
+    "requisitionConstants.hideSkippedLineItems": "Hide skipped line items",
+    "requisitionConstants.disableSkippedLineItems": "Disable skipped line items",
+    "requisitionConstants.newPatientCount": "New patient count",
+    "requisitionConstants.dispensingUnitsForNewPatients": "Dispensing unit for new patients",
+    "requisitionConstants.default": "Default"
 }

@@ -55,9 +55,9 @@
                                 <input ng-disabled="vm.template.isColumnDisabled(column)" disable-drag positive-integer id="numberOfPeriods" ng-model="vm.template.numberOfPeriodsToAverage" class="form-control"/>
                             </div>
                             <div ng-if="column.columnDefinition.options.length > 0">
-                                <div ng-if="!vm.canChangeSource(column)">{{column.option.optionLabel}}</div>
+                                <div ng-if="!vm.canChangeSource(column)">{{vm.translateLabel(column.option.optionLabel)}}</div>
                                 <div ng-if="vm.canChangeSource(column)">
-                                    <select ng-model="column.option" ng-options="option as option.optionLabel for option in column.columnDefinition.options" ng-required="column.isDisplayed"></select>
+                                    <select ng-model="column.option" ng-options="option as vm.translateLabel(option.optionLabel) for option in column.columnDefinition.options" ng-required="column.isDisplayed"></select>
                                 </div>
                             </div>
                             <div ng-if="vm.template.canAssignTag(column.name)">
