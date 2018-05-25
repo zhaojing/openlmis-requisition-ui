@@ -218,7 +218,7 @@
          * @return {String}      translated message
          */
         function translateLabel(labelKey) {
-            return messageService.get(labelKey)
+            return messageService.get(labelKey);
         }
 
         /**
