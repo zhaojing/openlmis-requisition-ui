@@ -415,7 +415,7 @@ describe('Template', function() {
             template = new Template(templateJson);
         });
 
-        it('should add column', function() {
+        it('should add displayed column', function() {
             var availableColumn = {
                     name: 'newColumn',
                     label: 'new column',
@@ -433,6 +433,31 @@ describe('Template', function() {
                 indicator: availableColumn.indicator,
                 displayOrder: 1,
                 isDisplayed: true,
+                source: availableColumn.sources[0],
+                columnDefinition: availableColumn,
+                option: availableColumn.options[0],
+                definition: availableColumn.definition
+            });
+        });
+
+        it('should add hidden column', function() {
+            var availableColumn = {
+                    name: 'newColumn',
+                    label: 'new column',
+                    indicator: 'newColumn',
+                    sources: ['USER_INPUT'],
+                    options: ['OPTION_1'],
+                    definition: 'definition'
+                };
+
+            template.addColumn(availableColumn, false);
+
+            expect(template.columnsMap.newColumn).toEqual({
+                name: availableColumn.name,
+                label: availableColumn.label,
+                indicator: availableColumn.indicator,
+                displayOrder: 1,
+                isDisplayed: false,
                 source: availableColumn.sources[0],
                 columnDefinition: availableColumn,
                 option: availableColumn.options[0],

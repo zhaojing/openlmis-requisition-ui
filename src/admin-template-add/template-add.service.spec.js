@@ -87,7 +87,9 @@ describe('TemplateAddService', function() {
         });
 
         it('should leave closing loading modal to the state change', function() {
-            originalCreate.andReturn($q.resolve({id: 'template-id'}));
+            originalCreate.andReturn($q.resolve({
+                id: 'template-id'
+            }));
 
             template.create();
             $rootScope.$apply();
@@ -120,7 +122,9 @@ describe('TemplateAddService', function() {
         });
 
         it('should redirect user to the columns configuration after save was successful', function() {
-            originalCreate.andReturn($q.resolve({id: 'template-id'}));
+            originalCreate.andReturn($q.resolve({
+                id: 'template-id'
+            }));
 
             var result;
             template.create()
@@ -132,7 +136,9 @@ describe('TemplateAddService', function() {
 
             $rootScope.$apply();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates.configure.columns', {id: result.id}, {
+            expect($state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates.configure.columns', {
+                id: result.id
+            }, {
                 reload: true
             });
         });

@@ -81,7 +81,9 @@
                 return originalCreate.apply(this, arguments)
                 .then(function(response) {
                     notificationService.success('adminTemplateAdd.createTemplate.success');
-                    $state.go('openlmis.administration.requisitionTemplates.configure.columns', {id: response.id}, {
+                    $state.go('openlmis.administration.requisitionTemplates.configure.columns', {
+                        id: response.id
+                    }, {
                         reload: true
                     });
                     return response;
