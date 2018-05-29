@@ -425,7 +425,7 @@ describe('Template', function() {
                     definition: 'definition'
                 };
             
-            template.addColumn(availableColumn);
+            template.addColumn(availableColumn, true);
 
             expect(template.columnsMap.newColumn).toEqual({
                 name: availableColumn.name,

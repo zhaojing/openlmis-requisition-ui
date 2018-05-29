@@ -19,6 +19,7 @@ describe('TemplateAddService', function() {
         templateRepositoryMock, TemplateMock, templateMock, originalCreate, template, $q, $rootScope;
 
     beforeEach(function() {
+        module('admin-template-configure-columns');
         module('admin-template-add', function($provide) {
             TemplateMock = jasmine.createSpy('Template');
             $provide.factory('Template', function() {
@@ -86,7 +87,7 @@ describe('TemplateAddService', function() {
         });
 
         it('should leave closing loading modal to the state change', function() {
-            originalCreate.andReturn($q.resolve());
+            originalCreate.andReturn($q.resolve({id: 'template-id'}));
 
             template.create();
             $rootScope.$apply();
@@ -118,16 +119,20 @@ describe('TemplateAddService', function() {
             expect(notificationService.success).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.success');
         });
 
-        it('should redirect user to parent state after save was successful', function() {
-            originalCreate.andReturn($q.resolve());
+        it('should redirect user to the columns configuration after save was successful', function() {
+            originalCreate.andReturn($q.resolve({id: 'template-id'}));
 
-            template.create();
+            var result;
+            template.create()
+            .then(function(response) {
+                result = response;
+            });
 
             expect($state.go).not.toHaveBeenCalled();
 
             $rootScope.$apply();
 
-            expect($state.go).toHaveBeenCalledWith('^', {}, {
+            expect($state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates.configure.columns', {id: result.id}, {
                 reload: true
             });
         });

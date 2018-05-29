@@ -29,10 +29,12 @@
         .controller('TemplateAddController', TemplateAddController);
 
     TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService',
-        'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'template'];
+        'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'template',
+        'TEMPLATE_COLUMNS'];
 
     function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService,
-        notificationService, loadingModalService, messageService, $state, programTemplates, template) {
+        notificationService, loadingModalService, messageService, $state, programTemplates, template,
+        TEMPLATE_COLUMNS) {
 
         var vm = this;
 
@@ -40,8 +42,6 @@
         vm.create = create;
         vm.addFacilityType = addFacilityType;
         vm.removeFacilityType = removeFacilityType;
-        vm.addColumn = addColumn;
-        vm.removeColumn = removeColumn;
         vm.populateFacilityTypes = populateFacilityTypes;
 
         /**
@@ -133,6 +133,7 @@
          * Saves program to the server. Before action confirm modal will be shown.
          */
         function create() {
+            vm.template = prepareDefaultColumns();
             var confirmMessage = messageService.get('adminTemplateAdd.createTemplate.confirm', {
                 program: vm.template.program.name
             });
@@ -178,42 +179,6 @@
         /**
          * @ngdoc property
          * @methodOf admin-template-add.controller:TemplateAddController
-         * @name addColumn
-         *
-         * @description
-         * Adds new Requisition Column to the list.
-         * 
-         * @return {Promise} resolved promise
-         */
-        function addColumn() {
-            vm.template.addColumn(vm.selectedColumn);
-            vm.availableColumns.splice(vm.availableColumns.indexOf(vm.selectedColumn), 1);
-            return $q.resolve();
-        }
-
-        /**
-         * @ngdoc property
-         * @methodOf admin-template-add.controller:TemplateAddController
-         * @name removeColumn
-         *
-         * @description
-         * Removes Requisition Column from the Template and adds it back to the list of available Requisition Columns.
-         * 
-         * @param {string} columnName name of Requisition Column to be removed from Template
-         */
-        function removeColumn(columnName) {
-            var column;
-            if (vm.template.columnsMap[columnName]) {
-                column = vm.template.columnsMap[columnName].columnDefinition;
-            }
-            vm.template.removeColumn(columnName).then(function() {
-                vm.availableColumns.push(column);
-            });
-        }
-
-        /**
-         * @ngdoc property
-         * @methodOf admin-template-add.controller:TemplateAddController
          * @name populateFacilityTypes
          *
          * @description
@@ -235,6 +200,21 @@
                     return !isAssigned;
                 });
             }
+        }
+
+        function prepareDefaultColumns() {
+            vm.availableColumns.forEach(function(column) {
+                var isDisplayed = true;
+                if (column.name === TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION
+                    || column.name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) {
+                    isDisplayed = false;
+                }
+                vm.template.addColumn(column, isDisplayed);
+            });
+
+            vm.template.numberOfPeriodsToAverage = 3;
+
+            return vm.template;
         }
     }
 })();

@@ -79,12 +79,12 @@
             template.create = function() {
                 loadingModalService.open();
                 return originalCreate.apply(this, arguments)
-                .then(function(template) {
+                .then(function(response) {
                     notificationService.success('adminTemplateAdd.createTemplate.success');
-                    $state.go('^', {}, {
+                    $state.go('openlmis.administration.requisitionTemplates.configure.columns', {id: response.id}, {
                         reload: true
                     });
-                    return template;
+                    return response;
                 })
                 .catch(function(error) {
                     loadingModalService.close();

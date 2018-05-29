@@ -145,16 +145,17 @@
          * @description
          * Add new column to Template based on given Available Requisition Column
          *
-         * @param  {Object} availableColumn Available Requisition Column to be added
+         * @param  {Object}  availableColumn Available Requisition Column to be added
+         * @param  {boolean} isDisplayed     True if new column should be displayed
          */
-        function addColumn(availableColumn) {
+        function addColumn(availableColumn, isDisplayed) {
             if (availableColumn) {
                 this.columnsMap[availableColumn.name] = {
                     name: availableColumn.name,
                     label: availableColumn.label,
                     indicator: availableColumn.indicator,
                     displayOrder: getNewDisplayOrder(this),
-                    isDisplayed: true,
+                    isDisplayed: isDisplayed,
                     source: availableColumn.sources[0],
                     columnDefinition: availableColumn,
                     option: availableColumn.options[0],

@@ -15,9 +15,10 @@
 
 describe('TemplateAddController', function () {
 
-    var $rootScope, $q, $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder, TemplateDataBuilder,
-        TemplateColumnDataBuilder, productNameColumn, facilityTypes, productCodeColumn, Template,
-        confirmService, messageService, templateOne, templateTwo, healthCenter, districtHospital, programTemplates, programTwo;
+    var $rootScope, $q, $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder,
+        TemplateDataBuilder, TemplateColumnDataBuilder, facilityTypes, productCodeColumn, Template,
+        confirmService, messageService, templateOne, templateTwo, healthCenter, districtHospital,
+        programTemplates, programTwo, calculatedOrderQuantityIsaColumn;
 
     beforeEach(function() {
         module('admin-template-add');
@@ -41,7 +42,8 @@ describe('TemplateAddController', function () {
         program = new ProgramDataBuilder().withId('program-1').build();
         programTwo = new ProgramDataBuilder().withId('program-2').build();
         
-        productNameColumn = new TemplateColumnDataBuilder().build();
+        calculatedOrderQuantityIsaColumn = new TemplateColumnDataBuilder()
+            .buildCalculatedOrderQuantityIsaColumn();
         productCodeColumn = new TemplateColumnDataBuilder().build();
         
         districtHospital = new FacilityTypeDataBuilder.buildDistrictHospital();
@@ -67,7 +69,10 @@ describe('TemplateAddController', function () {
         vm = $controller('TemplateAddController', {
             programs: [program, programTwo],
             facilityTypes: facilityTypes,
-            availableColumns: [productCodeColumn.columnDefinition],
+            availableColumns: [
+                productCodeColumn.columnDefinition,
+                calculatedOrderQuantityIsaColumn.columnDefinition
+            ],
             programTemplates: programTemplates,
             template: new Template({
                 populateStockOnHandFromStockCards: false,
@@ -91,7 +96,10 @@ describe('TemplateAddController', function () {
         });
 
         it('should resolve available columns', function() {
-            expect(vm.availableColumns).toEqual([productCodeColumn.columnDefinition]);
+            expect(vm.availableColumns).toEqual([
+                productCodeColumn.columnDefinition,
+                calculatedOrderQuantityIsaColumn.columnDefinition
+            ]);
         });
     });
 
@@ -126,37 +134,6 @@ describe('TemplateAddController', function () {
         });
     });
 
-    describe('addColumn', function() {
-
-        it('should add column', function() {
-            vm.selectedColumn = productNameColumn.columnDefinition;
-            vm.addColumn();
-
-            expect(vm.availableColumns.indexOf(vm.selectedColumn)).toEqual(-1);
-            expect(vm.template.columnsMap[vm.selectedColumn.name]).not.toBeUndefined();
-        });
-    });
-
-    describe('removeColumn', function() {
-
-        it('should remove column', function() {
-            vm.template.addColumn(productNameColumn.columnDefinition);
-
-            vm.removeColumn(productNameColumn.columnDefinition.name);
-            $rootScope.$apply();
-
-            expect(vm.template.columnsMap[vm.availableColumns[0].name]).toBeUndefined();
-            expect(vm.availableColumns.length).toBe(2);
-        });
-
-        it('should not remove if facility type was not found', function() {
-            vm.removeColumn(productNameColumn.columnDefinition.name);
-            $rootScope.$apply();
-
-            expect(vm.availableColumns.length).toBe(1);
-        });
-    });
-
     describe('create', function() {
 
         beforeEach(function() {
@@ -167,6 +144,7 @@ describe('TemplateAddController', function () {
 
             vm.template.program = program;
             vm.template.create = jasmine.createSpy();
+            vm.template.addColumn = jasmine.createSpy();
         });
 
         it('should create a template and display success notification', function() {
@@ -175,6 +153,9 @@ describe('TemplateAddController', function () {
 
             expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
             expect(vm.template.create).toHaveBeenCalled();
+            expect(vm.template.addColumn).toHaveBeenCalled();
+            expect(vm.template.columnsMap).not.toBeUndefined();
+            expect(vm.template.numberOfPeriodsToAverage).toEqual(3);
         });
 
         it('should not call any service when confirmation fails', function() {
