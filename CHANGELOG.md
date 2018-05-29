@@ -2,6 +2,7 @@
 ===========
 
 New functionality added in a backwards-compatible manner:
+* [OLMIS-4792](https://openlmis.atlassian.net/browse/OLMIS-4792): Make additional options column of requisition template translatable.
 * [OLMIS-4681](https://openlmis.atlassian.net/browse/OLMIS-4681): Added additional option and source option for skipped column.
 * [OLMIS-4015](https://openlmis.atlassian.net/browse/OLMIS-4015): Added new screen for creating Requisition Templates.
 * [OLMIS-4053](https://openlmis.atlassian.net/browse/OLMIS-4053): Enabled beginning balance column for stock based requisition templates
