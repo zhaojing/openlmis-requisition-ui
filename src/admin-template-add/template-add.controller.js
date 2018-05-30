@@ -30,11 +30,11 @@
 
     TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService',
         'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'template',
-        'TEMPLATE_COLUMNS', 'NUMBER_OF_PERIODS_TO_AVERAGE'];
+        'TEMPLATE_COLUMNS', 'DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE'];
 
     function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService,
         notificationService, loadingModalService, messageService, $state, programTemplates, template,
-        TEMPLATE_COLUMNS, NUMBER_OF_PERIODS_TO_AVERAGE) {
+        TEMPLATE_COLUMNS, DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE) {
 
         var vm = this;
 
@@ -209,7 +209,7 @@
                 vm.template.addColumn(column, isDisplayed);
             });
 
-            vm.template.numberOfPeriodsToAverage = NUMBER_OF_PERIODS_TO_AVERAGE;
+            vm.template.numberOfPeriodsToAverage = DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE;
 
             return vm.template;
         }

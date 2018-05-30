@@ -19,12 +19,12 @@
 
     /**
     * @ngdoc object
-    * @name admin-template-configure-columns.MAX_COLUMN_DESCRIPTION_LENGTH
+    * @name admin-template-add.DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE
     *
     * @description
-    * This is constant for max column description length.
+    * This is constant for default number of periods to calculate average consumption.
     */
     angular
-        .module('admin-template-configure-columns')
-        .constant('MAX_COLUMN_DESCRIPTION_LENGTH', 140);
+        .module('admin-template-add')
+        .constant('DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE', 3);
 })();
