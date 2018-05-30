@@ -89,7 +89,7 @@ describe('periodService', function() {
             promise.then(function(response) {
                 data = response;
             });
-            
+
             $rootScope.$apply();
 
             expect(data).not.toBe(undefined);
