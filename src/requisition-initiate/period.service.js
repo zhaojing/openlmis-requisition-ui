@@ -30,9 +30,9 @@
             $provide.decorator('periodService', decorator);
         });
 
-    decorator.$inject = ['$delegate', '$resource', 'requisitionUrlFactory', 'dateUtils'];
+    decorator.$inject = ['$delegate', '$resource', '$q', 'alertService', 'requisitionUrlFactory', 'dateUtils'];
 
-    function decorator($delegate, $resource, requisitionUrlFactory, dateUtils) {
+    function decorator($delegate, $resource, $q, alertService, requisitionUrlFactory, dateUtils) {
         var resource = $resource(requisitionUrlFactory('/api/requisitions/periodsForInitiate'), {}, {
                 periodsForInitiate: {
                     method: 'GET',
@@ -60,11 +60,28 @@
          * @return {Promise}            promise with periods array
          */
         function getPeriodsForInitiate(programId, facilityId, emergency) {
-            return resource.periodsForInitiate({
+            var deferred = $q.defer();
+
+            resource.periodsForInitiate({
                 programId: programId,
                 facilityId: facilityId,
                 emergency: emergency
-            }).$promise;
+            }).$promise.then(function(response) {
+                deferred.resolve(response);
+            }).catch(function(response) {
+                if (response.status === 400) {
+                    var data = angular.fromJson(response.data);
+                    if (data.messageKey === 'requisition.error.facilityDoesNotSupportProgram') {
+                        alertService.error(
+                            'requisitionInitiate.programNotSupported.label',
+                            'requisitionInitiate.programNotSupported.message'
+                        );
+                    }
+                }
+                deferred.reject(response);
+            });
+
+            return deferred.promise;
         }
 
         function transformResponse(data, headers, status) {
@@ -73,7 +90,7 @@
                 periods.forEach(function(period) {
                     period.startDate = dateUtils.toDate(period.startDate);
                     period.endDate = dateUtils.toDate(period.endDate);
-                })
+                });
                 return periods;
             }
             return data;

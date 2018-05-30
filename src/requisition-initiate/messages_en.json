@@ -24,9 +24,10 @@
     "requisitionInitiate.search": "Search",
     "requisitionInitiate.selectFacility": "Select facility",
     "requisitionInitiate.selectProgram": "Select program",
-    "requisitionInitiate.selectProgram": "Select program",
     "requisitionInitiate.selectRequiredFields": "Select required fields. Please contact the Admin if no periods are available.",
     "requisitionInitiate.startDate": "Start date",
     "requisitionInitiate.supervisedFacility": "Supervised facility",
-    "requisitionInitiate.type": "Type"
+    "requisitionInitiate.type": "Type",
+    "requisitionInitiate.programNotSupported.label": "Program not supported",
+    "requisitionInitiate.programNotSupported.message": "This program is inactive, please check with Admin."
 }
