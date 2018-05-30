@@ -60,15 +60,11 @@
          * @return {Promise}            promise with periods array
          */
         function getPeriodsForInitiate(programId, facilityId, emergency) {
-            var deferred = $q.defer();
-
-            resource.periodsForInitiate({
+            return resource.periodsForInitiate({
                 programId: programId,
                 facilityId: facilityId,
                 emergency: emergency
-            }).$promise.then(function(response) {
-                deferred.resolve(response);
-            }).catch(function(response) {
+            }).$promise.catch(function(response) {
                 if (response.status === 400) {
                     var data = angular.fromJson(response.data);
                     if (data.messageKey === 'requisition.error.facilityDoesNotSupportProgram') {
@@ -78,10 +74,8 @@
                         );
                     }
                 }
-                deferred.reject(response);
+                $q.reject(response);
             });
-
-            return deferred.promise;
         }
 
         function transformResponse(data, headers, status) {
