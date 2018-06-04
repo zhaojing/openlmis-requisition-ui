@@ -149,6 +149,21 @@ describe('ProductGridCell', function() {
         expect(directiveElem.find("a").length).toEqual(1);
     });
 
+    it('should produce read only for losesAndAdjustment and stock based requisition', function() {
+        dump('test');
+        scope.requisition.$isApproved.andReturn(false);
+        scope.requisition.$isReleased.andReturn(false);
+        scope.requisition.$isAuthorized.andReturn(false);
+        scope.column.name = "totalLossesAndAdjustments";
+        scope.lineItem.isReadOnly.andReturn(true);
+        scope.requisition.template.populateStockOnHandFromStockCards = true;
+
+        directiveElem = getCompiledElement();
+
+        expect(directiveElem.html()).toContain("readOnlyFieldValue");
+        expect(directiveElem.find("input").length).toEqual(0);
+    });
+
     it('should validate full supply line item columns after updating fields', function() {
         scope.requisition.$isInitiated.andReturn(true);
         var element = getCompiledElement(),

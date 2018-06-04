@@ -37,8 +37,7 @@ describe("TEMPLATE_COLUMNS", function() {
             expect(returnedList[3]).toEqual('adjustedConsumption');
             expect(returnedList[4]).toEqual('maximumStockQuantity');
             expect(returnedList[5]).toEqual('calculatedOrderQuantity');
-            expect(returnedList[6]).toEqual('totalLossesAndAdjustments');
-            expect(returnedList[7]).toEqual('averageConsumption');
+            expect(returnedList[6]).toEqual('averageConsumption');
         });
     });
 
@@ -49,6 +48,7 @@ describe("TEMPLATE_COLUMNS", function() {
 
             expect(returnedList[0]).toEqual('beginningBalance');
             expect(returnedList[1]).toEqual('stockOnHand');
+            expect(returnedList[2]).toEqual('totalLossesAndAdjustments');
         });
     });
 });

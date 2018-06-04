@@ -67,7 +67,6 @@
                 this.ADJUSTED_CONSUMPTION,
                 this.MAXIMUM_STOCK_QUANTITY,
                 this.CALCULATED_ORDER_QUANTITY,
-                this.TOTAL_LOSSES_AND_ADJUSTMENTS,
                 this.AVERAGE_CONSUMPTION
             ];
         }
@@ -75,7 +74,8 @@
         function getStockBasedColumns() {
             return [
                 this.BEGINNING_BALANCE,
-                this.STOCK_ON_HAND
+                this.STOCK_ON_HAND,
+                this.TOTAL_LOSSES_AND_ADJUSTMENTS
             ];
         }
     }
