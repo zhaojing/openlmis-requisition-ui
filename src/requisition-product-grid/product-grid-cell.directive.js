@@ -56,7 +56,6 @@
         };
 
         function link(scope, element) {
-            dump('link');
             var requisition = scope.requisition,
                 column = scope.column,
                 lineItem = scope.lineItem;
@@ -94,22 +93,16 @@
             function updateCellContents() {
                 var templateUrl = '';
                 if(column.name === TEMPLATE_COLUMNS.SKIPPED) {
-                    dump(1);
                     templateUrl = 'requisition-product-grid/product-grid-cell-skip.html';
-                } else if(column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS && !requisition.template.populateStockOnHandFromStockCards) {
-                    dump(2);
+                } else if(column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-total-losses-and-adjustments.html';
                 } else if(column.$type === COLUMN_TYPES.NUMERIC && !scope.isReadOnly){
-                    dump(3);
                     templateUrl = 'requisition-product-grid/product-grid-cell-input-numeric.html';
                 } else if(!scope.isReadOnly) {
-                    dump(4);
                     templateUrl = 'requisition-product-grid/product-grid-cell-input-text.html';
                 } else if(column.$type === COLUMN_TYPES.CURRENCY) {
-                    dump(5);
                     templateUrl = 'requisition-product-grid/product-grid-cell-currency.html';
                 } else {
-                    dump(6);
                     templateUrl = 'requisition-product-grid/product-grid-cell-text.html';
                 }
                 $templateRequest(templateUrl).then(replaceCell);
@@ -142,7 +135,6 @@
             }
 
             function isReadOnly() {
-                dump(lineItem.isReadOnly(requisition, column));
                 return lineItem.isReadOnly(requisition, column);
             }
 
