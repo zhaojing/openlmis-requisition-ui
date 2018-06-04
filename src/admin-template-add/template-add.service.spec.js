@@ -49,6 +49,7 @@ describe('TemplateAddService', function() {
         spyOn(loadingModalService, 'open');
         spyOn(loadingModalService, 'close');
         spyOn(notificationService, 'success');
+        spyOn(notificationService, 'error');
         
         templateMock = jasmine.createSpyObj('Template', ['create']);
         originalCreate = templateMock.create;

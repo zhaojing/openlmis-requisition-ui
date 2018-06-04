@@ -90,7 +90,7 @@
                 })
                 .catch(function(error) {
                     loadingModalService.close();
-                    notificationService.success('adminTemplateAdd.createTemplate.failure');
+                    notificationService.error('adminTemplateAdd.createTemplate.failure');
                     return $q.reject(error);
                 });
             };
