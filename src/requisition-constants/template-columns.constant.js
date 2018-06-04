@@ -75,7 +75,9 @@
             return [
                 this.BEGINNING_BALANCE,
                 this.STOCK_ON_HAND,
-                this.TOTAL_LOSSES_AND_ADJUSTMENTS
+                this.TOTAL_LOSSES_AND_ADJUSTMENTS,
+                this.TOTAL_CONSUMED_QUANTITY,
+                this.TOTAL_RECEIVED_QUANTITY
             ];
         }
     }

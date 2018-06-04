@@ -49,6 +49,8 @@ describe("TEMPLATE_COLUMNS", function() {
             expect(returnedList[0]).toEqual('beginningBalance');
             expect(returnedList[1]).toEqual('stockOnHand');
             expect(returnedList[2]).toEqual('totalLossesAndAdjustments');
+            expect(returnedList[3]).toEqual('totalConsumedQuantity');
+            expect(returnedList[4]).toEqual('totalReceivedQuantity');
         });
     });
 });
