@@ -8,6 +8,7 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-4053](https://openlmis.atlassian.net/browse/OLMIS-4053): Enabled beginning balance column for stock based requisition templates
 * [OLMIS-4708](https://openlmis.atlassian.net/browse/OLMIS-4708): Added selecting tags on Requisition Template Configure screen.
 * [OLMIS-4748](https://openlmis.atlassian.net/browse/OLMIS-4748): Added disabling Total Losses and Adjustments modal for Stock Based Requisition.
+* [OLMIS-4747](https://openlmis.atlassian.net/browse/OLMIS-4747): Added Total Received Quantity and Total Consumed Quantity to the stock based columns.
 
 Bug fixes:
 * [OLMIS-4509](https://openlmis.atlassian.net/browse/OLMIS-4509): Fixed redirect to 404 when clicking proceed for requisition while offline
