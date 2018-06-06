@@ -17,7 +17,7 @@ describe('ViewTabController', function() {
 
     var vm, addProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
         LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
-        RequisitionColumnDataBuilder, fullSupply, categoryFactory;
+        RequisitionColumnDataBuilder, fullSupply, categoryFactory, messageService;
 
     beforeEach(function() {
         module('requisition-view-tab');
@@ -28,6 +28,7 @@ describe('ViewTabController', function() {
             $q = $injector.get('$q');
             $state = $injector.get('$state');
             alertService = $injector.get('alertService');
+            messageService = $injector.get('messageService');
             OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
             categoryFactory = $injector.get('categoryFactory');
@@ -63,6 +64,9 @@ describe('ViewTabController', function() {
         canAuthorize = false;
 
         spyOn(categoryFactory, 'groupProducts');
+        spyOn(messageService, 'get').andCallFake(function(param) {
+            return param;
+        });
 
         vm = undefined;
     });
@@ -471,6 +475,24 @@ describe('ViewTabController', function() {
             expect(vm.showDeleteColumn()).toBe(true);
         });
 
+    });
+
+    describe('getDescriptionForColumn', function() {
+
+        it('should return column definition for regular columns', function() {
+            initController();
+            
+            expect(vm.getDescriptionForColumn(columns[0])).toEqual(columns[0].definition);
+        });
+
+        it('should return info about disabled total losses and adjustments modal', function() {
+            columns.push(new RequisitionColumnDataBuilder().buildTotalLossesAndAdjustmentsColumn());
+            requisition.template.populateStockOnHandFromStockCards = true;
+
+            initController();
+
+            expect(vm.getDescriptionForColumn(columns[1])).toEqual(columns[1].definition + ' ' + 'requisitionViewTab.totalLossesAndAdjustment.disabled');
+        });
     });
 
     function initController() {

@@ -29,13 +29,12 @@
         .controller('ViewTabController', ViewTabController);
 
     ViewTabController.$inject = [
-        '$filter', 'addProductModalService', 'requisitionValidator', 'requisition', 'columns',
-        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory'
+        '$filter', 'addProductModalService', 'requisitionValidator', 'requisition', 'columns', 'messageService',
+        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory', 'TEMPLATE_COLUMNS'
     ];
 
-    function ViewTabController($filter, addProductModalService, requisitionValidator,
-                                     requisition, columns, lineItems, alertService, canSubmit,
-                                     canAuthorize, fullSupply, categoryFactory) {
+    function ViewTabController($filter, addProductModalService, requisitionValidator, requisition, columns, messageService, 
+        lineItems, alertService, canSubmit, canAuthorize, fullSupply, categoryFactory, TEMPLATE_COLUMNS) {
 
         var vm = this;
 
@@ -44,6 +43,7 @@
         vm.addProduct = addProduct;
         vm.showDeleteColumn = showDeleteColumn;
         vm.isLineItemValid = requisitionValidator.isLineItemValid;
+        vm.getDescriptionForColumn = getDescriptionForColumn;
 
         /**
          * @ngdoc property
@@ -177,6 +177,23 @@
                     'requisitionViewTab.noProductsToAdd.message'
                 );
             }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name getDescriptionForColumn
+         *
+         * @description
+         * Opens modal that lets the user add new product to the grid. If there are no products to
+         * be added an alert will be shown.
+         */
+        function getDescriptionForColumn(column) {
+            if (requisition.template.populateStockOnHandFromStockCards && 
+                column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS) {
+                return column.definition + ' ' + messageService.get('requisitionViewTab.totalLossesAndAdjustment.disabled');
+            }
+            return column.definition;
         }
 
         function refreshLineItems() {

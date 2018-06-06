@@ -36,6 +36,7 @@
             buildRequestedQuantityExplanationColumn;
         RequisitionColumnDataBuilder.prototype.buildBeginningBalanceColumn =
             buildBeginningBalanceColumn;
+        RequisitionColumnDataBuilder.prototype.buildTotalLossesAndAdjustmentsColumn = buildTotalLossesAndAdjustmentsColumn;
 
         return RequisitionColumnDataBuilder;
 
@@ -191,6 +192,24 @@
             builder.columnDefinition = {
                 canChangeOrder: false,
                 columnType: "BOOLEAN"
+            };
+            return builder.build();
+        }
+
+        function buildTotalLossesAndAdjustmentsColumn() {
+            var builder = this;
+
+            builder.name = "totalLossesAndAdjustments";
+            builder.label = "Total Losses and Adjustments";
+            builder.indicator = "D";
+            builder.displayOrder = 7;
+            builder.isDisplayed = true;
+            builder.source = "STOCK_CARDS";
+            builder.option = null;
+            builder.definition = "All kind of losses/adjustments made at the facility.";
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: COLUMN_TYPES.NUMERIC
             };
             return builder.build();
         }

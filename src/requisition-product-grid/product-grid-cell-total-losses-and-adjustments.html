@@ -1,10 +1,4 @@
-<div ng-if="!requisition.template.populateStockOnHandFromStockCards"
-	losses-and-adjustments
+<div losses-and-adjustments
 	line-item="lineItem"
 	requisition="requisition"
 	ng-disabled="isReadOnly"></div>
-
-<div ng-if="requisition.template.populateStockOnHandFromStockCards"
-	popover="{{'requisitionProductGrid.totalLossesAndAdjustment.disabled' | message}}">
-	{{lineItem.getFieldValue(column.name)}}
-</div>
