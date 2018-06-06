@@ -201,11 +201,12 @@
 
         function shouldValidateCalculation(lineItem, column, template) {
             var counterpart = template.columnsMap[counterparts[column.name]];
-            if (template.populateStockOnHandFromStockCards) {
-                return !TEMPLATE_COLUMNS.getStockBasedColumns().includes(column.name);
+            if (template.populateStockOnHandFromStockCards &&
+                TEMPLATE_COLUMNS.getStockBasedColumns().includes(column.name)) {
+                return false;
             } else {
-            return calculationFactory[column.name] && !isCalculated(column) && counterpart &&
-                !isCalculated(counterpart);
+                return calculationFactory[column.name] && !isCalculated(column) && counterpart &&
+                    !isCalculated(counterpart);
             }
         }
 
