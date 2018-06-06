@@ -1,0 +1,59 @@
+<div class="modal add-product-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>{{'requisitionViewTab.addProduct' | message}}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="productForm" class="add-product-modal" ng-submit="vm.addProducts()">
+                        <fieldset class="form-group">
+                            <label for="search">
+                                {{'requisitionViewTab.searchProduct' | message}}
+                            </label>
+                            <input type="text" id="search" name="search" ng-model="vm.searchText"
+                                   ng-change="vm.refreshList()"/>
+                        </fieldset>
+                        <br/>
+                        <div class="openlmis-table-container">
+                            <table class="add-product-table">
+                                <thead>
+                                <tr>
+                                    <th>{{'requisitionViewTab.select' | message}}</th>
+                                    <th>{{'requisitionViewTab.code' | message}}</th>
+                                    <th style="width: 60%">{{'requisitionViewTab.product' |
+                                        message}}
+                                    </th>
+                                    <th>{{'requisitionViewTab.uoi' | message}}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="line in vm.lineItems">
+                                    <td><input type="checkbox" ng-model="vm.selections[line.id]"
+                                               ng-change="vm.toggleAddLineItem(line)"/></td>
+                                    <td>{{line.orderable.productCode}}</td>
+                                    <td>{{line.orderable.fullProductName}}</td>
+                                    <td>{{line.orderable.dispensable.displayUnit}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <openlmis-pagination
+                                    list="vm.filteredLineItems"
+                                    paged-list="vm.lineItems"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="button-group">
+                    <button class="primary" type="submit" form="productForm">
+                        {{'requisitionViewTab.addProduct' | message}}
+                    </button>
+                    <button type="button" class="cancel" ng-click="vm.close()">
+                        {{'requisitionViewTab.cancel' | message}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

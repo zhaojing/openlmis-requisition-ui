@@ -15,7 +15,7 @@
 
 describe('ViewTabController', function() {
 
-    var vm, addProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
+    var vm, addProductModalService, addFullSupplyProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
         LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
         RequisitionColumnDataBuilder, fullSupply, categoryFactory, messageService;
 
@@ -36,13 +36,14 @@ describe('ViewTabController', function() {
 
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
         addProductModalService = jasmine.createSpyObj('addProductModalService', ['show']);
+        addFullSupplyProductModalService = jasmine.createSpyObj('addFullSupplyProductModalService', ['show']);
 
         requisition = jasmine.createSpyObj('requisition', ['$isInitiated' , '$isRejected',
             '$isApproved', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased',
             '$isAfterAuthorize', '$getProducts', 'addLineItem', 'deleteLineItem',
             'getAvailableFullSupplyProducts', 'getAvailableNonFullSupplyProducts']);
         requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns',
-            'hasSkipColumn']);
+            'hasSkipColumn', 'hideSkippedLineItems' ]);
         requisition.requisitionLineItems = [
             lineItemSpy(0, 'One', true),
             lineItemSpy(1, 'Two', true),
@@ -161,6 +162,32 @@ describe('ViewTabController', function() {
             expect(vm.showAddProductButton).toBe(false);
         });
 
+        it('should not display add full supply product button if view is not full supply', function() {
+            fullSupply = false;
+
+            initController();
+
+            expect(vm.showAddFullSupplyProductButton).toBe(false);
+        });
+
+        it('should not display add full supply product button if requisition is in approval', function() {
+            canSubmit = false;
+
+            initController();
+
+            expect(vm.showAddFullSupplyProductButton).toBe(false);
+        });
+
+
+        it('should not display add full supply product button if requisition configured to disable skipped option', function() {
+
+            requisition.template.hideSkippedLineItems.andReturn(false);
+
+            initController();
+
+            expect(vm.showAddFullSupplyProductButton).toBe(false);
+        });
+
         it('should set correct noProductsMessage for full supply tab', function() {
             fullSupply = true;
 
@@ -204,6 +231,7 @@ describe('ViewTabController', function() {
     describe('$onInit', function() {
 
         beforeEach(function() {
+            requisition.template.hideSkippedLineItems.andReturn(true);
             fullSupply = true;
         });
 
@@ -502,6 +530,7 @@ describe('ViewTabController', function() {
             LineItem: LineItem,
             requisition: requisition,
             addProductModalService: addProductModalService,
+            addFullSupplyProductModalService: addFullSupplyProductModalService,
             requisitionValidator: requisitionValidator,
             canSubmit: canSubmit,
             canAuthorize: canAuthorize,

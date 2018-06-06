@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function() {
+(function () {
 
     'use strict';
 
@@ -29,18 +29,24 @@
         .controller('ViewTabController', ViewTabController);
 
     ViewTabController.$inject = [
-        '$filter', 'addProductModalService', 'requisitionValidator', 'requisition', 'columns', 'messageService',
-        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory', 'TEMPLATE_COLUMNS'
+        '$filter', 'addProductModalService', 'addFullSupplyProductModalService',
+        'requisitionValidator', 'requisition', 'columns', 'messageService',
+        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory',
+        'TEMPLATE_COLUMNS'
     ];
 
-    function ViewTabController($filter, addProductModalService, requisitionValidator, requisition, columns, messageService, 
-        lineItems, alertService, canSubmit, canAuthorize, fullSupply, categoryFactory, TEMPLATE_COLUMNS) {
+
+    function ViewTabController($filter, addProductModalService, addFullSupplyProductModalService,
+                               requisitionValidator, requisition, columns, messageService,
+                               lineItems, alertService, canSubmit, canAuthorize, fullSupply,
+                               categoryFactory, TEMPLATE_COLUMNS) {
 
         var vm = this;
 
         vm.$onInit = onInit;
         vm.deleteLineItem = deleteLineItem;
         vm.addProduct = addProduct;
+        vm.addFullSupplyProduct = addFullSupplyProduct;
         vm.showDeleteColumn = showDeleteColumn;
         vm.isLineItemValid = requisitionValidator.isLineItemValid;
         vm.getDescriptionForColumn = getDescriptionForColumn;
@@ -92,6 +98,18 @@
 
         /**
          * @ngdoc property
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name showAddFullSupplyProductButton
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether to show or hide the Add Product button based on the requisition
+         * status and user rights and requisition template configuration.
+         */
+        vm.showAddFullSupplyProductButton = undefined;
+
+        /**
+         * @ngdoc property
          * @propertyOf requisition-view-tab.controller:ViewTabController
          * @name columns
          * @type {Array}
@@ -109,6 +127,7 @@
             vm.showAddProductButton = showAddProductButton();
             vm.showSkipControls = showSkipControls();
             vm.noProductsMessage = getNoProductsMessage();
+            vm.showAddFullSupplyProductButton = showAddFullSupplyProductButton();
         }
 
         /**
@@ -163,14 +182,14 @@
                 );
 
                 addProductModalService.show(categories, fullSupply)
-                .then(function(lineItem) {
-                    vm.requisition.addLineItem(
-                        lineItem.orderable,
-                        lineItem.requestedQuantity,
-                        lineItem.requestedQuantityExplanation
-                    );
-                    refreshLineItems();
-                });
+                    .then(function (lineItem) {
+                        vm.requisition.addLineItem(
+                            lineItem.orderable,
+                            lineItem.requestedQuantity,
+                            lineItem.requestedQuantityExplanation
+                        );
+                        refreshLineItems();
+                    });
             } else {
                 alertService.error(
                     'requisitionViewTab.noProductsToAdd.label',
@@ -189,19 +208,50 @@
          * be added an alert will be shown.
          */
         function getDescriptionForColumn(column) {
-            if (requisition.template.populateStockOnHandFromStockCards && 
+            if (requisition.template.populateStockOnHandFromStockCards &&
                 column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS) {
                 return column.definition + ' ' + messageService.get('requisitionViewTab.totalLossesAndAdjustment.disabled');
             }
             return column.definition;
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name addFullSupplyProduct
+         *
+         * @description
+         * Opens modal that lets the user add new full supply product to the grid.
+         * If there are no products to
+         * be added an alert will be shown.
+         */
+        function addFullSupplyProduct() {
+            addFullSupplyProductModalService.show(vm.requisition)
+                .then(function (result) {
+                    result.items.forEach(function (item) {
+                        item.skipped = false;
+                        vm.items.unshift(item);
+                    });
+                });
+        }
+
         function refreshLineItems() {
-            var lineItems = $filter('filter')(vm.requisition.requisitionLineItems, {
-                $program: {
-                    fullSupply: fullSupply
-                }
-            });
+            var filterObject = (fullSupply &&
+                                    vm.requisition.template.hasSkipColumn() &&
+                                    vm.requisition.template.hideSkippedLineItems()) ?
+                                                                {
+                                                                    skipped: "!true",
+                                                                    $program: {
+                                                                        fullSupply: fullSupply
+                                                                    }
+                                                                } : {
+                                                                    $program: {
+                                                                        fullSupply: fullSupply
+                                                                    }
+                                                                };
+
+            var lineItems = $filter('filter')(vm.requisition.requisitionLineItems, filterObject);
+
 
             vm.lineItems = $filter('orderBy')(lineItems, [
                 '$program.orderableCategoryDisplayOrder',
@@ -223,10 +273,17 @@
                 (!fullSupply || requisition.emergency);
         }
 
+        function showAddFullSupplyProductButton() {
+            return (vm.userCanEdit &&
+                        fullSupply &&
+                        !requisition.emergency &&
+                        requisition.template.hideSkippedLineItems());
+        }
+
         function hasDeletableLineItems() {
             var hasDeletableLineItems = false;
 
-            vm.requisition.requisitionLineItems.forEach(function(lineItem) {
+            vm.requisition.requisitionLineItems.forEach(function (lineItem) {
                 hasDeletableLineItems = hasDeletableLineItems || lineItem.$deletable;
             });
 

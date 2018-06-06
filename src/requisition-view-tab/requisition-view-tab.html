@@ -5,6 +5,7 @@
 		<li><a ng-click="vm.requisition.unskipAllFullSupplyLineItems()">{{'requisitionViewTab.none' | message}}</a></li>
 	</ul>
 	<button class="add" ng-show="vm.showAddProductButton" ng-click="vm.addProduct()" >{{'requisitionViewTab.addProduct' | message}}</button>
+    <button class="add" ng-show="vm.showAddFullSupplyProductButton" ng-click="vm.addFullSupplyProduct()" >{{'requisitionViewTab.addProduct' | message}}</button>
 	<saving-indicator ng-show="vm.requisition.$isEditable" class="requisition-indicator" object="vm.requisition.requisitionLineItems"/>
 	<table>
 		<caption ng-if="!vm.items.length">{{vm.noProductsMessage | message}}</caption>
