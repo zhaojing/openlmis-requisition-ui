@@ -28,6 +28,7 @@
     angular
         .module('requisition-view-tab')
         .service('addFullSupplyProductModalService', service);
+
     service.$inject = [
         'openlmisModalService', 'paginationService', '$filter', '$stateParams'
     ];
@@ -45,10 +46,10 @@
          * @description
          * Opens a modal responsible for un-skipping full supply product.
          *
-         * @param  {Object} requisition the requisition containing list of available products
-         * @return {Object}             the new product
+         * @param  {Array} requisitionLineItems from the requisition containing list of available products
+         * @return {promise}            a promise that resolves line items user wants to un-skip
          */
-        function show(requisition) {
+        function show(requisitionLineItems) {
             if (dialog) return dialog.promise;
 
             dialog = openlmisModalService.createDialog({
@@ -60,13 +61,16 @@
                     requisitionLineItems: function () {
                         return paginationService.registerList(null, $stateParams,
                             function () {
-                                return $filter('filter')(requisition.requisitionLineItems, {
+                                return $filter('filter')(requisitionLineItems, {
                                     skipped: "true",
                                     $program: {
                                         fullSupply: true
                                     }
                                 });
-                            }, { customPageParamName: 'pPage', customSizeParamName: 'pSize' });
+                            }, {
+                                    customPageParamName: 'pPage',
+                                    customSizeParamName: 'pSize'
+                                });
                     }
                 }
             });

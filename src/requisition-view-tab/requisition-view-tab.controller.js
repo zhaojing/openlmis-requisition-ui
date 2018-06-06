@@ -226,9 +226,9 @@
          * be added an alert will be shown.
          */
         function addFullSupplyProduct() {
-            addFullSupplyProductModalService.show(vm.requisition)
+            addFullSupplyProductModalService.show(vm.requisition.requisitionLineItems)
                 .then(function (result) {
-                    result.items.forEach(function (item) {
+                    result.items.forEach(function(item) {
                         item.skipped = false;
                         vm.items.unshift(item);
                     });
@@ -283,7 +283,7 @@
         function hasDeletableLineItems() {
             var hasDeletableLineItems = false;
 
-            vm.requisition.requisitionLineItems.forEach(function (lineItem) {
+            vm.requisition.requisitionLineItems.forEach(function(lineItem) {
                 hasDeletableLineItems = hasDeletableLineItems || lineItem.$deletable;
             });
 

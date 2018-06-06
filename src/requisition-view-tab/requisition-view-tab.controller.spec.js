@@ -333,6 +333,18 @@ describe('ViewTabController', function() {
 
     });
 
+    describe('addFullSupplyProduct', function() {
+        it('should show the full supply add product modal', function(){
+            initController();
+            vm.requisition = {requisitionLineItems:[]};
+            vm.addFullSupplyProduct();
+
+            $rootScope.$apply();
+
+            expect(addProductModalService.show).toHaveBeenCalled();
+        });
+    });
+
     describe('addProduct', function() {
 
         var orderable, categories;

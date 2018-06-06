@@ -178,7 +178,7 @@
             return builder.build();
         }
 
-        function buildSkipColumn() {
+        function buildSkipColumn(hideOptionSelected) {
             var builder = this;
 
             builder.name = "skipped";
@@ -187,7 +187,11 @@
             builder.displayOrder = 1;
             builder.isDisplayed = true;
             builder.source = "USER_INPUT";
-            builder.option = null;
+            if (hideOptionSelected !== undefined && hideOptionSelected === true) {
+                builder.option = {optionName: 'hideSkippedLineItems'}
+            } else {
+                builder.option = {optionName: 'disableSkippedLineItems'}
+            }
             builder.definition = "Select the check box below to skip a single product. Remove all data from the row prior to selection.";
             builder.columnDefinition = {
                 canChangeOrder: false,

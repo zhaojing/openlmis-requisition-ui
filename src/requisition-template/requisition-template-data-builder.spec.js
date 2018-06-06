@@ -89,12 +89,7 @@
         }
 
         function withSkipColumn(hideOptionSelected) {
-            this.columnsMap.skipped = new RequisitionColumnDataBuilder().buildSkipColumn();
-            if (hideOptionSelected !== undefined && hideOptionSelected === true){
-                this.columnsMap.skipped.option = {optionName: 'hideSkippedLineItems'}
-            }else{
-                this.columnsMap.skipped.option = {optionName: 'disableSkippedLineItems'}
-            }
+            this.columnsMap.skipped = new RequisitionColumnDataBuilder().buildSkipColumn(hideOptionSelected);
             return this;
         }
 

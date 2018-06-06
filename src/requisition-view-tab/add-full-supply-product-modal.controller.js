@@ -29,9 +29,9 @@
         .module('requisition-view-tab')
         .controller('AddFullSupplyProductModalController', controller);
 
-    controller.$inject = ['modalDeferred', 'requisitionLineItems', '$filter'];
+    controller.$inject = ['modalDeferred', 'requisitionLineItems'];
 
-    function controller(modalDeferred, requisitionLineItems, $filter) {
+    function controller(modalDeferred, requisitionLineItems) {
         var vm = this;
         vm.$onInit = onInit;
         vm.addProducts = addProducts;
@@ -39,9 +39,40 @@
         vm.toggleAddLineItem = toggleAddLineItem;
         vm.refreshList = refreshList;
 
-        vm.requisitionLineItems = requisitionLineItems;
-        vm.lineItemsToAdd = [];
-        vm.searchText = '';
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @name requisitionLineItems
+         * @type {Array}
+         *
+         * @description
+         * Holds a list of skipped line items that are available to be un-skipped.
+         */
+        vm.requisitionLineItems = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @name lineItemsToAdd
+         * @type {Array}
+         *
+         * @description
+         * Holds a list of full supply line items the user selected to un-skip.
+         * These line items will not be un-skipped until the addProducts is triggered.
+         */
+        vm.lineItemsToAdd = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @name searchText
+         * @type {String}
+         *
+         * @description
+         * Holds text entered in product search box.
+         */
+        vm.searchText = undefined;
+
         /**
          * @ngdoc method
          * @methodOf requisition-view-tab.controller:AddFullSupplyProductModalController
@@ -54,7 +85,7 @@
             vm.requisitionLineItems = requisitionLineItems;
             vm.lineItemsToAdd = [];
             vm.searchText = '';
-            vm.refreshList()
+            vm.refreshList();
         }
 
         /**
@@ -63,12 +94,12 @@
          * @name toggleAddLineItem
          *
          * @description
-         * adds or removes the line item to/from the list of items that will be un-skipped
+         * Adds or removes the line item to/from the list of items that will be un-skipped.
          */
         function toggleAddLineItem(item) {
-            if (vm.lineItemsToAdd.indexOf(item) >= 0){
+            if (vm.lineItemsToAdd.indexOf(item) >= 0) {
                 vm.lineItemsToAdd.splice(vm.lineItemsToAdd.indexOf(item), 1);
-            }else{
+            } else {
                 vm.lineItemsToAdd.push(item);
             }
         }
@@ -82,9 +113,9 @@
          * Resolves promise with line item selected in the modal.
          */
         function addProducts() {
-                modalDeferred.resolve({
-                    items: vm.lineItemsToAdd
-                });
+            modalDeferred.resolve({
+                items: vm.lineItemsToAdd
+            });
         }
 
         /**
@@ -93,8 +124,7 @@
          * @name searchByCodeAndName
          *
          * @description
-         * returns true if the product code starts with the search text
-         * or true if product full name contains the search text.
+         * Returns true if the product code starts with the search text or true if product full name contains the search text.
          */
         function searchByCodeAndName(item){
             return (item.orderable.fullProductName.contains(vm.searchText) ||
@@ -107,13 +137,13 @@
          * @name refreshList
          *
          * @description
-         * Refreshes the product list so the add product dialog box shows only relevant products
+         * Refreshes the product list so the add product dialog box shows only relevant products.
          */
         function refreshList(){
             if (vm.searchText === '') {
                 vm.filteredLineItems = vm.requisitionLineItems;
             }else{
-                vm.filteredLineItems = $filter('filter')(vm.requisitionLineItems, searchByCodeAndName)
+                vm.filteredLineItems = vm.requisitionLineItems.filter(searchByCodeAndName);
             }
         }
     }

@@ -16,7 +16,7 @@
 describe('AddFullSupplyProductModalController', function() {
 
     var vm, $controller, RequisitionLineItemDataBuilder, ProgramDataBuilder, program,
-        $q, $rootScope, modalDeferred, requisitionLineItems, $filter, fullSupply;
+        $q, $rootScope, modalDeferred, requisitionLineItems, fullSupply;
 
     beforeEach(function() {
         module('requisition-view-tab');
@@ -25,7 +25,6 @@ describe('AddFullSupplyProductModalController', function() {
             $controller = $injector.get('$controller');
             RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
-            $filter = $injector.get('$filter');
             $q = $injector.get('$q');
             $rootScope = $injector.get('$rootScope');
         });
@@ -41,7 +40,7 @@ describe('AddFullSupplyProductModalController', function() {
 
         vm = $controller('AddFullSupplyProductModalController', {
             modalDeferred: modalDeferred,
-            requisitionLineItems: requisitionLineItems
+            requisitionLineItems: requisitionLineItems,
         });
     });
 
@@ -68,8 +67,8 @@ describe('AddFullSupplyProductModalController', function() {
     describe('toggleAddLineItem', function(){
 
         it('should add a line item if it does not exist in the to add list', function(){
-            var line = vm.requisitionLineItems[0];
             vm.$onInit();
+            var line = vm.requisitionLineItems[0];
             vm.toggleAddLineItem(line);
 
             expect(vm.lineItemsToAdd.length).toBe(1);
@@ -77,13 +76,32 @@ describe('AddFullSupplyProductModalController', function() {
         });
 
         it('should remove a line item if it does not exist in the to add list', function(){
-            var line = vm.requisitionLineItems[0];
             vm.$onInit();
+            var line = vm.requisitionLineItems[0];
             vm.toggleAddLineItem(line);
             vm.toggleAddLineItem(line);
 
             expect(vm.lineItemsToAdd.length).toBe(0);
         })
+    });
+
+    describe('addProducts', function(){
+       it('should add resolve with lineItems', function(){
+           vm.$onInit();
+           var line = vm.requisitionLineItems[0];
+           vm.toggleAddLineItem(line);
+
+           var result;
+           modalDeferred.promise
+               .then(function(response) {
+                   result = response;
+               });
+
+           vm.addProducts();
+           $rootScope.$apply();
+
+           expect(result.items[0]).toEqual(line);
+       })
     });
 
 
