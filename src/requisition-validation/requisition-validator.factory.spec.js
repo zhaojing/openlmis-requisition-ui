@@ -222,6 +222,23 @@ describe('requisitionValidator', function() {
             expect(result).toBe(true);
         });
 
+        it('should not validate stock based columns', function() {
+            column = jasmine.createSpyObj('column', ['isStockBasedColumn']);
+            column.isStockBasedColumn.andReturn(true);
+
+            column.$display = true;
+            column.name = TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY;
+            column.source = COLUMN_SOURCES.STOCK_CARDS;
+            columns = [column];
+
+            requisition.template.columnsMap = columns;
+            requisition.template.populateStockOnHandFromStockCards = true;
+
+            var result = validator.validateLineItemField(lineItem, column, requisition);
+
+            expect(result).toBe(true);
+        });
+
         it('should return false if any validation fails', function() {
             lineItem[TEMPLATE_COLUMNS.STOCK_ON_HAND] = -10;
             column.name = TEMPLATE_COLUMNS.STOCK_ON_HAND;

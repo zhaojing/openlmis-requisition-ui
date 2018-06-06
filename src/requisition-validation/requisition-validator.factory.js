@@ -144,14 +144,13 @@
                 error = error || validationFactory[name](lineItem, requisition);
             }
 
-            if (shouldValidateCalculation(lineItem, column, requisition.template.columnsMap)) {
+            if (shouldValidateCalculation(lineItem, column, requisition.template)) {
                 error = error || validateCalculation(calculationFactory[name], lineItem, name);
             }
 
             if (column.$type === COLUMN_TYPES.NUMERIC && lineItem[name] > MAX_INTEGER_VALUE) {
                 error = error || messageService.get('requisitionValidation.numberTooLarge');
             }
-
             return !(lineItem.$errors[name] = error);
         }
 
@@ -200,10 +199,14 @@
             return valid;
         }
 
-        function shouldValidateCalculation(lineItem, column, columns) {
-            var counterpart = columns[counterparts[column.name]];
+        function shouldValidateCalculation(lineItem, column, template) {
+            var counterpart = template.columnsMap[counterparts[column.name]];
+            if (template.populateStockOnHandFromStockCards) {
+                return !column.isStockBasedColumn();
+            } else {
             return calculationFactory[column.name] && !isCalculated(column) && counterpart &&
                 !isCalculated(counterpart);
+            }
         }
 
         function nonEmpty(value) {
