@@ -202,7 +202,7 @@
         function shouldValidateCalculation(lineItem, column, template) {
             var counterpart = template.columnsMap[counterparts[column.name]];
             if (template.populateStockOnHandFromStockCards) {
-                return !column.isStockBasedColumn();
+                return !TEMPLATE_COLUMNS.getStockBasedColumns().includes(column.name);
             } else {
             return calculationFactory[column.name] && !isCalculated(column) && counterpart &&
                 !isCalculated(counterpart);
