@@ -34,11 +34,17 @@
             resolve: {
                 lineItems: function(paginationService, requisition, $stateParams, $filter, requisitionValidator) {
 					return paginationService.registerList(requisitionValidator.isLineItemValid, $stateParams, function() {
-                        var fullSupplyLineItems = $filter('filter')(requisition.requisitionLineItems, {
+                        var filterObject = requisition.template.hideSkippedLineItems() ? {
+                            skipped: "!true",
                             $program: {
-                                fullSupply:true
+                                fullSupply: true
                             }
-                        });
+                        } : {
+                            $program: {
+                                fullSupply: true
+                            }
+                        };
+                        var fullSupplyLineItems = $filter('filter')(requisition.requisitionLineItems, filterObject);
 
                         return $filter('orderBy')(fullSupplyLineItems, [
                             '$program.orderableCategoryDisplayOrder',

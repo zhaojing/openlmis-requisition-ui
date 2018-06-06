@@ -35,6 +35,7 @@
         RequisitionTemplate.prototype.getColumns = getColumns;
         RequisitionTemplate.prototype.getColumn = getColumn;
         RequisitionTemplate.prototype.hasSkipColumn = hasSkipColumn;
+        RequisitionTemplate.prototype.hideSkippedLineItems = hideSkippedLineItems;
 
         return RequisitionTemplate;
 
@@ -131,6 +132,25 @@
             }
 
             return hasSkipColumn;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-template.RequisitionTemplate
+         * @name hideSkippedLineItems
+         *
+         * @description
+         * Return true if template has Skip column with hide skipped line item
+         * selected or false if it does not.
+         *
+         * @return {boolean} true if template has Skip column, and the column option selected
+         * is 'hideSkippedLineItems'
+         */
+        function hideSkippedLineItems() {
+            if(!this.hasSkipColumn()){
+                return false;
+            }
+            return this.getColumn('skipped').option.optionName === 'hideSkippedLineItems';
         }
     }
 

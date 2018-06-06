@@ -112,4 +112,37 @@ describe('RequisitionTemplate', function() {
 
     });
 
+    describe('hideSkippedLineItems', function() {
+
+        it('should return true if template has skip column and is configured to hide line items',
+            function() {
+            requisitionTemplate = new RequisitionTemplate(
+                new RequisitionTemplateDataBuilder().withSkipColumn(true).buildJson(),
+                new RequisitionDataBuilder().buildJson()
+            );
+
+            expect(requisitionTemplate.hideSkippedLineItems()).toBe(true);
+        });
+
+        it('should return false if template has skip column and is configured to disable line items',
+            function() {
+                requisitionTemplate = new RequisitionTemplate(
+                    new RequisitionTemplateDataBuilder().withSkipColumn(false).buildJson(),
+                    new RequisitionDataBuilder().buildJson()
+                );
+
+                expect(requisitionTemplate.hideSkippedLineItems()).toBe(false);
+            });
+
+        it('should return false if template does not have skip column', function() {
+            requisitionTemplate = new RequisitionTemplate(
+                new RequisitionTemplateDataBuilder().buildJson(),
+                new RequisitionDataBuilder().buildJson()
+            );
+
+            expect(requisitionTemplate.hideSkippedLineItems()).toBe(false);
+        });
+
+    });
+
 });
