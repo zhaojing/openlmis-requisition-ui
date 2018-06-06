@@ -12,5 +12,5 @@
     "requisitionViewTab.all": "All",
     "requisitionViewTab.none": "None",
     "requisitionViewTab.skip": "Skip",
-    "requisitionViewTab.totalLossesAndAdjustment.disabled": "Total losses and adjustment modal is disabled for stock based requisitions."
+    "requisitionViewTab.totalLossesAndAdjustment.disabled": "Total losses and adjustments modal is disabled for stock based requisitions."
 }
