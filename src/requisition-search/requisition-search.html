@@ -27,9 +27,9 @@
         <fieldset>
             <legend>{{'requisitionSearch.dateInitiated' | message}}</legend>
             <label for=startDate>{{'requisitionSearch.from' | message}}</label>
-            <openlmis-datepicker input-id="startDate" value="vm.startDate" max-date="vm.endDate"></openlmis-datepicker>
+            <input id="startDate" type="date" ng-model="vm.startDate" max-date="vm.endDate"/>
             <label for=endDate>{{'requisitionSearch.to' | message}}</label>
-            <openlmis-datepicker input-id="endDate" value="vm.endDate" min-date="vm.startDate"></openlmis-datepicker>
+            <input id="endDate" type="date" ng-model="vm.endDate" min-date="vm.startDate"/>
         </fieldset>
         <input class="btn btn-primary" type="submit" value="{{'requisitionSearch.search' | message}}"/>
     </form>
