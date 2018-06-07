@@ -104,5 +104,30 @@ describe('AddFullSupplyProductModalController', function() {
        })
     });
 
+    describe('refreshList', function () {
+
+        it('should filter by filter function when search text is different from empty string', function () {
+            vm.$onInit();
+            vm.requisitionLineItems = jasmine.createSpyObj('requisitionLineItems', ['filter']);
+            vm.searchText = 'xxx';
+
+            vm.refreshList();
+
+           expect(vm.requisitionLineItems.filter).toHaveBeenCalled()
+
+        });
+
+        it('should filter by filter function when search text is different from empty string', function () {
+            vm.$onInit();
+            vm.requisitionLineItems = jasmine.createSpyObj('requisitionLineItems', ['filter']);
+            vm.searchText = '';
+
+            vm.refreshList();
+
+            expect(vm.requisitionLineItems.filter).not.toHaveBeenCalled()
+
+        });
+    });
+
 
 });

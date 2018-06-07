@@ -334,15 +334,33 @@ describe('ViewTabController', function() {
     });
 
     describe('addFullSupplyProduct', function() {
+
+        beforeEach(function(){
+            addFullSupplyProductModalService.show.andReturn($q.resolve({
+               items: [lineItemSpy(1,'one',true)]
+            }));
+        });
+
         it('should show the full supply add product modal', function(){
             initController();
-            vm.requisition = {requisitionLineItems:[]};
             vm.addFullSupplyProduct();
-
             $rootScope.$apply();
 
-            expect(addProductModalService.show).toHaveBeenCalled();
+            expect(addFullSupplyProductModalService.show).toHaveBeenCalled();
         });
+
+        it('should insert selected products to the beginning of full supply table', function(){
+            initController();
+
+            vm.items = jasmine.createSpyObj('items', ['unshift']);
+
+            vm.addFullSupplyProduct();
+            $rootScope.$apply();
+
+            expect(vm.items.unshift).toHaveBeenCalled();
+        });
+
+
     });
 
     describe('addProduct', function() {

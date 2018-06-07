@@ -227,7 +227,7 @@
          */
         function addFullSupplyProduct() {
             addFullSupplyProductModalService.show(vm.requisition.requisitionLineItems)
-                .then(function (result) {
+                .then(function(result) {
                     result.items.forEach(function(item) {
                         item.skipped = false;
                         vm.items.unshift(item);
