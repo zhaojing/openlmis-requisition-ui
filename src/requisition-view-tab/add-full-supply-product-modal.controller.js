@@ -74,6 +74,17 @@
         vm.searchText = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @name searchTextLowerCase
+         * @type {String}
+         *
+         * @description
+         * Holds text entered in product search box in lower case.
+         */
+        vm.searchTextLowerCase = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf requisition-view-tab.controller:AddFullSupplyProductModalController
          * @name $onInit
@@ -110,7 +121,7 @@
          * @name addProducts
          *
          * @description
-         * Resolves promise with line item selected in the modal.
+         * Resolves promise with line items selected in the modal.
          */
         function addProducts() {
             modalDeferred.resolve({
@@ -127,8 +138,8 @@
          * Returns true if the product code starts with the search text or true if product full name contains the search text.
          */
         function searchByCodeAndName(item){
-            return (item.orderable.fullProductName.contains(vm.searchText) ||
-                item.orderable.productCode.startsWith(vm.searchText));
+            return (item.orderable.fullProductName.toLowerCase().contains(vm.searchTextLowerCase) ||
+                item.orderable.productCode.toLowerCase().startsWith(vm.searchTextLowerCase));
         }
 
         /**
@@ -143,6 +154,7 @@
             if (vm.searchText === '') {
                 vm.filteredLineItems = vm.requisitionLineItems;
             }else{
+                vm.searchTextLowerCase = vm.searchText.toLowerCase();
                 vm.filteredLineItems = vm.requisitionLineItems.filter(searchByCodeAndName);
             }
         }

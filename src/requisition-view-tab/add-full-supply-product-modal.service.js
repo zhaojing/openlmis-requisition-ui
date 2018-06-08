@@ -60,7 +60,7 @@
                 resolve: {
                     requisitionLineItems: function () {
                         return paginationService.registerList(null, $stateParams,
-                            function () {
+                            function() {
                                 return $filter('filter')(requisitionLineItems, {
                                     skipped: "true",
                                     $program: {
@@ -75,7 +75,7 @@
                 }
             });
 
-            dialog.promise.finally(function () {
+            dialog.promise.finally(function() {
                 dialog = undefined;
             });
 
