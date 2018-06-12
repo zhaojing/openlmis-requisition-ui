@@ -17,7 +17,7 @@
                     <form id="addDateForm" name="addDateForm" class="user-form" ng-submit="vm.submit()">
                         <label for="date">{{'requisitionView.datePhysicalStockCountCompleted' | message}}</label>
                         <input id="date" type="date" ng-model="vm.datePhysicalStockCountCompleted" required
-                            openlmis-invalid="vm.validateDate() | message"/>
+                            openlmis-invalid="{{vm.validateDate() | message}}"/>
                     </form>
                 </div>
                 <div class="modal-footer">
