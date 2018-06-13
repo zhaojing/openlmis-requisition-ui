@@ -9,19 +9,5 @@
   "devDependencies": {
     "openlmis-ui": "file:///dev-ui"
   },
-  "dependencies": {
-    "angular": "1.6.6",
-    "angular-drag-and-drop-lists": "*",
-    "angular-strap": "*",
-    "angular-md5": "0.1.10",
-    "angular-filter": "^0.5",
-    "angular-http-auth": "^1.5"
-  },
-  "overrides": {
-    "angular-filter": {
-      "main": [
-        "dist/angular-filter.js"
-      ]
-    }
-  }
+  "dependencies": {}
 }
