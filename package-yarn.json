@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@bower_components/angular-filter": "a8m/angular-filter#^0.5",
+    "@bower_components/angular-http-auth": "witoldsz/angular-http-auth#^1.5",
+    "@bower_components/angular-drag-and-drop-lists": "marceljuenemann/angular-drag-and-drop-lists#*",
+    "@bower_components/angular-strap": "mgcrea/angular-strap#*",
+    "@bower_components/angular-md5": "gdi2290/angular-md5#0.1.10",
+    "@bower_components/analytics": "./analytics"
+  },
+  "engines": {
+    "yarn": ">= 1.0.0"
+  },
+  "scripts": {
+    "preinstall": "mkdir -p analytics && curl -o analytics/analytics.js https://www.google-analytics.com/analytics.js"
+  }
+}
