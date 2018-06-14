@@ -155,6 +155,13 @@ describe('ViewTabController', function() {
             expect(vm.showAddProductButton).toBe(false);
         });
 
+        it('should count number of skipped and hidden products', function() {
+
+            initController();
+
+            expect(vm.skippedFullSupplyProductsCount).toBe(0);
+        });
+
         it('should not display add product button if requisition is released', function() {
 
             initController();
@@ -167,7 +174,7 @@ describe('ViewTabController', function() {
 
             initController();
 
-            expect(vm.showAddFullSupplyProductButton).toBe(false);
+            expect(vm.showAddFullSupplyProductControls).toBe(false);
         });
 
         it('should not display add full supply product button if requisition is in approval', function() {
@@ -175,7 +182,7 @@ describe('ViewTabController', function() {
 
             initController();
 
-            expect(vm.showAddFullSupplyProductButton).toBe(false);
+            expect(vm.showAddFullSupplyProductControls).toBe(false);
         });
 
 
@@ -185,7 +192,7 @@ describe('ViewTabController', function() {
 
             initController();
 
-            expect(vm.showAddFullSupplyProductButton).toBe(false);
+            expect(vm.showAddFullSupplyProductControls).toBe(false);
         });
 
         it('should set correct noProductsMessage for full supply tab', function() {

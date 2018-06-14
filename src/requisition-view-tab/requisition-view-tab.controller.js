@@ -99,14 +99,25 @@
         /**
          * @ngdoc property
          * @methodOf requisition-view-tab.controller:ViewTabController
-         * @name showAddFullSupplyProductButton
+         * @name showAddFullSupplyProductControls
          * @type {Boolean}
          *
          * @description
          * Flag defining whether to show or hide the Add Product button based on the requisition
          * status and user rights and requisition template configuration.
          */
-        vm.showAddFullSupplyProductButton = undefined;
+        vm.showAddFullSupplyProductControls = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view-tab.controller:ViewTabController
+         * @name skippedFullSupplyProductsCount
+         * @type {Number}
+         *
+         * @description
+         * Holds the number of full supply products marked as skipped.
+         */
+        vm.skippedFullSupplyProductsCount = undefined;
 
         /**
          * @ngdoc property
@@ -127,7 +138,8 @@
             vm.showAddProductButton = showAddProductButton();
             vm.showSkipControls = showSkipControls();
             vm.noProductsMessage = getNoProductsMessage();
-            vm.showAddFullSupplyProductButton = showAddFullSupplyProductButton();
+            vm.showAddFullSupplyProductControls = showAddFullSupplyProductControls();
+            vm.skippedFullSupplyProductsCount = getCountOfSkippedAndHiddenFullSupplyProducts();
         }
 
         /**
@@ -226,16 +238,19 @@
          * be added an alert will be shown.
          */
         function addFullSupplyProduct() {
+            refreshLineItems();
             addFullSupplyProductModalService.show(vm.requisition.requisitionLineItems)
                 .then(function(result) {
                     result.items.forEach(function(item) {
                         item.skipped = false;
                         vm.items.unshift(item);
                     });
+                    vm.skippedFullSupplyProductsCount = getCountOfSkippedAndHiddenFullSupplyProducts();
                 });
         }
 
         function refreshLineItems() {
+            vm.skippedFullSupplyProductsCount = getCountOfSkippedAndHiddenFullSupplyProducts();
             var filterObject = (fullSupply &&
                                     vm.requisition.template.hasSkipColumn() &&
                                     vm.requisition.template.hideSkippedLineItems()) ?
@@ -273,7 +288,7 @@
                 (!fullSupply || requisition.emergency);
         }
 
-        function showAddFullSupplyProductButton() {
+        function showAddFullSupplyProductControls() {
             return (vm.userCanEdit &&
                         fullSupply &&
                         !requisition.emergency &&
@@ -295,6 +310,15 @@
                 return requisition.getAvailableFullSupplyProducts();
             }
             return requisition.getAvailableNonFullSupplyProducts();
+        }
+
+        function getCountOfSkippedAndHiddenFullSupplyProducts(){
+            return $filter('filter')(vm.requisition.requisitionLineItems, {
+                skipped: "true",
+                $program: {
+                    fullSupply: fullSupply
+                }
+            }).length;
         }
 
         function getNoProductsMessage() {
