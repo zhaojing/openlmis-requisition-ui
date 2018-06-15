@@ -129,6 +129,10 @@ describe('RequisitionApprovalListController', function () {
             expect(vm.offline).toBe(false);
         });
 
+        it('should expose isBatchApproveScreenActive flag', function() {
+            vm.$onInit();
+            expect(vm.isBatchApproveScreenActive).toBe(true);
+        });
     });
 
     describe ('search', function() {
@@ -230,7 +234,8 @@ describe('RequisitionApprovalListController', function () {
         vm = $controller('RequisitionApprovalListController', {
             requisitions: requisitions,
             programs: programs,
-            selectedProgram: programs[0]
+            selectedProgram: programs[0],
+            isBatchApproveScreenActive: true
         });
         vm.$onInit();
     }

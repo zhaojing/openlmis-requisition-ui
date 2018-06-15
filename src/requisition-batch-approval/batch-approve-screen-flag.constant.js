@@ -18,19 +18,13 @@
     'use strict';
 
     /**
-     * @module
+     * @ngdoc object
+     * @name requisition-batch-approval.BATCH_APPROVE_SCREEN_FEATURE_FLAG
      *
      * @description
-     * Responsible for managing requisition for approval list screen.
+     * This is constant Batch Approve Screen feature flag.
      */
-    angular.module('requisition-approval', [
-        'requisition',
-        'openlmis-auth',
-        'openlmis-local-storage',
-        'openlmis-pagination',
-        'requisition-batch-approval',
-        'referencedata-program',
-        'ui.router',
-        'openlmis-feature-flag'
-    ]);
+    angular
+        .module('requisition-batch-approval')
+        .constant('BATCH_APPROVE_SCREEN_FEATURE_FLAG', 'BATCH_APPROVE_SCREEN');
 })();

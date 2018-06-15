@@ -65,6 +65,9 @@
                             id: $stateParams.program
                         })[0];
                     }
+                },
+                isBatchApproveScreenActive: function(BATCH_APPROVE_SCREEN_FEATURE_FLAG, featureFlagService) {
+                    return featureFlagService.get(BATCH_APPROVE_SCREEN_FEATURE_FLAG);
                 }
             }
         });

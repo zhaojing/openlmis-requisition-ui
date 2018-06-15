@@ -17,20 +17,13 @@
 
     'use strict';
 
-    /**
-     * @module
-     *
-     * @description
-     * Responsible for managing requisition for approval list screen.
-     */
-    angular.module('requisition-approval', [
-        'requisition',
-        'openlmis-auth',
-        'openlmis-local-storage',
-        'openlmis-pagination',
-        'requisition-batch-approval',
-        'referencedata-program',
-        'ui.router',
-        'openlmis-feature-flag'
-    ]);
+    angular
+        .module('requisition-batch-approval')
+        .run(setBatchApproveScreenFlag);
+
+        setBatchApproveScreenFlag.$inject = ['featureFlagService', 'BATCH_APPROVE_SCREEN_FEATURE_FLAG'];
+
+    function setBatchApproveScreenFlag(featureFlagService, BATCH_APPROVE_SCREEN_FEATURE_FLAG) {
+        featureFlagService.set(BATCH_APPROVE_SCREEN_FEATURE_FLAG, '${BATCH_APPROVE_SCREEN}', false);
+    }
 })();

@@ -21,7 +21,7 @@
      * @module
      *
      * @description
-     * Responsible for managing modyfing multiple requisitions screen.
+     * Responsible for managing modifying multiple requisitions screen.
      */
     angular.module('requisition-batch-approval', [
         'requisition',
@@ -30,7 +30,8 @@
         'requisition-product-grid',
         'requisition-validation',
         'ui.router',
-        'openlmis-state-tracker'
+        'openlmis-state-tracker',
+        'openlmis-feature-flag'
     ]);
 
 })();

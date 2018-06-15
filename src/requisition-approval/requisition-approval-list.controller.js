@@ -31,11 +31,11 @@
 
     controller.$inject = [
         '$controller', '$state', 'requisitions', '$stateParams', 'programs', 'selectedProgram',
-        'alertService', 'offlineService', 'localStorageFactory'
+        'alertService', 'offlineService', 'localStorageFactory', 'isBatchApproveScreenActive'
     ];
 
     function controller($controller, $state, requisitions, $stateParams, programs, selectedProgram,
-        alertService, offlineService, localStorageFactory) {
+        alertService, offlineService, localStorageFactory, isBatchApproveScreenActive) {
 
         var vm = this,
             offlineRequisitions = localStorageFactory('requisitions');
@@ -92,6 +92,17 @@
         vm.offline = undefined;
 
         /**
+         * @ngdoc property
+         * @propertyOf requisition-approval.controller:RequisitionApprovalListController
+         * @name isBatchApproveScreenActive
+         * @type {boolean}
+         *
+         * @description
+         * Indicates if Batch Approve screen is active.
+         */
+        vm.isBatchApproveScreenActive = undefined;
+
+        /**
          * @ngdoc method
          * @methodOf requisition-approval.controller:RequisitionApprovalListController
          * @name $onInit
@@ -105,6 +116,7 @@
             vm.programs = programs;
             vm.selectedProgram = selectedProgram;
             vm.offline = $stateParams.offline === 'true' || offlineService.isOffline();
+            vm.isBatchApproveScreenActive = isBatchApproveScreenActive;
         }
 
         /**
