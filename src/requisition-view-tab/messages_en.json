@@ -4,7 +4,7 @@
     "requisitionViewTab.category": "Category",
     "requisitionViewTab.product": "Product",
     "requisitionViewTab.searchProduct": "Search Product",
-    "requisitionViewTab.fullSupplyProductsHidden": "full supply product(s) are skipped and hidden.",
+    "requisitionViewTab.fullSupplyProductsSkipped": "${skippedProductCount} full supply product(s) are skipped.",
     "requisitionViewTab.uoi": "UoI",
     "requisitionViewTab.code": "Code",
     "requisitionViewTab.select": "Select",

@@ -155,12 +155,6 @@ describe('ViewTabController', function() {
             expect(vm.showAddProductButton).toBe(false);
         });
 
-        it('should count number of skipped and hidden products', function() {
-
-            initController();
-
-            expect(vm.skippedFullSupplyProductsCount).toBe(0);
-        });
 
         it('should not display add product button if requisition is released', function() {
 
@@ -540,6 +534,34 @@ describe('ViewTabController', function() {
             expect(vm.showDeleteColumn()).toBe(true);
         });
 
+    });
+
+    describe('skippedFullSupplyProductCountMessage', function(){
+       it('should count the number of skipped line items and return the right message', function(){
+           initController();
+           messageService.get.isSpy = false;
+           spyOn(messageService, 'get').andCallFake(function(p1, p2){
+               return p2;
+           });
+           requisition.requisitionLineItems[0].skipped = true;
+
+           expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(1)
+       })
+    });
+
+    describe('skippedFullSupplyProductCountMessage', function(){
+       it('should not count the number of skipped line items that are not full supply', function(){
+           initController();
+
+           messageService.get.isSpy = false;
+           spyOn(messageService, 'get').andCallFake(function(p1, p2){
+               return p2;
+           });
+           requisition.requisitionLineItems[0].skipped = true;
+           requisition.requisitionLineItems[0].$program.fullSupply = false;
+
+           expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(0);
+       })
     });
 
     describe('getDescriptionForColumn', function() {

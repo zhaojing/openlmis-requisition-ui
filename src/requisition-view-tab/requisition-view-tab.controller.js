@@ -108,16 +108,6 @@
          */
         vm.showAddFullSupplyProductControls = undefined;
 
-        /**
-         * @ngdoc property
-         * @propertyOf requisition-view-tab.controller:ViewTabController
-         * @name skippedFullSupplyProductsCount
-         * @type {Number}
-         *
-         * @description
-         * Holds the number of full supply products marked as skipped.
-         */
-        vm.skippedFullSupplyProductsCount = undefined;
 
         /**
          * @ngdoc property
@@ -139,7 +129,7 @@
             vm.showSkipControls = showSkipControls();
             vm.noProductsMessage = getNoProductsMessage();
             vm.showAddFullSupplyProductControls = showAddFullSupplyProductControls();
-            vm.skippedFullSupplyProductsCount = getCountOfSkippedAndHiddenFullSupplyProducts();
+            vm.skippedFullSupplyProductCountMessage = skippedFullSupplyProductCountMessage;
         }
 
         /**
@@ -245,12 +235,23 @@
                         item.skipped = false;
                         vm.items.unshift(item);
                     });
-                    vm.skippedFullSupplyProductsCount = getCountOfSkippedAndHiddenFullSupplyProducts();
                 });
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name skippedFullSupplyProductCountMessage
+         *
+         * @description
+         * Returns a translated message that contains the number of line items that were skipped
+         * from full supply requisition.
+         */
+        function skippedFullSupplyProductCountMessage(){
+            return  messageService.get('requisitionViewTab.fullSupplyProductsSkipped', { skippedProductCount: getCountOfSkippedFullSupplyProducts()});
+        }
+
         function refreshLineItems() {
-            vm.skippedFullSupplyProductsCount = getCountOfSkippedAndHiddenFullSupplyProducts();
             var filterObject = (fullSupply &&
                                     vm.requisition.template.hasSkipColumn() &&
                                     vm.requisition.template.hideSkippedLineItems()) ?
@@ -312,13 +313,12 @@
             return requisition.getAvailableNonFullSupplyProducts();
         }
 
-        function getCountOfSkippedAndHiddenFullSupplyProducts(){
-            return $filter('filter')(vm.requisition.requisitionLineItems, {
-                skipped: "true",
-                $program: {
-                    fullSupply: fullSupply
-                }
-            }).length;
+        function isSkippedFullSupply(item) {
+            return (item.skipped === true && item.$program.fullSupply === true);
+        }
+
+        function getCountOfSkippedFullSupplyProducts(){
+            return vm.requisition.requisitionLineItems.filter(isSkippedFullSupply).length;
         }
 
         function getNoProductsMessage() {
