@@ -61,6 +61,6 @@
     </table>
     <openlmis-pagination/>
 </div>
-<div class="openlmis-toolbar" ng-if="vm.requisitions.length" ng-if="vm.isBatchApproveScreenActive">
+<div class="openlmis-toolbar" ng-if="vm.requisitions.length && vm.isBatchApproveScreenActive">
     <button class="primary" ng-click="vm.viewSelectedRequisitions()">{{'requisitionApproval.viewSelectedRequisitions' | message}}</button>
 </div>
