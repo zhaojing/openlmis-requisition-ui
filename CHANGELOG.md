@@ -15,6 +15,7 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-4686](https://openlmis.atlassian.net/browse/OLMIS-4686): Added an add product button and modal window to un-skip products
 * [OLMIS-4686](https://openlmis.atlassian.net/browse/OLMIS-4687): Allow users to search from skipped line items.
 * [OLMIS-4813](https://openlmis.atlassian.net/browse/OLMIS-4813): Added feature flag for enabling Batch Approve screen.
+* [OLMIS-4927](https://openlmis.atlassian.net/browse/OLMIS-4927): Added If-Match header to the requisition save request.
 
 Bug fixes:
 * [OLMIS-4509](https://openlmis.atlassian.net/browse/OLMIS-4509): Fixed redirect to 404 when clicking proceed for requisition while offline

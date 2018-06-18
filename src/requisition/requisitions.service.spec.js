@@ -15,7 +15,7 @@
 
 describe('requisitionService', function() {
 
-    var $rootScope, httpBackend, requisitionService, dateUtils, confirm, q, allStatuses,
+    var $rootScope, httpBackend, requisitionService, dateUtils, q, allStatuses, $templateCache,
         requisitionUrlFactory, openlmisUrl, requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate,
         endDate, startDate1, endDate1, modifiedDate, createdDate, processingSchedule, facility,
         program, period, emergency, requisition, requisitionDto, requisitionDto2, createdDate2,
@@ -144,19 +144,17 @@ describe('requisitionService', function() {
             });
         });
 
-        inject(function(_$httpBackend_, _$rootScope_, _requisitionService_, _requisitionUrlFactory_,
-                        openlmisUrlFactory, REQUISITION_STATUS, _dateUtils_, $q,
-                        $templateCache, _offlineService_) {
-
-            httpBackend = _$httpBackend_;
-            $rootScope = _$rootScope_;
-            requisitionService = _requisitionService_;
+        inject(function($injector) {
+            httpBackend = $injector.get('$httpBackend');
+            $rootScope = $injector.get('$rootScope');
+            requisitionService = $injector.get('requisitionService');
             allStatuses = REQUISITION_STATUS.$toList();
-            dateUtils = _dateUtils_;
-            q = $q;
-            requisitionUrlFactory = _requisitionUrlFactory_;
-            openlmisUrl = openlmisUrlFactory;
-            offlineService = _offlineService_;
+            dateUtils = $injector.get('dateUtils');
+            q = $injector.get('$q');
+            requisitionUrlFactory = $injector.get('requisitionUrlFactory');
+            openlmisUrl = $injector.get('openlmisUrlFactory');
+            offlineService = $injector.get('offlineService');
+            $templateCache = $injector.get('$templateCache');
 
             $templateCache.put('common/notification-modal.html', "something");
         });
@@ -166,15 +164,31 @@ describe('requisitionService', function() {
 
     describe('get', function () {
 
-        var getRequisitionUrl;
+        var getRequisitionUrl,
+            headers = { 'eTag': 'W/1' };
 
         beforeEach(function() {
             var getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
 
             getRequisitionUrl = '/api/requisitions/' + requisition.id;
 
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition);
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
             httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+        });
+
+        it('should return eTag for requisition', function() {
+            var data = {};
+            requisitionService.get('1').then(function(response) {
+                data = response;
+            });
+
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(data.id).toBe(requisition.id);
+            expect(data.eTag).toBe(headers['eTag']);
+            expect(requisitionsStorage.put).toHaveBeenCalled();
+            expect(statusMessagesStorage.put).toHaveBeenCalled();
         });
 
         it('should get requisition by id', function() {
@@ -474,7 +488,7 @@ describe('requisitionService', function() {
     describe('transformRequisition', function() {
 
         it('should not require createdDate to be set', function() {
-            var expected, data;
+            var data;
 
             requisition.createdDate = null;
 
@@ -499,7 +513,7 @@ describe('requisitionService', function() {
         });
 
         it('should not require processingSchedule to be set', function() {
-            var expected, data;
+            var data;
 
             requisition.processingPeriod.processingSchedule = null;
 

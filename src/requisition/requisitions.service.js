@@ -335,33 +335,34 @@
         }
 
         function transformGetResponse(data, headers, status) {
-            return transformResponse(data, status, function(response) {
+            return transformResponse(data, headers, status, function(response) {
                 if (response.processingPeriod.startDate) {
                     response.processingPeriod.startDate = dateUtils.toDate(response.processingPeriod.startDate);
                 }
                 if (response.processingPeriod.endDate) {
                     response.processingPeriod.endDate = dateUtils.toDate(response.processingPeriod.endDate);
                 }
+                response.eTag = headers('eTag');
                 return response;
             });
         }
 
         function transformRequisitionSearchResponse(data, headers, status) {
-            return transformResponse(data, status, function(response) {
+            return transformResponse(data, headers, status, function(response) {
                 angular.forEach(response.content, transformRequisition);
                 return response;
             });
         }
 
         function transformRequisitionListResponse(data, headers, status) {
-            return transformResponse(data, status, function(response) {
+            return transformResponse(data, headers, status, function(response) {
                 angular.forEach(response.content, transformRequisition);
                 return response;
             });
         }
 
         function transformResponseForConvert(data, headers, status) {
-            return transformResponse(data, status, function(response) {
+            return transformResponse(data, headers, status, function(response) {
                 angular.forEach(response.content, function(item) {
                     transformRequisition(item.requisition);
                 });
@@ -369,7 +370,7 @@
             });
         }
 
-        function transformResponse(data, status, transformer) {
+        function transformResponse(data, headers, status, transformer) {
             if (status === 200) {
                 return transformer(angular.fromJson(data));
             }
