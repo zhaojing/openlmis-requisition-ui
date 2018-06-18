@@ -13,7 +13,8 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-4684](https://openlmis.atlassian.net/browse/OLMIS-4684): Hide skipped full supply products from create requisition when template is configured to hide.
 * [OLMIS-4685](https://openlmis.atlassian.net/browse/OLMIS-4685): Hide skipped full supply products from approve requisition when template is configured to hide.
 * [OLMIS-4686](https://openlmis.atlassian.net/browse/OLMIS-4686): Added an add product button and modal window to un-skip products
-* [OLMIS-4686](https://openlmis.atlassian.net/browse/OLMIS-4687): Allow users to search from skipped line items. 
+* [OLMIS-4686](https://openlmis.atlassian.net/browse/OLMIS-4687): Allow users to search from skipped line items.
+* [OLMIS-4813](https://openlmis.atlassian.net/browse/OLMIS-4813): Added feature flag for enabling Batch Approve screen.
 
 Bug fixes:
 * [OLMIS-4509](https://openlmis.atlassian.net/browse/OLMIS-4509): Fixed redirect to 404 when clicking proceed for requisition while offline
