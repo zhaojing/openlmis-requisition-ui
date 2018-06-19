@@ -228,9 +228,9 @@
          * be added an alert will be shown.
          */
         function addFullSupplyProduct() {
-            refreshLineItems();
             addFullSupplyProductModalService.show(vm.requisition.requisitionLineItems)
                 .then(function(result) {
+                    refreshLineItems();
                     result.items.forEach(function(item) {
                         item.skipped = false;
                         vm.items.unshift(item);
