@@ -30,9 +30,9 @@
             $provide.decorator('periodFactory', decorator);
         });
 
-    decorator.$inject = ['$delegate', 'periodService', 'requisitionService', 'messageService', '$q', 'REQUISITION_STATUS'];
+    decorator.$inject = ['$delegate', 'periodService', 'messageService', '$q', 'REQUISITION_STATUS'];
 
-    function decorator($delegate, periodService, requisitionService, messageService, $q, REQUISITION_STATUS) {
+    function decorator($delegate, periodService, messageService, REQUISITION_STATUS) {
         var periodFactory = $delegate;
 
         periodFactory.get = get;
@@ -53,62 +53,32 @@
          * @return {Promise}            facility promise
          */
         function get(programId, facilityId, emergency) {
-            var deferred = $q.defer(),
-                promises = [];
-
-            promises.push(periodService.getPeriodsForInitiate(programId, facilityId, emergency));
-            promises.push(requisitionService.search(false, {
-                program: programId,
-                facility: facilityId,
-                emergency: emergency,
-                requisitionStatus: emergency ? [REQUISITION_STATUS.INITIATED, REQUISITION_STATUS.SUBMITTED, REQUISITION_STATUS.REJECTED] : undefined
-            }));
-
-            $q.all(promises).then(function(response) {
-                var periods = getPeriodGridLineItems(response[0], response[1].content, emergency);
+            return periodService.getPeriodsForInitiate(programId, facilityId, emergency)
+            .then(function(response) {
+                var periods = getPeriodGridLineItems(response, emergency);
                 angular.forEach(periods, setStatus(emergency));
-                deferred.resolve(periods);
-            }, function() {
-                deferred.reject();
+                return periods;
             });
-
-            return deferred.promise;
         }
 
-        function getPeriodGridLineItems(periods, requisitions, emergency) {
+        function getPeriodGridLineItems(periods, emergency) {
             var periodGridLineItems = [];
 
             angular.forEach(periods, function(period, id) {
-                if(emergency) {
-                    periodGridLineItems.push(createPeriodGridItem(period, null, 0));
-                } else {
-                    var foundRequisition = null;
-                    angular.forEach(requisitions, function (requisition) {
-                        if (requisition.processingPeriod.id == period.id) {
-                            foundRequisition = requisition;
-                        }
-                    });
-                    periodGridLineItems.push(createPeriodGridItem(period, foundRequisition, id));
-                }
+                periodGridLineItems.push(createPeriodGridItem(period, emergency, id));
             });
-
-            if(emergency) {
-                angular.forEach(requisitions, function(requisition) {
-                    periodGridLineItems.push(createPeriodGridItem(requisition.processingPeriod, requisition, 0));
-                });
-            }
 
             return periodGridLineItems;
         }
 
-        function createPeriodGridItem(period, requisition, id) {
+        function createPeriodGridItem(period, emergency, id) {
             return {
                 name: period.name,
                 startDate: period.startDate,
                 endDate: period.endDate,
-                rnrStatus: (requisition ? requisition.status : (id === 0 ? messageService.get("requisitionInitiate.notYetStarted") : messageService.get("requisitionInitiate.previousPending"))),
-                activeForRnr: (id === 0 ? true : false),
-                rnrId: (requisition ? requisition.id : null)
+                rnrStatus: (period.requisitionStatus ? period.requisitionStatus : ((emergency || id === 0) ? messageService.get("requisitionInitiate.notYetStarted") : messageService.get("requisitionInitiate.previousPending"))),
+                activeForRnr: (emergency || id === 0),
+                rnrId: (period.requisitionId) ? period.requisitionId : null
             };
         }
 

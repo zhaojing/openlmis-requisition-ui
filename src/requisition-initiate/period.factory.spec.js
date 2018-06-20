@@ -15,19 +15,13 @@
 
 describe('periodFactory', function() {
 
-    var $rootScope, $q, periodServiceMock, requisitionServiceMock, periodFactory, periodOne,
-        requisition;
+    var $rootScope, $q, periodServiceMock, periodFactory, periodOne, periodTwo;
 
     beforeEach(function() {
         module('requisition-initiate', function($provide){
             periodServiceMock = jasmine.createSpyObj('periodService', ['getPeriodsForInitiate']);
             $provide.service('periodService', function() {
                 return periodServiceMock;
-            });
-
-            requisitionServiceMock = jasmine.createSpyObj('requisitionService', ['search']);
-            $provide.service('requisitionService', function() {
-                return requisitionServiceMock;
             });
         });
 
@@ -45,10 +39,13 @@ describe('periodFactory', function() {
             endDate: 'date2'
         };
 
-        requisition = {
+        periodTwo = {
             id: '1',
-            processingPeriod: periodOne,
-            status: REQUISITION_STATUS.INITIATED
+            name: 'period1',
+            startDate: 'date1',
+            endDate: 'date2',
+            requisitionId: '05eb8040-66a9-4cd7-8da4-0735c9c44ab2',
+            requisitionStatus: REQUISITION_STATUS.INITIATED
         };
     });
 
@@ -61,14 +58,7 @@ describe('periodFactory', function() {
 
         beforeEach(function() {
             periodServiceMock.getPeriodsForInitiate.andCallFake(function() {
-                return $q.when([periodOne]);
-            });
-            requisitionServiceMock.search.andCallFake(function() {
-                return $q.when({
-                    content: [
-                        requisition
-                    ]
-                });
+                return $q.when([periodOne, periodTwo]);
             });
 
             periodFactory.get(programId, facilityId, emergency).then(function(response) {
@@ -82,15 +72,6 @@ describe('periodFactory', function() {
             expect(periodServiceMock.getPeriodsForInitiate).toHaveBeenCalledWith(programId, facilityId, emergency);
         });
 
-        it('should call requisitionService search method with proper params', function() {
-            expect(requisitionServiceMock.search).toHaveBeenCalledWith(false, {
-                emergency: emergency,
-                facility: facilityId,
-                program: programId,
-                requisitionStatus: [REQUISITION_STATUS.INITIATED, REQUISITION_STATUS.SUBMITTED, REQUISITION_STATUS.REJECTED]
-            });
-        });
-
         it('should return proper periods', function() {
             expect(data[0]).toEqual({
                 name: periodOne.name,
@@ -101,12 +82,12 @@ describe('periodFactory', function() {
                 rnrId: null
             });
             expect(data[1]).toEqual({
-                name: periodOne.name,
-                startDate: periodOne.startDate,
-                endDate: periodOne.endDate,
+                name: periodTwo.name,
+                startDate: periodTwo.startDate,
+                endDate: periodTwo.endDate,
                 rnrStatus: REQUISITION_STATUS.INITIATED,
                 activeForRnr: true,
-                rnrId: requisition.id
+                rnrId: periodTwo.requisitionId
             });
         });
     });
@@ -120,14 +101,7 @@ describe('periodFactory', function() {
 
         beforeEach(function() {
             periodServiceMock.getPeriodsForInitiate.andCallFake(function() {
-                return $q.when([periodOne]);
-            });
-            requisitionServiceMock.search.andCallFake(function() {
-                return $q.when({
-                    content: [
-                        requisition
-                    ]
-                });
+                return $q.when([periodTwo]);
             });
 
             periodFactory.get(programId, facilityId, emergency).then(function(response) {
@@ -141,23 +115,14 @@ describe('periodFactory', function() {
             expect(periodServiceMock.getPeriodsForInitiate).toHaveBeenCalledWith(programId, facilityId, emergency);
         });
 
-        it('should call requisitionService search method with proper params', function() {
-            expect(requisitionServiceMock.search).toHaveBeenCalledWith(false, {
-                emergency: emergency,
-                facility: facilityId,
-                program: programId,
-                requisitionStatus: undefined
-            });
-        });
-
         it('should return proper periods', function() {
             expect(data[0]).toEqual({
-                name: periodOne.name,
-                startDate: periodOne.startDate,
-                endDate: periodOne.endDate,
+                name: periodTwo.name,
+                startDate: periodTwo.startDate,
+                endDate: periodTwo.endDate,
                 rnrStatus: REQUISITION_STATUS.INITIATED,
                 activeForRnr: true,
-                rnrId: requisition.id
+                rnrId: periodTwo.requisitionId
             });
         });
     });
