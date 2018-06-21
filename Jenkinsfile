@@ -65,6 +65,23 @@ pipeline {
                 }
             }
         }
+        stage('Build reference-ui') {
+            when {
+                expression {
+                    return env.GIT_BRANCH == 'master'
+                }
+            }
+            steps {
+                sh "docker tag openlmis/requisition-ui:latest openlmis/requisition-ui:${VERSION}"
+                sh "docker push openlmis/requisition-ui:${VERSION}
+                build job: 'OpenLMIS-reference-ui-pipeline/master', wait: false
+            }
+            post {
+                failure {
+                    slackSend color: 'danger', message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} ${env.STAGE_NAME} FAILED (<${env.BUILD_URL}|Open>)"
+                }
+            }
+        }
         stage('Sonar analysis') {
             steps {
                 withSonarQubeEnv('Sonar OpenLMIS') {
@@ -105,7 +122,7 @@ pipeline {
         stage('Push image') {
             when {
                 expression {
-                    return env.GIT_BRANCH == 'master' || env.GIT_BRANCH =~ /rel-.+/
+                    return env.GIT_BRANCH =~ /rel-.+/
                 }
             }
             steps {
@@ -129,9 +146,6 @@ pipeline {
     post {
         fixed {
             slackSend color: 'good', message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} Back to normal"
-        }
-        success {
-            build job: 'OpenLMIS-reference-ui-pipeline/master', wait: false
         }
     }
 }
