@@ -92,12 +92,11 @@ pipeline {
                             sudo rm -f .env
                             touch .env
 
-                            SONAR_BRANCH_TEMP=$(echo $GIT_BRANCH)
                             SONAR_LOGIN_TEMP=$(echo $SONAR_LOGIN | cut -f2 -d=)
                             SONAR_PASSWORD_TEMP=$(echo $SONAR_PASSWORD | cut -f2 -d=)
                             echo "SONAR_LOGIN=$SONAR_LOGIN_TEMP" >> .env
                             echo "SONAR_PASSWORD=$SONAR_PASSWORD_TEMP" >> .env
-                            echo "SONAR_BRANCH=$SONAR_BRANCH_TEMP" >> .env
+                            echo "SONAR_BRANCH=$GIT_BRANCH" >> .env
 
                             docker-compose run --entrypoint ./sonar.sh requisition-ui
                             docker-compose down --volumes
