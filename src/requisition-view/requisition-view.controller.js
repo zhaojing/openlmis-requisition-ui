@@ -35,7 +35,7 @@
         'requisitionUrlFactory', '$filter', '$scope', 'RequisitionWatcher',
         'accessTokenFactory', 'messageService', 'stateTrackerService', 'RequisitionStockCountDateModal',
         'localStorageFactory', 'canSubmit', 'canAuthorize',
-        'canApproveAndReject', 'canDelete', 'canSkip', 'canSync'
+        'canApproveAndReject', 'canDelete', 'canSkip', 'canSync', 'uniqueIdService'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator,
@@ -46,10 +46,11 @@
                                        $scope, RequisitionWatcher, accessTokenFactory,
                                        messageService, stateTrackerService, RequisitionStockCountDateModal,
                                        localStorageFactory, canSubmit, canAuthorize, canApproveAndReject, 
-                                       canDelete, canSkip, canSync) {
+                                       canDelete, canSkip, canSync, uniqueIdService) {
 
         var vm = this,
-            watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions'));
+            watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions')),
+            key = uniqueIdService.generate();
 
         /**
          * @ngdoc property
@@ -328,6 +329,7 @@
 
             function saveThenSubmit() {
                 var loadingPromise = loadingModalService.open();
+                vm.requisition.idempotencyKey = key;
                 vm.requisition.$save().then(function () {
                     vm.requisition.$submit().then(function (response) {
                         watcher.disableWatcher();
@@ -378,6 +380,7 @@
 
             function saveThenAuthorize() {
                 var loadingPromise = loadingModalService.open();
+                vm.requisition.idempotencyKey = key;
                 vm.requisition.$save().then(function () {
                     vm.requisition.$authorize().then(function (response) {
                         watcher.disableWatcher();
@@ -408,6 +411,7 @@
                 'requisitionView.delete.label'
             ).then(function() {
                 var loadingPromise = loadingModalService.open();
+                vm.requisition.idempotencyKey = key;
                 vm.requisition.$remove().then(function(response) {
                     watcher.disableWatcher();
                     loadingPromise.then(function() {
@@ -436,6 +440,7 @@
             ).then(function() {
                 if(requisitionValidator.validateRequisition(requisition)) {
                     var loadingPromise = loadingModalService.open();
+                    vm.requisition.idempotencyKey = key;
                     vm.requisition.$save().then(function() {
                         vm.requisition.$approve().then(function(response) {
                             watcher.disableWatcher();
@@ -470,6 +475,7 @@
                 'requisitionView.reject.label'
             ).then(function() {
                 var loadingPromise = loadingModalService.open();
+                vm.requisition.idempotencyKey = key;
                 vm.requisition.$save().then(function() {
                     vm.requisition.$reject().then().then(function(response) {
                         watcher.disableWatcher();
@@ -499,6 +505,7 @@
                 'requisitionView.skip.label'
             ).then(function() {
                 var loadingPromise = loadingModalService.open();
+                vm.requisition.idempotencyKey = key;
                 vm.requisition.$skip().then(function(response) {
                     watcher.disableWatcher();
                     loadingPromise.then(function() {

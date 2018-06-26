@@ -42,6 +42,9 @@
         var offlineRequisitions = localStorageFactory('requisitions'),
             resource = $resource(requisitionUrlFactory('/api/requisitions/:id'), {}, {
             'authorize': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
                 url: requisitionUrlFactory('/api/requisitions/:id/authorize'),
                 method: 'POST'
             },
@@ -53,18 +56,30 @@
                 transformRequest: transformRequisition
             },
             'submit': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
                 url: requisitionUrlFactory('/api/requisitions/:id/submit'),
                 method: 'POST'
             },
             'approve': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
                 url: requisitionUrlFactory('/api/requisitions/:id/approve'),
                 method: 'POST'
             },
             'reject': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
                 url: requisitionUrlFactory('/api/requisitions/:id/reject'),
                 method: 'PUT'
             },
             'skip': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
                 url: requisitionUrlFactory('/api/requisitions/:id/skip'),
                 method: 'PUT'
             }
@@ -671,6 +686,10 @@
 
         function getETag(config) {
             return config.data.eTag;
+        }
+
+        function getIdempotencyKey(config) {
+            return config.data.idempotencyKey;
         }
 
         function transformLineItem(lineItem, columns) {

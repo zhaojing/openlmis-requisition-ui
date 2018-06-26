@@ -16,6 +16,7 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-4686](https://openlmis.atlassian.net/browse/OLMIS-4687): Allow users to search from skipped line items.
 * [OLMIS-4813](https://openlmis.atlassian.net/browse/OLMIS-4813): Added feature flag for enabling Batch Approve screen.
 * [OLMIS-4927](https://openlmis.atlassian.net/browse/OLMIS-4927): Added If-Match header to the requisition save request.
+* [OLMIS-4935](https://openlmis.atlassian.net/browse/OLMIS-4935): Added Idempotency-Key header to the requisition submit, authorize, approve, reject and skip requests.
 * [OLMIS-3162](https://openlmis.atlassian.net/browse/OLMIS-3162): _Initiate Requisition_ screen will now only use _periodsForInitiate_ endpoint to determine available periods and not additionally search for requisitions.
 
 Bug fixes:
