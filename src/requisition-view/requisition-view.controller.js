@@ -35,7 +35,7 @@
         'requisitionUrlFactory', '$filter', '$scope', 'RequisitionWatcher',
         'accessTokenFactory', 'messageService', 'stateTrackerService', 'RequisitionStockCountDateModal',
         'localStorageFactory', 'canSubmit', 'canAuthorize',
-        'canApproveAndReject', 'canDelete', 'canSkip', 'canSync', 'uniqueIdService'
+        'canApproveAndReject', 'canDelete', 'canSkip', 'canSync'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator,
@@ -46,11 +46,11 @@
                                        $scope, RequisitionWatcher, accessTokenFactory,
                                        messageService, stateTrackerService, RequisitionStockCountDateModal,
                                        localStorageFactory, canSubmit, canAuthorize, canApproveAndReject, 
-                                       canDelete, canSkip, canSync, uniqueIdService) {
+                                       canDelete, canSkip, canSync) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions')),
-            key = uniqueIdService.generate();
+            key = 'key';
 
         /**
          * @ngdoc property
