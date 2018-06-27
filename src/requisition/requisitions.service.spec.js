@@ -321,13 +321,9 @@ describe('requisitionService', function() {
     it('should convert requisitions', function() {
         var callback = jasmine.createSpy();
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/convertToOrder'))
+        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/batchReleases'))
         .respond(function(method, url, data){
-          if(!angular.equals(data, angular.toJson([requisitionToConvert]))){
-            return [404];
-          } else {
-            return [200, angular.toJson(requisition)];
-          }
+            return [200, angular.toJson({})];
         });
 
         requisitionService.convertToOrder([{requisition: requisition}]).then(callback);

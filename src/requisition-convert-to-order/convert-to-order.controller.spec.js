@@ -240,6 +240,145 @@ describe('ConvertToOrderController', function(){
 
     });
 
+    describe('releaseWithoutOrder', function() {
+        var confirmService, loadingModalService, confirmDeferred, convertDeferred, loadingDeferred;
+
+        beforeEach(function() {
+            inject(function($injector) {
+                confirmService = $injector.get('confirmService');
+                loadingModalService = $injector.get('loadingModalService');
+            });
+
+            confirmDeferred = $q.defer();
+            convertDeferred = $q.defer();
+            loadingDeferred = $q.defer();
+
+            spyOn(loadingModalService, 'open').andReturn(loadingDeferred.promise);
+            spyOn(loadingModalService, 'close').andReturn();
+            spyOn(confirmService, 'confirm').andReturn(confirmDeferred.promise);
+            spyOn(requisitionService, 'releaseWithoutOrder').andReturn(convertDeferred.promise);
+            spyOn(notificationService, 'error').andReturn();
+            spyOn(notificationService, 'success').andReturn();
+        });
+
+        it('should show error if no requisition is selected', function() {
+            vm.releaseWithoutOrder();
+
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.selectAtLeastOneRnr');
+        });
+
+        it('should not call requisitionService if no requisition is selected', function() {
+            vm.releaseWithoutOrder();
+            confirmDeferred.resolve();
+            convertDeferred.resolve();
+            $rootScope.$apply();
+
+            expect(requisitionService.releaseWithoutOrder).not.toHaveBeenCalled();
+        });
+
+        it('should show error if requisition does not have facility selected', function() {
+            vm.requisitions[0].$selected = true;
+
+            vm.releaseWithoutOrder();
+
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.noSupplyingDepotSelected');
+        });
+
+        it('should not call requisitionService if requisition does not have facility selected', function() {
+            vm.requisitions[0].$selected = true;
+
+            vm.releaseWithoutOrder();
+            confirmDeferred.resolve();
+            convertDeferred.resolve();
+            $rootScope.$apply();
+
+            expect(requisitionService.releaseWithoutOrder).not.toHaveBeenCalled();
+        });
+
+        it('should call confirmation modal', function() {
+            vm.requisitions[0].$selected = true;
+            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+
+            vm.releaseWithoutOrder();
+            confirmDeferred.resolve();
+            convertDeferred.resolve();
+            $rootScope.$apply();
+
+            expect(confirmService.confirm)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.releaseWithoutOrder.confirm');
+        });
+
+        it('should bring up loading modal if confirmation passed', function() {
+            vm.requisitions[0].$selected = true;
+            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+
+            vm.releaseWithoutOrder();
+            confirmDeferred.resolve();
+            convertDeferred.resolve();
+            $rootScope.$apply();
+
+            expect(loadingModalService.open).toHaveBeenCalled();
+        });
+
+        it('should call requisitionService if confirmation passed', function() {
+            vm.requisitions[0].$selected = true;
+            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+
+            vm.releaseWithoutOrder();
+            confirmDeferred.resolve();
+            convertDeferred.resolve();
+            $rootScope.$apply();
+
+            expect(requisitionService.releaseWithoutOrder).toHaveBeenCalledWith([
+                                                                               vm.requisitions[0]
+                                                                           ]);
+        });
+
+        it('should show alert if release without order passed', function() {
+            vm.requisitions[0].$selected = true;
+            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+
+            vm.releaseWithoutOrder();
+            confirmDeferred.resolve();
+            convertDeferred.resolve();
+            $rootScope.$apply();
+            loadingDeferred.resolve();
+            $rootScope.$apply();
+
+            expect(notificationService.success)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.releaseWithoutOrder.success');
+        });
+
+        it('should show error if release without order failed', function() {
+            vm.requisitions[0].$selected = true;
+            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+
+            vm.releaseWithoutOrder();
+            confirmDeferred.resolve();
+            convertDeferred.reject();
+            $rootScope.$apply();
+
+            expect(notificationService.error)
+                .toHaveBeenCalledWith('requisitionConvertToOrder.errorOccurred');
+        });
+
+        it('should close loading modal if release without order failed', function() {
+            vm.requisitions[0].$selected = true;
+            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+
+            vm.releaseWithoutOrder();
+            confirmDeferred.resolve();
+            convertDeferred.reject();
+            $rootScope.$apply();
+
+            expect(loadingModalService.close).toHaveBeenCalled();
+        });
+
+    });
+
+
     it('should show error when trying to convert to order with no supplying depot selected', function() {
         vm.requisitions[0].$selected = true;
 

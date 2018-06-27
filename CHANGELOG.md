@@ -18,6 +18,8 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-4927](https://openlmis.atlassian.net/browse/OLMIS-4927): Added If-Match header to the requisition save request.
 * [OLMIS-4935](https://openlmis.atlassian.net/browse/OLMIS-4935): Added Idempotency-Key header to the requisition submit, authorize, approve, reject and skip requests.
 * [OLMIS-3162](https://openlmis.atlassian.net/browse/OLMIS-3162): _Initiate Requisition_ screen will now only use _periodsForInitiate_ endpoint to determine available periods and not additionally search for requisitions.
+* [OLMIS-4865](https://openlmis.atlassian.net/browse/OLMIS-4865): Added new functionality on convert to order page to release requisitions without order.
+* [OLMIS-4958](https://openlmis.atlassian.net/browse/OLMIS-4958): Convert requisition to order updated to use batchReleases resource.
 
 Bug fixes:
 * [OLMIS-4509](https://openlmis.atlassian.net/browse/OLMIS-4509): Fixed redirect to 404 when clicking proceed for requisition while offline

@@ -41,6 +41,7 @@
 	    var vm = this;
 
         vm.convertToOrder = convertToOrder;
+        vm.releaseWithoutOrder = releaseWithoutOrder;
         vm.getSelected = getSelected;
         vm.toggleSelectAll = toggleSelectAll;
         vm.setSelectAll = setSelectAll;
@@ -235,6 +236,43 @@
                         requisitionsForConvertFactory.convertToOrder(requisitions).then(function() {
                             loadingPromise.then(function() {
                                 notificationService.success('requisitionConvertToOrder.convertToOrder.success');
+                            });
+                            $state.reload();
+                        }, function() {
+                            loadingModalService.close();
+                            notificationService.error('requisitionConvertToOrder.errorOccurred');
+                        });
+                    });
+                }
+            } else {
+                notificationService.error('requisitionConvertToOrder.selectAtLeastOneRnr');
+            }
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-convert-to-order.controller:ConvertToOrderController
+         * @name releaseWithoutOrder
+         *
+         * @description
+         * Responsible for releasing selected requisitions without creating orders.
+         */
+        function releaseWithoutOrder() {
+            var requisitions = getSelected();
+            var missedDepots = false;
+            if (requisitions.length > 0) {
+                angular.forEach(requisitions, function(item) {
+                    if (!item.requisition.supplyingFacility) {
+                        missedDepots = true;
+                        notificationService.error('requisitionConvertToOrder.noSupplyingDepotSelected');
+                    }
+                });
+                if (!missedDepots) {
+                    confirmService.confirm('requisitionConvertToOrder.releaseWithoutOrder.confirm').then(function() {
+                        var loadingPromise = loadingModalService.open();
+                        requisitionsForConvertFactory.releaseWithoutOrder(requisitions).then(function() {
+                            loadingPromise.then(function() {
+                                notificationService.success('requisitionConvertToOrder.releaseWithoutOrder.success');
                             });
                             $state.reload();
                         }, function() {

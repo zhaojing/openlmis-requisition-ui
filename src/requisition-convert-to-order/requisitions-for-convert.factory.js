@@ -41,6 +41,7 @@
         var factory = {
             forConvert: forConvert,
             convertToOrder: convertToOrder,
+            releaseWithoutOrder: releaseWithoutOrder,
             clearCache: clearCache
         };
 
@@ -93,6 +94,27 @@
             .then(function() {
                 removeConvertedRequisitions(requisitions, lastPage);
             });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-convert-to-order.requisitionsForConvertFactory
+         * @name releaseWithoutOrder
+         *
+         * @description
+         * Releases the the given list of requisitions without creating orders. Every requisition that is
+         * converted will be removed from the cache and the stored page will be shrunk.
+         *
+         * @param  {Array}      requisitions    the list of arrays to be released without order
+         * @return {Promise}                    the promise resolved when the requisitions has been
+         *                                      successfully released
+         */
+        function releaseWithoutOrder(requisitions) {
+            var lastPage = this.lastPage;
+            return requisitionService.releaseWithoutOrder(requisitions)
+                .then(function() {
+                    removeConvertedRequisitions(requisitions, lastPage);
+                });
         }
 
         /**

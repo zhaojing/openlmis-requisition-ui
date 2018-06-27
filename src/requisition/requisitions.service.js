@@ -70,8 +70,8 @@
                 method: 'GET',
                 transformResponse: transformResponseForConvert
             },
-            'convertToOrder': {
-                url: requisitionUrlFactory('/api/requisitions/convertToOrder'),
+            'batchRelease': {
+                url: requisitionUrlFactory('/api/requisitions/batchReleases'),
                 method: 'POST',
                 transformRequest: transformRequest
             },
@@ -89,6 +89,7 @@
             forApproval: forApproval,
             forConvert: forConvert,
             convertToOrder: convertToOrder,
+            releaseWithoutOrder: releaseWithoutOrder,
             removeOfflineRequisition: removeOfflineRequisition
         };
 
@@ -280,7 +281,7 @@
          * @param {Array} requisitions Array of requisitions to convert
          */
         function convertToOrder(requisitions) {
-            var promise = resource.convertToOrder(requisitions).$promise;
+            var promise = resource.batchRelease({createOrder: true, requisitions: requisitions}).$promise;
             promise.then(function(response) {
                 angular.forEach(requisitions, function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
@@ -288,6 +289,27 @@
             });
             return promise;
         }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionService
+         * @name releaseWithoutOrder
+         *
+         * @description
+         * Release given requisitions without orders.
+         *
+         * @param {Array} requisitions Array of requisitions release
+         */
+        function releaseWithoutOrder(requisitions) {
+            var promise = resource.batchRelease({createOrder: false, requisitions: requisitions}).$promise;
+            promise.then(function(response) {
+                angular.forEach(requisitions, function(requisition) {
+                    offlineRequisitions.removeBy('id', requisition.requisition.id);
+                });
+            });
+            return promise;
+        }
+
 
         /**
          * @ngdoc method
@@ -328,14 +350,18 @@
             });
         }
 
-        function transformRequest(requisitionsWithDepots) {
-            var body = [];
-            angular.forEach(requisitionsWithDepots, function(requisitionWithDepots) {
-                body.push({
+        function transformRequest(request) {
+            var body = {
+                createOrder: request.createOrder,
+                requisitionsToRelease: []
+            };
+            angular.forEach(request.requisitions, function(requisitionWithDepots) {
+                body.requisitionsToRelease.push({
                     requisitionId: requisitionWithDepots.requisition.id,
                     supplyingDepotId: requisitionWithDepots.requisition.supplyingFacility
                 });
             });
+
             return angular.toJson(body);
         }
 
