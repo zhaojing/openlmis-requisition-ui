@@ -152,7 +152,8 @@
         function authorize() {
             var requisition = this;
             return handlePromise(resource.authorize({
-                id: this.id
+                id: this.id,
+                idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(authorized) {
                 updateRequisition(requisition, authorized);
             });
@@ -171,7 +172,8 @@
         function remove() {
             var id = this.id;
             return handlePromise(resource.remove({
-                id: this.id
+                id: this.id,
+                idempotencyKey: this.idempotencyKey
             }).$promise, function() {
                 offlineRequisitions.removeBy('id', id);
             });
@@ -215,7 +217,8 @@
         function submit() {
             var requisition = this;
             return handlePromise(resource.submit({
-                id: this.id
+                id: this.id,
+                idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(submitted) {
                 updateRequisition(requisition, submitted);
             });
@@ -234,7 +237,8 @@
         function approve() {
             var requisition = this;
             return handlePromise(resource.approve({
-                id: this.id
+                id: this.id,
+                idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(approved) {
                 updateRequisition(requisition, approved);
             });
@@ -253,7 +257,8 @@
         function reject() {
             var requisition = this;
             return handlePromise(resource.reject({
-                id: this.id
+                id: this.id,
+                idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(rejected) {
                 updateRequisition(requisition, rejected);
             });
@@ -271,7 +276,8 @@
          */
         function skip() {
             return handlePromise(resource.skip({
-                id: this.id
+                id: this.id,
+                idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(requisition) {
                 offlineRequisitions.removeBy('id', requisition.id);
             });
@@ -689,7 +695,9 @@
         }
 
         function getIdempotencyKey(config) {
-            return config.data.idempotencyKey;
+            var key = config.params.idempotencyKey;
+            delete config.params.idempotencyKey;
+            return key;
         }
 
         function transformLineItem(lineItem, columns) {

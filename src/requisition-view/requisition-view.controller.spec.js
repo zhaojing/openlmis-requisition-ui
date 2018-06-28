@@ -20,7 +20,7 @@ describe('RequisitionViewController', function() {
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
         accessTokenFactorySpy, $window, stateTrackerService, messageService,
-        RequisitionStockCountDateModal, RequisitionWatcher, watcher, key;
+        RequisitionStockCountDateModal, RequisitionWatcher, watcher, key, UuidGenerator;
 
     beforeEach(function() {
         module('requisition-view');
@@ -87,6 +87,7 @@ describe('RequisitionViewController', function() {
             loadingModalService = $injector.get('loadingModalService');
             stateTrackerService = $injector.get('stateTrackerService');
             messageService = $injector.get('messageService');
+            UuidGenerator = $injector.get('UuidGenerator');
 
             confirmService.confirm.andCallFake(function() {
                 return $q.when(true);
@@ -115,6 +116,9 @@ describe('RequisitionViewController', function() {
             spyOn(stateTrackerService, 'goToPreviousState');
 
             key = 'key';
+            UuidGenerator.prototype.generate = function() {
+                return key;
+            };
 
             var canSubmit = true,
                 canAuthorize = false,
