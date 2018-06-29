@@ -295,6 +295,7 @@ describe('templateValidator', function() {
                     $dependentOn: ['stockOnHand'],
                     source: 'CALCULATED',
                     label: 'column',
+                    definition: '',
                     columnDefinition: {
                         sources: ['USER_INPUT', 'CALCULATED'],
                         options: []
@@ -340,6 +341,7 @@ describe('templateValidator', function() {
                     displayOrder: 5,
                     isDisplayed: false,
                     source: COLUMN_SOURCES.USER_INPUT,
+                    definition : "",
                     label: 'Stock on Hand',
                     columnDefinition: {
                         options: [],

@@ -118,7 +118,7 @@
         }
 
         function validateDefinition(definition) {
-            if (definition && definition.length > MAX_COLUMN_DESCRIPTION_LENGTH) {
+            if ((definition && definition.length > MAX_COLUMN_DESCRIPTION_LENGTH) || definition == undefined) {
                 return messageService.get('adminProgramTemplate.columnDescriptionTooLong');
             }
         }

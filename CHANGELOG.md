@@ -23,6 +23,7 @@ Bug fixes:
 * [OLMIS-4509](https://openlmis.atlassian.net/browse/OLMIS-4509): Fixed redirect to 404 when clicking proceed for requisition while offline
 * [OLMIS-4689](https://openlmis.atlassian.net/browse/OLMIS-4689): Fixed Total Cost was not updated based on Calc Order Qty ISA column
 * [OLMIS-4415](https://openlmis.atlassian.net/browse/OLMIS-4415): Fixed a bug with stock count days validation not updating correctly after failing to submit the form
+* [OLMIS-4719](https://openlmis.atlassian.net/browse/OLMIS-4719): Fix Requisition template definition field error when value exceeds max limit
 
 Improvements:
 * [OLMIS-4643](https://openlmis.atlassian.net/browse/OLMIS-4643): Added Jenkinsfile
