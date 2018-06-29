@@ -41,7 +41,8 @@
         authorizationService, $stateParams, periods, canInitiateRnr, UuidGenerator) {
 
         var vm = this,
-            key = new UuidGenerator().generate();
+            uuidGenerator = new UuidGenerator(),
+            key = uuidGenerator.generate();
 
         vm.$onInit = onInit;
         vm.loadPeriods = loadPeriods;
@@ -150,11 +151,12 @@
                 .catch(function() {
                     notificationService.error('requisitionInitiate.couldNotInitiateRequisition');
                     loadingModalService.close();
+                    key = uuidGenerator.generate();
                 });
             })
             .catch(function() {
                 notificationService.error('requisitionInitiate.noPermissionToInitiateRequisition');
-                loadingModalService.close();
+                loadingModalService.close(); 
             });
         }
 

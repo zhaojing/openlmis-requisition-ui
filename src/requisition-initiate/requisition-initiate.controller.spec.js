@@ -63,9 +63,9 @@ describe('RequisitionInitiateController', function(){
             spyOn(authorizationService, 'getUser').andReturn(user); 
 
             key = 'key';
-            UuidGenerator.prototype.generate = function() {
+            spyOn(UuidGenerator.prototype, 'generate').andCallFake(function() {
                 return key;
-            };
+            });
 
             vm = $injector.get('$controller')('RequisitionInitiateController', {
                 periods: periods,
@@ -157,6 +157,7 @@ describe('RequisitionInitiateController', function(){
         $rootScope.$apply();
 
         expect($state.go).not.toHaveBeenCalled();
+        expect(UuidGenerator.prototype.generate.calls.length).toEqual(2);
     });
 
     it('should open loading modal', function() {
