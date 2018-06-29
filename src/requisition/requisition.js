@@ -160,7 +160,7 @@
                 idempotencyKey: this.idempotencyKeys
             }, {}).$promise, function(authorized) {
                 updateRequisition(requisition, authorized);
-            });
+            }, handleFailure);
         }
 
         /**
@@ -180,7 +180,7 @@
                 idempotencyKey: this.idempotencyKey
             }).$promise, function() {
                 offlineRequisitions.removeBy('id', id);
-            });
+            }, handleFailure);
         }
 
         /**
@@ -225,7 +225,7 @@
                 idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(submitted) {
                 updateRequisition(requisition, submitted);
-            });
+            }, handleFailure);
         }
 
         /**
@@ -245,7 +245,7 @@
                 idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(approved) {
                 updateRequisition(requisition, approved);
-            });
+            }, handleFailure);
         }
 
         /**
@@ -265,7 +265,7 @@
                 idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(rejected) {
                 updateRequisition(requisition, rejected);
-            });
+            }, handleFailure);
         }
 
         /**
@@ -284,7 +284,7 @@
                 idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(requisition) {
                 offlineRequisitions.removeBy('id', requisition.id);
-            });
+            }, handleFailure);
         }
 
         /**
@@ -706,6 +706,12 @@
                 delete config.params.idempotencyKey;
                 return key;
             }
+        }
+
+        function handleFailure(data) {
+            if (data.status !== 409) {
+                getIdempotencyKey();
+            } 
         }
 
         function transformLineItem(lineItem, columns) {
