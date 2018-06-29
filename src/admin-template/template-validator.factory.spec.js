@@ -341,7 +341,7 @@ describe('templateValidator', function() {
                     displayOrder: 5,
                     isDisplayed: false,
                     source: COLUMN_SOURCES.USER_INPUT,
-                    definition : "",
+                    definition : '',
                     label: 'Stock on Hand',
                     columnDefinition: {
                         options: [],
