@@ -49,6 +49,9 @@
                 transformResponse: transformGetResponse
             },
             'initiate': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
                 url: requisitionUrlFactory('/api/requisitions/initiate'),
                 method: 'POST'
             },
@@ -173,14 +176,16 @@
          * @param  {String}  program         Program UUID
          * @param  {String}  suggestedPeriod Period UUID
          * @param  {Boolean} emergency       Indicates if requisition is emergency or not
+         * @param  {String}  key             Idempotency key for initiating requisition
          * @return {Promise}                 requisition promise
          */
-        function initiate(facility, program, suggestedPeriod, emergency) {
+        function initiate(facility, program, suggestedPeriod, emergency, key) {
             return resource.initiate({
                 facility: facility,
                 program: program,
                 suggestedPeriod: suggestedPeriod,
-                emergency: emergency
+                emergency: emergency,
+                idempotencyKey: key
             }, {}).$promise
             .then(function(requisition) {
                 filterRequisitionStockAdjustmentReasons(requisition);
@@ -450,6 +455,14 @@
                     hidden: '!true'
                 }
             );
+        }
+
+        function getIdempotencyKey(config) {
+            var key = config.params.idempotencyKey;
+            if (key) {
+                delete config.params.idempotencyKey;
+                return key;
+            }
         }
     }
 })();

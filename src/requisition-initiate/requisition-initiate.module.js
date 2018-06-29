@@ -33,6 +33,7 @@
         'openlmis-permissions',
         'openlmis-date',
         'openlmis-facility-program-select',
+        'openlmis-uuid',
         'referencedata-facility',
         'referencedata-period',
         'openlmis-form',

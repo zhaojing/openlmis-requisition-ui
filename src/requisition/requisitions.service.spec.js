@@ -16,10 +16,10 @@
 describe('requisitionService', function() {
 
     var $rootScope, httpBackend, requisitionService, dateUtils, q, allStatuses, $templateCache,
-        requisitionUrlFactory, openlmisUrl, requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate,
+        requisitionUrlFactory, requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate,
         endDate, startDate1, endDate1, modifiedDate, createdDate, processingSchedule, facility,
         program, period, emergency, requisition, requisitionDto, requisitionDto2, createdDate2,
-        requisitionToConvert, templateOffline, statusMessage, statusMessagesStorage,
+        requisitionToConvert,  statusMessage, statusMessagesStorage,
         reasonWithoutHidden, reasonNotHidden, reasonHidden, offlineService;
 
     beforeEach(function() {
@@ -130,7 +130,6 @@ describe('requisitionService', function() {
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
-            templateOffline = jasmine.createSpyObj('templates', ['put']);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
                 if (resourceName === 'offlineFlag') return offlineFlag;
                 if (resourceName === 'onlineOnly') return onlineOnlyRequisitions;
@@ -152,7 +151,6 @@ describe('requisitionService', function() {
             dateUtils = $injector.get('dateUtils');
             q = $injector.get('$q');
             requisitionUrlFactory = $injector.get('requisitionUrlFactory');
-            openlmisUrl = $injector.get('openlmisUrlFactory');
             offlineService = $injector.get('offlineService');
             $templateCache = $injector.get('$templateCache');
 
