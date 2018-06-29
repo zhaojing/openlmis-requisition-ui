@@ -33,14 +33,15 @@
     RequisitionInitiateController.$inject = [
         'messageService', 'requisitionService', '$state', 'loadingModalService',
         'notificationService', 'REQUISITION_RIGHTS', 'permissionService', 'authorizationService',
-        '$stateParams', 'periods', 'canInitiateRnr'
+        '$stateParams', 'periods', 'canInitiateRnr', 'UuidGenerator'
     ];
 
     function RequisitionInitiateController(messageService, requisitionService, $state,
         loadingModalService, notificationService, REQUISITION_RIGHTS, permissionService,
-        authorizationService, $stateParams, periods, canInitiateRnr) {
+        authorizationService, $stateParams, periods, canInitiateRnr, UuidGenerator) {
 
-        var vm = this;
+        var vm = this,
+            key = new UuidGenerator().generate();
 
         vm.$onInit = onInit;
         vm.loadPeriods = loadPeriods;
@@ -142,7 +143,7 @@
                 facilityId: vm.facility.id
             })
             .then(function() {
-                requisitionService.initiate(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency)
+                requisitionService.initiate(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency, key)
                 .then(function(data) {
                     vm.goToRequisition(data.id);
                 })

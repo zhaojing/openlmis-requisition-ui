@@ -38,6 +38,7 @@
         'openlmis-urls',
         'openlmis-auth',
         'openlmis-main-state',
+        'openlmis-uuid',
         'referencedata-facility',
         'referencedata-program',
         'referencedata-period',

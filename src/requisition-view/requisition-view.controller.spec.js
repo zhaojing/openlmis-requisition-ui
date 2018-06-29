@@ -20,7 +20,7 @@ describe('RequisitionViewController', function() {
         loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
         fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
         accessTokenFactorySpy, $window, stateTrackerService, messageService,
-        RequisitionStockCountDateModal, RequisitionWatcher, watcher, key, UuidGenerator;
+        RequisitionStockCountDateModal, RequisitionWatcher, watcher;
 
     beforeEach(function() {
         module('requisition-view');
@@ -87,7 +87,6 @@ describe('RequisitionViewController', function() {
             loadingModalService = $injector.get('loadingModalService');
             stateTrackerService = $injector.get('stateTrackerService');
             messageService = $injector.get('messageService');
-            UuidGenerator = $injector.get('UuidGenerator');
 
             confirmService.confirm.andCallFake(function() {
                 return $q.when(true);
@@ -114,11 +113,6 @@ describe('RequisitionViewController', function() {
             requisition.$save.andReturn(deferred.promise);
             requisition.$authorize.andReturn(deferred.promise);
             spyOn(stateTrackerService, 'goToPreviousState');
-
-            key = 'key';
-            UuidGenerator.prototype.generate = function() {
-                return key;
-            };
 
             var canSubmit = true,
                 canAuthorize = false,
@@ -369,16 +363,6 @@ describe('RequisitionViewController', function() {
             RequisitionStockCountDateModal.andReturn($q.when());
         });
 
-        it('should set idempotencyKey', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
-
-            vm.authorizeRnr();
-            $scope.$apply();
-
-            expect(requisition.idempotencyKey).toEqual(key);
-        });
-
         it('should redirect to previous state', function() {
             authorizationServiceSpy.hasRight.andReturn(false);
             spyOn($state, 'go');
@@ -445,16 +429,6 @@ describe('RequisitionViewController', function() {
             RequisitionStockCountDateModal.andReturn($q.when());
         });
 
-        it('should set idempotencyKey', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
-
-            vm.submitRnr();
-            $scope.$apply();
-
-            expect(requisition.idempotencyKey).toEqual(key);
-        });
-
         it('should redirect to previous state', function() {
             authorizationServiceSpy.hasRight.andReturn(false);
             spyOn($state, 'go');
@@ -500,16 +474,6 @@ describe('RequisitionViewController', function() {
             requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
         });
 
-        it('should set idempotencyKey', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
-
-            vm.removeRnr();
-            $scope.$apply();
-
-            expect(requisition.idempotencyKey).toEqual(key);
-        });
-
         it('should redirect to previous state', function() {
             authorizationServiceSpy.hasRight.andReturn(false);
             spyOn($state, 'go');
@@ -537,16 +501,6 @@ describe('RequisitionViewController', function() {
 
             requisitionValidatorMock.validateRequisition.andReturn(true);
             requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
-        });
-
-        it('should set idempotencyKey', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
-
-            vm.approveRnr();
-            $scope.$apply();
-
-            expect(requisition.idempotencyKey).toEqual(key);
         });
 
         it('should redirect to previous state', function() {
@@ -591,14 +545,6 @@ describe('RequisitionViewController', function() {
 
             requisitionValidatorMock.validateRequisition.andReturn(true);
             requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
-        });
-
-        it('should set idempotencyKey', function() {
-            vm.rejectRnr();
-            confirmDeferred.resolve();
-            $scope.$apply();
-
-            expect(requisition.idempotencyKey).toEqual(key);
         });
 
         it('should save requisition before rejecting', function() {

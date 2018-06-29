@@ -29,15 +29,15 @@
         .factory('Requisition', requisitionFactory);
 
     requisitionFactory.$inject = [
-        '$q', '$resource', 'requisitionUrlFactory', 'RequisitionTemplate',
-        'LineItem', 'REQUISITION_STATUS', 'COLUMN_SOURCES', 'localStorageFactory',
-        'dateUtils', '$filter', 'TEMPLATE_COLUMNS', 'authorizationService', 'REQUISITION_RIGHTS'
+        '$q', '$resource', 'requisitionUrlFactory', 'RequisitionTemplate', 'LineItem', 
+        'REQUISITION_STATUS', 'COLUMN_SOURCES', 'localStorageFactory', 'dateUtils', '$filter', 
+        'TEMPLATE_COLUMNS', 'authorizationService', 'REQUISITION_RIGHTS', 'UuidGenerator'
     ];
 
     function requisitionFactory($q, $resource, requisitionUrlFactory,
                                 RequisitionTemplate, LineItem, REQUISITION_STATUS, COLUMN_SOURCES,
                                 localStorageFactory, dateUtils, $filter, TEMPLATE_COLUMNS,
-                                authorizationService, REQUISITION_RIGHTS) {
+                                authorizationService, REQUISITION_RIGHTS, UuidGenerator) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
             resource = $resource(requisitionUrlFactory('/api/requisitions/:id'), {}, {
@@ -137,6 +137,10 @@
             });
 
             this.$isEditable = isEditable(this);
+
+            if (!this.idempotencyKey) {
+                generateIdempotencyKey(this);
+            }
         }
 
         /**
@@ -153,7 +157,7 @@
             var requisition = this;
             return handlePromise(resource.authorize({
                 id: this.id,
-                idempotencyKey: this.idempotencyKey
+                idempotencyKey: this.idempotencyKeys
             }, {}).$promise, function(authorized) {
                 updateRequisition(requisition, authorized);
             });
@@ -622,6 +626,8 @@
                 populateApprovedQuantity(requisition);
             }
 
+            generateIdempotencyKey(requisition);
+
             saveToStorage(requisition, availableOffline);
         }
 
@@ -696,8 +702,10 @@
 
         function getIdempotencyKey(config) {
             var key = config.params.idempotencyKey;
-            delete config.params.idempotencyKey;
-            return key;
+            if (key) {
+                delete config.params.idempotencyKey;
+                return key;
+            }
         }
 
         function transformLineItem(lineItem, columns) {
@@ -713,6 +721,11 @@
                 programId: requisition.program.id,
                 facilityId: requisition.facility.id
             });
+        }
+
+        function generateIdempotencyKey(requisition) {
+            var newId = new UuidGenerator().generate();
+            requisition.idempotencyKey = newId;
         }
     }
 
