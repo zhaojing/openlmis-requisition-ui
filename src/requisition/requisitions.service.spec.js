@@ -318,7 +318,7 @@ describe('requisitionService', function() {
         }));
     });
 
-    it('should convert requisitions', function() {
+    it('should release a batch of requisitions with order', function() {
         var callback = jasmine.createSpy();
 
         httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/batchReleases'))
@@ -327,6 +327,24 @@ describe('requisitionService', function() {
         });
 
         requisitionService.convertToOrder([{requisition: requisition}]).then(callback);
+
+        $rootScope.$apply();
+        httpBackend.flush();
+        $rootScope.$apply();
+
+        expect(callback).toHaveBeenCalled();
+        expect(requisitionsStorage.removeBy).toHaveBeenCalledWith('id', '1');
+    });
+
+    it('should release a batch of requisitions without order', function() {
+        var callback = jasmine.createSpy();
+
+        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/batchReleases'))
+            .respond(function(method, url, data){
+                return [200, angular.toJson({})];
+            });
+
+        requisitionService.releaseWithoutOrder([{requisition: requisition}]).then(callback);
 
         $rootScope.$apply();
         httpBackend.flush();
