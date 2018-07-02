@@ -157,7 +157,7 @@
             var requisition = this;
             return handlePromise(resource.authorize({
                 id: this.id,
-                idempotencyKey: this.idempotencyKeys
+                idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(authorized) {
                 updateRequisition(requisition, authorized);
             }, handleFailure);
