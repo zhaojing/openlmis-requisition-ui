@@ -55,6 +55,7 @@
 				requisitions: function(paginationService, requisitionService, $stateParams) {
 					return paginationService.registerUrl($stateParams, function(stateParams) {
 						if (stateParams.facility) {
+							delete stateParams.offline;
 							return requisitionService.search(stateParams.offline === 'true', stateParams);
 						}
 						return undefined;
