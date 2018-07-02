@@ -282,7 +282,7 @@
          */
         function convertToOrder(requisitions) {
             var promise = resource.batchRelease({createOrder: true, requisitions: requisitions}).$promise;
-            promise.then(function(response) {
+            promise.then(function() {
                 angular.forEach(requisitions, function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
                 });
@@ -302,7 +302,7 @@
          */
         function releaseWithoutOrder(requisitions) {
             var promise = resource.batchRelease({createOrder: false, requisitions: requisitions}).$promise;
-            promise.then(function(response) {
+            promise.then(function() {
                 angular.forEach(requisitions, function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
                 });
