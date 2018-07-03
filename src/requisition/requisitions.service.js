@@ -278,12 +278,14 @@
          * @description
          * Converts given requisitions into orders.
          *
-         * @param {Array} requisitions Array of requisitions to convert
+         * @param {Array}    requisitions Array of requisitions to convert
+         * @return {Promise} requisitions processing status
          */
         function convertToOrder(requisitions) {
-            var promise = resource.batchRelease({createOrder: true, requisitions: requisitions}).$promise;
+            var promise = resource.batchRelease(
+                {createOrder: true, requisitions: requisitions}).$promise;
             promise.then(function() {
-                angular.forEach(requisitions, function(requisition) {
+                requisitions.forEach(function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
                 });
             });
@@ -298,12 +300,14 @@
          * @description
          * Release given requisitions without orders.
          *
-         * @param {Array} requisitions Array of requisitions release
+         * @param {Array}    requisitions Array of requisitions release
+         * @return {Promise} requisitions processing status
          */
         function releaseWithoutOrder(requisitions) {
-            var promise = resource.batchRelease({createOrder: false, requisitions: requisitions}).$promise;
+            var promise = resource.batchRelease(
+                {createOrder: false, requisitions: requisitions}).$promise;
             promise.then(function() {
-                angular.forEach(requisitions, function(requisition) {
+                requisitions.forEach(function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
                 });
             });
@@ -355,7 +359,7 @@
                 createOrder: request.createOrder,
                 requisitionsToRelease: []
             };
-            angular.forEach(request.requisitions, function(requisitionWithDepots) {
+            request.requisitions.forEach(function(requisitionWithDepots) {
                 body.requisitionsToRelease.push({
                     requisitionId: requisitionWithDepots.requisition.id,
                     supplyingDepotId: requisitionWithDepots.requisition.supplyingFacility
