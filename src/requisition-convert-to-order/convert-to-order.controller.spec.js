@@ -15,8 +15,8 @@
 
 describe('ConvertToOrderController', function(){
 
-    var vm, $rootScope, $q, $stateParams, requisitionService, notificationService,
-        requisitions, supplyingDepots, stateParams;
+    var vm, $rootScope, $q, $state, requisitionService, notificationService,
+        requisitions, supplyingDepots, stateParams, key, UuidGenerator;
 
     beforeEach( function() {
         module('requisition-convert-to-order');
@@ -27,6 +27,12 @@ describe('ConvertToOrderController', function(){
             requisitionService = $injector.get('requisitionService');
             notificationService = $injector.get('notificationService');
             $state = $injector.get('$state');
+            UuidGenerator = $injector.get('UuidGenerator');
+
+            key = 'key';
+            spyOn(UuidGenerator.prototype, 'generate').andCallFake(function() {
+                return key;
+            });
 
             stateParams = {
                 filterBy: 'all',
@@ -195,7 +201,7 @@ describe('ConvertToOrderController', function(){
 
             expect(requisitionService.convertToOrder).toHaveBeenCalledWith([
                 vm.requisitions[0]
-            ]);
+            ], key);
         });
 
         it('should show alert if convert passed', function() {
@@ -332,8 +338,8 @@ describe('ConvertToOrderController', function(){
             $rootScope.$apply();
 
             expect(requisitionService.releaseWithoutOrder).toHaveBeenCalledWith([
-                                                                               vm.requisitions[0]
-                                                                           ]);
+                vm.requisitions[0]
+            ], key);
         });
 
         it('should show alert if release without order passed', function() {

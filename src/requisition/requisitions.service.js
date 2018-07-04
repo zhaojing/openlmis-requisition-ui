@@ -71,6 +71,9 @@
                 transformResponse: transformResponseForConvert
             },
             'batchRelease': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
                 url: requisitionUrlFactory('/api/requisitions/batchReleases'),
                 method: 'POST',
                 transformRequest: transformRequest
@@ -278,18 +281,23 @@
          * @description
          * Converts given requisitions into orders.
          *
-         * @param {Array}    requisitions Array of requisitions to convert
-         * @return {Promise} requisitions processing status
+         * @param  {Array}   requisitions Array of requisitions to convert
+         * @param  {String}  key          Idempotency key for request
+         * @return {Promise}              requisitions processing status
          */
-        function convertToOrder(requisitions) {
-            var promise = resource.batchRelease(
-                {createOrder: true, requisitions: requisitions}).$promise;
-            promise.then(function() {
+        function convertToOrder(requisitions, key) {
+            return resource.batchRelease({
+                idempotencyKey: key
+            },
+            {
+                createOrder: true, 
+                requisitions: requisitions
+            }).$promise
+            .then(function() {
                 requisitions.forEach(function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
                 });
             });
-            return promise;
         }
 
         /**
@@ -300,18 +308,23 @@
          * @description
          * Release given requisitions without orders.
          *
-         * @param {Array}    requisitions Array of requisitions release
-         * @return {Promise} requisitions processing status
+         * @param  {Array}   requisitions Array of requisitions release
+         * @param  {String}  key          Idempotency key for request
+         * @return {Promise}              requisitions processing status
          */
-        function releaseWithoutOrder(requisitions) {
-            var promise = resource.batchRelease(
-                {createOrder: false, requisitions: requisitions}).$promise;
-            promise.then(function() {
+        function releaseWithoutOrder(requisitions, key) {
+            return resource.batchRelease({
+                idempotencyKey: key
+            }, 
+            {
+                createOrder: false, 
+                requisitions: requisitions
+            }).$promise
+            .then(function() {
                 requisitions.forEach(function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
                 });
             });
-            return promise;
         }
 
 

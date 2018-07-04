@@ -32,13 +32,15 @@
 
 	ConvertToOrderController.$inject = [
         '$stateParams', 'requisitionsForConvertFactory', 'notificationService',
-        'confirmService', 'loadingModalService', 'requisitions', '$state'
+        'confirmService', 'loadingModalService', 'requisitions', '$state', 'UuidGenerator'
     ];
 
 	function ConvertToOrderController($stateParams, requisitionsForConvertFactory, notificationService,
-                                confirmService, loadingModalService, requisitions, $state) {
+                                confirmService, loadingModalService, requisitions, $state, UuidGenerator) {
 
-	    var vm = this;
+        var vm = this,
+            uuidGenerator = new UuidGenerator(),
+            key = uuidGenerator.generate();
 
         vm.convertToOrder = convertToOrder;
         vm.releaseWithoutOrder = releaseWithoutOrder;
@@ -223,36 +225,7 @@
          * Responsible for converting selected requisitions to orders.
          */
         function convertToOrder() {
-            var requisitions = getSelected();
-            if (requisitions.length > 0) {
-                var missingDepots = requisitions
-                    .filter(function(item) {
-                                return !item.requisition.supplyingFacility
-                            }
-                    );
-                if (missingDepots.length > 0) {
-                    notificationService.error('requisitionConvertToOrder.noSupplyingDepotSelected');
-                } else {
-                    confirmService.confirm('requisitionConvertToOrder.convertToOrder.confirm')
-                        .then(function() {
-                            var loadingPromise = loadingModalService.open();
-                            requisitionsForConvertFactory.convertToOrder(requisitions)
-                                .then(function() {
-                                    loadingPromise.then(function() {
-                                        notificationService.success(
-                                            'requisitionConvertToOrder.convertToOrder.success');
-                                    });
-                                    $state.reload();
-                                }, function() {
-                                    loadingModalService.close();
-                                    notificationService.error(
-                                        'requisitionConvertToOrder.errorOccurred');
-                                });
-                        });
-                }
-            } else {
-                notificationService.error('requisitionConvertToOrder.selectAtLeastOneRnr');
-            }
+            release(true);
         }
 
         /**
@@ -264,38 +237,7 @@
          * Responsible for releasing selected requisitions without creating orders.
          */
         function releaseWithoutOrder() {
-            var requisitions = getSelected();
-            if (requisitions.length > 0) {
-                var missingDepots = requisitions
-                    .filter(function(item) {
-                                return !item.requisition.supplyingFacility
-                            }
-                    );
-                if (missingDepots.length > 0) {
-                    notificationService.error('requisitionConvertToOrder.noSupplyingDepotSelected');
-                } else {
-                    confirmService.confirm('requisitionConvertToOrder.releaseWithoutOrder.confirm')
-                        .then(function() {
-                            var loadingPromise = loadingModalService.open();
-                            requisitionsForConvertFactory
-                                .releaseWithoutOrder(requisitions)
-                                .then(function() {
-                                    loadingPromise.then(function() {
-                                        notificationService
-                                            .success(
-                                                'requisitionConvertToOrder.releaseWithoutOrder.success');
-                                    });
-                                    $state.reload();
-                                }).catch(function() {
-                                loadingModalService.close();
-                                notificationService.error(
-                                    'requisitionConvertToOrder.errorOccurred');
-                            });
-                        });
-                }
-            } else {
-                notificationService.error('requisitionConvertToOrder.selectAtLeastOneRnr');
-            }
+            release(false);
         }
 
         /**
@@ -375,7 +317,46 @@
 			$state.go('openlmis.requisitions.convertToOrder', stateParams, {
 				reload: true
 			});
-		}
+        }
+        
+        function release(withOrder) {
+            var requisitions = getSelected();
+            if (requisitions.length > 0) {
+                var missingDepots = requisitions
+                    .filter(function(item) {
+                        return !item.requisition.supplyingFacility;
+                    });
+                if (missingDepots.length > 0) {
+                    notificationService.error('requisitionConvertToOrder.noSupplyingDepotSelected');
+                } else {
+                    confirmService.confirm(withOrder ? 
+                        'requisitionConvertToOrder.convertToOrder.confirm' :
+                        'requisitionConvertToOrder.releaseWithoutOrder.confirm')
+                    .then(function() {
+                        loadingModalService.open();
+
+                        var promise = withOrder ? 
+                            requisitionsForConvertFactory.convertToOrder(requisitions, key) : 
+                            requisitionsForConvertFactory.releaseWithoutOrder(requisitions, key);
+
+                        promise
+                        .then(function() {
+                            notificationService.success(withOrder ? 
+                                'requisitionConvertToOrder.convertToOrder.success' : 
+                                'requisitionConvertToOrder.releaseWithoutOrder.success');
+                            $state.reload();
+                        })
+                        .catch(function() {
+                            loadingModalService.close();
+                            notificationService.error('requisitionConvertToOrder.errorOccurred');
+                            key = uuidGenerator.generate();
+                        });
+                    });
+                }
+            } else {
+                notificationService.error('requisitionConvertToOrder.selectAtLeastOneRnr');
+            }
+        }
 	}
 
 })();
