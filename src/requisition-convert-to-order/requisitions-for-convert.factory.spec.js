@@ -29,6 +29,7 @@ describe('requisitionsForConvertFactory', function() {
 
         spyOn(requisitionService, 'forConvert');
         spyOn(requisitionService, 'convertToOrder').andReturn($q.resolve());
+        spyOn(requisitionService, 'releaseWithoutOrder').andReturn($q.resolve());
     });
 
     describe('forConvert', function() {
@@ -612,6 +613,104 @@ describe('requisitionsForConvertFactory', function() {
             });
         });
 
+    });
+
+    describe('releaseWithoutOrder interactions with forConvert', function(){
+
+        it('should cause forConvert make a request if there is not enough data cached', function() {
+            requisitionService.forConvert.andReturn($q.resolve({
+                                                                   first: true,
+                                                                   last: false,
+                                                                   number: 0,
+                                                                   size: 20,
+                                                                   numberOfElements: 20,
+                                                                   totalElements: 60,
+                                                                   totalPages: 3,
+                                                                   content: createDummyRequisitionsWithDates(20)
+                                                               }));
+
+            requisitionsForConvertFactory.forConvert({
+                                                         page: 0,
+                                                         size: 10
+                                                     });
+            $rootScope.$apply();
+
+            requisitionsForConvertFactory.forConvert({
+                                                         page: 1,
+                                                         size: 10
+                                                     });
+            $rootScope.$apply();
+            expect(requisitionService.forConvert.calls.length).toBe(1);
+
+            requisitionsForConvertFactory.releaseWithoutOrder([createDummyRequisitionWithDate(19)]);
+            $rootScope.$apply();
+
+            requisitionService.forConvert.andReturn($q.resolve({
+                                                                   first: true,
+                                                                   last: false,
+                                                                   number: 0,
+                                                                   size: 30,
+                                                                   numberOfElements: 30,
+                                                                   totalElements: 59,
+                                                                   totalPages: 2,
+                                                                   content: createDummyRequisitionsWithDates(30)
+                                                               }));
+
+            requisitionsForConvertFactory.forConvert({
+                                                         page: 1,
+                                                         size: 10
+                                                     });
+            $rootScope.$apply();
+
+            expect(requisitionService.forConvert.calls.length).toBe(2);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                                                                           size: 20,
+                                                                           page: 0
+                                                                       });
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                                                                           size: 30,
+                                                                           page: 0
+                                                                       });
+        });
+
+        it('should cause forConvert return cached data if there is enough', function() {
+            requisitionService.forConvert.andReturn($q.resolve({
+                                                                   first: true,
+                                                                   last: false,
+                                                                   number: 0,
+                                                                   size: 20,
+                                                                   numberOfElements: 20,
+                                                                   totalElements: 60,
+                                                                   totalPages: 3,
+                                                                   content: createDummyRequisitionsWithDates(20)
+                                                               }));
+
+            requisitionsForConvertFactory.forConvert({
+                                                         page: 0,
+                                                         size: 10
+                                                     });
+            $rootScope.$apply();
+
+            requisitionsForConvertFactory.releaseWithoutOrder(createDummyRequisitionsWithDates(10));
+            $rootScope.$apply();
+
+            var result;
+            requisitionsForConvertFactory.forConvert({
+                                                         page: 0,
+                                                         size: 10
+                                                     })
+                .then(function(response) {
+                    result = response;
+                });
+            $rootScope.$apply();
+
+            expect(result.content).toEqual(createDummyRequisitionsWithDates(10, 10));
+            expect(requisitionService.forConvert.calls.length).toBe(1);
+            expect(requisitionService.forConvert).toHaveBeenCalledWith({
+                                                                           size: 20,
+                                                                           page: 0
+                                                                       });
+        });
     });
 
     describe('convertToOrder interaction with forConvert', function() {
