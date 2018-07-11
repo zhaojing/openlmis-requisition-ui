@@ -20,6 +20,7 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-3162](https://openlmis.atlassian.net/browse/OLMIS-3162): _Initiate Requisition_ screen will now only use _periodsForInitiate_ endpoint to determine available periods and not additionally search for requisitions.
 * [OLMIS-4865](https://openlmis.atlassian.net/browse/OLMIS-4865): Added new functionality on convert to order page to release requisitions without order.
 * [OLMIS-4958](https://openlmis.atlassian.net/browse/OLMIS-4958): Convert requisition to order updated to use batchReleases resource.
+* [OLMIS-4982](https://openlmis.atlassian.net/browse/OLMIS-4982): Give visual indicator that requisition is report-only.
 
 Bug fixes:
 * [OLMIS-4509](https://openlmis.atlassian.net/browse/OLMIS-4509): Fixed redirect to 404 when clicking proceed for requisition while offline

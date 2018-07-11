@@ -27,6 +27,7 @@
     "requisitionView.reject.success": "Requisition has been rejected!",
     "requisitionView.reportAndRequisitionFor": "Report and Requisition for",
     "requisitionView.reportingPeriod": "Reporting period",
+    "requisitionView.reportOnly": "Report Only",
     "requisitionView.rnrHasErrors": "R&R has errors, please correct them to proceed.",
     "requisitionView.skip.confirm": "Are you sure you want to skip this requisition?",
     "requisitionView.skip.failure": "Failed to skip requisition!",

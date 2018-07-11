@@ -40,4 +40,8 @@
         background-color: $brand-danger;
         color: $white;
     }
+
+    &.report-only {
+        background-color: $brand-warning;
+    }
 }

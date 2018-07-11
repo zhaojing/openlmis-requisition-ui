@@ -176,7 +176,35 @@ describe('RequisitionViewController', function() {
             expect(vm.displaySubmitButton).toBe(false);
         });
 
+        it('should set requisition type label and class for regular requisition', function() {
+            vm.requisition.emergency = false;
+            vm.requisition.reportOnly = false;
 
+            vm.$onInit();
+
+            expect(vm.requisitionType).toBe('requisitionView.regular');
+            expect(vm.requisitionTypeClass).toBe('regular');
+        });
+
+        it('should set requisition type label and class for emergency requisition', function() {
+            vm.requisition.emergency = true;
+            vm.requisition.reportOnly = true;
+
+            vm.$onInit();
+
+            expect(vm.requisitionType).toBe('requisitionView.emergency');
+            expect(vm.requisitionTypeClass).toBe('emergency');
+        });
+
+        it('should set requisition type label and class for report-only requisition', function() {
+            vm.requisition.emergency = false;
+            vm.requisition.reportOnly = true;
+
+            vm.$onInit();
+
+            expect(vm.requisitionType).toBe('requisitionView.reportOnly');
+            expect(vm.requisitionTypeClass).toBe('report-only');
+        });
     });
 
     it('should display message when successfully skipped requisition', function() {
