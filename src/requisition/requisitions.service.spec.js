@@ -168,7 +168,6 @@ describe('requisitionService', function() {
             headers = { 'eTag': 'W/1' };
 
         beforeEach(function() {
-            var getRequisitionUrl = '/api/requisitions/' + requisition.id;
             var getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
 
             getRequisitionUrl = '/api/requisitions/' + requisition.id;
