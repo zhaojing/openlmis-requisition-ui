@@ -73,6 +73,7 @@
             this.supplyingFacility = 'supplying-facility-id-' + instanceNumber;
             this.supervisoryNode = 'supervisory-node-id-' + instanceNumber;
             this.template = new RequisitionTemplateDataBuilder().buildJson();
+            this.eTag = 'W/1';
 
             var programs = [
                 new ProgramOrderableDataBuilder()
@@ -155,7 +156,8 @@
                 statusChange: builder.statusChange,
                 statusHistory: builder.statusHistory,
                 datePhysicalStockCountCompleted: builder.datePhysicalStockCountCompleted,
-                stockAdjustmentReasons: builder.stockAdjustmentReasons
+                stockAdjustmentReasons: builder.stockAdjustmentReasons,
+                eTag: builder.eTag
             };
         }
 

@@ -1,3 +1,9 @@
+5.3.2 / WIP
+===========
+
+New functionality added in a backwards-compatible manner:
+* [OLMIS-4927](https://openlmis.atlassian.net/browse/OLMIS-4927): Added If-Match header to the requisition save request.
+
 5.3.1 / 2018-04-27
 ==================
 

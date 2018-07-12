@@ -47,6 +47,9 @@
             },
             'save': {
                 method: 'PUT',
+                headers: {
+                    'If-Match': getETag
+                },
                 transformRequest: transformRequisition
             },
             'submit': {
@@ -666,6 +669,9 @@
             return angular.toJson(requestBody);
         }
 
+        function getETag(config) {
+            return config.data.eTag;
+        }
 
         function transformLineItem(lineItem, columns) {
             angular.forEach(columns, function(column) {
