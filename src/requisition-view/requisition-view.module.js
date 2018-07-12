@@ -24,6 +24,7 @@
      * Responsible for requisition view screen.
      */
     angular.module('requisition-view', [
+        'openlmis-form',
         'openlmis-templates',
         'openlmis-i18n',
         'openlmis-state-tracker',

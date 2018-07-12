@@ -3,6 +3,7 @@
 
 New functionality added in a backwards-compatible manner:
 * [OLMIS-4927](https://openlmis.atlassian.net/browse/OLMIS-4927): Added If-Match header to the requisition save request.
+* [OLMIS-4935](https://openlmis.atlassian.net/browse/OLMIS-4935): Added Idempotency-Key header to the requisition submit, authorize, approve, reject and skip requests.
 
 5.3.1 / 2018-04-27
 ==================
