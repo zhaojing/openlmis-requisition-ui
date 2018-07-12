@@ -370,7 +370,7 @@ describe('Requisition', function() {
         });
     });
 
-    describe('reject', function() {
+    describe('skip', function() {
 
         it('should skip requisition', function() {
             var data;
@@ -385,6 +385,25 @@ describe('Requisition', function() {
             $httpBackend.flush();
             $rootScope.$apply();
     
+            expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
+        });
+    });
+
+    describe('remove', function() {
+
+        it('should remove requisition', function() {
+            var data;
+
+            $httpBackend.when('DELETE', requisitionUrlFactory('/api/requisitions/' + requisition.id))
+            .respond(200, requisition);
+    
+            requisition.$remove().then(function(response) {
+                data = response;
+            });
+    
+            $httpBackend.flush();
+            $rootScope.$apply();
+
             expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
         });
     });
