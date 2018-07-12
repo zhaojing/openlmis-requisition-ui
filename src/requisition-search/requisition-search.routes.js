@@ -41,7 +41,7 @@
 				user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-		        facilities: function (facilityFactory, user, $q, alertService) {
+		        facilities: function (facilityFactory, user, $q) {
 					var deferred = $q.defer();
 
 					facilityFactory.getAllUserFacilities(user.user_id).then(function(response) {
