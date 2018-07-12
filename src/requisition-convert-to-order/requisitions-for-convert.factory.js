@@ -83,13 +83,14 @@
          * Converts the the given list of requisitions to orders. Every requisition that is
          * converted will be removed from the cache and the stored page will be shrunk.
          *
-         * @param  {Array}      requisitions    the list of arrays to be converted to order
-         * @return {Promise}                    the promise resolved when the requisitions hass been
-         *                                      successfully converted to order
+         * @param  {Array}   requisitions the list of arrays to be converted to order
+         * @param  {String}  key          Idempotency key for request
+         * @return {Promise}              the promise resolved when the requisitions hass been
+         *                                successfully converted to order
          */
-        function convertToOrder(requisitions) {
+        function convertToOrder(requisitions, key) {
             var lastPage = this.lastPage;
-            return requisitionService.convertToOrder(requisitions)
+            return requisitionService.convertToOrder(requisitions, key)
             .then(function() {
                 removeConvertedRequisitions(requisitions, lastPage);
             });

@@ -71,6 +71,9 @@
                 transformResponse: transformResponseForConvert
             },
             'convertToOrder': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
                 url: requisitionUrlFactory('/api/requisitions/convertToOrder'),
                 method: 'POST',
                 transformRequest: transformRequest
@@ -286,16 +289,18 @@
          * @description
          * Converts given requisitions into orders.
          *
-         * @param {Array} requisitions Array of requisitions to convert
+         * @param {Array}  requisitions Array of requisitions to convert
+         * @param {String} key          Idempotency key for request
          */
-        function convertToOrder(requisitions) {
-            var promise = resource.convertToOrder(requisitions).$promise;
-            promise.then(function(response) {
-                angular.forEach(requisitions, function(requisition) {
+        function convertToOrder(requisitions, key) {
+            return resource.convertToOrder({
+                idempotencyKey: key
+            }, requisitions).$promise
+            .then(function(response) {
+                requisitions.forEach(function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
                 });
             });
-            return promise;
         }
 
         /**

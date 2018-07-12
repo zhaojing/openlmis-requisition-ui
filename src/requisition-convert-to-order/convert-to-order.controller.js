@@ -32,13 +32,15 @@
 
 	ConvertToOrderController.$inject = [
         '$stateParams', 'requisitionsForConvertFactory', 'notificationService',
-        'confirmService', 'loadingModalService', 'requisitions', '$state'
+        'confirmService', 'loadingModalService', 'requisitions', '$state', 'UuidGenerator'
     ];
 
 	function ConvertToOrderController($stateParams, requisitionsForConvertFactory, notificationService,
-                                confirmService, loadingModalService, requisitions, $state) {
+                                confirmService, loadingModalService, requisitions, $state, UuidGenerator) {
 
-	    var vm = this;
+        var vm = this,
+            uuidGenerator = new UuidGenerator(),
+            key = uuidGenerator.generate();
 
         vm.convertToOrder = convertToOrder;
         vm.getSelected = getSelected;
@@ -232,7 +234,7 @@
                 if (!missedDepots) {
                     confirmService.confirm('requisitionConvertToOrder.convertToOrder.confirm').then(function() {
                         var loadingPromise = loadingModalService.open();
-                        requisitionsForConvertFactory.convertToOrder(requisitions).then(function() {
+                        requisitionsForConvertFactory.convertToOrder(requisitions, key).then(function() {
                             loadingPromise.then(function() {
                                 notificationService.success('requisitionConvertToOrder.convertToOrder.success');
                             });
@@ -240,6 +242,7 @@
                         }, function() {
                             loadingModalService.close();
                             notificationService.error('requisitionConvertToOrder.errorOccurred');
+                            key = uuidGenerator.generate();
                         });
                     });
                 }
