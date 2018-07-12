@@ -296,7 +296,7 @@
             return resource.convertToOrder({
                 idempotencyKey: key
             }, requisitions).$promise
-            .then(function(response) {
+            .then(function() {
                 requisitions.forEach(function(requisition) {
                     offlineRequisitions.removeBy('id', requisition.requisition.id);
                 });
