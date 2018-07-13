@@ -471,7 +471,7 @@
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$save().then(function() {
                     vm.requisition.$reject()
-                    .then(function(response) {
+                    .then(function() {
                         watcher.disableWatcher();
                         loadingPromise.then(function() {
                             notificationService.success('requisitionView.reject.success');
