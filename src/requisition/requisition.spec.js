@@ -191,6 +191,23 @@ describe('Requisition', function() {
             expect(requisition.$isSubmitted()).toBe(true);
             expect(offlineRequisitions.put).not.toHaveBeenCalled();
         });
+
+        it('should not submit requisition if request fails', function() {
+            expect(requisition.$isSubmitted()).toBe(false);
+    
+            requisition.status = REQUISITION_STATUS.SUBMITTED;
+    
+            $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/submit'))
+            .respond(500);
+    
+            var spy = jasmine.createSpy();
+            requisition.$submit().then(spy);
+    
+            $httpBackend.flush();
+            $rootScope.$apply();
+    
+            expect(spy).not.toHaveBeenCalled();
+        });
     });
 
     describe('authorize', function() {
@@ -301,6 +318,21 @@ describe('Requisition', function() {
             expect(requisition.requisitionLineItems[0].approvedQuantity).toBe(requisition.requisitionLineItems[0].requestedQuantity);
             expect(requisition.requisitionLineItems[1].approvedQuantity).toBe(requisition.requisitionLineItems[1].requestedQuantity);
         });    
+
+        it('should not authorize requisition if request fails', function() {
+            requisition.status = REQUISITION_STATUS.AUTHORIZED;
+    
+            $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/authorize'))
+                .respond(500);
+    
+            var spy = jasmine.createSpy();
+            requisition.$authorize().then(spy);
+    
+            $httpBackend.flush();
+            $rootScope.$apply();
+    
+            expect(spy).not.toHaveBeenCalled();
+        });
     });
     
     describe('approve', function() {
@@ -349,6 +381,21 @@ describe('Requisition', function() {
             expect(requisition.$isApproved()).toBe(true);
             expect(offlineRequisitions.put).not.toHaveBeenCalled();
         });
+
+        it('should not approve requisition if request fails', function() {
+            requisition.status = REQUISITION_STATUS.APPROVED;
+    
+            $httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/approve'))
+            .respond(500);
+    
+            var spy = jasmine.createSpy();
+            requisition.$approve().then(spy);
+    
+            $httpBackend.flush();
+            $rootScope.$apply();
+    
+            expect(spy).not.toHaveBeenCalled();
+        });
     });
 
     describe('reject', function() {
@@ -367,6 +414,19 @@ describe('Requisition', function() {
             $rootScope.$apply();
     
             expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
+        });
+
+        it('should not approve requisition if request fails', function() {
+            $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/reject'))
+            .respond(500);
+    
+            var spy = jasmine.createSpy();
+            requisition.$reject().then(spy);
+    
+            $httpBackend.flush();
+            $rootScope.$apply();
+    
+            expect(spy).not.toHaveBeenCalled();
         });
     });
 
@@ -387,6 +447,19 @@ describe('Requisition', function() {
     
             expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
         });
+
+        it('should not approve requisition if request fails', function() {
+            $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id + '/skip'))
+            .respond(500);
+    
+            var spy = jasmine.createSpy();
+            requisition.$skip().then(spy);
+    
+            $httpBackend.flush();
+            $rootScope.$apply();
+    
+            expect(spy).not.toHaveBeenCalled();
+        });
     });
 
     describe('remove', function() {
@@ -405,6 +478,19 @@ describe('Requisition', function() {
             $rootScope.$apply();
 
             expect(angular.toJson(data)).toEqual(angular.toJson(requisition));
+        });
+
+        it('should not approve requisition if request fails', function() {
+            $httpBackend.when('DELETE', requisitionUrlFactory('/api/requisitions/' + requisition.id))
+            .respond(500);
+    
+            var spy = jasmine.createSpy();
+            requisition.$remove().then(spy);
+    
+            $httpBackend.flush();
+            $rootScope.$apply();
+    
+            expect(spy).not.toHaveBeenCalled();
         });
     });
 
