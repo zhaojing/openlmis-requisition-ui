@@ -493,15 +493,19 @@
             ).then(function() {
                 var loadingPromise = loadingModalService.open();
                 vm.requisition.$save().then(function() {
-                    vm.requisition.$reject().then().then(function(response) {
+                    vm.requisition.$reject()
+                    .then(function(response) {
                         watcher.disableWatcher();
                         loadingPromise.then(function() {
                             notificationService.success('requisitionView.reject.success');
                         });
                         stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
-                    }, failWithMessage('requisitionView.reject.failure'));
-                });
-
+                    })
+                    .catch(function() {
+                        failWithMessage('requisitionView.reject.failure');
+                    });
+                })
+                .catch(loadingModalService.close);
             });
         }
 
