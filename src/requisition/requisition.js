@@ -163,11 +163,13 @@
         function authorize() {
             var requisition = this;
             return handlePromise(resource.authorize({
-                id: this.id,
+                id: requisition.id,
                 idempotencyKey: this.idempotencyKey
             }, {}).$promise, function(authorized) {
                 updateRequisition(requisition, authorized);
-            }, handleFailure);
+            }, function(data) {
+                handleFailure(data, requisition); 
+            });
         }
 
         /**
@@ -181,13 +183,15 @@
          * @return {Promise} promise that resolves after requisition is deleted
          */
         function remove() {
-            var id = this.id;
+            var requisition = this;
             return handlePromise(resource.remove({
-                id: this.id,
-                idempotencyKey: this.idempotencyKey
+                id: requisition.id,
+                idempotencyKey: requisition.idempotencyKey
             }).$promise, function() {
-                offlineRequisitions.removeBy('id', id);
-            }, handleFailure);
+                offlineRequisitions.removeBy('id', requisition.id);
+            }, function(data) {
+                handleFailure(data, requisition); 
+            });
         }
 
         /**
@@ -228,11 +232,13 @@
         function submit() {
             var requisition = this;
             return handlePromise(resource.submit({
-                id: this.id,
-                idempotencyKey: this.idempotencyKey
+                id: requisition.id,
+                idempotencyKey: requisition.idempotencyKey
             }, {}).$promise, function(submitted) {
                 updateRequisition(requisition, submitted);
-            }, handleFailure);
+            }, function(data) {
+                handleFailure(data, requisition); 
+            });
         }
 
         /**
@@ -248,11 +254,13 @@
         function approve() {
             var requisition = this;
             return handlePromise(resource.approve({
-                id: this.id,
-                idempotencyKey: this.idempotencyKey
+                id: requisition.id,
+                idempotencyKey: requisition.idempotencyKey
             }, {}).$promise, function(approved) {
                 updateRequisition(requisition, approved);
-            }, handleFailure);
+            }, function(data) {
+                handleFailure(data, requisition); 
+            });
         }
 
         /**
@@ -268,11 +276,13 @@
         function reject() {
             var requisition = this;
             return handlePromise(resource.reject({
-                id: this.id,
-                idempotencyKey: this.idempotencyKey
+                id: requisition.id,
+                idempotencyKey: requisition.idempotencyKey
             }, {}).$promise, function(rejected) {
                 updateRequisition(requisition, rejected);
-            }, handleFailure);
+            }, function(data) {
+                handleFailure(data, requisition); 
+            });
         }
 
         /**
@@ -286,12 +296,15 @@
          * @return {Promise} promise that resolves when requisition is skipped
          */
         function skip() {
+            var requisition = this;
             return handlePromise(resource.skip({
-                id: this.id,
-                idempotencyKey: this.idempotencyKey
+                id: requisition.id,
+                idempotencyKey: requisition.idempotencyKey
             }, {}).$promise, function(requisition) {
                 offlineRequisitions.removeBy('id', requisition.id);
-            }, handleFailure);
+            }, function(data) {
+                handleFailure(data, requisition); 
+            });
         }
 
         /**
@@ -607,12 +620,14 @@
         function handlePromise(promise, success, failure) {
             var deferred = $q.defer();
 
-            promise.then(function(response) {
+            promise
+            .then(function(response) {
                 if (success) {
                   success(response);
                 }
                 deferred.resolve(response);
-            }, function(response) {
+            })
+            .catch(function(response) {
                 if (failure) {
                   failure(response);
                 }
@@ -715,9 +730,9 @@
             }
         }
 
-        function handleFailure(data) {
+        function handleFailure(data, requisition) {
             if (data.status !== 409) {
-                getIdempotencyKey();
+                generateIdempotencyKey(requisition);
             } 
         }
 
