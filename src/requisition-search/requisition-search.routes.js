@@ -55,8 +55,9 @@
 				requisitions: function(paginationService, requisitionService, $stateParams) {
 					return paginationService.registerUrl($stateParams, function(stateParams) {
 						if (stateParams.facility) {
+							var offlineFlag = stateParams.offline; 
 							delete stateParams.offline;
-							return requisitionService.search(stateParams.offline === 'true', stateParams);
+							return requisitionService.search(offlineFlag === 'true', stateParams);
 						}
 						return undefined;
 					});
