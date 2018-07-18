@@ -54,6 +54,7 @@
             MAXIMUM_STOCK_QUANTITY: 'maximumStockQuantity',
             CALCULATED_ORDER_QUANTITY: 'calculatedOrderQuantity',
             CALCULATED_ORDER_QUANTITY_ISA: 'calculatedOrderQuantityIsa',
+            ADDITIONAL_QUANTITY_REQUIRED: 'additionalQuantityRequired',
             IDEAL_STOCK_AMOUNT: 'idealStockAmount',
             getStockDisabledColumns: getStockDisabledColumns,
             getStockBasedColumns: getStockBasedColumns

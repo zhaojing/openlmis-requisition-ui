@@ -45,7 +45,8 @@
         P = TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION,
         //Q = TEMPLATE_COLUMNS.TOTAL_COST,
         S = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA,
-        T = TEMPLATE_COLUMNS.PRICE_PER_PACK;
+        T = TEMPLATE_COLUMNS.PRICE_PER_PACK,
+        Z = TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED;
         //V = TEMPLATE_COLUMNS.PACKS_TO_SHIP,
         //Y = TEMPLATE_COLUMNS.TOTAL;
 
@@ -205,7 +206,9 @@
          */
         function calculateAdjustedConsumption(lineItem, requisition) {
             var cColumn = requisition.template.getColumn(C),
-                consumedQuantity = getColumnValue(lineItem, requisition, cColumn);
+                aColumn = requisition.template.getColumn(Z),
+                consumedQuantity = getColumnValue(lineItem, requisition, cColumn),
+                additionalQuantityRequired = getColumnValue(lineItem, requisition, aColumn);
 
             if (consumedQuantity === undefined) {
                 return 0;
@@ -219,6 +222,12 @@
             }
 
             var adjustedConsumption = Math.ceil(consumedQuantity * (totalDays / nonStockoutDays));
+            if(aColumn.isDisplayed){
+                if(additionalQuantityRequired === undefined){
+                    additionalQuantityRequired = 0;
+                }
+                adjustedConsumption = adjustedConsumption + additionalQuantityRequired;
+            }
             return adjustedConsumption;
         }
 

@@ -18,7 +18,8 @@ describe('calculationFactory', function() {
     var calculationFactory, TEMPLATE_COLUMNS, COLUMN_SOURCES, lineItem, requisitionMock, TemplateColumnDataBuilder,
         ReasonDataBuilder, StockAdjustmentDataBuilder, templateMock, stockOnHandColumn, requestedQuantityColumn,
         isaColumn, maximumStockQuantityColumn, RequisitionLineItemDataBuilder, averageConsumptionColumn,
-        calculatedOrderQuantityColumn, totalConsumedQuantityColumn, calculatedOrderQuantityIsaColumn;
+        calculatedOrderQuantityColumn, additionalQuantityRequiredColumn, totalConsumedQuantityColumn,
+        calculatedOrderQuantityIsaColumn;
 
     beforeEach(function() {
         module('admin-template');
@@ -38,6 +39,7 @@ describe('calculationFactory', function() {
         calculatedOrderQuantityIsaColumn = new TemplateColumnDataBuilder().buildCalculatedOrderQuantityIsaColumn();
         calculatedOrderQuantityColumn = new TemplateColumnDataBuilder().buildCalculatedOrderQuantityColumn();
         totalConsumedQuantityColumn = new TemplateColumnDataBuilder().buildTotalConsumedQuantityColumn();
+        additionalQuantityRequiredColumn = new TemplateColumnDataBuilder().buildAdditionalQuantityRequiredColumn();
         maximumStockQuantityColumn = new TemplateColumnDataBuilder().buildMaximumStockQuantityColumn();
         averageConsumptionColumn = new TemplateColumnDataBuilder().buildAverageConsumptionColumn();
         requestedQuantityColumn = new TemplateColumnDataBuilder().buildRequestedQuantityColumn();
@@ -64,6 +66,7 @@ describe('calculationFactory', function() {
             if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) return requestedQuantityColumn;
             if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) return stockOnHandColumn;
             if (name === TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT) return isaColumn;
+            if (name === TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED) return additionalQuantityRequiredColumn;
         });
     });
 

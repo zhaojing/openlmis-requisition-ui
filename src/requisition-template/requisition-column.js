@@ -90,6 +90,7 @@
             ],
             adjustedConsumption: [
                 TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY,
+                TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED,
                 TEMPLATE_COLUMNS.TOTAL_STOCKOUT_DAYS
             ],
             averageConsumption: [

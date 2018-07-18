@@ -36,6 +36,7 @@
         TemplateColumnDataBuilder.prototype.buildAverageConsumptionColumn = buildAverageConsumptionColumn;
         TemplateColumnDataBuilder.prototype.buildMaximumStockQuantityColumn = buildMaximumStockQuantityColumn;
         TemplateColumnDataBuilder.prototype.buildTotalConsumedQuantityColumn = buildTotalConsumedQuantityColumn;
+        TemplateColumnDataBuilder.prototype.buildAdditionalQuantityRequiredColumn = buildAdditionalQuantityRequiredColumn;
         TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityColumn = buildCalculatedOrderQuantityColumn;
         TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityIsaColumn = buildCalculatedOrderQuantityIsaColumn;
         TemplateColumnDataBuilder.prototype.buildBeginningBalanceColumn = buildBeginningBalanceColumn;
@@ -142,6 +143,13 @@
         function buildCalculatedOrderQuantityIsaColumn() {
             return this.withSource(COLUMN_SOURCES.USER_INPUT)
                 .withName(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA)
+                .build();
+        }
+
+        function buildAdditionalQuantityRequiredColumn() {
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED)
+                .visible()
                 .build();
         }
 

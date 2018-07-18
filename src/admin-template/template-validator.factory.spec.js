@@ -432,6 +432,93 @@ describe('templateValidator', function() {
 
         });
 
+        describe('for additional quantity required', function() {
+
+            var messageService, adjustedConsumptionColumn, stockOutDaysColumn, additionalQuantityRequiredColumn;
+
+            beforeEach(function() {
+                inject(function($injector) {
+                    messageService = $injector.get('messageService');
+                });
+
+                adjustedConsumptionColumn = {
+                    label: 'Adjusted Consumption',
+                    definition: 'Adjusted Consumption',
+                    name: TEMPLATE_COLUMNS.ADJUSTED_CONSUMPTION,
+                    isDisplayed: true,
+                    source: COLUMN_SOURCES.CALCULATED,
+                    columnDefinition: {
+                        options: [],
+                        sources: [
+                            COLUMN_SOURCES.CALCULATED
+                        ]
+                    }
+                };
+
+                template.columnsMap.adjustedConsumption = adjustedConsumptionColumn;
+
+                stockOutDaysColumn = {
+                    label: 'Stock Out Days',
+                    definition: 'Stock Out Days',
+                    name: TEMPLATE_COLUMNS.TOTAL_STOCKOUT_DAYS,
+                    isDisplayed: true,
+                    source: COLUMN_SOURCES.USER_INPUT,
+                    columnDefinition: {
+                        options: [],
+                        sources: [
+                            COLUMN_SOURCES.USER_INPUT
+                        ]
+                    }
+                };
+
+                template.columnsMap.totalStockoutDays = stockOutDaysColumn;
+
+                additionalQuantityRequiredColumn = {
+                    label: 'Additional Quantity Required',
+                    definition: 'Additional Quantity Required',
+                    name: TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED,
+                    isDisplayed: true,
+                    source: COLUMN_SOURCES.USER_INPUT,
+                    columnDefinition: {
+                        options: [],
+                        sources: [
+                            COLUMN_SOURCES.USER_INPUT
+                        ]
+                    }
+                };
+
+                template.columnsMap.additionalQuantityRequired = additionalQuantityRequiredColumn;
+
+                spyOn(messageService, 'get').andCallThrough();
+
+                messageService.get.andCallFake(function(message) {
+                        return message;
+                });
+            });
+
+
+            it('should return error if the column is visible and adjusted consumption is hidden', function() {
+                additionalQuantityRequiredColumn.isDisplayed = true;
+                adjustedConsumptionColumn.isDisplayed = false;
+
+                var result = templateValidator.getColumnError(additionalQuantityRequiredColumn, template);
+
+                expect(result)
+                    .toBe('adminProgramTemplate.columnDisplayMismatch' + adjustedConsumptionColumn.label);
+            });
+
+            it('should return undefined if the column is hidden and adjusted consumption is hidden', function() {
+                additionalQuantityRequiredColumn.isDisplayed = false;
+                adjustedConsumptionColumn.isDisplayed = false;
+
+                var result = templateValidator.getColumnError(additionalQuantityRequiredColumn, template);
+
+                expect(result).toBeUndefined();
+            });
+
+        });
+
+
         describe('for calculated order quantity', function() {
 
             beforeEach(function() {

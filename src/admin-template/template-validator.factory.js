@@ -42,7 +42,8 @@
                 requestedQuantityExplanation: validateRequestedQuantityExplanation,
                 totalStockoutDays: validateTotalStockoutDays,
                 calculatedOrderQuantity: validateCalculatedOrderQuantity,
-                calculatedOrderQuantityIsa: validateCalculatedOrderQuantityIsa
+                calculatedOrderQuantityIsa: validateCalculatedOrderQuantityIsa,
+                additionalQuantityRequired: validateAdditionalQuantityRequired
             },
             validator = {
                 getColumnError: getColumnError,
@@ -93,7 +94,7 @@
 
             var error = validateLabel(column.label) ||
                 validateDefinition(column.definition) ||
-                validateSource(column.source) ||
+                validateSource(column) ||
                 validateOption(column) ||
                 validateCalculated(column, template) ||
                 validateUserInput(column) ||
@@ -123,8 +124,9 @@
             }
         }
 
-        function validateSource(source) {
-            if (isEmpty(source)) return messageService.get('adminProgramTemplate.emptyColumnSource');
+        function validateSource(column) {
+            if (column.isDisplayed && isEmpty(column.source))
+                return messageService.get('adminProgramTemplate.emptyColumnSource');
         }
 
         function validateOption(column) {
@@ -155,6 +157,13 @@
 
             if (column.isDisplayed && !wColumn.isDisplayed) {
                 return messageService.get('adminProgramTemplate.columnDisplayMismatch') + wColumn.label;
+            }
+        }
+
+        function validateAdditionalQuantityRequired(column, template) {
+            var aColumn = template.columnsMap[TEMPLATE_COLUMNS.ADJUSTED_CONSUMPTION];
+            if(!aColumn.isDisplayed && column.isDisplayed) {
+                return messageService.get('adminProgramTemplate.columnDisplayMismatch') + aColumn.label;
             }
         }
 
