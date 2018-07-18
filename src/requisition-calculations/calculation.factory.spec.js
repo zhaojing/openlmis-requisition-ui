@@ -301,6 +301,19 @@ describe('calculationFactory', function() {
             lineItem.totalStockoutDays = 15;
             expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(30);
         });
+
+        it('should add additionalQuantityRequired to adjusted consumption', function() {
+            lineItem.totalStockoutDays = 15;
+            lineItem.additionalQuantityRequired = 15;
+            expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(45);
+        });
+
+        it('should not add additionalQtyRequired to adjusted cons. when not displayed', function() {
+            additionalQuantityRequiredColumn.isDisplayed = false;
+            lineItem.totalStockoutDays = 15;
+            lineItem.additionalQuantityRequired = 15;
+            expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(30);
+        });
     });
 
     describe('Calculate Maximum Stock Quantity', function () {
