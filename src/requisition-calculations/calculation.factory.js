@@ -223,10 +223,9 @@
 
             var adjustedConsumption = Math.ceil(consumedQuantity * (totalDays / nonStockoutDays));
             if(aColumn.isDisplayed){
-                if(additionalQuantityRequired === undefined){
-                    additionalQuantityRequired = 0;
+                if(additionalQuantityRequired){
+                    adjustedConsumption = adjustedConsumption + additionalQuantityRequired;
                 }
-                adjustedConsumption = adjustedConsumption + additionalQuantityRequired;
             }
             return adjustedConsumption;
         }

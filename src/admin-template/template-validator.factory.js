@@ -125,7 +125,7 @@
         }
 
         function validateSource(column) {
-            if (column.isDisplayed && isEmpty(column.source))
+            if (isEmpty(column.source))
                 return messageService.get('adminProgramTemplate.emptyColumnSource');
         }
 
