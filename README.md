@@ -77,3 +77,14 @@ Transifex has been integrated into the development and build process. In order t
 For the development environment in Docker, you can sync with Transifex by running the sync_transifex.sh script. This will upload your source messages file to the Transifex project and download translated messages files.
 
 The build process has syncing with Transifex seamlessly built-in.
+
+## Feature Flags
+Some of the feature are only available after setting environment variable in docker container.
+
+### Batch Approve screen
+Batch Approve screen has been disabled by default. To enable it you have to set environment variable from console, i.e.:
+```shell
+> export BATCH_APPROVE_SCREEN=true
+```
+or setting it in your .env file:
+- BATCH_APPROVE_SCREEN=true
