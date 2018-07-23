@@ -82,6 +82,13 @@
                 },
                 url: requisitionUrlFactory('/api/requisitions/:id/skip'),
                 method: 'PUT'
+            },
+            'remove': {
+                headers: {
+                    'Idempotency-Key': getIdempotencyKey
+                },
+                url: requisitionUrlFactory('/api/requisitions/:id'),
+                method: 'DELETE'
             }
         });
 
