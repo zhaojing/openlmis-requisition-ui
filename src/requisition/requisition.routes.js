@@ -19,11 +19,12 @@
 
     angular.module('requisition').config(routes);
 
-    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+    routes.$inject = ['$stateProvider'];
 
-    function routes($stateProvider, REQUISITION_RIGHTS) {
+    function routes($stateProvider) {
 
         $stateProvider.state('openlmis.requisitions', {
+            isOffline: true,
             abstract: true,
             showInNavigation: true,
             priority: 10,

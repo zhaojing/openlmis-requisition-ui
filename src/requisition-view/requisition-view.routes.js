@@ -31,6 +31,7 @@
             controller: 'RequisitionViewController',
             controllerAs: 'vm',
             templateUrl: 'requisition-view/requisition-view.html',
+            isOffline: true,
             accessRights: [
                 REQUISITION_RIGHTS.REQUISITION_CREATE,
                 REQUISITION_RIGHTS.REQUISITION_DELETE,
