@@ -220,9 +220,13 @@
                 return consumedQuantity;
             }
 
-            var adjustedConsumption = Math.ceil(consumedQuantity * (totalDays / nonStockoutDays));
-            if (aColumn && aColumn.isDisplayed && getColumnValue(lineItem, requisition, aColumn)) {
-                adjustedConsumption = adjustedConsumption + getColumnValue(lineItem, requisition, aColumn);
+            var adjustedConsumption = Math.ceil(consumedQuantity * (totalDays / nonStockoutDays)),
+                additionalQuantityRequired;
+            if (aColumn && aColumn.isDisplayed) {
+                additionalQuantityRequired = getColumnValue(lineItem, requisition, aColumn)
+            }
+            if (additionalQuantityRequired) {
+                adjustedConsumption = adjustedConsumption + additionalQuantityRequired;
             }
             return adjustedConsumption;
         }
