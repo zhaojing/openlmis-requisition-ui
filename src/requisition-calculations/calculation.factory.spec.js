@@ -314,6 +314,18 @@ describe('calculationFactory', function() {
             lineItem.additionalQuantityRequired = 15;
             expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(30);
         });
+
+        it('should not add additionalQtyRequired to adjusted consumption if the column does not exist', function() {
+            lineItem.totalStockoutDays = 15;
+            lineItem.additionalQuantityRequired = 15;
+            templateMock.getColumn.andCallFake(function(name) {
+                if (name === TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY) {
+                    return totalConsumedQuantityColumn;
+                }
+            });
+
+            expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(30);
+        });
     });
 
     describe('Calculate Maximum Stock Quantity', function () {

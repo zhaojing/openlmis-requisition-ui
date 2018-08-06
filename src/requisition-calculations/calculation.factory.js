@@ -207,8 +207,7 @@
         function calculateAdjustedConsumption(lineItem, requisition) {
             var cColumn = requisition.template.getColumn(C),
                 aColumn = requisition.template.getColumn(Z),
-                consumedQuantity = getColumnValue(lineItem, requisition, cColumn),
-                additionalQuantityRequired = getColumnValue(lineItem, requisition, aColumn);
+                consumedQuantity = getColumnValue(lineItem, requisition, cColumn);
 
             if (consumedQuantity === undefined) {
                 return 0;
@@ -222,8 +221,8 @@
             }
 
             var adjustedConsumption = Math.ceil(consumedQuantity * (totalDays / nonStockoutDays));
-            if (aColumn.isDisplayed && additionalQuantityRequired) {
-                adjustedConsumption = adjustedConsumption + additionalQuantityRequired;
+            if (aColumn && aColumn.isDisplayed && getColumnValue(lineItem, requisition, aColumn)) {
+                adjustedConsumption = adjustedConsumption + getColumnValue(lineItem, requisition, aColumn);
             }
             return adjustedConsumption;
         }
