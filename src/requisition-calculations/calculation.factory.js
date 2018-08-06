@@ -223,7 +223,7 @@
             var adjustedConsumption = Math.ceil(consumedQuantity * (totalDays / nonStockoutDays)),
                 additionalQuantityRequired;
             if (aColumn && aColumn.isDisplayed) {
-                additionalQuantityRequired = getColumnValue(lineItem, requisition, aColumn)
+                additionalQuantityRequired = getColumnValue(lineItem, requisition, aColumn);
             }
             if (additionalQuantityRequired) {
                 adjustedConsumption = adjustedConsumption + additionalQuantityRequired;
