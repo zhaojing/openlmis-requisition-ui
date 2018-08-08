@@ -472,6 +472,56 @@ describe('Template', function() {
 
             expect(template.columnsMap).toEqual({});
         });
+
+        it('should set USER_INPUT as source if possible', function() {
+            var availableColumn = {
+                name: 'newColumn',
+                label: 'new column',
+                indicator: 'newColumn',
+                sources: [COLUMN_SOURCES.CALCULATED, COLUMN_SOURCES.USER_INPUT],
+                options: ['OPTION_1'],
+                definition: 'definition'
+            };
+
+            template.addColumn(availableColumn, false);
+
+            expect(template.columnsMap.newColumn).toEqual({
+                name: availableColumn.name,
+                label: availableColumn.label,
+                indicator: availableColumn.indicator,
+                displayOrder: 1,
+                isDisplayed: false,
+                source: COLUMN_SOURCES.USER_INPUT,
+                columnDefinition: availableColumn,
+                option: availableColumn.options[0],
+                definition: availableColumn.definition
+            });
+        });
+
+        it('should fallback to the first source option', function() {
+            var availableColumn = {
+                name: 'newColumn',
+                label: 'new column',
+                indicator: 'newColumn',
+                sources: [COLUMN_SOURCES.CALCULATED, COLUMN_SOURCES.STOCK_CARDS],
+                options: ['OPTION_1'],
+                definition: 'definition'
+            };
+
+            template.addColumn(availableColumn, false);
+
+            expect(template.columnsMap.newColumn).toEqual({
+                name: availableColumn.name,
+                label: availableColumn.label,
+                indicator: availableColumn.indicator,
+                displayOrder: 1,
+                isDisplayed: false,
+                source: COLUMN_SOURCES.CALCULATED,
+                columnDefinition: availableColumn,
+                option: availableColumn.options[0],
+                definition: availableColumn.definition
+            });
+        });
     });
 
     describe('create', function() {

@@ -28,9 +28,9 @@
         .module('admin-template')
         .factory('Template', Template);
 
-    Template.$inject = ['$q', 'templateValidator', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'TemplateColumn', 'RequisitionColumn'];
+    Template.$inject = ['$q', 'templateValidator', 'COLUMN_SOURCES', 'TemplateColumn', 'RequisitionColumn'];
 
-    function Template($q, templateValidator, TEMPLATE_COLUMNS, COLUMN_SOURCES, TemplateColumn, RequisitionColumn) {
+    function Template($q, templateValidator, COLUMN_SOURCES, TemplateColumn, RequisitionColumn) {
         Template.prototype.moveColumn = moveColumn;
         Template.prototype.findCircularCalculatedDependencies = findCircularCalculatedDependencies;
         Template.prototype.changePopulateStockOnHandFromStockCards = changePopulateStockOnHandFromStockCards;
@@ -156,7 +156,7 @@
                     indicator: availableColumn.indicator,
                     displayOrder: getNewDisplayOrder(this),
                     isDisplayed: isDisplayed,
-                    source: availableColumn.sources[0],
+                    source: getSource(availableColumn.sources),
                     columnDefinition: availableColumn,
                     option: availableColumn.options[0],
                     definition: availableColumn.definition
@@ -432,6 +432,14 @@
                 }
             });
             return newDisplayOrder;
+        }
+
+        function getSource(sources) {
+            var filteredSources = sources.filter(function(source) {
+                return source === COLUMN_SOURCES.USER_INPUT;
+            });
+
+            return filteredSources.length ? filteredSources[0] : sources[0];
         }
     }
 })();
