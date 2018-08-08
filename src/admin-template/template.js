@@ -435,11 +435,7 @@
         }
 
         function getSource(sources) {
-            var filteredSources = sources.filter(function(source) {
-                return source === COLUMN_SOURCES.USER_INPUT;
-            });
-
-            return filteredSources.length ? filteredSources[0] : sources[0];
+            return sources.indexOf(COLUMN_SOURCES.USER_INPUT) > -1 ? COLUMN_SOURCES.USER_INPUT : sources[0];
         }
     }
 })();
