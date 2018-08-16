@@ -1,5 +1,5 @@
-5.4.0 / WIP
-===========
+5.4.0 / 2018-08-16
+==================
 
 New functionality added in a backwards-compatible manner:
 * [OLMIS-4792](https://openlmis.atlassian.net/browse/OLMIS-4792): Make additional options column of requisition template translatable.
