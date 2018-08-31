@@ -1,3 +1,9 @@
+5.4.1 / WIP
+==================
+
+Improvements:
+* [OLMIS-5115](https://openlmis.atlassian.net/browse/OLMIS-5115): Made the requisition print button disabled when going offline
+
 5.4.0 / 2018-08-16
 ==================
 
