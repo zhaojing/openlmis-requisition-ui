@@ -1,5 +1,8 @@
-5.4.1 / WIP
+5.5.0 / WIP
 ==================
+
+New functionality added in a backwards-compatible manner:
+* [OLMIS-5314](https://openlmis.atlassian.net/browse/OLMIS-5314): Enabled Total and Number of patients added columns for Stock Based Requisitions. 
 
 Improvements:
 * [OLMIS-5115](https://openlmis.atlassian.net/browse/OLMIS-5115): Made the requisition print button disabled when going offline
