@@ -40,7 +40,7 @@
         };
 
         function getLockedColumnDisplayOrder(columnName) {
-            return lockedColumnsOrder[columnName] ? lockedColumnsOrder[columnName] : 4;
+            return lockedColumnsOrder[columnName] ? lockedColumnsOrder[columnName] : Object.keys(lockedColumnsOrder).length + 1;
         }
     }
 

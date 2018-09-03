@@ -34,7 +34,7 @@ describe('LOCKED_TEMPLATE_COLUMNS_ORDER', function() {
             expect(displayOrder).toEqual(1);
         });
 
-        it('should return 3 if column was not found', function() {
+        it('should return 4 if column was not found', function() {
             var displayOrder = LOCKED_TEMPLATE_COLUMNS_ORDER.getLockedColumnDisplayOrder('nonExisting');
 
             expect(displayOrder).toEqual(4);
