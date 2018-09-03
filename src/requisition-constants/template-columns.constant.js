@@ -62,8 +62,6 @@
 
         function getStockDisabledColumns() {
             return [
-                this.TOTAL,
-                this.NUMBER_OF_NEW_PATIENTS_ADDED,
                 this.ADJUSTED_CONSUMPTION,
                 this.MAXIMUM_STOCK_QUANTITY,
                 this.CALCULATED_ORDER_QUANTITY,
@@ -78,7 +76,9 @@
                 this.TOTAL_LOSSES_AND_ADJUSTMENTS,
                 this.TOTAL_CONSUMED_QUANTITY,
                 this.TOTAL_RECEIVED_QUANTITY,
-                this.TOTAL_STOCKOUT_DAYS
+                this.TOTAL_STOCKOUT_DAYS,
+                this.TOTAL,
+                this.NUMBER_OF_NEW_PATIENTS_ADDED
             ];
         }
     }

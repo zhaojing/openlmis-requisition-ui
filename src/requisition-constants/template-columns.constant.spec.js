@@ -31,12 +31,10 @@ describe("TEMPLATE_COLUMNS", function() {
         it('should return list of stock disabled columns', function() {
             var returnedList = TEMPLATE_COLUMNS.getStockDisabledColumns();
 
-            expect(returnedList[0]).toEqual('total');
-            expect(returnedList[1]).toEqual('numberOfNewPatientsAdded');
-            expect(returnedList[2]).toEqual('adjustedConsumption');
-            expect(returnedList[3]).toEqual('maximumStockQuantity');
-            expect(returnedList[4]).toEqual('calculatedOrderQuantity');
-            expect(returnedList[5]).toEqual('averageConsumption');
+            expect(returnedList[0]).toEqual('adjustedConsumption');
+            expect(returnedList[1]).toEqual('maximumStockQuantity');
+            expect(returnedList[2]).toEqual('calculatedOrderQuantity');
+            expect(returnedList[3]).toEqual('averageConsumption');
         });
     });
 
@@ -51,6 +49,8 @@ describe("TEMPLATE_COLUMNS", function() {
             expect(returnedList[3]).toEqual('totalConsumedQuantity');
             expect(returnedList[4]).toEqual('totalReceivedQuantity');
             expect(returnedList[5]).toEqual('totalStockoutDays');
+            expect(returnedList[6]).toEqual('total');
+            expect(returnedList[7]).toEqual('numberOfNewPatientsAdded');
         });
     });
 });
