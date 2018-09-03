@@ -42,6 +42,7 @@
         TemplateColumnDataBuilder.prototype.buildBeginningBalanceColumn = buildBeginningBalanceColumn;
         TemplateColumnDataBuilder.prototype.buildRemarksColumn = buildRemarksColumn;
         TemplateColumnDataBuilder.prototype.buildTotalColumn = buildTotalColumn;
+        TemplateColumnDataBuilder.prototype.buildSkipped = buildSkipped;
 
         return TemplateColumnDataBuilder;
 
@@ -180,6 +181,12 @@
         function buildTotalColumn() {
             return this.withSource(COLUMN_SOURCES.REFERENCE_DATA)
                 .withName(TEMPLATE_COLUMNS.TOTAL)
+                .build();
+        }
+
+        function buildSkipped() {
+            return this.withSource(COLUMN_SOURCES.USER_INPUT)
+                .withName(TEMPLATE_COLUMNS.SKIPPED)
                 .build();
         }
 

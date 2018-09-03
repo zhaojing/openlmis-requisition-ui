@@ -30,11 +30,11 @@
 
     TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService',
         'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'template',
-        'TEMPLATE_COLUMNS', 'DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE'];
+        'TEMPLATE_COLUMNS', 'DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE', 'LOCKED_TEMPLATE_COLUMNS_ORDER'];
 
     function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService,
         notificationService, loadingModalService, messageService, $state, programTemplates, template,
-        TEMPLATE_COLUMNS, DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE) {
+        TEMPLATE_COLUMNS, DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE, LOCKED_TEMPLATE_COLUMNS_ORDER) {
 
         var vm = this;
 
@@ -203,6 +203,13 @@
         }
 
         function prepareDefaultColumns() {
+            vm.availableColumns.sort(function(a,b) {
+                if (!a.canChangeOrder && !b.canChangeOrder) {
+                    return LOCKED_TEMPLATE_COLUMNS_ORDER.getLockedColumnDisplayOrder(a.name) - LOCKED_TEMPLATE_COLUMNS_ORDER.getLockedColumnDisplayOrder(b.name);
+                }
+                return a.canChangeOrder - b.canChangeOrder;
+            });
+
             vm.availableColumns.forEach(function(column) {
                 var isDisplayed = column.name !== TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION
                     && column.name !== TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA;

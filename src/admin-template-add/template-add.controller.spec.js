@@ -18,7 +18,7 @@ describe('TemplateAddController', function () {
     var $rootScope, $q, $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder,
         TemplateDataBuilder, TemplateColumnDataBuilder, facilityTypes, productCodeColumn, Template,
         confirmService, messageService, templateOne, templateTwo, healthCenter, districtHospital,
-        programTemplates, programTwo, calculatedOrderQuantityIsaColumn;
+        programTemplates, programTwo, calculatedOrderQuantityIsaColumn, skippedColumn;
 
     beforeEach(function() {
         module('admin-template-add');
@@ -45,6 +45,8 @@ describe('TemplateAddController', function () {
         calculatedOrderQuantityIsaColumn = new TemplateColumnDataBuilder()
             .buildCalculatedOrderQuantityIsaColumn();
         productCodeColumn = new TemplateColumnDataBuilder().build();
+        skippedColumn = new TemplateColumnDataBuilder()
+            .buildSkipped();
         
         districtHospital = new FacilityTypeDataBuilder.buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder().build();
@@ -71,7 +73,8 @@ describe('TemplateAddController', function () {
             facilityTypes: facilityTypes,
             availableColumns: [
                 productCodeColumn.columnDefinition,
-                calculatedOrderQuantityIsaColumn.columnDefinition
+                calculatedOrderQuantityIsaColumn.columnDefinition,
+                skippedColumn.columnDefinition
             ],
             programTemplates: programTemplates,
             template: new Template({
@@ -98,7 +101,8 @@ describe('TemplateAddController', function () {
         it('should resolve available columns', function() {
             expect(vm.availableColumns).toEqual([
                 productCodeColumn.columnDefinition,
-                calculatedOrderQuantityIsaColumn.columnDefinition
+                calculatedOrderQuantityIsaColumn.columnDefinition,
+                skippedColumn.columnDefinition
             ]);
         });
     });
@@ -147,17 +151,24 @@ describe('TemplateAddController', function () {
             vm.template.addColumn = jasmine.createSpy();
         });
 
+        it('should create a template with proper columns order', function() {
+            vm.create();
+            $rootScope.$apply();
+
+            expect(vm.template.addColumn.callCount).toBe(3);
+            expect(vm.template.addColumn.calls[0].args).toEqual([skippedColumn.columnDefinition, true]);
+            expect(vm.template.addColumn.calls[1].args).toEqual([productCodeColumn.columnDefinition, true]);
+            expect(vm.template.addColumn.calls[2].args).toEqual([calculatedOrderQuantityIsaColumn.columnDefinition, false]);
+            expect(vm.template.columnsMap).not.toBeUndefined();
+            expect(vm.template.numberOfPeriodsToAverage).toEqual(3);
+        });
+
         it('should create a template and display success notification', function() {
             vm.create();
             $rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
             expect(vm.template.create).toHaveBeenCalled();
-            expect(vm.template.addColumn.callCount).toBe(2);
-            expect(vm.template.addColumn.calls[0].args).toEqual([productCodeColumn.columnDefinition, true]);
-            expect(vm.template.addColumn.calls[1].args).toEqual([calculatedOrderQuantityIsaColumn.columnDefinition, false]);
-            expect(vm.template.columnsMap).not.toBeUndefined();
-            expect(vm.template.numberOfPeriodsToAverage).toEqual(3);
         });
 
         it('should not call any service when confirmation fails', function() {
