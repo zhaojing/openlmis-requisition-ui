@@ -101,7 +101,7 @@
             if (requisition.$isAuthorized() || requisition.$isInApproval()) {
                 return hasRightForProgramAndFacility(user.id, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition.program.id, requisition.facility.id)
                     .then(function (result) {
-                        return result && user.getRoleAssignments(undefined, requisition.supervisoryNode, requisition.program.id).length > 0
+                        return result && user.getRoleAssignments(undefined, requisition.supervisoryNode, requisition.program.id).length > 0;
                     });
             } else {
                 return $q.resolve(false);
