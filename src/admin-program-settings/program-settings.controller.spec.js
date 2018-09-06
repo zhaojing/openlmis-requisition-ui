@@ -57,7 +57,7 @@ describe('ProgramSettingsController', function() {
         vm = $controller('ProgramSettingsController', {
             program: program
         });
-        stateParams={};
+        stateParams = {};
     });
 
     describe('init', function() {
