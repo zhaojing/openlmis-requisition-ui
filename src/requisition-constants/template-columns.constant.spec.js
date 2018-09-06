@@ -31,10 +31,9 @@ describe("TEMPLATE_COLUMNS", function() {
         it('should return list of stock disabled columns', function() {
             var returnedList = TEMPLATE_COLUMNS.getStockDisabledColumns();
 
-            expect(returnedList[0]).toEqual('adjustedConsumption');
-            expect(returnedList[1]).toEqual('maximumStockQuantity');
-            expect(returnedList[2]).toEqual('calculatedOrderQuantity');
-            expect(returnedList[3]).toEqual('averageConsumption');
+            expect(returnedList[0]).toEqual('maximumStockQuantity');
+            expect(returnedList[1]).toEqual('calculatedOrderQuantity');
+            expect(returnedList[2]).toEqual('averageConsumption');
         });
     });
 

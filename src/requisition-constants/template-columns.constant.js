@@ -62,7 +62,6 @@
 
         function getStockDisabledColumns() {
             return [
-                this.ADJUSTED_CONSUMPTION,
                 this.MAXIMUM_STOCK_QUANTITY,
                 this.CALCULATED_ORDER_QUANTITY,
                 this.AVERAGE_CONSUMPTION
