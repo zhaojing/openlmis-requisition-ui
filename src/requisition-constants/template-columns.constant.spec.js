@@ -48,8 +48,6 @@ describe("TEMPLATE_COLUMNS", function() {
             expect(returnedList[3]).toEqual('totalConsumedQuantity');
             expect(returnedList[4]).toEqual('totalReceivedQuantity');
             expect(returnedList[5]).toEqual('totalStockoutDays');
-            expect(returnedList[6]).toEqual('total');
-            expect(returnedList[7]).toEqual('numberOfNewPatientsAdded');
         });
     });
 });
