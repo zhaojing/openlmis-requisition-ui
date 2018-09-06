@@ -15,7 +15,7 @@
 
 describe('requisitionViewFactory', function() {
 
-    var requisitionViewFactory, $q, permissionService, userId, requisition;
+    var requisitionViewFactory, $q, permissionService, UserDataBuilder, user, requisition;
 
     beforeEach(function() {
         module('requisition-view');
@@ -26,10 +26,13 @@ describe('requisitionViewFactory', function() {
             $q = $injector.get('$q');
 
             permissionService = $injector.get('permissionService');
+            UserDataBuilder = $injector.get('UserDataBuilder');
             spyOn(permissionService, 'hasPermission').andReturn($q.resolve(true));
         });
 
-        userId = '1';
+        user = new UserDataBuilder()
+            .withSupervisionRoleAssignment('1', '1', '2')
+            .build();
 
         requisition = jasmine.createSpyObj('requisition', ['$isInitiated', '$isRejected', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isSkipped', '$isApproved']);
 
@@ -42,6 +45,7 @@ describe('requisitionViewFactory', function() {
         };
 
         requisition.emergency = false;
+        requisition.supervisoryNode = '1';
 
         requisition.$isInitiated.andReturn(false);
         requisition.$isRejected.andReturn(false);
@@ -57,7 +61,7 @@ describe('requisitionViewFactory', function() {
         it('should be true if requisition is initiated and user has right to create (initiate/submit) this requisition', function() {
             requisition.$isInitiated.andReturn(true);
 
-            requisitionViewFactory.canSubmit(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSubmit(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -65,7 +69,7 @@ describe('requisitionViewFactory', function() {
         it('should be true if requisition is rejected and user has right to create (initiate/submit) this requisition', function() {
             requisition.$isRejected.andReturn(true);
 
-            requisitionViewFactory.canSubmit(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSubmit(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -73,7 +77,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if requisition is not initiated or rejected', function() {
             requisition.$isSubmitted.andReturn(true);
 
-            requisitionViewFactory.canSubmit(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSubmit(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -81,7 +85,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if user does not have right to create (initiate/submit) this requisition', function() {
             permissionService.hasPermission.andReturn($q.resolve(false));
 
-            requisitionViewFactory.canSubmit(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSubmit(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -93,7 +97,7 @@ describe('requisitionViewFactory', function() {
         it('should be true if requisition is submitted and user has right to authorize this requisition', function() {
             requisition.$isSubmitted.andReturn(true);
 
-            requisitionViewFactory.canAuthorize(userId, requisition).then(function(response) {
+            requisitionViewFactory.canAuthorize(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -101,7 +105,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if requisition is not submitted', function() {
             requisition.$isInitiated.andReturn(true);
 
-            requisitionViewFactory.canAuthorize(userId, requisition).then(function(response) {
+            requisitionViewFactory.canAuthorize(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -109,7 +113,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if user does not have right to authorize this requisition', function() {
             permissionService.hasPermission.andReturn($q.resolve(false));
 
-            requisitionViewFactory.canAuthorize(userId, requisition).then(function(response) {
+            requisitionViewFactory.canAuthorize(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -121,15 +125,15 @@ describe('requisitionViewFactory', function() {
         it('should be true if requisition is authorized and user has right to approve this requisition', function() {
             requisition.$isAuthorized.andReturn(true);
 
-            requisitionViewFactory.canApproveAndReject(userId, requisition).then(function(response) {
+            requisitionViewFactory.canApproveAndReject(user, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
 
-        it('should be true if requisition is in approval and user has right to approve this requisition', function() {
+        it('should be true if requisition is in approval and user has right to approve this requisition and has right to supervisory node', function() {
             requisition.$isInApproval.andReturn(true);
 
-            requisitionViewFactory.canApproveAndReject(userId, requisition).then(function(response) {
+            requisitionViewFactory.canApproveAndReject(user, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -137,7 +141,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if requisition is not authorized or in approval', function() {
             requisition.$isInitiated.andReturn(true);
 
-            requisitionViewFactory.canApproveAndReject(userId, requisition).then(function(response) {
+            requisitionViewFactory.canApproveAndReject(user, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -145,8 +149,17 @@ describe('requisitionViewFactory', function() {
         it('should be false if user does not have right to approve this requisition', function() {
             permissionService.hasPermission.andReturn($q.resolve(false));
 
-            requisitionViewFactory.canApproveAndReject(userId, requisition).then(function(response) {
-                expect(response).toBe(true);
+            requisitionViewFactory.canApproveAndReject(user, requisition).then(function(response) {
+                expect(response).toBe(false);
+            });
+        });
+
+        it('should be false if user does not have right to supervisory node in the requisition', function() {
+            requisition.$isInApproval.andReturn(true);
+            requisition.supervisoryNode = '2';
+
+            requisitionViewFactory.canApproveAndReject(user, requisition).then(function(response) {
+                expect(response).toBe(false);
             });
         });
 
@@ -157,7 +170,7 @@ describe('requisitionViewFactory', function() {
         it('should be true if requisition is initiated and user has right to create (initiate/submit) and delete this requisition', function() {
             requisition.$isInitiated.andReturn(true);
 
-            requisitionViewFactory.canDelete(userId, requisition).then(function(response) {
+            requisitionViewFactory.canDelete(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -165,7 +178,7 @@ describe('requisitionViewFactory', function() {
         it('should be true if requisition is rejected and user has right to create (initiate/submit) and delete this requisition', function() {
             requisition.$isRejected.andReturn(true);
 
-            requisitionViewFactory.canDelete(userId, requisition).then(function(response) {
+            requisitionViewFactory.canDelete(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -173,7 +186,7 @@ describe('requisitionViewFactory', function() {
         it('should be true if requisition is skipped and user has right to create (initiate/submit) and delete this requisition', function() {
             requisition.$isSkipped.andReturn(true);
 
-            requisitionViewFactory.canDelete(userId, requisition).then(function(response) {
+            requisitionViewFactory.canDelete(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -181,7 +194,7 @@ describe('requisitionViewFactory', function() {
         it('should be true if requisition is submitted and user has right to authorize and delete this requisition', function() {
             requisition.$isSubmitted.andReturn(true);
 
-            requisitionViewFactory.canDelete(userId, requisition).then(function(response) {
+            requisitionViewFactory.canDelete(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -196,7 +209,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canDelete(userId, requisition).then(function(response) {
+            requisitionViewFactory.canDelete(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -211,7 +224,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canDelete(userId, requisition).then(function(response) {
+            requisitionViewFactory.canDelete(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -226,7 +239,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canDelete(userId, requisition).then(function(response) {
+            requisitionViewFactory.canDelete(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -234,7 +247,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if requisition is not initiated, rejected, skipped or submitted', function() {
             requisition.$isApproved.andReturn(true);
 
-            requisitionViewFactory.canDelete(userId, requisition).then(function(response) {
+            requisitionViewFactory.canDelete(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -248,7 +261,7 @@ describe('requisitionViewFactory', function() {
             requisition.program.periodsSkippable = true;
             requisition.emergency = false;
 
-            requisitionViewFactory.canSkip(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSkip(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -258,7 +271,7 @@ describe('requisitionViewFactory', function() {
             requisition.program.periodsSkippable = true;
             requisition.emergency = false;
 
-            requisitionViewFactory.canSkip(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSkip(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -266,7 +279,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if requisition is not initiated or rejected', function() {
             requisition.$isSubmitted.andReturn(true);
 
-            requisitionViewFactory.canSkip(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSkip(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -275,7 +288,7 @@ describe('requisitionViewFactory', function() {
             requisition.$isInitiated.andReturn(true);
             requisition.program.periodsSkippable = false;
 
-            requisitionViewFactory.canSkip(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSkip(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -285,7 +298,7 @@ describe('requisitionViewFactory', function() {
             requisition.program.periodsSkippable = true;
             requisition.emergency = true;
 
-            requisitionViewFactory.canSkip(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSkip(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -293,7 +306,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if user does not have right to create (initiate/submit) this requisition', function() {
             permissionService.hasPermission.andReturn($q.resolve(false));
 
-            requisitionViewFactory.canSkip(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSkip(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -312,7 +325,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -327,7 +340,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -342,7 +355,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -357,7 +370,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -372,7 +385,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(true);
             });
         });
@@ -387,7 +400,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -402,7 +415,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -417,7 +430,7 @@ describe('requisitionViewFactory', function() {
                 }
             });
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });
@@ -425,7 +438,7 @@ describe('requisitionViewFactory', function() {
         it('should be false if requisition is not initiated, rejected, submitted, authorized or in approval', function() {
             requisition.$isApproved.andReturn(true);
 
-            requisitionViewFactory.canSync(userId, requisition).then(function(response) {
+            requisitionViewFactory.canSync(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
         });

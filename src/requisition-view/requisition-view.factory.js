@@ -93,13 +93,16 @@
          * Determines whether the user can approve and reject or not. Returns true only if
          * requisition is authorized or in approval and user has permission to approve requisition.
          *
-         * @param  {String} userId id of user to check
+         * @param  {String} user user to check
          * @param  {Object} requisition requisition to check
          * @return {Boolean} can user approve and reject this requisition
          */
-        function canApproveAndReject(userId, requisition) {
+        function canApproveAndReject(user, requisition) {
             if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition.program.id, requisition.facility.id);
+                return hasRightForProgramAndFacility(user.id, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition.program.id, requisition.facility.id)
+                    .then(function (result) {
+                        return result && user.getRoleAssignments(undefined, requisition.supervisoryNode, requisition.program.id).length > 0
+                    });
             } else {
                 return $q.resolve(false);
             }

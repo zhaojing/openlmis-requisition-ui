@@ -40,29 +40,29 @@
                 FULFILLMENT_RIGHTS.ORDERS_EDIT
             ],
             resolve: {
-                user: function(authorizationService) {
-                    return authorizationService.getUser();
+                user: function(currentUserService) {
+                    return currentUserService.getUserInfo();
                 },
                 requisition: function($stateParams, requisitionService) {
                     return requisitionService.get($stateParams.rnr);
                 },
                 canSubmit: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canSubmit(user.user_id, requisition);
+                    return requisitionViewFactory.canSubmit(user.id, requisition);
                 },
                 canAuthorize: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canAuthorize(user.user_id, requisition);
+                    return requisitionViewFactory.canAuthorize(user.id, requisition);
                 },
                 canApproveAndReject: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canApproveAndReject(user.user_id, requisition);
+                    return requisitionViewFactory.canApproveAndReject(user, requisition);
                 },
                 canDelete: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canDelete(user.user_id, requisition);
+                    return requisitionViewFactory.canDelete(user.id, requisition);
                 },
                 canSkip: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canSkip(user.user_id, requisition);
+                    return requisitionViewFactory.canSkip(user.id, requisition);
                 },
                 canSync: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canSync(user.user_id, requisition);
+                    return requisitionViewFactory.canSync(user.id, requisition);
                 }
             }
         });
