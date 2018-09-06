@@ -16,7 +16,7 @@
 describe('ProgramSettingsController', function() {
 
     var $q, $rootScope, $state, confirmService, loadingModalService, programService, notificationService,
-        program, vm, ProgramDataBuilder, $controller;
+        program, vm, ProgramDataBuilder, $controller,stateParams;
 
     beforeEach(function() {
         module('admin-program-settings', function($provide) {
@@ -57,6 +57,7 @@ describe('ProgramSettingsController', function() {
         vm = $controller('ProgramSettingsController', {
             program: program
         });
+        stateParams={};
     });
 
     describe('init', function() {
@@ -123,7 +124,9 @@ describe('ProgramSettingsController', function() {
             vm.saveProgram();
             $rootScope.$apply();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs');
+            expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs',stateParams,{
+                reload:true
+            });
         });
 
         it('should show error notification if saved failed', function() {

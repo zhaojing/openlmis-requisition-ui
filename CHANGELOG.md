@@ -6,6 +6,7 @@ New functionality added in a backwards-compatible manner:
 
 Bug fixes:
 * [OLMIS-4938](https://openlmis.atlassian.net/browse/OLMIS-4938): Moved locked requisition template columns to the top.
+* [OLMIS-4555](https://openlmis.atlassian.net/browse/OLMIS-4555): Add reload flag to reflect changes on admin programs screen.
 
 Improvements:
 * [OLMIS-5115](https://openlmis.atlassian.net/browse/OLMIS-5115): Made the requisition print button disabled when going offline
