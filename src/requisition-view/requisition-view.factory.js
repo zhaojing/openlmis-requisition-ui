@@ -209,10 +209,10 @@
                 facilityId: facilityId
             })
             .then(function() {
-                return $q.resolve(true);
+                return true;
             })
             .catch(function() {
-                return $q.resolve(false);
+                return false;
             });
         }
     }

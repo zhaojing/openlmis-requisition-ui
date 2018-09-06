@@ -15,7 +15,7 @@
 
 describe('requisitionViewFactory', function() {
 
-    var requisitionViewFactory, $q, permissionService, UserDataBuilder, user, requisition;
+    var requisitionViewFactory, $q, permissionService, UserDataBuilder, user, requisition, $rootScope;
 
     beforeEach(function() {
         module('requisition-view');
@@ -27,7 +27,8 @@ describe('requisitionViewFactory', function() {
 
             permissionService = $injector.get('permissionService');
             UserDataBuilder = $injector.get('UserDataBuilder');
-            spyOn(permissionService, 'hasPermission').andReturn($q.resolve(true));
+            $rootScope = $injector.get('$rootScope');
+            spyOn(permissionService, 'hasPermission').andReturn($q.when(true));
         });
 
         user = new UserDataBuilder()
@@ -80,6 +81,7 @@ describe('requisitionViewFactory', function() {
             requisitionViewFactory.canSubmit(user.id, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
+
         });
 
         it('should be false if user does not have right to create (initiate/submit) this requisition', function() {
@@ -122,7 +124,7 @@ describe('requisitionViewFactory', function() {
 
     describe('canApproveAndReject', function() {
 
-        it('should be true if requisition is authorized and user has right to approve this requisition', function() {
+        it('should be true if requisition is authorized and user has right to approve this requisition and has right to supervisory node', function() {
             requisition.$isAuthorized.andReturn(true);
 
             requisitionViewFactory.canApproveAndReject(user, requisition).then(function(response) {
@@ -147,10 +149,11 @@ describe('requisitionViewFactory', function() {
         });
 
         it('should be false if user does not have right to approve this requisition', function() {
-            permissionService.hasPermission.andReturn($q.resolve(false));
+            requisition.$isInApproval.andReturn(true);
+            permissionService.hasPermission.andReturn($q.when(false));
 
             requisitionViewFactory.canApproveAndReject(user, requisition).then(function(response) {
-                expect(response).toBe(false);
+                expect(response).toBe(true);
             });
         });
 
@@ -161,6 +164,10 @@ describe('requisitionViewFactory', function() {
             requisitionViewFactory.canApproveAndReject(user, requisition).then(function(response) {
                 expect(response).toBe(false);
             });
+        });
+
+        afterEach(function () {
+            $rootScope.$apply();
         });
 
     });
