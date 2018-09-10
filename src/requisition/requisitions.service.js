@@ -29,14 +29,12 @@
         .service('requisitionService', service);
 
     service.$inject = [
-        '$q', '$resource', 'messageService', 'openlmisUrlFactory', 'requisitionUrlFactory',
-        'Requisition', 'dateUtils', 'localStorageFactory', 'offlineService', 'paginationFactory',
-        'PAGE_SIZE', '$filter'
+        '$q', '$resource', 'requisitionUrlFactory', 'Requisition', 'dateUtils', 'localStorageFactory', 'offlineService',
+        'paginationFactory', '$filter'
     ];
 
-    function service($q, $resource, messageService, openlmisUrlFactory, requisitionUrlFactory,
-                     Requisition, dateUtils, localStorageFactory, offlineService, paginationFactory,
-                     PAGE_SIZE, $filter) {
+    function service($q, $resource, requisitionUrlFactory, Requisition, dateUtils, localStorageFactory, offlineService,
+                     paginationFactory, $filter) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
             offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions'),
@@ -116,12 +114,7 @@
 
             requisition = getOfflineRequisition(id);
 
-            if (offlineService.isOffline() && requisition) {
-                statusMessages = offlineStatusMessages.search({
-                    requisitionId: requisition.id
-                });
-                resolve(requisition, statusMessages);
-            } else if (!requisition || !requisition.$modified) {
+            if (!requisition || (offlineService.isOffline() && requisition.$modified)) {
                 getRequisition(id).then(function(requisition) {
                     filterRequisitionStockAdjustmentReasons(requisition);
 
