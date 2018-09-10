@@ -28,13 +28,14 @@
         .module('admin-template-add')
         .controller('TemplateAddController', TemplateAddController);
 
-    TemplateAddController.$inject = ['$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService',
-        'notificationService', 'loadingModalService', 'messageService', '$state', 'programTemplates', 'template',
-        'TEMPLATE_COLUMNS', 'DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE', 'LOCKED_TEMPLATE_COLUMNS_ORDER'];
+    TemplateAddController.$inject = [
+        '$q', 'programs', 'facilityTypes', 'availableColumns', 'confirmService', 'messageService', 'programTemplates',
+        'template', 'TEMPLATE_COLUMNS', 'DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE', 'LOCKED_TEMPLATE_COLUMNS_ORDER'
+    ];
 
-    function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService,
-        notificationService, loadingModalService, messageService, $state, programTemplates, template,
-        TEMPLATE_COLUMNS, DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE, LOCKED_TEMPLATE_COLUMNS_ORDER) {
+    function TemplateAddController($q, programs, facilityTypes, availableColumns, confirmService, messageService,
+                                   programTemplates, template, TEMPLATE_COLUMNS, DEFAULT_NUMBER_OF_PERIODS_TO_AVERAGE,
+                                   LOCKED_TEMPLATE_COLUMNS_ORDER) {
 
         var vm = this;
 
@@ -138,9 +139,9 @@
                 program: vm.template.program.name
             });
             confirmService.confirm(confirmMessage, 'adminTemplateAdd.create')
-            .then(function() {
-                template.create();
-            });
+                .then(function() {
+                    template.create();
+                });
         }
 
         /**
@@ -190,22 +191,23 @@
                 vm.template.facilityTypes = [];
 
                 vm.facilityTypes = facilityTypes
-                .filter(function(facilityType) {
-                    var isAssigned = false;
-                    programTemplates[vm.template.program.id].forEach(function(template) {
-                        template.facilityTypes.forEach(function(assignedFacilityType) {
-                            isAssigned = isAssigned || assignedFacilityType.id === facilityType.id;
+                    .filter(function(facilityType) {
+                        var isAssigned = false;
+                        programTemplates[vm.template.program.id].forEach(function(template) {
+                            template.facilityTypes.forEach(function(assignedFacilityType) {
+                                isAssigned = isAssigned || assignedFacilityType.id === facilityType.id;
+                            });
                         });
+                        return !isAssigned;
                     });
-                    return !isAssigned;
-                });
             }
         }
 
         function prepareDefaultColumns() {
-            vm.availableColumns.sort(function(a,b) {
+            vm.availableColumns.sort(function(a, b) {
                 if (!a.canChangeOrder && !b.canChangeOrder) {
-                    return LOCKED_TEMPLATE_COLUMNS_ORDER.getLockedColumnDisplayOrder(a.name) - LOCKED_TEMPLATE_COLUMNS_ORDER.getLockedColumnDisplayOrder(b.name);
+                    return LOCKED_TEMPLATE_COLUMNS_ORDER.getLockedColumnDisplayOrder(a.name) -
+                        LOCKED_TEMPLATE_COLUMNS_ORDER.getLockedColumnDisplayOrder(b.name);
                 }
                 return a.canChangeOrder - b.canChangeOrder;
             });

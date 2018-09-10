@@ -178,7 +178,7 @@
          */
         function canAssignTag(columnName) {
             if (this.columnsMap.hasOwnProperty(columnName)) {
-                return this.populateStockOnHandFromStockCards && 
+                return this.populateStockOnHandFromStockCards &&
                     this.columnsMap[columnName].columnDefinition.supportsTag;
             }
         }
@@ -211,38 +211,57 @@
          */
         function moveColumn(droppedItem, dropSpotIndex) {
             var maxNumber = 999999999999999,
-                pinnedColumns = [], // columns that position can't be changed
-                columns = [],       // all columns
+                // columns that position can't be changed
+                pinnedColumns = [],
+                // all columns
+                columns = [],
                 newDisplayOrder,
-                min,                // the lowest column displayOrder value in droppable area
-                max,                // the highest column displayOrder value in droppable area
-                isMovingUpTheList;  // indicates if column is going down or up the list
+                // the lowest column displayOrder value in droppable area
+                min,
+                // the highest column displayOrder value in droppable area
+                max,
+                // indicates if column is going down or up the list
+                isMovingUpTheList;
 
             convertListToArray(this.columnsMap);
             isMovingUpTheList = getArrayIndexForColumn(droppedItem) > dropSpotIndex;
 
-            if(isMovingUpTheList) newDisplayOrder = columns[dropSpotIndex].displayOrder;    // new displayOrder value depends on if column was dropped below or above
-            else newDisplayOrder = columns[dropSpotIndex - 1].displayOrder;
+            if (isMovingUpTheList) {
+                newDisplayOrder = columns[dropSpotIndex].displayOrder;
+            // new displayOrder value depends on if column was dropped below or above
+            } else {
+                newDisplayOrder = columns[dropSpotIndex - 1].displayOrder;
+            }
 
             setMinMaxDisplayOrder(droppedItem.displayOrder);
 
-            if(isInDroppableArea(newDisplayOrder) && droppedItem.columnDefinition.canChangeOrder) {
+            if (isInDroppableArea(newDisplayOrder) && droppedItem.columnDefinition.canChangeOrder) {
                 angular.forEach(columns, function(column) {
-                    if(isInDroppableArea(column.displayOrder) && column.columnDefinition.canChangeOrder) {
-                        if(droppedItem.name === column.name) column.displayOrder = newDisplayOrder; // setting new displayOrder for dropped column
-                        else if(isMovingUpTheList && column.displayOrder >= newDisplayOrder && column.displayOrder < droppedItem.displayOrder) column.displayOrder++;  // columns between old and new position must be
-                        else if(column.displayOrder <= newDisplayOrder && column.displayOrder > droppedItem.displayOrder) column.displayOrder--;                       // incremented or decremented
+                    if (isInDroppableArea(column.displayOrder) && column.columnDefinition.canChangeOrder) {
+                        if (droppedItem.name === column.name) {
+                            column.displayOrder = newDisplayOrder;
+                        // setting new displayOrder for dropped column
+                        } else if (shouldIncrementDisplayOrder(
+                            column, droppedItem, newDisplayOrder, isMovingUpTheList
+                        )) {
+                            column.displayOrder++;
+                        // columns between old and new position must be
+                        } else if (shouldDecrementDisplayOrder(column, droppedItem, newDisplayOrder)) {
+                            // incremented or decremented
+                            column.displayOrder--;
+                        }
                     }
                 });
                 return true;
-            } else {
-                return false;
             }
+            return false;
 
             // Converts list of columns to array, copies "pinned" columns to another array and sorts both.
             function convertListToArray(list) {
                 angular.forEach(list, function(column) {
-                    if(!column.columnDefinition.canChangeOrder) pinnedColumns.push(column);
+                    if (!column.columnDefinition.canChangeOrder) {
+                        pinnedColumns.push(column);
+                    }
                     columns.push(column);
                 });
 
@@ -262,7 +281,9 @@
                 var index;
 
                 angular.forEach(columns, function(item, idx) {
-                    if(column.name === item.name) index = idx;
+                    if (column.name === item.name) {
+                        index = idx;
+                    }
                 });
 
                 return index;
@@ -275,10 +296,16 @@
                 min = 0;
                 max = undefined;
                 angular.forEach(pinnedColumns, function(pinnedColumn) {
-                    if(displayOrder > pinnedColumn.displayOrder) min = pinnedColumn.displayOrder;
-                    if(!max && displayOrder < pinnedColumn.displayOrder) max = pinnedColumn.displayOrder;
+                    if (displayOrder > pinnedColumn.displayOrder) {
+                        min = pinnedColumn.displayOrder;
+                    }
+                    if (!max && displayOrder < pinnedColumn.displayOrder) {
+                        max = pinnedColumn.displayOrder;
+                    }
                 });
-                if(!max) max = maxNumber;
+                if (!max) {
+                    max = maxNumber;
+                }
             }
 
             // Based on mix and max from function above checks if column was dropped in proper area
@@ -301,7 +328,7 @@
         function findCircularCalculatedDependencies(columnName) {
             var circularDependencies = [];
             checkForCircularCalculatedDependencies(null, columnName, [], null,
-                                                   this.columnsMap, circularDependencies);
+                this.columnsMap, circularDependencies);
             return circularDependencies;
         }
 
@@ -315,9 +342,9 @@
          */
         function changePopulateStockOnHandFromStockCards() {
             if (this.populateStockOnHandFromStockCards) {
-              setColumnsForStockBasedTemplate(this.columnsMap);
+                setColumnsForStockBasedTemplate(this.columnsMap);
             } else {
-              restoreStockBasedColumns(this.columnsMap);
+                restoreStockBasedColumns(this.columnsMap);
             }
         }
 
@@ -338,15 +365,15 @@
         }
 
         function restoreStockBasedColumns(columns) {
-          for (var columnName in columns) {
-              if (columns.hasOwnProperty(columnName)) {
-                  var column = columns[columnName];
+            for (var columnName in columns) {
+                if (columns.hasOwnProperty(columnName)) {
+                    var column = columns[columnName];
 
-                  if (column.isStockBasedColumn()) {
-                      column.source = COLUMN_SOURCES.USER_INPUT;
-                  }
-              }
-          }
+                    if (column.isStockBasedColumn()) {
+                        column.source = COLUMN_SOURCES.USER_INPUT;
+                    }
+                }
+            }
         }
 
         /**
@@ -365,7 +392,7 @@
         }
 
         function checkForCircularCalculatedDependencies(columnNameToCheck, columnNameToFind, columnsVisited,
-                                                directParent, columnsMap, circularDependencies) {
+                                                        directParent, columnsMap, circularDependencies) {
             // already visited this column in a different dependency chain, skip
             if (columnsVisited.indexOf(columnNameToCheck) > -1) {
                 return;
@@ -404,7 +431,7 @@
                     var dependencyColumn = columnsMap[dependency];
                     if (dependencyColumn && dependencyColumn.source === COLUMN_SOURCES.CALCULATED) {
                         checkForCircularCalculatedDependencies(dependency, columnNameToFind, columnsVisited,
-                                                   currentColumnName, columnsMap, circularDependencies);
+                            currentColumnName, columnsMap, circularDependencies);
                     }
                 });
             }
@@ -412,7 +439,7 @@
 
         function addDependentColumnValidation(column, columns) {
             var dependencies = RequisitionColumn.columnDependencies(column);
-            if(dependencies && dependencies.length > 0) {
+            if (dependencies && dependencies.length > 0) {
                 angular.forEach(dependencies, function(dependency) {
                     if (columns[dependency]) {
                         if (!columns[dependency].$dependentOn) {
@@ -436,6 +463,17 @@
 
         function getSource(sources) {
             return sources.indexOf(COLUMN_SOURCES.USER_INPUT) > -1 ? COLUMN_SOURCES.USER_INPUT : sources[0];
+        }
+
+        function shouldIncrementDisplayOrder(column, droppedItem, newDisplayOrder, isMovingUpTheList) {
+            return isMovingUpTheList
+                && column.displayOrder >= newDisplayOrder
+                && column.displayOrder < droppedItem.displayOrder;
+        }
+
+        function shouldDecrementDisplayOrder(column, droppedItem, newDisplayOrder) {
+            return column.displayOrder <= newDisplayOrder
+                && column.displayOrder > droppedItem.displayOrder;
         }
     }
 })();

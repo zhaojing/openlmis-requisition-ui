@@ -13,7 +13,6 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 (function() {
 
     'use strict';
@@ -29,13 +28,15 @@
      * @param  {String} key   object properties will be sorted using this key
      * @return {Array}        sorted properties
      */
-    angular.module('admin-template-configure-columns').filter('orderObjectBy', function(){
+    angular.module('admin-template-configure-columns').filter('orderObjectBy', function() {
         return function(input, attribute) {
-            if (!angular.isObject(input)) return input;
+            if (!angular.isObject(input)) {
+                return input;
+            }
 
             var columns = [];
 
-            for(var objectKey in input) {
+            for (var objectKey in input) {
                 columns.push(input[objectKey]);
             }
             return columns.sort(sort);
@@ -45,6 +46,6 @@
                 b = parseInt(b[attribute]);
                 return a - b;
             }
-        }
+        };
     });
 })();

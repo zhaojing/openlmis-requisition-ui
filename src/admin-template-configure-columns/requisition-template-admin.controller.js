@@ -29,16 +29,15 @@
         .controller('RequisitionTemplateAdminController', RequisitionTemplateAdminController);
 
     RequisitionTemplateAdminController.$inject = [
-        '$state', 'template', 'program', 'tags', '$q', 'notificationService', 'messageService',
-        'templateValidator', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS',
-        'loadingModalService', 'confirmService', 'requisitionTemplateService'
+        '$state', 'template', 'program', 'tags', 'notificationService', 'messageService', 'templateValidator',
+        'MAX_COLUMN_DESCRIPTION_LENGTH', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS', 'loadingModalService', 'confirmService',
+        'requisitionTemplateService'
     ];
 
-    function RequisitionTemplateAdminController(
-        $state, template, program, tags, $q, notificationService, messageService, 
-        templateValidator, MAX_COLUMN_DESCRIPTION_LENGTH, COLUMN_SOURCES, TEMPLATE_COLUMNS, 
-        loadingModalService, confirmService, requisitionTemplateService) {
-
+    function RequisitionTemplateAdminController($state, template, program, tags, notificationService, messageService,
+                                                templateValidator, MAX_COLUMN_DESCRIPTION_LENGTH, COLUMN_SOURCES,
+                                                TEMPLATE_COLUMNS, loadingModalService, confirmService,
+                                                requisitionTemplateService) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -120,7 +119,9 @@
          * Redirects user to template list view page.
          */
         function goToTemplateList() {
-            $state.go('openlmis.administration.requisitionTemplates', {}, {reload: true});
+            $state.go('openlmis.administration.requisitionTemplates', {}, {
+                reload: true
+            });
         }
 
         /**
@@ -137,17 +138,18 @@
             if (vm.template.isValid()) {
                 confirmService.confirm(
                     'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                    undefined, 'adminProgramTemplate.templateSave.title')
-                .then(function() {
-                    loadingModalService.open();
-                    requisitionTemplateService.save(vm.template).then(function() {
-                        notificationService.success('adminProgramTemplate.templateSave.success');
-                        goToTemplateList();
-                    }, function() {
-                        notificationService.error('adminProgramTemplate.templateSave.failure');
-                        loadingModalService.close();
+                    undefined, 'adminProgramTemplate.templateSave.title'
+                )
+                    .then(function() {
+                        loadingModalService.open();
+                        requisitionTemplateService.save(vm.template).then(function() {
+                            notificationService.success('adminProgramTemplate.templateSave.success');
+                            goToTemplateList();
+                        }, function() {
+                            notificationService.error('adminProgramTemplate.templateSave.failure');
+                            loadingModalService.close();
+                        });
                     });
-                });
             } else {
                 notificationService.error('adminProgramTemplate.template.invalid');
             }
@@ -167,10 +169,11 @@
          * @param {Object}  item  Dropped column
          */
         function dropCallback(event, index, item) {
-            if(!vm.template.moveColumn(item, index)) {
+            if (!vm.template.moveColumn(item, index)) {
                 notificationService.error('adminProgramTemplate.canNotDropColumn');
             }
-            return false; // disable default drop functionality
+            // disable default drop functionality
+            return false;
         }
 
         /**
@@ -185,8 +188,8 @@
          * @return {boolean}        true if source can be changed
          */
         function canChangeSource(column) {
-            return column.columnDefinition.sources.length > 1 && 
-                !vm.template.isColumnDisabled(column) && 
+            return column.columnDefinition.sources.length > 1 &&
+                !vm.template.isColumnDisabled(column) &&
                 !(vm.template.populateStockOnHandFromStockCards && column.isStockBasedColumn());
         }
 

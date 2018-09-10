@@ -28,13 +28,11 @@
         .module('admin-template-configure-settings')
         .factory('templateFacilityTypeFactory', factory);
 
-    factory.$inject = ['$filter'];
-
-    function factory($filter) {
+    function factory() {
 
         var factory = {
-                getAvailableFacilityTypesForProgram: getAvailableFacilityTypesForProgram
-            };
+            getAvailableFacilityTypesForProgram: getAvailableFacilityTypesForProgram
+        };
 
         return factory;
 
@@ -70,7 +68,7 @@
 
         function getFacilityTypeById(facilityTypes, id) {
             return facilityTypes.filter(function(facilityType) {
-                return facilityType.id == id;
+                return facilityType.id === id;
             })[0];
         }
     }

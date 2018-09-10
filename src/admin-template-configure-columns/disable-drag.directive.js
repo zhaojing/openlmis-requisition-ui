@@ -13,7 +13,6 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 (function() {
 
     'use strict';
@@ -32,24 +31,23 @@
         var directive = {
             restrict: 'A',
             link: link
-        }
+        };
         return directive;
 
         function link(scope, element) {
-            element.on('focus', function(event) {
-                var draggableElements = angular.element("[dnd-draggable]");
+            element.on('focus', function() {
+                var draggableElements = angular.element('[dnd-draggable]');
                 angular.forEach(draggableElements, function(el) {
-                    angular.element(el).attr("draggable", false);
+                    angular.element(el).attr('draggable', false);
                 });
             });
-            element.on('blur', function(event) {
-                var draggableElements = angular.element("[dnd-draggable]");
+            element.on('blur', function() {
+                var draggableElements = angular.element('[dnd-draggable]');
                 angular.forEach(draggableElements, function(el) {
-                    angular.element(el).attr("draggable", true);
+                    angular.element(el).attr('draggable', true);
                 });
             });
         }
     }
-
 
 })();

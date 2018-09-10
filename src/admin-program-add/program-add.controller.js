@@ -28,9 +28,13 @@
         .module('admin-program-add')
         .controller('ProgramAddController', ProgramAddController);
 
-    ProgramAddController.$inject = ['$stateParams', '$state', 'programService', 'confirmService', 'notificationService', 'loadingModalService', 'messageService'];
+    ProgramAddController.$inject = [
+        '$stateParams', '$state', 'programService', 'confirmService', 'notificationService', 'loadingModalService',
+        'messageService'
+    ];
 
-    function ProgramAddController($stateParams, $state, programService, confirmService, notificationService, loadingModalService, messageService) {
+    function ProgramAddController($stateParams, $state, programService, confirmService, notificationService,
+                                  loadingModalService, messageService) {
 
         var vm = this;
 
@@ -76,23 +80,23 @@
                 program: vm.program.name
             });
             confirmService.confirm(confirmMessage, 'adminProgramAdd.create')
-            .then(function() {
-                var loadingPromise = loadingModalService.open();
-                programService.create(vm.program)
                 .then(function() {
-                    loadingPromise
-                    .then(function() {
-                        notificationService.success('adminProgramAdd.createProgram.success')
-                    });
-                    $state.go('openlmis.administration.programs', $stateParams, {
-                        reload: true
-                    });
-                })
-                .catch(function() {
-                    notificationService.error('adminProgramAdd.createProgram.failure');
-                    loadingModalService.close();
+                    var loadingPromise = loadingModalService.open();
+                    programService.create(vm.program)
+                        .then(function() {
+                            loadingPromise
+                                .then(function() {
+                                    notificationService.success('adminProgramAdd.createProgram.success');
+                                });
+                            $state.go('openlmis.administration.programs', $stateParams, {
+                                reload: true
+                            });
+                        })
+                        .catch(function() {
+                            notificationService.error('adminProgramAdd.createProgram.failure');
+                            loadingModalService.close();
+                        });
                 });
-            });
         }
 
         /**

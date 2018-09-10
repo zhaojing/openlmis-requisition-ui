@@ -33,9 +33,9 @@
             resolve: {
                 availableColumns: function(AvailableRequisitionColumnResource) {
                     return new AvailableRequisitionColumnResource().query()
-                    .then(function(response) {
-                        return response.content;
-                    });
+                        .then(function(response) {
+                            return response.content;
+                        });
                 },
                 template: function(TemplateAddService) {
                     return new TemplateAddService().initiateTemplate();

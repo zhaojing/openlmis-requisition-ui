@@ -53,7 +53,7 @@
         function disableColumnsAndChangeSource() {
             this.isDisplayed = false;
 
-            if (this.source == COLUMN_SOURCES.USER_INPUT) {
+            if (this.source === COLUMN_SOURCES.USER_INPUT) {
                 if (this.columnDefinition.sources.includes(COLUMN_SOURCES.REFERENCE_DATA)) {
                     this.source = COLUMN_SOURCES.REFERENCE_DATA;
                 } else if (this.columnDefinition.sources.includes(COLUMN_SOURCES.CALCULATED)) {

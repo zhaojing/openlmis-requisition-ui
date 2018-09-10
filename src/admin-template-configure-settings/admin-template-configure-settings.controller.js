@@ -28,11 +28,14 @@
         .module('admin-template-configure-settings')
         .controller('AdminTemplateConfigureSettingsController', AdminTemplateConfigureSettingsController);
 
-    AdminTemplateConfigureSettingsController.$inject = ['template', 'availableFacilityTypes', 'loadingModalService',
-        'notificationService', '$state', 'confirmService', 'requisitionTemplateService', 'templateFacilityTypes', '$q'];
+    AdminTemplateConfigureSettingsController.$inject = [
+        'template', 'availableFacilityTypes', 'loadingModalService', 'notificationService', '$state', 'confirmService',
+        'requisitionTemplateService', 'templateFacilityTypes', '$q'
+    ];
 
     function AdminTemplateConfigureSettingsController(template, availableFacilityTypes, loadingModalService,
-        notificationService, $state, confirmService, requisitionTemplateService, templateFacilityTypes, $q) {
+                                                      notificationService, $state, confirmService,
+                                                      requisitionTemplateService, templateFacilityTypes, $q) {
 
         var vm = this;
 
@@ -111,7 +114,7 @@
             sortByName(vm.facilityTypes);
 
             $q.resolve();
-        };
+        }
 
         /**
          * @ngdoc method
@@ -122,7 +125,9 @@
          * Redirects user to template list view page.
          */
         function goToTemplateList() {
-            $state.go('openlmis.administration.requisitionTemplates', {}, {reload: true});
+            $state.go('openlmis.administration.requisitionTemplates', {}, {
+                reload: true
+            });
         }
 
         /**
@@ -137,18 +142,21 @@
          */
         function saveTemplate() {
             confirmService.confirm(
-                'adminTemplateConfigureSettings.templateSettingsSave.description', 'adminTemplateConfigureSettings.save',
-                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title')
-            .then(function() {
-                loadingModalService.open();
-                requisitionTemplateService.save(vm.template).then(function() {
-                    notificationService.success('adminTemplateConfigureSettings.templateSettingsSave.success');
-                    goToTemplateList();
-                }, function() {
-                    notificationService.error('adminTemplateConfigureSettings.templateSettingsSave.failure');
-                    loadingModalService.close();
+                'adminTemplateConfigureSettings.templateSettingsSave.description',
+                'adminTemplateConfigureSettings.save',
+                undefined,
+                'adminTemplateConfigureSettings.templateSettingsSave.title'
+            )
+                .then(function() {
+                    loadingModalService.open();
+                    requisitionTemplateService.save(vm.template).then(function() {
+                        notificationService.success('adminTemplateConfigureSettings.templateSettingsSave.success');
+                        goToTemplateList();
+                    }, function() {
+                        notificationService.error('adminTemplateConfigureSettings.templateSettingsSave.failure');
+                        loadingModalService.close();
+                    });
                 });
-            });
         }
 
         /**

@@ -105,7 +105,7 @@
         }
 
         function validateTag(column, template) {
-            if (isEmpty(column.tag) && 
+            if (isEmpty(column.tag) &&
                 template.populateStockOnHandFromStockCards &&
                 column.columnDefinition.supportsTag) {
                 return messageService.get('adminProgramTemplate.columnTagEmpty');
@@ -113,9 +113,15 @@
         }
 
         function validateLabel(label) {
-            if (isEmpty(label)) return messageService.get('adminProgramTemplate.columnLabelEmpty');
-            if (label.length < 2) return messageService.get('adminProgramTemplate.columnLabelToShort');
-            if (!ALPHA_NUMERIC_REGEX.test(label)) return messageService.get('adminProgramTemplate.columnLabelNotAllowedCharacters');
+            if (isEmpty(label)) {
+                return messageService.get('adminProgramTemplate.columnLabelEmpty');
+            }
+            if (label.length < 2) {
+                return messageService.get('adminProgramTemplate.columnLabelToShort');
+            }
+            if (!ALPHA_NUMERIC_REGEX.test(label)) {
+                return messageService.get('adminProgramTemplate.columnLabelNotAllowedCharacters');
+            }
         }
 
         function validateDefinition(definition) {
@@ -125,8 +131,9 @@
         }
 
         function validateSource(column) {
-            if (isEmpty(column.source))
+            if (isEmpty(column.source)) {
                 return messageService.get('adminProgramTemplate.emptyColumnSource');
+            }
         }
 
         function validateOption(column) {
@@ -162,7 +169,7 @@
 
         function validateAdditionalQuantityRequired(column, template) {
             var aColumn = template.columnsMap[TEMPLATE_COLUMNS.ADJUSTED_CONSUMPTION];
-            if(!aColumn.isDisplayed && column.isDisplayed) {
+            if (!aColumn.isDisplayed && column.isDisplayed) {
                 return messageService.get('adminProgramTemplate.columnDisplayMismatch') + aColumn.label;
             }
         }
@@ -179,15 +186,16 @@
             var dependencies = '',
                 message;
 
-            if(column.source === COLUMN_SOURCES.CALCULATED) {
+            if (column.source === COLUMN_SOURCES.CALCULATED) {
                 var circularDependencyArray = template.findCircularCalculatedDependencies(column.name);
                 angular.forEach(circularDependencyArray, function(dependency) {
                     dependencies = dependencies + ' ' + template.columnsMap[dependency].label + ',';
                 });
             }
 
-            if(dependencies.length > 0) {
-                dependencies = dependencies.substring(0, dependencies.length - 1); // remove last comma
+            if (dependencies.length > 0) {
+                // remove last comma
+                dependencies = dependencies.substring(0, dependencies.length - 1);
                 return messageService.get('adminProgramTemplate.calculatedError') + dependencies;
             }
 
@@ -195,8 +203,11 @@
         }
 
         function validateUserInput(column) {
-            if (!column.isDisplayed && column.source === COLUMN_SOURCES.USER_INPUT && column.columnDefinition.sources.length > 1) {
-                return messageService.get('adminProgramTemplate.shouldBeDisplayed') + messageService.get('adminProgramTemplate.isUserInput');
+            if (!column.isDisplayed
+                && column.source === COLUMN_SOURCES.USER_INPUT
+                && column.columnDefinition.sources.length > 1) {
+                return messageService.get('adminProgramTemplate.shouldBeDisplayed') +
+                    messageService.get('adminProgramTemplate.isUserInput');
             }
         }
 

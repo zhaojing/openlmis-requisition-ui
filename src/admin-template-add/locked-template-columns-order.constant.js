@@ -30,9 +30,9 @@
 
     function columns() {
         var lockedColumnsOrder = {
-            'skipped': 1,
-            'productCode': 2,
-            'productName': 3
+            skipped: 1,
+            productCode: 2,
+            productName: 3
         };
 
         return {
@@ -40,7 +40,9 @@
         };
 
         function getLockedColumnDisplayOrder(columnName) {
-            return lockedColumnsOrder[columnName] ? lockedColumnsOrder[columnName] : Object.keys(lockedColumnsOrder).length + 1;
+            return lockedColumnsOrder[columnName] ?
+                lockedColumnsOrder[columnName] :
+                Object.keys(lockedColumnsOrder).length + 1;
         }
     }
 

@@ -34,7 +34,8 @@
     ];
 
     function TemplateAddService(
-        notificationService, loadingModalService, alertService, Template, TemplateRepository, $state, $q) {
+        notificationService, loadingModalService, alertService, Template, TemplateRepository, $state, $q
+    ) {
 
         TemplateAddService.prototype.initiateTemplate = initiateTemplate;
 
@@ -79,20 +80,20 @@
             template.create = function() {
                 loadingModalService.open();
                 return originalCreate.apply(this, arguments)
-                .then(function(response) {
-                    notificationService.success('adminTemplateAdd.createTemplate.success');
-                    $state.go('openlmis.administration.requisitionTemplates.configure.columns', {
-                        id: response.id
-                    }, {
-                        reload: true
+                    .then(function(response) {
+                        notificationService.success('adminTemplateAdd.createTemplate.success');
+                        $state.go('openlmis.administration.requisitionTemplates.configure.columns', {
+                            id: response.id
+                        }, {
+                            reload: true
+                        });
+                        return response;
+                    })
+                    .catch(function(error) {
+                        loadingModalService.close();
+                        notificationService.error('adminTemplateAdd.createTemplate.failure');
+                        return $q.reject(error);
                     });
-                    return response;
-                })
-                .catch(function(error) {
-                    loadingModalService.close();
-                    notificationService.error('adminTemplateAdd.createTemplate.failure');
-                    return $q.reject(error);
-                });
             };
         }
     }

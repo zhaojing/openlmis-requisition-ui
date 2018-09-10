@@ -33,16 +33,16 @@
     function requisitionTemplateService(requisitionUrlFactory, $resource, Template) {
 
         var resource = $resource(requisitionUrlFactory('/api/requisitionTemplates/:id'), {}, {
-            'getAll': {
+            getAll: {
                 url: requisitionUrlFactory('/api/requisitionTemplates'),
                 method: 'GET',
                 isArray: true
             },
-            'search': {
+            search: {
                 url: requisitionUrlFactory('/api/requisitionTemplates/search'),
                 method: 'GET'
             },
-            'update': {
+            update: {
                 method: 'PUT'
             }
         });
@@ -65,10 +65,12 @@
          * @return {Promise}    Requisition template info
          */
         function get(id) {
-            return resource.get({id: id}).$promise
-            .then(function(response) {
-                return new Template(response);
-            });
+            return resource.get({
+                id: id
+            }).$promise
+                .then(function(response) {
+                    return new Template(response);
+                });
         }
 
         /**
@@ -83,13 +85,13 @@
          */
         function getAll() {
             return resource.getAll().$promise
-            .then(function(response) {
-                var templates = [];
-                response.forEach(function(template) {
-                    templates.push(new Template(template));
+                .then(function(response) {
+                    var templates = [];
+                    response.forEach(function(template) {
+                        templates.push(new Template(template));
+                    });
+                    return templates;
                 });
-                return templates;
-            });
         }
 
         /**
@@ -104,10 +106,12 @@
          * @return {Promise}            Requisition template for given program
          */
         function search(programId) {
-            return resource.search({program: programId}).$promise
-            .then(function(response) {
-                return new Template(response);
-            });
+            return resource.search({
+                program: programId
+            }).$promise
+                .then(function(response) {
+                    return new Template(response);
+                });
         }
 
         /**
@@ -121,7 +125,9 @@
          * @return {Promise} Saved requisition template
          */
         function save(template) {
-            return resource.update({id: template.id}, template).$promise;
+            return resource.update({
+                id: template.id
+            }, template).$promise;
         }
 
         /**

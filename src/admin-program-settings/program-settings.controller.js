@@ -28,9 +28,13 @@
         .module('admin-program-settings')
         .controller('ProgramSettingsController', ProgramSettingsController);
 
-    ProgramSettingsController.$inject = ['$stateParams','$state', 'program', 'programService', 'confirmService', 'notificationService', 'loadingModalService'];
+    ProgramSettingsController.$inject = [
+        '$stateParams', '$state', 'program', 'programService', 'confirmService', 'notificationService',
+        'loadingModalService'
+    ];
 
-    function ProgramSettingsController($stateParams,$state, program, programService, confirmService, notificationService, loadingModalService) {
+    function ProgramSettingsController($stateParams, $state, program, programService, confirmService,
+                                       notificationService, loadingModalService) {
 
         var vm = this;
 
@@ -60,15 +64,15 @@
                 loadingModalService.open();
                 programService.update(vm.program).then(function() {
                     notificationService.success('adminProgramSettings.programSettingsSavedSuccessfully');
-                    $state.go('openlmis.administration.programs',$stateParams,{
-                        reload:true
+                    $state.go('openlmis.administration.programs', $stateParams, {
+                        reload: true
                     });
                 }, function() {
                     notificationService.error('adminProgramSettings.programSettingsSaveFailed');
-                }).finally(loadingModalService.close);
+                })
+                    .finally(loadingModalService.close);
             });
         }
-
 
     }
 })();
