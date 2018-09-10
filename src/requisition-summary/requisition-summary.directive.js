@@ -39,7 +39,7 @@
                 requisition: '=requisition'
             },
             templateUrl: 'requisition-summary/requisition-summary.html'
-        };
+        }
         return directive;
     }
 

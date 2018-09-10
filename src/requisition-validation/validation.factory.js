@@ -28,9 +28,9 @@
         .module('requisition-validation')
         .factory('validationFactory', validationFactory);
 
-    validationFactory.$inject = ['messageService', 'TEMPLATE_COLUMNS'];
+    validationFactory.$inject = ['messageService', 'TEMPLATE_COLUMNS', 'calculationFactory'];
 
-    function validationFactory(messageService, TEMPLATE_COLUMNS) {
+    function validationFactory(messageService, TEMPLATE_COLUMNS, calculationFactory) {
         var factory = {
             stockOnHand: validateStockOnHand,
             totalConsumedQuantity: validateTotalConsumedQuantity,
@@ -87,12 +87,9 @@
          * @return {String}             the error if field is invalid, undefined otherwise
          */
         function validateRequestedQuantityExplanation(lineItem, requisition) {
-            var requestedQuantityColumn = requisition.template
-                    .getColumn(TEMPLATE_COLUMNS.REQUESTED_QUANTITY),
-                calculatedOrderQuantityColumn = requisition.template.
-                    getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY),
-                calculatedOrderQuantityIsaColumn = requisition.template
-                    .getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA),
+            var requestedQuantityColumn = requisition.template.getColumn(TEMPLATE_COLUMNS.REQUESTED_QUANTITY),
+                calculatedOrderQuantityColumn = requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY),
+                calculatedOrderQuantityIsaColumn = requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA),
                 requestedQuantityExplanation = lineItem.requestedQuantityExplanation,
                 requestedQuantity = lineItem.requestedQuantity;
 
@@ -154,7 +151,7 @@
 
         function isRequestedQuantityRequired(lineItem, requisition) {
             return lineItem.isNonFullSupply() ||
-            requisition.emergency ||
+            requisition.emergency || 
             (!isDisplayed(requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY)) &&
             !isDisplayed(requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA)));
         }

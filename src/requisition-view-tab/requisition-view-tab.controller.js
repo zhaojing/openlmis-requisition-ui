@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function() {
+(function () {
 
     'use strict';
 
@@ -34,6 +34,7 @@
         'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory',
         'TEMPLATE_COLUMNS'
     ];
+
 
     function ViewTabController($filter, addProductModalService, addFullSupplyProductModalService,
                                requisitionValidator, requisition, columns, messageService,
@@ -106,6 +107,7 @@
          * status and user rights and requisition template configuration.
          */
         vm.showAddFullSupplyProductControls = undefined;
+
 
         /**
          * @ngdoc property
@@ -182,7 +184,7 @@
                 );
 
                 addProductModalService.show(categories, fullSupply)
-                    .then(function(lineItem) {
+                    .then(function (lineItem) {
                         vm.requisition.addLineItem(
                             lineItem.orderable,
                             lineItem.requestedQuantity,
@@ -210,8 +212,7 @@
         function getDescriptionForColumn(column) {
             if (requisition.template.populateStockOnHandFromStockCards &&
                 column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS) {
-                return column.definition + ' ' +
-                    messageService.get('requisitionViewTab.totalLossesAndAdjustment.disabled');
+                return column.definition + ' ' + messageService.get('requisitionViewTab.totalLossesAndAdjustment.disabled');
             }
             return column.definition;
         }
@@ -246,28 +247,27 @@
          * Returns a translated message that contains the number of line items that were skipped
          * from full supply requisition.
          */
-        function skippedFullSupplyProductCountMessage() {
-            return  messageService.get('requisitionViewTab.fullSupplyProductsSkipped', {
-                skippedProductCount: getCountOfSkippedFullSupplyProducts()
-            });
+        function skippedFullSupplyProductCountMessage(){
+            return  messageService.get('requisitionViewTab.fullSupplyProductsSkipped', { skippedProductCount: getCountOfSkippedFullSupplyProducts()});
         }
 
         function refreshLineItems() {
             var filterObject = (fullSupply &&
                                     vm.requisition.template.hasSkipColumn() &&
                                     vm.requisition.template.hideSkippedLineItems()) ?
-                {
-                    skipped: '!true',
-                    $program: {
-                        fullSupply: fullSupply
-                    }
-                } : {
-                    $program: {
-                        fullSupply: fullSupply
-                    }
-                };
+                                                                {
+                                                                    skipped: "!true",
+                                                                    $program: {
+                                                                        fullSupply: fullSupply
+                                                                    }
+                                                                } : {
+                                                                    $program: {
+                                                                        fullSupply: fullSupply
+                                                                    }
+                                                                };
 
             var lineItems = $filter('filter')(vm.requisition.requisitionLineItems, filterObject);
+
 
             vm.lineItems = $filter('orderBy')(lineItems, [
                 '$program.orderableCategoryDisplayOrder',
@@ -317,7 +317,7 @@
             return (item.skipped === true && item.$program.fullSupply === true);
         }
 
-        function getCountOfSkippedFullSupplyProducts() {
+        function getCountOfSkippedFullSupplyProducts(){
             return vm.requisition.requisitionLineItems.filter(isSkippedFullSupply).length;
         }
 

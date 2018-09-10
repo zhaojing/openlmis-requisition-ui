@@ -34,16 +34,14 @@
             nonTrackable: true,
             resolve: {
                 lineItems: function(paginationService, requisition, $stateParams, $filter, requisitionValidator) {
-                    return paginationService.registerList(
-                        requisitionValidator.isLineItemValid, $stateParams, function() {
-                            return $filter('filter')(requisition.requisitionLineItems, {
-                                $program: {
-                                    fullSupply: false
-                                }
-                            });
-                        }
-                    );
-                },
+					return paginationService.registerList(requisitionValidator.isLineItemValid, $stateParams, function() {
+                        return $filter('filter')(requisition.requisitionLineItems, {
+                            $program: {
+                                fullSupply: false
+                            }
+                        });
+					});
+				},
                 columns: function(requisition) {
                     return requisition.template.getColumns(true);
                 },

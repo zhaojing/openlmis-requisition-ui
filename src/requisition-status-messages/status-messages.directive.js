@@ -39,7 +39,7 @@
                 requisition: '=requisition'
             },
             templateUrl: 'requisition-status-messages/status-messages.html'
-        };
+        }
         return directive;
     }
 })();

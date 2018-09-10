@@ -39,7 +39,7 @@
             canDelete: canDelete,
             canSkip: canSkip,
             canSync: canSync
-        };
+        }
         return factory;
 
         /**
@@ -57,10 +57,10 @@
          */
         function canSubmit(userId, requisition) {
             if (requisition.$isInitiated() || requisition.$isRejected()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition);
+                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition.program.id, requisition.facility.id);
+            } else {
+                return $q.resolve(false);
             }
-            return $q.resolve(false);
-
         }
 
         /**
@@ -78,10 +78,10 @@
          */
         function canAuthorize(userId, requisition) {
             if (requisition.$isSubmitted()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition);
+                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition.program.id, requisition.facility.id);
+            } else {
+                return $q.resolve(false);
             }
-            return $q.resolve(false);
-
         }
 
         /**
@@ -99,15 +99,13 @@
          */
         function canApproveAndReject(user, requisition) {
             if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                return hasRightForProgramAndFacility(user.id, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition)
-                    .then(function(result) {
-                        return result && user.getRoleAssignments(
-                            undefined, requisition.supervisoryNode, requisition.program.id
-                        ).length > 0;
+                return hasRightForProgramAndFacility(user.id, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition.program.id, requisition.facility.id)
+                    .then(function (result) {
+                        return result && user.getRoleAssignments(undefined, requisition.supervisoryNode, requisition.program.id).length > 0;
                     });
+            } else {
+                return $q.resolve(false);
             }
-            return $q.resolve(false);
-
         }
 
         /**
@@ -127,35 +125,35 @@
         function canDelete(userId, requisition) {
             if (requisition.$isInitiated() || requisition.$isRejected() || requisition.$isSkipped()) {
                 return $q.all([
-                    hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_DELETE, requisition),
-                    hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition)
+                    hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_DELETE, requisition.program.id, requisition.facility.id),
+                    hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition.program.id, requisition.facility.id)
                 ]).then(function(responses) {
                     var hasDeleteRight = responses[0],
                         hasCreateRight = responses[1];
 
                     if (hasDeleteRight && hasCreateRight) {
                         return $q.resolve(true);
+                    } else {
+                        return $q.resolve(false);
                     }
-                    return $q.resolve(false);
-
                 });
             } else if (requisition.$isSubmitted()) {
                 return $q.all([
-                    hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_DELETE, requisition),
-                    hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition)
+                    hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_DELETE, requisition.program.id, requisition.facility.id),
+                    hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition.program.id, requisition.facility.id)
                 ]).then(function(responses) {
                     var hasDeleteRight = responses[0],
                         hasAuthorizeRight = responses[1];
 
                     if (hasDeleteRight && hasAuthorizeRight) {
                         return $q.resolve(true);
+                    } else {
+                        return $q.resolve(false);
                     }
-                    return $q.resolve(false);
-
                 });
+            } else {
+                return $q.resolve(false);
             }
-            return $q.resolve(false);
-
         }
 
         /**
@@ -174,10 +172,10 @@
             if ((requisition.$isInitiated() || requisition.$isRejected()) &&
                 requisition.program.periodsSkippable &&
                 !requisition.emergency) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition);
+                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition.program.id, requisition.facility.id);
+            } else {
+                return $q.resolve(false);
             }
-            return $q.resolve(false);
-
         }
 
         /**
@@ -194,28 +192,28 @@
          */
         function canSync(userId, requisition) {
             if (requisition.$isInitiated() || requisition.$isRejected()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition);
+                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition.program.id, requisition.facility.id);
             } else if (requisition.$isSubmitted()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition);
+                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition.program.id, requisition.facility.id);
             } else if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition);
+                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition.program.id, requisition.facility.id);
+            } else {
+                return $q.resolve(false);
             }
-            return $q.resolve(false);
-
         }
 
-        function hasRightForProgramAndFacility(userId, rightName, requisition) {
+        function hasRightForProgramAndFacility(userId, rightName, programId, facilityId) {
             return permissionService.hasPermission(userId, {
                 right: rightName,
-                programId: requisition.program.id,
-                facilityId: requisition.facility.id
+                programId: programId,
+                facilityId: facilityId
             })
-                .then(function() {
-                    return $q.resolve(true);
-                })
-                .catch(function() {
-                    return $q.resolve(false);
-                });
+            .then(function() {
+                return $q.resolve(true);
+            })
+            .catch(function() {
+                return $q.resolve(false);
+            });
         }
     }
 

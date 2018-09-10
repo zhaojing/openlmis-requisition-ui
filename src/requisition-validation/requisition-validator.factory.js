@@ -29,12 +29,12 @@
         .factory('requisitionValidator', requisitionValidator);
 
     requisitionValidator.$inject = [
-        'validationFactory', 'calculationFactory', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'COLUMN_TYPES',
-        'messageService', '$filter', 'MAX_INTEGER_VALUE'
+        'validationFactory', 'calculationFactory', 'TEMPLATE_COLUMNS',
+        'COLUMN_SOURCES', 'COLUMN_TYPES', 'messageService', '$filter', 'MAX_INTEGER_VALUE'
     ];
 
-    function requisitionValidator(validationFactory, calculationFactory, TEMPLATE_COLUMNS, COLUMN_SOURCES, COLUMN_TYPES,
-                                  messageService, $filter, MAX_INTEGER_VALUE) {
+    function requisitionValidator(validationFactory, calculationFactory, TEMPLATE_COLUMNS,
+                                  COLUMN_SOURCES, COLUMN_TYPES, messageService, $filter, MAX_INTEGER_VALUE) {
 
         var counterparts = {
             stockOnHand: TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY,
@@ -103,6 +103,7 @@
             var valid = true,
                 validator = this;
 
+
             angular.forEach(columns, function(column) {
                 valid = validator.validateLineItemField(lineItem, column, requisition) && valid;
             });
@@ -127,12 +128,16 @@
             var name = column.name,
                 error;
 
-            if (shouldSkipValidation(lineItem, column)) {
+            if (lineItem[TEMPLATE_COLUMNS.SKIPPED]) return true;
+
+            if (name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS) return true;
+
+            if (!column.$display) {
                 return true;
             }
 
             if (column.$required) {
-                error = nonEmpty(lineItem[name]);
+                error = error || nonEmpty(lineItem[name]);
             }
 
             if (validationFactory[name]) {
@@ -143,7 +148,7 @@
                 error = error || validateCalculation(calculationFactory[name], lineItem, name);
             }
 
-            if (validateNumeric(lineItem, column)) {
+            if (column.$type === COLUMN_TYPES.NUMERIC && lineItem[name] > MAX_INTEGER_VALUE) {
                 error = error || messageService.get('requisitionValidation.numberTooLarge');
             }
             return !(lineItem.$errors[name] = error);
@@ -164,9 +169,7 @@
         function isLineItemValid(lineItem) {
             var valid = true,
                 isSkipped = lineItem.skipped ? lineItem.skipped : false;
-            if (isSkipped) {
-                return true;
-            }
+            if(isSkipped) return true;
             angular.forEach(lineItem.$errors, function(error) {
                 valid = valid && !error;
             });
@@ -201,10 +204,10 @@
             if (template.populateStockOnHandFromStockCards &&
                 TEMPLATE_COLUMNS.getStockBasedColumns().includes(column.name)) {
                 return false;
-            }
-            return calculationFactory[column.name] && !isCalculated(column) && counterpart &&
+            } else {
+                return calculationFactory[column.name] && !isCalculated(column) && counterpart &&
                     !isCalculated(counterpart);
-
+            }
         }
 
         function nonEmpty(value) {
@@ -243,16 +246,6 @@
                 }
             });
             return allSkipped;
-        }
-
-        function shouldSkipValidation(lineItem, column) {
-            return lineItem[TEMPLATE_COLUMNS.SKIPPED] ||
-                column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS ||
-                !column.$display;
-        }
-
-        function validateNumeric(lineItem, column) {
-            return column.$type === COLUMN_TYPES.NUMERIC && lineItem[column.name] > MAX_INTEGER_VALUE;
         }
     }
 

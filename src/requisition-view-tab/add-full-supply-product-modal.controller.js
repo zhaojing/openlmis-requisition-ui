@@ -135,10 +135,9 @@
          * @name searchByCodeAndName
          *
          * @description
-         * Returns true if the product code starts with the search text or true if product full name contains the search
-         * text.
+         * Returns true if the product code starts with the search text or true if product full name contains the search text.
          */
-        function searchByCodeAndName(item) {
+        function searchByCodeAndName(item){
             return (item.orderable.fullProductName.toLowerCase().contains(vm.searchTextLowerCase) ||
                 item.orderable.productCode.toLowerCase().startsWith(vm.searchTextLowerCase));
         }
@@ -151,10 +150,10 @@
          * @description
          * Refreshes the product list so the add product dialog box shows only relevant products.
          */
-        function refreshList() {
+        function refreshList(){
             if (vm.searchText === '') {
                 vm.filteredLineItems = vm.requisitionLineItems;
-            } else {
+            }else{
                 vm.searchTextLowerCase = vm.searchText.toLowerCase();
                 vm.filteredLineItems = vm.requisitionLineItems.filter(searchByCodeAndName);
             }

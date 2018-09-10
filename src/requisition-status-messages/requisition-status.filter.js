@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function() {
+(function(){
     /**
     * @ngdoc filter
     * @name requisition-status-messages.requisitionStatus
