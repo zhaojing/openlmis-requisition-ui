@@ -269,13 +269,6 @@
                 columns.sort(sort);
             }
 
-            // Sorting function for column arrays
-            function sort(a, b) {
-                a = parseInt(a.displayOrder);
-                b = parseInt(b.displayOrder);
-                return a - b;
-            }
-
             // Returns current index in array of given column.
             function getArrayIndexForColumn(column) {
                 var index;
@@ -474,6 +467,13 @@
         function shouldDecrementDisplayOrder(column, droppedItem, newDisplayOrder) {
             return column.displayOrder <= newDisplayOrder
                 && column.displayOrder > droppedItem.displayOrder;
+        }
+
+        // Sorting function for column arrays
+        function sort(a, b) {
+            a = parseInt(a.displayOrder);
+            b = parseInt(b.displayOrder);
+            return a - b;
         }
     }
 })();
