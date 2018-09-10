@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function () {
+(function() {
 
     'use strict';
 
@@ -50,7 +50,9 @@
          * @return {promise}            a promise that resolves line items user wants to un-skip
          */
         function show(requisitionLineItems) {
-            if (dialog) return dialog.promise;
+            if (dialog) {
+                return dialog.promise;
+            }
 
             dialog = openlmisModalService.createDialog({
                 controller: 'AddFullSupplyProductModalController',
@@ -58,19 +60,19 @@
                 templateUrl: 'requisition-view-tab/add-full-supply-product-modal.html',
                 show: true,
                 resolve: {
-                    requisitionLineItems: function () {
+                    requisitionLineItems: function() {
                         return paginationService.registerList(null, $stateParams,
                             function() {
                                 return $filter('filter')(requisitionLineItems, {
-                                    skipped: "true",
+                                    skipped: 'true',
                                     $program: {
                                         fullSupply: true
                                     }
                                 });
                             }, {
-                                    customPageParamName: 'pPage',
-                                    customSizeParamName: 'pSize'
-                                });
+                                customPageParamName: 'pPage',
+                                customSizeParamName: 'pSize'
+                            });
                     }
                 }
             });

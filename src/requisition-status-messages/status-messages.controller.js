@@ -63,7 +63,7 @@
         vm.removeComment = removeComment;
         vm.displayEditComment = displayEditComment;
 
-         /**
+        /**
          * @ngdoc method
          * @methodOf requisition-status-messages.controller:StatusMessagesController
          * @name addComment
@@ -75,7 +75,7 @@
             vm.isTextAreaVisible = true;
         }
 
-         /**
+        /**
          * @ngdoc method
          * @methodOf requisition-status-messages.controller:StatusMessagesController
          * @name removeComment
@@ -88,7 +88,7 @@
             vm.isTextAreaVisible = false;
         }
 
-         /**
+        /**
          * @ngdoc method
          * @methodOf requisition-status-messages.controller:StatusMessagesController
          * @name displayRequisitionHistory
@@ -107,8 +107,8 @@
          *
          * @description
          * Responsible for checking if requisition does not have a draft.
-         * If text area is not visible and draftStatusMessage is not set and requisition is editable then button will be displayed.
-         * Otherwise add button will not be displayed.
+         * If text area is not visible and draftStatusMessage is not set and requisition is editable then button will be
+         * displayed. Otherwise add button will not be displayed.
          */
         function displayAddComment() {
             return !vm.requisition.draftStatusMessage && !vm.isTextAreaVisible && vm.requisition.$isEditable;

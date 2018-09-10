@@ -33,28 +33,30 @@
             nonTrackable: true,
             resolve: {
                 lineItems: function(paginationService, requisition, $stateParams, $filter, requisitionValidator) {
-					return paginationService.registerList(requisitionValidator.isLineItemValid, $stateParams, function() {
-                        var filterObject = requisition.template.hideSkippedLineItems() ?
-                                            {
-                                                skipped: "!true",
-                                                $program: {
-                                                    fullSupply: true
-                                                }
-                                            } : {
-                                                $program: {
-                                                    fullSupply: true
-                                                }
-                                            };
-                        var fullSupplyLineItems = $filter('filter')(requisition.requisitionLineItems, filterObject);
+                    return paginationService.registerList(
+                        requisitionValidator.isLineItemValid, $stateParams, function() {
+                            var filterObject = requisition.template.hideSkippedLineItems() ?
+                                {
+                                    skipped: '!true',
+                                    $program: {
+                                        fullSupply: true
+                                    }
+                                } : {
+                                    $program: {
+                                        fullSupply: true
+                                    }
+                                };
+                            var fullSupplyLineItems = $filter('filter')(requisition.requisitionLineItems, filterObject);
 
-                        return $filter('orderBy')(fullSupplyLineItems, [
-                            '$program.orderableCategoryDisplayOrder',
-                            '$program.orderableCategoryDisplayName',
-                            '$program.displayOrder',
-                            'orderable.fullProductName'
-                        ]);
-					});
-				},
+                            return $filter('orderBy')(fullSupplyLineItems, [
+                                '$program.orderableCategoryDisplayOrder',
+                                '$program.orderableCategoryDisplayName',
+                                '$program.displayOrder',
+                                'orderable.fullProductName'
+                            ]);
+                        }
+                    );
+                },
                 columns: function(requisition) {
                     return requisition.template.getColumns(requisition.emergency);
                 },

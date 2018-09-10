@@ -29,9 +29,9 @@
         .module('requisition-view')
         .factory('RequisitionWatcher', factory);
 
-    factory.$inject = ['$timeout', 'localStorageFactory'];
+    factory.$inject = ['$timeout'];
 
-    function factory($timeout, localStorageFactory) {
+    function factory($timeout) {
 
         return RequisitionWatcher;
 

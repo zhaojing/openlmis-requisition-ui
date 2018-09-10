@@ -41,7 +41,7 @@
         /**
          * @ngdoc property
          * @propertyOf requisition-view.controller:RequisitionStockCountDateModalController
-         * @name requsition
+         * @name requisition
          * @type {Object}
          *
          * @description
@@ -103,7 +103,7 @@
                 return;
             }
 
-            if(!isDateBeforeOrEqualToday(dateUtils.toDate(vm.datePhysicalStockCountCompleted))) {
+            if (!isDateBeforeOrEqualToday(dateUtils.toDate(vm.datePhysicalStockCountCompleted))) {
                 return 'requisitionView.datePhysicalStockCountCompleted.inFuture';
             }
         }

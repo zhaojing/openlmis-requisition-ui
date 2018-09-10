@@ -28,9 +28,9 @@
         .module('requisition-template')
         .factory('RequisitionColumn', requisitionColumn);
 
-    requisitionColumn.$inject = ['TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'REQUISITION_STATUS'];
+    requisitionColumn.$inject = ['TEMPLATE_COLUMNS', 'COLUMN_SOURCES'];
 
-    function requisitionColumn(TEMPLATE_COLUMNS, COLUMN_SOURCES, REQUISITION_STATUS) {
+    function requisitionColumn(TEMPLATE_COLUMNS, COLUMN_SOURCES) {
 
         /**
          * @ngdoc property
@@ -153,7 +153,7 @@
             this.$type = column.columnDefinition.columnType;
             this.$display = displayColumn(column, requisition);
             this.$required = (nonMandatoryFields.indexOf(this.name) === -1 &&
-                this.source == COLUMN_SOURCES.USER_INPUT);
+                this.source === COLUMN_SOURCES.USER_INPUT);
             this.$fullSupplyOnly = nonFullSupplyColumns.indexOf(this.name) === -1;
             this.$dependencies = dependencies[this.name];
             this.$canChangeOrder = column.columnDefinition.canChangeOrder;
@@ -175,7 +175,7 @@
             return column.isDisplayed && (
                 [TEMPLATE_COLUMNS.APPROVED_QUANTITY, TEMPLATE_COLUMNS.REMARKS].indexOf(column.name) === -1 ||
                 requisition.$isAfterAuthorize());
-            }
+        }
 
         function columnDependencies(column) {
             return dependencies[column.name];
