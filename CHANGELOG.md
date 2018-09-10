@@ -3,7 +3,8 @@
 
 New functionality added in a backwards-compatible manner:
 * [OLMIS-5334](https://openlmis.atlassian.net/browse/OLMIS-5334): Enabled Total and Number of patients added columns for Stock Based Requisitions.
-* [OLMIS-5335](https://openlmis.atlassian.net/browse/OLMIS-5335): Enabled Adjusted Consumption column for Stock Based Requisitions. 
+* [OLMIS-5335](https://openlmis.atlassian.net/browse/OLMIS-5335): Enabled Adjusted Consumption column for Stock Based Requisitions.
+* [OLMIS-5366](https://openlmis.atlassian.net/browse/OLMIS-5366): Enabled Average Consumption column for Stock Based Requisitions.
 
 Bug fixes:
 * [OLMIS-4938](https://openlmis.atlassian.net/browse/OLMIS-4938): Moved locked requisition template columns to the top.
