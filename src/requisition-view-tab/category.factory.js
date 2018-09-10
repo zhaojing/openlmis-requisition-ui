@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-  (function() {
+(function() {
 
     'use strict';
 
@@ -28,9 +28,7 @@
         .module('requisition-view-tab')
         .factory('categoryFactory', factory);
 
-    factory.$inject = ['$filter'];
-
-    function factory($filter) {
+    function factory() {
         var factory = {
             groupProducts: groupProducts
         };

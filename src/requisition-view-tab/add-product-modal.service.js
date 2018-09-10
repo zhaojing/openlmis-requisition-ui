@@ -50,7 +50,9 @@
          * @return {Object}             the new product
          */
         function show(categories, fullSupply) {
-            if (dialog) return dialog.promise;
+            if (dialog) {
+                return dialog.promise;
+            }
 
             dialog = openlmisModalService.createDialog({
                 controller: 'AddProductModalController',

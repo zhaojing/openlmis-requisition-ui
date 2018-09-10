@@ -28,9 +28,9 @@
         .module('requisition-template')
         .factory('RequisitionTemplate', template);
 
-    template.$inject = ['RequisitionColumn', '$filter'];
+    template.$inject = ['RequisitionColumn'];
 
-    function template(RequisitionColumn, $filter) {
+    function template(RequisitionColumn) {
 
         RequisitionTemplate.prototype.getColumns = getColumns;
         RequisitionTemplate.prototype.getColumn = getColumn;
@@ -79,18 +79,19 @@
                 columnsMap = this.columnsMap;
 
             if (nonFullSupply || this.emergency) {
-                for (var columnName in columnsMap) {
+                var columnName;
+                for (columnName in columnsMap) {
                     if (columnsMap.hasOwnProperty(columnName) &&
                         columnsMap[columnName].$display && !columnsMap[columnName].$fullSupplyOnly) {
-                            columns.push(columnsMap[columnName]);
-                        }
+                        columns.push(columnsMap[columnName]);
+                    }
                 }
             } else {
-                for (var columnName in columnsMap) {
+                for (columnName in columnsMap) {
                     if (columnsMap.hasOwnProperty(columnName) &&
                         columnsMap[columnName].$display) {
-                            columns.push(columnsMap[columnName]);
-                        }
+                        columns.push(columnsMap[columnName]);
+                    }
                 }
             }
 
@@ -147,7 +148,7 @@
          * is 'hideSkippedLineItems'
          */
         function hideSkippedLineItems() {
-            if(!this.hasSkipColumn()){
+            if (!this.hasSkipColumn()) {
                 return false;
             }
             return this.getColumn('skipped').option.optionName === 'hideSkippedLineItems';
