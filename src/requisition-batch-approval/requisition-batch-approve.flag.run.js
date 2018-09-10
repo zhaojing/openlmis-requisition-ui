@@ -21,7 +21,7 @@
         .module('requisition-batch-approval')
         .run(setBatchApproveScreenFlag);
 
-        setBatchApproveScreenFlag.$inject = ['featureFlagService', 'BATCH_APPROVE_SCREEN_FEATURE_FLAG'];
+    setBatchApproveScreenFlag.$inject = ['featureFlagService', 'BATCH_APPROVE_SCREEN_FEATURE_FLAG'];
 
     function setBatchApproveScreenFlag(featureFlagService, BATCH_APPROVE_SCREEN_FEATURE_FLAG) {
         featureFlagService.set(BATCH_APPROVE_SCREEN_FEATURE_FLAG, '${BATCH_APPROVE_SCREEN}', false);

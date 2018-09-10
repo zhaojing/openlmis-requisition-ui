@@ -25,14 +25,16 @@
      * Responsible for adding required methods for line items.
      */
     angular
-    .module('requisition')
-    .factory('LineItem', lineItem);
+        .module('requisition')
+        .factory('LineItem', lineItem);
 
-    lineItem.$inject = ['$timeout', 'validationFactory', 'calculationFactory', 'authorizationService',
-        'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'COLUMN_TYPES', 'REQUISITION_RIGHTS'];
+    lineItem.$inject = [
+        'calculationFactory', 'authorizationService', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'COLUMN_TYPES',
+        'REQUISITION_RIGHTS'
+    ];
 
-    function lineItem($timeout, validationFactory, calculationFactory, authorizationService,
-                      TEMPLATE_COLUMNS, COLUMN_SOURCES, COLUMN_TYPES, REQUISITION_RIGHTS) {
+    function lineItem(calculationFactory, authorizationService, TEMPLATE_COLUMNS, COLUMN_SOURCES, COLUMN_TYPES,
+                      REQUISITION_RIGHTS) {
 
         LineItem.prototype.getFieldValue = getFieldValue;
         LineItem.prototype.updateFieldValue = updateFieldValue;
@@ -61,7 +63,9 @@
             this.stockAdjustments = lineItem.stockAdjustments;
 
             this.$errors = {};
-            this.$program = this.orderable.$program ? this.orderable.$program : getProgramById(lineItem.orderable.programs, requisition.program.id);
+            this.$program = this.orderable.$program ?
+                this.orderable.$program :
+                getProgramById(lineItem.orderable.programs, requisition.program.id);
 
             var newLineItem = this;
             requisition.template.getColumns(!this.$program.fullSupply).forEach(function(column) {
@@ -93,9 +97,11 @@
                 object = getObject(this, fullName),
                 propertyName = getPropertyName(column.name);
 
-            if(object) {
+            if (object) {
                 if (column.source === COLUMN_SOURCES.CALCULATED) {
-                    object[propertyName] = calculationFactory[fullName] ? calculationFactory[fullName](this, requisition) : null;
+                    object[propertyName] = calculationFactory[fullName] ?
+                        calculationFactory[fullName](this, requisition) :
+                        null;
                 } else if (column.$type === COLUMN_TYPES.NUMERIC || column.$type === COLUMN_TYPES.CURRENCY) {
                     checkIfNullOrZero(object[propertyName]);
                 } else {
@@ -117,7 +123,7 @@
          * @param {Object} column Requisition template column
          * @param {Object} requisition Requisition to which line item belongs
          */
-        function updateDependentFields(column, requisition){
+        function updateDependentFields(column, requisition) {
             updateDependentFieldsHelper(this, column, requisition, []);
         }
 
@@ -134,28 +140,26 @@
          * @param {Object} lineItem Reference to the lineItem being updated
          * @param {Object} column Requisition template column
          * @param {Object} requisition Requisition to which line item belongs
-         * @param {Array} updatedColums Arry of column names that have already been updated
+         * @param {Array} updatedColumns Arry of column names that have already been updated
          *
          */
-        function updateDependentFieldsHelper(lineItem, column, requisition, updatedColumns){
+        function updateDependentFieldsHelper(lineItem, column, requisition, updatedColumns) {
 
-
-            // Protecting against circular dependancies, by keeping track of the
+            // Protecting against circular dependencies, by keeping track of the
             // fields that we have already updated.
-            if(updatedColumns.indexOf(column.name) >= 0){
+            if (updatedColumns.indexOf(column.name) >= 0) {
                 return;
-            } else {
-               updatedColumns.push(column.name);
             }
+            updatedColumns.push(column.name);
 
             // Update the dependencies for the column
-            angular.forEach(requisition.template.columnsMap, function(dependantColumn){
+            angular.forEach(requisition.template.columnsMap, function(dependantColumn) {
                 var dependencies = [];
-                if(dependantColumn.$dependencies && Array.isArray(dependantColumn.$dependencies)){
+                if (dependantColumn.$dependencies && Array.isArray(dependantColumn.$dependencies)) {
                     dependencies = dependantColumn.$dependencies;
                 }
 
-                if(dependencies.indexOf(column.name) >= 0){
+                if (dependencies.indexOf(column.name) >= 0) {
                     lineItem.updateFieldValue(dependantColumn, requisition);
                     updateDependentFieldsHelper(lineItem, dependantColumn, requisition, updatedColumns);
                 }
@@ -175,14 +179,15 @@
          */
         function canBeSkipped(requisition) {
             var result = true,
-            lineItem = this,
-            columns = requisition.template.getColumns(!this.$program.fullSupply);
+                lineItem = this,
+                columns = requisition.template.getColumns(!this.$program.fullSupply);
 
-            if (requisition.$isApproved() || requisition.$isAuthorized() || requisition.$isInApproval() || requisition.$isReleased()) {
+            if (requisition.$isApproved() || requisition.$isAuthorized() || requisition.$isInApproval()
+                || requisition.$isReleased()) {
                 return false;
             }
 
-            columns.forEach(function (column) {
+            columns.forEach(function(column) {
                 if (isInputDisplayedAndNotEmpty(column, lineItem)) {
                     result = false;
                 }
@@ -217,27 +222,35 @@
          * @return {Boolean} true if line item is read only
          */
         function isReadOnly(requisition, column) {
-            if (requisition.$isApproved() || requisition.$isReleased()){
+            if (requisition.$isApproved() || requisition.$isReleased()) {
                 return true;
             }
-            if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                if (hasApproveRight(requisition) && isApprovalColumn(column)) {
-                    return false;
-                }
+            if (canApprove(requisition) && isApprovalColumn(column)) {
+                return false;
             }
-            if (column.source === COLUMN_SOURCES.USER_INPUT) {
-                if (hasAuthorizeRight(requisition) && requisition.$isSubmitted()) {
-                    return false;
-                }
-                if (hasCreateRight(requisition) && (requisition.$isInitiated() || requisition.$isRejected())) {
-                    return false;
-                }
+            if (canEditColumn(requisition, column)) {
+                return false;
             }
 
             // If we don't know that the field is editable, its read only
             return true;
         }
 
+        function canEditColumn(requisition, column) {
+            return column.source === COLUMN_SOURCES.USER_INPUT && (canAuthorize(requisition) || canSubmit(requisition));
+        }
+
+        function canApprove(requisition) {
+            return hasApproveRight(requisition) && (requisition.$isAuthorized() || requisition.$isInApproval());
+        }
+
+        function canSubmit(requisition) {
+            return hasCreateRight(requisition) && (requisition.$isInitiated() || requisition.$isRejected());
+        }
+
+        function canAuthorize(requisition) {
+            return hasAuthorizeRight(requisition) && requisition.$isSubmitted();
+        }
 
         function hasApproveRight(requisition) {
             return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_APPROVE, {
@@ -300,7 +313,7 @@
         }
 
         function getPropertyName(fullPath) {
-            var id = fullPath.lastIndexOf('.')
+            var id = fullPath.lastIndexOf('.');
             return id > -1 ? fullPath.substr(id) : fullPath;
         }
 
@@ -311,6 +324,6 @@
                 value = null;
             }
         }
-    };
+    }
 
 })();

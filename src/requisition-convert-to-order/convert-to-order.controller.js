@@ -13,10 +13,9 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 (function() {
 
-	'use strict';
+    'use strict';
 
     /**
      * @ngdoc controller
@@ -26,17 +25,17 @@
      * Controller for converting requisitions to orders.
      */
 
-	angular
-		.module('requisition-convert-to-order')
-		.controller('ConvertToOrderController', ConvertToOrderController);
+    angular
+        .module('requisition-convert-to-order')
+        .controller('ConvertToOrderController', ConvertToOrderController);
 
-	ConvertToOrderController.$inject = [
+    ConvertToOrderController.$inject = [
         '$stateParams', 'requisitionsForConvertFactory', 'notificationService',
         'confirmService', 'loadingModalService', 'requisitions', '$state', 'UuidGenerator'
     ];
 
-	function ConvertToOrderController($stateParams, requisitionsForConvertFactory, notificationService,
-                                confirmService, loadingModalService, requisitions, $state, UuidGenerator) {
+    function ConvertToOrderController($stateParams, requisitionsForConvertFactory, notificationService,
+                                      confirmService, loadingModalService, requisitions, $state, UuidGenerator) {
 
         var vm = this,
             uuidGenerator = new UuidGenerator(),
@@ -47,9 +46,9 @@
         vm.getSelected = getSelected;
         vm.toggleSelectAll = toggleSelectAll;
         vm.setSelectAll = setSelectAll;
-		vm.search = search;
+        vm.search = search;
 
-		/**
+        /**
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
          * @name requisitions
@@ -58,9 +57,9 @@
          * @description
          * Holds requisitions that will be displayed on screen.
          */
-		vm.requisitions = requisitions;
+        vm.requisitions = requisitions;
 
-		/**
+        /**
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
          * @name filterBy
@@ -69,9 +68,9 @@
          * @description
          * Holds field that will be filtered.
          */
-		vm.filterBy = $stateParams.filterBy;
+        vm.filterBy = $stateParams.filterBy;
 
-		/**
+        /**
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
          * @name filterValue
@@ -82,7 +81,7 @@
          */
         vm.filterValue = $stateParams.filterValue;
 
-		/**
+        /**
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
          * @name sortBy
@@ -91,9 +90,9 @@
          * @description
          * Holds field to sort by.
          */
-		vm.sortBy = $stateParams.sortBy;
+        vm.sortBy = $stateParams.sortBy;
 
-		/**
+        /**
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
          * @name descending
@@ -102,7 +101,7 @@
          * @description
          * Indicates if list will be sorted descending or ascending.
          */
-		vm.descending = $stateParams.descending;
+        vm.descending = $stateParams.descending;
 
         /**
          * @ngdoc property
@@ -306,19 +305,19 @@
             return value === undefined;
         }
 
-		function search() {
-			var stateParams = angular.copy($stateParams);
+        function search() {
+            var stateParams = angular.copy($stateParams);
 
-			stateParams.filterBy = vm.filterBy;
-			stateParams.filterValue = vm.filterValue;
-			stateParams.sortBy = vm.sortBy;
-			stateParams.descending = vm.descending;
+            stateParams.filterBy = vm.filterBy;
+            stateParams.filterValue = vm.filterValue;
+            stateParams.sortBy = vm.sortBy;
+            stateParams.descending = vm.descending;
 
-			$state.go('openlmis.requisitions.convertToOrder', stateParams, {
-				reload: true
-			});
+            $state.go('openlmis.requisitions.convertToOrder', stateParams, {
+                reload: true
+            });
         }
-        
+
         function release(withOrder) {
             var requisitions = getSelected();
             if (requisitions.length > 0) {
@@ -329,34 +328,34 @@
                 if (missingDepots.length > 0) {
                     notificationService.error('requisitionConvertToOrder.noSupplyingDepotSelected');
                 } else {
-                    confirmService.confirm(withOrder ? 
+                    confirmService.confirm(withOrder ?
                         'requisitionConvertToOrder.convertToOrder.confirm' :
                         'requisitionConvertToOrder.releaseWithoutOrder.confirm')
-                    .then(function() {
-                        loadingModalService.open();
-
-                        var promise = withOrder ? 
-                            requisitionsForConvertFactory.convertToOrder(requisitions, key) : 
-                            requisitionsForConvertFactory.releaseWithoutOrder(requisitions, key);
-
-                        promise
                         .then(function() {
-                            notificationService.success(withOrder ? 
-                                'requisitionConvertToOrder.convertToOrder.success' : 
-                                'requisitionConvertToOrder.releaseWithoutOrder.success');
-                            $state.reload();
-                        })
-                        .catch(function() {
-                            loadingModalService.close();
-                            notificationService.error('requisitionConvertToOrder.errorOccurred');
-                            key = uuidGenerator.generate();
+                            loadingModalService.open();
+
+                            var promise = withOrder ?
+                                requisitionsForConvertFactory.convertToOrder(requisitions, key) :
+                                requisitionsForConvertFactory.releaseWithoutOrder(requisitions, key);
+
+                            promise
+                                .then(function() {
+                                    notificationService.success(withOrder ?
+                                        'requisitionConvertToOrder.convertToOrder.success' :
+                                        'requisitionConvertToOrder.releaseWithoutOrder.success');
+                                    $state.reload();
+                                })
+                                .catch(function() {
+                                    loadingModalService.close();
+                                    notificationService.error('requisitionConvertToOrder.errorOccurred');
+                                    key = uuidGenerator.generate();
+                                });
                         });
-                    });
                 }
             } else {
                 notificationService.error('requisitionConvertToOrder.selectAtLeastOneRnr');
             }
         }
-	}
+    }
 
 })();

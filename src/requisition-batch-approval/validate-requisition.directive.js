@@ -66,7 +66,7 @@
 
             function updateMessage() {
                 requisition.$error = isValid(requisition) ?
-                    messageService.get("requisitionBatchApproval.invalidRequisition") :
+                    messageService.get('requisitionBatchApproval.invalidRequisition') :
                     undefined;
             }
 
@@ -88,7 +88,7 @@
                 var errors = [];
                 return function() {
                     return errors;
-                }
+                };
             }
 
         }

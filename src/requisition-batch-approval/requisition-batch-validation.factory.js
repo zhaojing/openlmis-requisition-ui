@@ -34,7 +34,7 @@
 
         var factory = {
             validateRequisitions: validateRequisitions
-        }
+        };
         return factory;
 
         /**
@@ -53,22 +53,22 @@
             var successfulRequisitions = [];
 
             requisitions.forEach(function(requisition) {
-                if(validateRequisition(requisition)){
+                if (validateRequisition(requisition)) {
                     successfulRequisitions.push(requisition);
                 }
             });
 
-            if(successfulRequisitions.length < requisitions.length) {
+            if (successfulRequisitions.length < requisitions.length) {
                 return $q.reject(successfulRequisitions);
-            } else {
-                return $q.resolve(successfulRequisitions);
             }
+            return $q.resolve(successfulRequisitions);
+
         }
 
         function validateRequisition(requisition) {
             var valid = true;
-            angular.forEach(requisition.requisitionLineItems, function (lineItem) {
-               valid = validateApprovedQuantity(lineItem) && valid;
+            angular.forEach(requisition.requisitionLineItems, function(lineItem) {
+                valid = validateApprovedQuantity(lineItem) && valid;
             });
 
             return valid;
@@ -77,7 +77,9 @@
         function validateApprovedQuantity(lineItem) {
             var error;
 
-            if (lineItem.skipped) return true;
+            if (lineItem.skipped) {
+                return true;
+            }
             if (isEmpty(lineItem.approvedQuantity)) {
                 error = messageService.get('requisitionBatchApproval.required');
             } else if (lineItem.approvedQuantity > MAX_INTEGER_VALUE) {
@@ -89,10 +91,6 @@
 
         function isEmpty(value) {
             return value === null || value === undefined || value === '';
-        }
-
-        function removeFromStorage(requisition, storage) {
-            storage.removeBy('id', requisition.id);
         }
     }
 

@@ -30,14 +30,14 @@
 
     controller.$inject = [
         'requisitions', 'calculationFactory', 'stateTrackerService', 'loadingModalService', 'messageService',
-            'alertService', 'confirmService', 'notificationService', 'requisitionBatchSaveFactory',
-            'requisitionBatchApproveFactory', 'offlineService', 'RequisitionWatcher', '$scope', '$filter', 'REQUISITION_STATUS',
-            'localStorageFactory', '$state', '$stateParams', 'requisitionBatchDisplayFactory'
+        'alertService', 'confirmService', 'notificationService', 'requisitionBatchSaveFactory',
+        'requisitionBatchApproveFactory', 'offlineService', 'RequisitionWatcher', '$scope', '$filter',
+        'localStorageFactory', '$state', '$stateParams', 'requisitionBatchDisplayFactory'
     ];
 
-    function controller(requisitions, calculationFactory, stateTrackerService, loadingModalService,
-                        messageService, alertService, confirmService, notificationService, requisitionBatchSaveFactory,
-                        requisitionBatchApproveFactory, offlineService, RequisitionWatcher, $scope, $filter, REQUISITION_STATUS,
+    function controller(requisitions, calculationFactory, stateTrackerService, loadingModalService, messageService,
+                        alertService, confirmService, notificationService, requisitionBatchSaveFactory,
+                        requisitionBatchApproveFactory, offlineService, RequisitionWatcher, $scope, $filter,
                         localStorageFactory, $state, $stateParams, requisitionBatchDisplayFactory) {
 
         var vm = this;
@@ -157,9 +157,11 @@
          * Replaces all values manually entered by user with the values the page displayed when originally loaded.
          */
         function revert() {
-            confirmService.confirm('requisitionBatchApproval.revertConfirm', 'requisitionBatchApproval.revert').then(function() {
-                prepareDataToDisplay(vm.requisitionsCopy);
-            });
+            confirmService
+                .confirm('requisitionBatchApproval.revertConfirm', 'requisitionBatchApproval.revert')
+                .then(function() {
+                    prepareDataToDisplay(vm.requisitionsCopy);
+                });
 
         }
 
@@ -175,37 +177,44 @@
             loadingModalService.open();
 
             requisitionBatchSaveFactory.saveRequisitions(vm.requisitions)
-            .then(function(savedRequisitions){
+                .then(function(savedRequisitions) {
                 //successfully saved all requisitions
-                var successMessage = messageService.get("requisitionBatchApproval.syncSuccess", {
-                    successCount: savedRequisitions.length
-                });
-
-                $stateParams.errors = {};
-                prepareDataToDisplay(savedRequisitions);
-                notificationService.success(successMessage);
-
-            }, function(savedRequisitions) {
-                //at least one requisition failed to save
-                var errors = {},
-                    successCount = savedRequisitions ? savedRequisitions.length : 0,
-                    errorMessage = messageService.get("requisitionBatchApproval.syncError", {
-                        errorCount: vm.requisitions.length - successCount
+                    var successMessage = messageService.get('requisitionBatchApproval.syncSuccess', {
+                        successCount: savedRequisitions.length
                     });
 
-                angular.forEach(vm.requisitions, function(requisition){
-                    var savedRequisition = $filter('filter')(savedRequisitions, {id: requisition.id});
-                    if(savedRequisition[0] !== undefined) { // if successful requisition
-                        requisition = savedRequisition[0];
-                    } else {
-                        errors[requisition.id] = requisition.$error;
-                    }
-                });
+                    $stateParams.errors = {};
+                    prepareDataToDisplay(savedRequisitions);
+                    notificationService.success(successMessage);
 
-                notificationService.error(errorMessage);
-                $state.go($state.current, {errors: errors}, {reload: true});
-            })
-            .finally(loadingModalService.close);
+                }, function(savedRequisitions) {
+                //at least one requisition failed to save
+                    var errors = {},
+                        successCount = savedRequisitions ? savedRequisitions.length : 0,
+                        errorMessage = messageService.get('requisitionBatchApproval.syncError', {
+                            errorCount: vm.requisitions.length - successCount
+                        });
+
+                    angular.forEach(vm.requisitions, function(requisition) {
+                        var savedRequisition = $filter('filter')(savedRequisitions, {
+                            id: requisition.id
+                        });
+                        if (savedRequisition[0] === undefined) {
+                            errors[requisition.id] = requisition.$error;
+                        // if successful requisition
+                        } else {
+                            requisition = savedRequisition[0];
+                        }
+                    });
+
+                    notificationService.error(errorMessage);
+                    $state.go($state.current, {
+                        errors: errors
+                    }, {
+                        reload: true
+                    });
+                })
+                .finally(loadingModalService.close);
         }
 
         /**
@@ -217,14 +226,15 @@
          * Approves all displayed requisitions.
          */
         function approve() {
-            confirmService.confirm('requisitionBatchApproval.approvalConfirm').then(function(){
+            confirmService.confirm('requisitionBatchApproval.approvalConfirm').then(function() {
                 var loadingPromise = loadingModalService.open();
 
                 // Using slice to make copy of array, so scope changes at end only
                 requisitionBatchApproveFactory.batchApprove(vm.requisitions.slice())
-                .then(function(successfulRequisitions) {
-                    handleApprove(successfulRequisitions, loadingPromise);
-                }).catch(loadingModalService.close);
+                    .then(function(successfulRequisitions) {
+                        handleApprove(successfulRequisitions, loadingPromise);
+                    })
+                    .catch(loadingModalService.close);
             });
         }
 
@@ -243,19 +253,19 @@
          *
          */
         function updateRequisitions() {
-            if(vm.isOffline()) {
+            if (vm.isOffline()) {
                 alertService.error('requisitionBatchApproval.updateOffline');
                 return;
             }
 
             confirmService.confirm('requisitionBatchApproval.updateWarning', 'requisitionBatchApproval.update')
-                .then(function(){
+                .then(function() {
                     var offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions'),
                         offlineRequisitions = localStorageFactory('requisitions');
 
                     angular.forEach(vm.requisitions, function(requisition) {
                         offlineBatchRequisitions.removeBy('id', requisition.id);
-                        offlineRequisitions.removeBy('id', requisition.id)
+                        offlineRequisitions.removeBy('id', requisition.id);
                     });
 
                     $state.reload();
@@ -275,23 +285,30 @@
          *
          */
         function areRequisitionsOutdated() {
-            return $filter('filter')(vm.requisitions, {$outdated: true}).length > 0;
+            return $filter('filter')(vm.requisitions, {
+                $outdated: true
+            }).length > 0;
         }
 
         function handleApprove(successfulRequisitions, loadingPromise) {
             var errors = {},
                 requisitionIds = [];
 
-            if(successfulRequisitions.length < vm.requisitions.length) {
+            if (successfulRequisitions.length < vm.requisitions.length) {
                 vm.requisitions.forEach(function(requisition) {
                     if (!isFoundInSuccessfulRequisitions(requisition, successfulRequisitions)) {
                         requisitionIds.push(requisition.id);
-                        errors[requisition.id] = messageService.get("requisitionBatchApproval.invalidRequisition");
+                        errors[requisition.id] = messageService.get('requisitionBatchApproval.invalidRequisition');
                     }
                 });
 
                 // Reload state to display page without approved notifications and to update outdated ones
-                $state.go($state.current, {errors: errors, ids: requisitionIds.join(',')}, {reload: true});
+                $state.go($state.current, {
+                    errors: errors,
+                    ids: requisitionIds.join(',')
+                }, {
+                    reload: true
+                });
 
             } else {
                 //All requisitions got approved, display notification and go back to approval list
@@ -301,14 +318,14 @@
             loadingPromise.then(function() {
                 if (requisitionIds.length > 0) {
                     notificationService.error(
-                        messageService.get("requisitionBatchApproval.approvalError", {
+                        messageService.get('requisitionBatchApproval.approvalError', {
                             errorCount: requisitionIds.length
                         })
                     );
                 }
                 if (successfulRequisitions.length > 0) {
                     notificationService.success(
-                        messageService.get("requisitionBatchApproval.approvalSuccess", {
+                        messageService.get('requisitionBatchApproval.approvalSuccess', {
                             successCount: successfulRequisitions.length
                         })
                     );
@@ -353,13 +370,13 @@
                 }
 
                 new RequisitionWatcher($scope, requisition, localStorageFactory('batchApproveRequisitions'))
-                .enableWatcher();
+                    .enableWatcher();
             });
         }
 
         function isFoundInSuccessfulRequisitions(requisition, successfulRequisitions) {
             return successfulRequisitions.filter(function(r) {
-                return r.id == requisition.id;
+                return r.id === requisition.id;
             }).length > 0;
         }
     }

@@ -32,14 +32,13 @@
         .module('requisition-batch-approval')
         .factory('requisitionBatchSaveFactory', factory);
 
-    factory.$inject = ['$q', '$http', '$filter', 'openlmisUrlFactory', 'localStorageFactory',
-        'requisitionBatchApprovalService'];
+    factory.$inject = ['$q', '$filter', 'localStorageFactory', 'requisitionBatchApprovalService'];
 
-    function factory($q, $http, $filter, openlmisUrlFactory, localStorageFactory, requisitionBatchApprovalService) {
+    function factory($q, $filter, localStorageFactory, requisitionBatchApprovalService) {
 
         var factory = {
             saveRequisitions: saveRequisitions
-        }
+        };
         return factory;
 
         /**
@@ -56,9 +55,9 @@
          * OpenLMIS Server.
          * 
          */
-        function saveRequisitions(requisitions){
+        function saveRequisitions(requisitions) {
 
-            if(!Array.isArray(requisitions) || requisitions.length == 0){
+            if (!Array.isArray(requisitions) || requisitions.length === 0) {
                 return $q.reject([]);
             }
 
@@ -67,14 +66,16 @@
                 offlineRequisitions = localStorageFactory('requisitions'),
                 requisitionDtos = [];
 
-            requisitions.forEach(function(requisition){
+            requisitions.forEach(function(requisition) {
                 requisitionDtos.push(transformRequisition(requisition));
             });
 
             requisitionBatchApprovalService.saveAll(requisitionDtos).then(function(response) {
 
                 angular.forEach(requisitions, function(requisition) {
-                    var savedRequisition = $filter('filter')(response.requisitionDtos, {id: requisition.id});
+                    var savedRequisition = $filter('filter')(response.requisitionDtos, {
+                        id: requisition.id
+                    });
                     saveToStorage(angular.copy(savedRequisition[0]), offlineBatchRequisitions);
                 });
 
@@ -82,17 +83,21 @@
             }, function(response) {
 
                 angular.forEach(requisitions, function(requisition) {
-                    var requisitionError = $filter('filter')(response.requisitionErrors, {requisitionId: requisition.id});
+                    var requisitionError = $filter('filter')(response.requisitionErrors, {
+                        requisitionId: requisition.id
+                    });
                     if (requisitionError.length > 0) {
                         requisition.$error = requisitionError[0].errorMessage.message;
-                        if (requisitionError[0].errorMessage.messageKey === 'requisition.error.validation.dateModifiedMismatch') {
+                        if (isDateModifiedMismatchMessage(requisitionError[0].errorMessage.messageKey)) {
                             // In case of outdated requisition remove it from storage
                             removeFromStorage(requisition, offlineBatchRequisitions);
                             removeFromStorage(requisition, offlineRequisitions);
                         }
                     } else {
                         //Save successful requisitions to storage
-                        var savedRequisition = $filter('filter')(response.requisitionDtos, {id: requisition.id});
+                        var savedRequisition = $filter('filter')(response.requisitionDtos, {
+                            id: requisition.id
+                        });
                         saveToStorage(angular.copy(savedRequisition[0]), offlineBatchRequisitions);
                     }
                 });
@@ -125,6 +130,10 @@
 
         function removeFromStorage(requisition, storage) {
             storage.removeBy('id', requisition.id);
+        }
+
+        function isDateModifiedMismatchMessage(messageKey) {
+            return messageKey === 'requisition.error.validation.dateModifiedMismatch';
         }
     }
 

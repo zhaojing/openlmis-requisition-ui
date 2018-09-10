@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-(function(){
+(function() {
 
     'use strict';
 
@@ -66,11 +66,11 @@
             var factory = this;
             if (shouldFetchFromServer(params, this.lastParams, this.lastPage)) {
                 return requisitionService.forConvert(newParams)
-                .then(function(page) {
-                    factory.lastParams = params;
-                    factory.lastPage = page;
-                    return getRequestedPage(page, params, newParams);
-                });
+                    .then(function(page) {
+                        factory.lastParams = params;
+                        factory.lastPage = page;
+                        return getRequestedPage(page, params, newParams);
+                    });
             }
             return getRequestedPage(this.lastPage, params, this.lastPage);
         }
@@ -160,7 +160,6 @@
             var originalFrom = calculateFrom(params),
                 from = calculateFrom(pageable),
                 offset = originalFrom - from,
-                contentPromise,
                 newPage = {
                     first: originalFrom === 0,
                     last: page.totalElements - 1 <= calculateTo(params),
@@ -213,7 +212,7 @@
             var newParams = angular.copy(params);
             newParams.size = undefined;
 
-            if (params.page == 0) {
+            if (params.page === 0) {
                 newParams.size = params.size * 2;
                 return newParams;
             }
@@ -223,7 +222,7 @@
                 var newPage = 0;
 
                 do {
-                    var from = ((params.page * params.size) + (2 * params.size))/(newPage + 1),
+                    var from = ((params.page * params.size) + (2 * params.size)) / (newPage + 1),
                         roundedFrom = Math.ceil(from / params.size) * params.size,
                         to = (params.page * params.size) / newPage;
 
@@ -263,7 +262,7 @@
         }
 
         function getNumberOfElements(pageable) {
-            if (pageable.numberOfElements != undefined && pageable.page !== null) {
+            if (pageable.numberOfElements !== undefined && pageable.page !== null) {
                 return parseInt(pageable.numberOfElements);
             }
             return parseInt(pageable.size);

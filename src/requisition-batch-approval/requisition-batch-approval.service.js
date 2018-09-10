@@ -35,14 +35,14 @@
         var offlineRequisitions = localStorageFactory('batchApproveRequisitions');
 
         var resource = $resource(requisitionUrlFactory('/api/requisitions?retrieveAll'), {}, {
-            'get': {
+            get: {
                 method: 'GET'
             },
-            'saveAll': {
+            saveAll: {
                 method: 'PUT',
                 url: requisitionUrlFactory('/api/requisitions?saveAll')
             },
-            'approveAll': {
+            approveAll: {
                 method: 'POST',
                 url: requisitionUrlFactory('/api/requisitions?approveAll')
             }
@@ -76,10 +76,10 @@
 
                 angular.forEach(ids, function(id) {
                     var requisition = offlineRequisitions.getBy('id', id);
-                    if(!requisition) {
-                        deferred.reject();
-                    } else {
+                    if (requisition) {
                         offlineResponse.push(requisition);
+                    } else {
+                        deferred.reject();
                     }
                 });
 
@@ -122,11 +122,15 @@
         }
 
         function approveAll(ids) {
-            return resource.approveAll({id: ids.join(',')}, {}).$promise;
+            return resource.approveAll({
+                id: ids.join(',')
+            }, {}).$promise;
         }
 
         function getRequisitions(ids) {
-            return resource.get({id: ids.join(',')}).$promise;
+            return resource.get({
+                id: ids.join(',')
+            }).$promise;
         }
 
         function saveToLocalStorage(requisition) {

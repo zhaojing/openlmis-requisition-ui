@@ -32,15 +32,17 @@
         .module('requisition-batch-approval')
         .factory('requisitionBatchApproveFactory', factory);
 
-    factory.$inject = ['$q', 'requisitionBatchSaveFactory', 'messageService', 'MAX_INTEGER_VALUE', 'TEMPLATE_COLUMNS', 'localStorageFactory',
-        'requisitionBatchApprovalService', 'requisitionBatchValidationFactory'];
+    factory.$inject = [
+        '$q', 'requisitionBatchSaveFactory', 'messageService', 'localStorageFactory', 'requisitionBatchApprovalService',
+        'requisitionBatchValidationFactory'
+    ];
 
-    function factory($q, requisitionBatchSaveFactory, messageService, MAX_INTEGER_VALUE, TEMPLATE_COLUMNS, localStorageFactory,
-        requisitionBatchApprovalService, requisitionBatchValidationFactory) {
+    function factory($q, requisitionBatchSaveFactory, messageService, localStorageFactory,
+                     requisitionBatchApprovalService, requisitionBatchValidationFactory) {
 
         var factory = {
             batchApprove: batchApprove
-        }
+        };
         return factory;
 
         /**
@@ -63,13 +65,16 @@
 
             // Sending an error would complicate the contract, so we do
             // nothing (and pretend like it was a success)
-            if(!Array.isArray(requisitions) || requisitions.length == 0){
+            if (!Array.isArray(requisitions) || requisitions.length === 0) {
                 return $q.reject([]);
             }
 
             return requisitionBatchSaveFactory.saveRequisitions(requisitions)
-            .then(requisitionBatchValidationFactory.validateRequisitions, requisitionBatchValidationFactory.validateRequisitions)
-            .then(approveRequisitions, approveRequisitions);
+                .then(
+                    requisitionBatchValidationFactory.validateRequisitions,
+                    requisitionBatchValidationFactory.validateRequisitions
+                )
+                .then(approveRequisitions, approveRequisitions);
         }
 
         function approveRequisitions(requisitions) {
@@ -77,14 +82,14 @@
                 requisitionIds = [],
                 offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions');
 
-            requisitions.forEach(function(requisition){
+            requisitions.forEach(function(requisition) {
                 requisitionsObject[requisition.id] = requisition;
                 requisitionIds.push(requisition.id);
             });
 
             var deferred = $q.defer();
 
-            requisitionBatchApprovalService.approveAll(requisitionIds).then(function(response){
+            requisitionBatchApprovalService.approveAll(requisitionIds).then(function(response) {
 
                 // All requisitions are approved so remove them from batchRequisitions storage
                 angular.forEach(requisitions, function(requisition) {
@@ -93,33 +98,34 @@
 
                 return deferred.resolve(response.requisitionDtos);
             })
-            .catch(function(response){
-                if(response.status === 400){
+                .catch(function(response) {
+                    if (response.status === 400) {
                     // Process errors
-                    if(response.data.requisitionErrors) {
-                        response.data.requisitionErrors.forEach(function(error){
-                            if(requisitionsObject[error.requisitionId]){
-                                requisitionsObject[error.requisitionId].$error = error.errorMessage.message ?
-                                    error.errorMessage.message : messageService.get('requisitionBatchApproval.errorApprove');
+                        if (response.data.requisitionErrors) {
+                            response.data.requisitionErrors.forEach(function(error) {
+                                if (requisitionsObject[error.requisitionId]) {
+                                    requisitionsObject[error.requisitionId].$error = error.errorMessage.message ?
+                                        error.errorMessage.message :
+                                        messageService.get('requisitionBatchApproval.errorApprove');
+                                }
+                            });
+                        }
+
+                        // Process successful requisitions
+                        var successfulRequisitions = [];
+                        requisitions.forEach(function(requisition) {
+                            if (!requisition.$error) {
+                            // Remove successful requisitions from batchRequisitions storage
+                                removeFromStorage(requisition, offlineBatchRequisitions);
+                                successfulRequisitions.push(requisition);
                             }
                         });
-                    }
 
-                    // Process successful requisitions
-                    var successfulRequisitions = [];
-                    requisitions.forEach(function(requisition){
-                        if(!requisition.$error){
-                            // Remove successful requisitions from batchRequisitions storage
-                            removeFromStorage(requisition, offlineBatchRequisitions);
-                            successfulRequisitions.push(requisition);
-                        }
-                    });
-                    
-                    return deferred.resolve(successfulRequisitions);
-                } else {
+                        return deferred.resolve(successfulRequisitions);
+                    }
                     return deferred.reject([]);
-                }
-            });
+
+                });
 
             return deferred.promise;
 

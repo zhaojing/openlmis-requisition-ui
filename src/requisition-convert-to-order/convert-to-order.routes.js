@@ -22,18 +22,16 @@
         .config(routes)
         .run(run);
 
-    var cachedRequisitionService;
-
     routes.$inject = ['$stateProvider', 'FULFILLMENT_RIGHTS'];
     run.$inject = ['$rootScope', 'requisitionsForConvertFactory'];
 
     function run($rootScope, requisitionsForConvertFactory) {
         $rootScope.$on('$stateChangeStart',
-        function(event, toState, toParams, fromState, fromParams, options) {
-            if (toState.name !== 'openlmis.requisitions.convertToOrder') {
-                requisitionsForConvertFactory.clearCache();
-            }
-        });
+            function(event, toState) {
+                if (toState.name !== 'openlmis.requisitions.convertToOrder') {
+                    requisitionsForConvertFactory.clearCache();
+                }
+            });
     }
 
     function routes($stateProvider, FULFILLMENT_RIGHTS) {
@@ -53,9 +51,9 @@
             resolve: {
                 requisitions: function(paginationService, requisitionsForConvertFactory, $stateParams) {
                     return paginationService.registerUrl($stateParams, function(stateParams) {
-						return requisitionsForConvertFactory.forConvert(stateParams);
-					});
-				}
+                        return requisitionsForConvertFactory.forConvert(stateParams);
+                    });
+                }
             }
         });
     }

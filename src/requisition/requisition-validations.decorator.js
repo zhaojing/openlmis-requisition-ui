@@ -60,7 +60,7 @@
          * @param   {integer}   requestedQuantity               the requested quantity
          * @param   {string}    requestedQuantityExplanation    the explanation
          */
-        function addLineItem(orderable, requestedQuantity, requestedQuantityExplanation) {
+        function addLineItem(orderable) {
 
             validateStatusForManipulatingLineItems(this.status);
             validateOrderableDoesNotHaveLineItem(this.requisitionLineItems, orderable);
@@ -95,7 +95,7 @@
         function validateStatusForManipulatingLineItems(status) {
             if (REQUISITION_STATUS.INITIATED !== status &&
                 REQUISITION_STATUS.SUBMITTED !== status &&
-                REQUISITION_STATUS.REJECTED != status
+                REQUISITION_STATUS.REJECTED !== status
             ) {
                 throw 'Can not add or remove line items past SUBMITTED status';
             }
@@ -114,7 +114,7 @@
         function validateOrderableIsAvailable(requisition, orderable) {
             var program = getOrderableProgramById(orderable.programs, requisition.program.id);
 
-            if(!program) {
+            if (!program) {
                 throw 'The given product is not available for this requisition';
             }
 

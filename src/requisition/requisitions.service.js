@@ -44,33 +44,33 @@
             offlineStatusMessages = localStorageFactory('statusMessages');
 
         var resource = $resource(requisitionUrlFactory('/api/requisitions/:id'), {}, {
-            'get': {
+            get: {
                 method: 'GET',
                 transformResponse: transformGetResponse
             },
-            'initiate': {
+            initiate: {
                 headers: {
                     'Idempotency-Key': getIdempotencyKey
                 },
                 url: requisitionUrlFactory('/api/requisitions/initiate'),
                 method: 'POST'
             },
-            'search': {
+            search: {
                 url: requisitionUrlFactory('/api/requisitions/search'),
                 method: 'GET',
                 transformResponse: transformRequisitionSearchResponse
             },
-            'forApproval': {
+            forApproval: {
                 url: requisitionUrlFactory('/api/requisitions/requisitionsForApproval'),
                 method: 'GET',
                 transformResponse: transformRequisitionListResponse
             },
-            'forConvert': {
+            forConvert: {
                 url: requisitionUrlFactory('/api/requisitions/requisitionsForConvert'),
                 method: 'GET',
                 transformResponse: transformResponseForConvert
             },
-            'batchRelease': {
+            batchRelease: {
                 headers: {
                     'Idempotency-Key': getIdempotencyKey
                 },
@@ -78,7 +78,7 @@
                 method: 'POST',
                 transformRequest: transformRequest
             },
-            'getStatusMessages': {
+            getStatusMessages: {
                 url: requisitionUrlFactory('/api/requisitions/:id/statusMessages'),
                 method: 'GET',
                 isArray: true
@@ -117,35 +117,33 @@
             requisition = getOfflineRequisition(id);
 
             if (offlineService.isOffline() && requisition) {
-                    statusMessages = offlineStatusMessages.search({
-                        requisitionId: requisition.id
+                statusMessages = offlineStatusMessages.search({
+                    requisitionId: requisition.id
+                });
+                resolve(requisition, statusMessages);
+            } else if (!requisition || !requisition.$modified) {
+                getRequisition(id).then(function(requisition) {
+                    filterRequisitionStockAdjustmentReasons(requisition);
+
+                    requisition.$availableOffline = !onlineOnlyRequisitions.contains(id);
+                    getStatusMessages(requisition).then(function(response) {
+                        if (requisition.$availableOffline) {
+                            storeResponses(requisition, response);
+                        }
+                        resolve(requisition, response);
+                    }, function() {
+                        if (requisition.$availableOffline) {
+                            offlineRequisitions.put(requisition);
+                        }
+                        resolve(requisition);
                     });
-                    resolve(requisition, statusMessages);
+                }, error);
             } else {
-                if (!requisition || !requisition.$modified) {
-                    getRequisition(id).then(function(requisition) {
-                        filterRequisitionStockAdjustmentReasons(requisition);
+                statusMessages = offlineStatusMessages.search({
+                    requisitionId: requisition.id
+                });
 
-                        requisition.$availableOffline = !onlineOnlyRequisitions.contains(id);
-                        getStatusMessages(requisition).then(function(response) {
-                            if (requisition.$availableOffline) {
-                                storeResponses(requisition, response);
-                            }
-                            resolve(requisition, response);
-                        }, function() {
-                            if (requisition.$availableOffline) {
-                                offlineRequisitions.put(requisition);
-                            }
-                            resolve(requisition);
-                        });
-                    }, error);
-                } else {
-                    statusMessages = offlineStatusMessages.search({
-                            requisitionId: requisition.id
-                        });
-
-                    resolve(requisition, statusMessages);
-                }
+                resolve(requisition, statusMessages);
             }
 
             return deferred.promise;
@@ -182,13 +180,13 @@
                 emergency: emergency,
                 idempotencyKey: key
             }, {}).$promise
-            .then(function(requisition) {
-                filterRequisitionStockAdjustmentReasons(requisition);
-                requisition.$modified = true;
-                requisition.$availableOffline = true;
-                offlineRequisitions.put(requisition);
-                return requisition;
-            });
+                .then(function(requisition) {
+                    filterRequisitionStockAdjustmentReasons(requisition);
+                    requisition.$modified = true;
+                    requisition.$availableOffline = true;
+                    offlineRequisitions.put(requisition);
+                    return requisition;
+                });
         }
 
         /**
@@ -214,7 +212,7 @@
         function search(offline, searchParams) {
             var deferred = $q.defer();
 
-            if(offline) {
+            if (offline) {
                 var requisitions = offlineRequisitions.search(searchParams, 'requisitionSearch'),
                     batchRequisitions = searchParams.showBatchRequisitions ?
                         offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [],
@@ -223,7 +221,9 @@
                     sort = searchParams.sort;
 
                 angular.forEach(batchRequisitions, function(batchRequisition) {
-                    if ($filter('filter')(requisitions, {id: batchRequisition.id}).length === 0) {
+                    if ($filter('filter')(requisitions, {
+                        id: batchRequisition.id
+                    }).length === 0) {
                         requisitions.push(batchRequisition);
                     }
                 });
@@ -290,14 +290,14 @@
                 idempotencyKey: key
             },
             {
-                createOrder: true, 
+                createOrder: true,
                 requisitions: requisitions
             }).$promise
-            .then(function() {
-                requisitions.forEach(function(requisition) {
-                    offlineRequisitions.removeBy('id', requisition.requisition.id);
+                .then(function() {
+                    requisitions.forEach(function(requisition) {
+                        offlineRequisitions.removeBy('id', requisition.requisition.id);
+                    });
                 });
-            });
         }
 
         /**
@@ -315,18 +315,17 @@
         function releaseWithoutOrder(requisitions, key) {
             return resource.batchRelease({
                 idempotencyKey: key
-            }, 
+            },
             {
-                createOrder: false, 
+                createOrder: false,
                 requisitions: requisitions
             }).$promise
-            .then(function() {
-                requisitions.forEach(function(requisition) {
-                    offlineRequisitions.removeBy('id', requisition.requisition.id);
+                .then(function() {
+                    requisitions.forEach(function(requisition) {
+                        offlineRequisitions.removeBy('id', requisition.requisition.id);
+                    });
                 });
-            });
         }
-
 
         /**
          * @ngdoc method
@@ -426,7 +425,7 @@
         }
 
         function transformRequisition(requisition) {
-            if(requisition.modifiedDate) {
+            if (requisition.modifiedDate) {
                 requisition.modifiedDate = dateUtils.toDate(requisition.modifiedDate);
             }
 
@@ -459,7 +458,7 @@
                 requisition.$availableOffline = true;
             }
 
-            if(requisition.modifiedDate && requisition.modifiedDate.getTime) {
+            if (requisition.modifiedDate && requisition.modifiedDate.getTime) {
 
                 if (offlineRequisition) {
                     markIfOutdated(requisition, offlineRequisition);
@@ -476,7 +475,7 @@
         function markIfOutdated(requisition, offlineRequisition) {
             var offlineDate = dateUtils.toDate(offlineRequisition.modifiedDate);
 
-            if(!offlineDate || offlineDate.getTime() !== requisition.modifiedDate.getTime()) {
+            if (!offlineDate || offlineDate.getTime() !== requisition.modifiedDate.getTime()) {
                 offlineRequisition.$outdated = true;
             } else {
                 delete offlineRequisition.$outdated;

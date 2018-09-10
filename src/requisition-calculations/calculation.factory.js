@@ -25,28 +25,28 @@
      * Responsible for storing all the calculations related with the line item and product grid.
      */
     angular
-    .module('requisition-calculations')
-    .factory('calculationFactory', factory);
+        .module('requisition-calculations')
+        .factory('calculationFactory', factory);
 
     factory.$inject = ['TEMPLATE_COLUMNS', 'COLUMN_SOURCES', '$filter', 'stockReasonsCalculations'];
 
     function factory(TEMPLATE_COLUMNS, COLUMN_SOURCES, $filter, stockReasonsCalculations) {
         var A = TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-        B = TEMPLATE_COLUMNS.TOTAL_RECEIVED_QUANTITY,
-        C = TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY,
-        D = TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS,
-        E = TEMPLATE_COLUMNS.STOCK_ON_HAND,
-        G = TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT,
-        H = TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY,
-        J = TEMPLATE_COLUMNS.REQUESTED_QUANTITY,
-        K = TEMPLATE_COLUMNS.APPROVED_QUANTITY,
-        //N = TEMPLATE_COLUMNS.ADJUSTED_CONSUMPTION,
-        M = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY,
-        P = TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION,
-        //Q = TEMPLATE_COLUMNS.TOTAL_COST,
-        S = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA,
-        T = TEMPLATE_COLUMNS.PRICE_PER_PACK,
-        Z = TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED;
+            B = TEMPLATE_COLUMNS.TOTAL_RECEIVED_QUANTITY,
+            C = TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY,
+            D = TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS,
+            E = TEMPLATE_COLUMNS.STOCK_ON_HAND,
+            G = TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT,
+            H = TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY,
+            J = TEMPLATE_COLUMNS.REQUESTED_QUANTITY,
+            K = TEMPLATE_COLUMNS.APPROVED_QUANTITY,
+            //N = TEMPLATE_COLUMNS.ADJUSTED_CONSUMPTION,
+            M = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY,
+            P = TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION,
+            //Q = TEMPLATE_COLUMNS.TOTAL_COST,
+            S = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA,
+            T = TEMPLATE_COLUMNS.PRICE_PER_PACK,
+            Z = TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED;
         //V = TEMPLATE_COLUMNS.PACKS_TO_SHIP,
         //Y = TEMPLATE_COLUMNS.TOTAL;
 
@@ -77,7 +77,7 @@
          * @param  {Object} lineItem the line item to calculate the value from
          * @return {Number}          the calculated Total Consumed Quantity value
          */
-        function calculateTotalConsumedQuantity(lineItem, requisition) {
+        function calculateTotalConsumedQuantity(lineItem) {
             return getItem(lineItem, A) + getItem(lineItem, B) + getItem(lineItem, D) - getItem(lineItem, E);
         }
 
@@ -128,7 +128,9 @@
             var adjustmentsForCalculations = angular.copy(adjustments);
 
             angular.forEach(adjustmentsForCalculations, function(adjustment) {
-                var filteredReasons = $filter('filter')(reasons, {id: adjustment.reasonId}, true);
+                var filteredReasons = $filter('filter')(reasons, {
+                    id: adjustment.reasonId
+                }, true);
                 adjustment.reason = (filteredReasons) ? filteredReasons[0] : null;
             });
 
@@ -149,24 +151,24 @@
          */
         function calculatePacksToShip(lineItem, requisition) {
             var orderQuantity = getOrderQuantity(lineItem, requisition),
-            netContent = lineItem.orderable.netContent;
+                netContent = lineItem.orderable.netContent;
 
             if (!orderQuantity || !netContent) {
                 return 0;
-            } else {
-                var remainderQuantity = orderQuantity % netContent,
+            }
+            var remainderQuantity = orderQuantity % netContent,
                 packsToShip = (orderQuantity - remainderQuantity) / netContent;
 
-                if (remainderQuantity > 0 && remainderQuantity > lineItem.orderable.packRoundingThreshold) {
-                    packsToShip += 1;
-                }
-
-                if (packsToShip === 0 && !lineItem.orderable.roundToZero) {
-                    packsToShip = 1;
-                }
-
-                return packsToShip;
+            if (remainderQuantity > 0 && remainderQuantity > lineItem.orderable.packRoundingThreshold) {
+                packsToShip += 1;
             }
+
+            if (packsToShip === 0 && !lineItem.orderable.roundToZero) {
+                packsToShip = 1;
+            }
+
+            return packsToShip;
+
         }
 
         /**
@@ -214,7 +216,7 @@
             }
 
             var totalDays = 30 * requisition.processingPeriod.durationInMonths;
-            var stockoutDays = lineItem.totalStockoutDays === undefined ? 0: lineItem.totalStockoutDays;
+            var stockoutDays = lineItem.totalStockoutDays === undefined ? 0 : lineItem.totalStockoutDays;
             var nonStockoutDays = totalDays - stockoutDays;
             if (nonStockoutDays === 0) {
                 return consumedQuantity;
@@ -252,19 +254,18 @@
             //if there is no previous adjusted consumption
             if (numberOfPeriods === 1) {
                 return adjustedConsumptions[0];
-            }
             //if there is only one previous adjusted consumption
-            else if (numberOfPeriods === 2) {
-                return Math.ceil((adjustedConsumptions[0] + adjustedConsumptions[1])/2);
+            } else if (numberOfPeriods === 2) {
+                return Math.ceil((adjustedConsumptions[0] + adjustedConsumptions[1]) / 2);
             }
             //if more than one previous adjusted consumption
-            else {
-                var sum = 0;
-                adjustedConsumptions.forEach(function (adjustedConsumption) {
-                    sum += adjustedConsumption;
-                });
-                return Math.ceil(sum / numberOfPeriods);
-            }
+
+            var sum = 0;
+            adjustedConsumptions.forEach(function(adjustedConsumption) {
+                sum += adjustedConsumption;
+            });
+            return Math.ceil(sum / numberOfPeriods);
+
         }
 
         /**
@@ -321,7 +322,7 @@
 
             if (pColumn) {
                 pValue = getColumnValue(lineItem, requisition, pColumn);
-                pValue = pValue === undefined ? 0 : pValue
+                pValue = pValue === undefined ? 0 : pValue;
             }
 
             return hColumn && hColumn.option.optionName === 'default' ?

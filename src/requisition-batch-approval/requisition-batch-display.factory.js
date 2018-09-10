@@ -36,7 +36,7 @@
         var requisitionBatchDisplayFactory = {
             prepareDataToDisplay: prepareDataToDisplay,
             calculateRequisitionTotalCost: calculateRequisitionTotalCost
-        }
+        };
 
         return requisitionBatchDisplayFactory;
 
@@ -75,7 +75,9 @@
 
                     totalCost += lineItem.totalCost;
 
-                    products[lineItem.orderable.id] = prepareProductDetails(products[lineItem.orderable.id], lineItem, requisition);
+                    products[lineItem.orderable.id] = prepareProductDetails(
+                        products[lineItem.orderable.id], lineItem, requisition
+                    );
                 });
 
                 calculateRequisitionTotalCost(requisition);
@@ -101,7 +103,7 @@
                 lineItems: lineItems,
                 errors: errors,
                 requisitionsCopy: requisitionsCopy
-            }
+            };
             return dataToDisplay;
         }
 
@@ -132,11 +134,7 @@
         }
 
         function prepareProductDetails(product, lineItem, requisition) {
-            if (product !== undefined) {
-                product.requisitions.push(requisition.id);
-                product.totalCost += lineItem.totalCost;
-                product.totalQuantity += lineItem.approvedQuantity;
-            } else {
+            if (product === undefined) {
                 product = {
                     code: lineItem.orderable.productCode,
                     name: lineItem.orderable.fullProductName,
@@ -144,6 +142,10 @@
                     totalQuantity: lineItem.approvedQuantity,
                     requisitions: [requisition.id]
                 };
+            } else {
+                product.requisitions.push(requisition.id);
+                product.totalCost += lineItem.totalCost;
+                product.totalQuantity += lineItem.approvedQuantity;
             }
             return product;
         }

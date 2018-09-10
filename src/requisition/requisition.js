@@ -29,68 +29,67 @@
         .factory('Requisition', requisitionFactory);
 
     requisitionFactory.$inject = [
-        '$q', '$resource', 'requisitionUrlFactory', 'RequisitionTemplate', 'LineItem', 
-        'REQUISITION_STATUS', 'COLUMN_SOURCES', 'localStorageFactory', 'dateUtils', '$filter', 
-        'TEMPLATE_COLUMNS', 'authorizationService', 'REQUISITION_RIGHTS', 'UuidGenerator'
+        '$q', '$resource', 'requisitionUrlFactory', 'RequisitionTemplate', 'LineItem', 'REQUISITION_STATUS',
+        'COLUMN_SOURCES', 'localStorageFactory', 'dateUtils', '$filter', 'TEMPLATE_COLUMNS', 'authorizationService',
+        'REQUISITION_RIGHTS', 'UuidGenerator'
     ];
 
-    function requisitionFactory($q, $resource, requisitionUrlFactory,
-                                RequisitionTemplate, LineItem, REQUISITION_STATUS, COLUMN_SOURCES,
-                                localStorageFactory, dateUtils, $filter, TEMPLATE_COLUMNS,
+    function requisitionFactory($q, $resource, requisitionUrlFactory, RequisitionTemplate, LineItem, REQUISITION_STATUS,
+                                COLUMN_SOURCES, localStorageFactory, dateUtils, $filter, TEMPLATE_COLUMNS,
                                 authorizationService, REQUISITION_RIGHTS, UuidGenerator) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
             resource = $resource(requisitionUrlFactory('/api/requisitions/:id'), {}, {
-            'authorize': {
-                headers: {
-                    'Idempotency-Key': getIdempotencyKey
+                authorize: {
+                    headers: {
+                        'Idempotency-Key': getIdempotencyKey
+                    },
+                    url: requisitionUrlFactory('/api/requisitions/:id/authorize'),
+                    method: 'POST'
                 },
-                url: requisitionUrlFactory('/api/requisitions/:id/authorize'),
-                method: 'POST'
-            },
-            'save': {
-                method: 'PUT',
-                headers: {
-                    'If-Match': getETag
+                save: {
+                    method: 'PUT',
+                    headers: {
+                        'If-Match': getETag
+                    },
+                    transformRequest: transformRequisition
                 },
-                transformRequest: transformRequisition
-            },
-            'submit': {
-                headers: {
-                    'Idempotency-Key': getIdempotencyKey
+                submit: {
+                    headers: {
+                        'Idempotency-Key': getIdempotencyKey
+                    },
+                    url: requisitionUrlFactory('/api/requisitions/:id/submit'),
+                    method: 'POST'
                 },
-                url: requisitionUrlFactory('/api/requisitions/:id/submit'),
-                method: 'POST'
-            },
-            'approve': {
-                headers: {
-                    'Idempotency-Key': getIdempotencyKey
+                approve: {
+                    headers: {
+                        'Idempotency-Key': getIdempotencyKey
+                    },
+                    url: requisitionUrlFactory('/api/requisitions/:id/approve'),
+                    method: 'POST'
                 },
-                url: requisitionUrlFactory('/api/requisitions/:id/approve'),
-                method: 'POST'
-            },
-            'reject': {
-                headers: {
-                    'Idempotency-Key': getIdempotencyKey
+                reject: {
+                    headers: {
+                        'Idempotency-Key': getIdempotencyKey
+                    },
+                    url: requisitionUrlFactory('/api/requisitions/:id/reject'),
+                    method: 'PUT'
                 },
-                url: requisitionUrlFactory('/api/requisitions/:id/reject'),
-                method: 'PUT'
-            },
-            'skip': {
-                headers: {
-                    'Idempotency-Key': getIdempotencyKey
+                skip: {
+                    headers: {
+                        'Idempotency-Key': getIdempotencyKey
+                    },
+                    url: requisitionUrlFactory('/api/requisitions/:id/skip'),
+                    method: 'PUT'
                 },
-                url: requisitionUrlFactory('/api/requisitions/:id/skip'),
-                method: 'PUT'
-            },
-            'remove': {
-                headers: {
-                    'Idempotency-Key': getIdempotencyKey
-                },
-                url: requisitionUrlFactory('/api/requisitions/:id'),
-                method: 'DELETE'
-            }
-        });
+                remove: {
+                    headers: {
+                        'Idempotency-Key': getIdempotencyKey
+                    },
+                    url: requisitionUrlFactory('/api/requisitions/:id'),
+                    method: 'DELETE'
+                }
+            });
 
         Requisition.prototype.$authorize = authorize;
         Requisition.prototype.$save = save;
@@ -168,7 +167,7 @@
             }, {}).$promise, function(authorized) {
                 updateRequisition(requisition, authorized);
             }, function(data) {
-                handleFailure(data, requisition); 
+                handleFailure(data, requisition);
             });
         }
 
@@ -190,7 +189,7 @@
             }).$promise, function() {
                 offlineRequisitions.removeBy('id', requisition.id);
             }, function(data) {
-                handleFailure(data, requisition); 
+                handleFailure(data, requisition);
             });
         }
 
@@ -212,10 +211,10 @@
             }, this).$promise, function(saved) {
                 saveToStorage(saved, availableOffline);
             }, function(saved) {
-              if (saved.status === 409 || saved.status === 403) {
-                  // in case of conflict or unauthorized, remove requisition from storage
-                  offlineRequisitions.removeBy('id', id);
-              }
+                if (saved.status === 409 || saved.status === 403) {
+                    // in case of conflict or unauthorized, remove requisition from storage
+                    offlineRequisitions.removeBy('id', id);
+                }
             });
         }
 
@@ -237,7 +236,7 @@
             }, {}).$promise, function(submitted) {
                 updateRequisition(requisition, submitted);
             }, function(data) {
-                handleFailure(data, requisition); 
+                handleFailure(data, requisition);
             });
         }
 
@@ -259,7 +258,7 @@
             }, {}).$promise, function(approved) {
                 updateRequisition(requisition, approved);
             }, function(data) {
-                handleFailure(data, requisition); 
+                handleFailure(data, requisition);
             });
         }
 
@@ -281,7 +280,7 @@
             }, {}).$promise, function(rejected) {
                 updateRequisition(requisition, rejected);
             }, function(data) {
-                handleFailure(data, requisition); 
+                handleFailure(data, requisition);
             });
         }
 
@@ -303,7 +302,7 @@
             }, {}).$promise, function(requisition) {
                 offlineRequisitions.removeBy('id', requisition.id);
             }, function(data) {
-                handleFailure(data, requisition); 
+                handleFailure(data, requisition);
             });
         }
 
@@ -427,7 +426,7 @@
             return this.status === REQUISITION_STATUS.SKIPPED;
         }
 
-       /**
+        /**
          * @ngdoc method
          * @methodOf requisition.Requisition
          * @name isAfterAuthorize
@@ -440,7 +439,7 @@
          */
         function isAfterAuthorize() {
             return [REQUISITION_STATUS.AUTHORIZED, REQUISITION_STATUS.IN_APPROVAL,
-                    REQUISITION_STATUS.APPROVED, REQUISITION_STATUS.RELEASED].indexOf(this.status) !== -1;
+                REQUISITION_STATUS.APPROVED, REQUISITION_STATUS.RELEASED].indexOf(this.status) !== -1;
         }
 
         /**
@@ -454,11 +453,31 @@
          * @return {boolean} true if this requisition is editable, false otherwise
          */
         function isEditable(requisition) {
-            return hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, requisition) && (requisition.$isInitiated() || requisition.$isRejected())
-                || hasRight(REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition) && (requisition.$isAuthorized() || requisition.$isInApproval())
-                || hasRight(REQUISITION_RIGHTS.REQUISITION_DELETE, requisition) && hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, requisition) && (requisition.$isInitiated() || requisition.$isRejected())
-                || hasRight(REQUISITION_RIGHTS.REQUISITION_DELETE, requisition) && hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition) && requisition.$isSubmitted()
-                || hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition) && (requisition.$isInitiated() || requisition.$isRejected() || requisition.$isSubmitted());
+            return canSubmit(requisition)
+                || canAuthorize(requisition)
+                || canApprove(requisition)
+                || canDelete(requisition);
+        }
+
+        function canSubmit(requisition) {
+            return hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, requisition)
+                && (requisition.$isInitiated() || requisition.$isRejected());
+        }
+
+        function canAuthorize(requisition) {
+            return hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition)
+                && (requisition.$isInitiated() || requisition.$isRejected() || requisition.$isSubmitted());
+        }
+
+        function canApprove(requisition) {
+            return hasRight(REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition)
+                && (requisition.$isAuthorized() || requisition.$isInApproval());
+        }
+
+        function canDelete(requisition) {
+            return hasRight(REQUISITION_RIGHTS.REQUISITION_DELETE, requisition)
+                && hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition)
+                && requisition.$isSubmitted();
         }
 
         /**
@@ -614,25 +633,25 @@
                 });
 
                 return orderableLineItems.length === 0;
-            })
+            });
         }
 
         function handlePromise(promise, success, failure) {
             var deferred = $q.defer();
 
             promise
-            .then(function(response) {
-                if (success) {
-                  success(response);
-                }
-                deferred.resolve(response);
-            })
-            .catch(function(response) {
-                if (failure) {
-                  failure(response);
-                }
-                deferred.reject(response);
-            });
+                .then(function(response) {
+                    if (success) {
+                        success(response);
+                    }
+                    deferred.resolve(response);
+                })
+                .catch(function(response) {
+                    if (failure) {
+                        failure(response);
+                    }
+                    deferred.reject(response);
+                });
 
             return deferred.promise;
         }
@@ -663,7 +682,7 @@
 
         function populateApprovedQuantity(requisition) {
             if (requisition.template.getColumn(TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY).isDisplayed) {
-                angular.forEach(requisition.requisitionLineItems, function (lineItem) {
+                angular.forEach(requisition.requisitionLineItems, function(lineItem) {
                     if (!(lineItem.skipped)) {
                         if (lineItem.requestedQuantity === null) {
                             lineItem.approvedQuantity = lineItem.calculatedOrderQuantity;
@@ -673,7 +692,7 @@
                     }
                 });
             } else {
-                angular.forEach(requisition.requisitionLineItems, function (lineItem) {
+                angular.forEach(requisition.requisitionLineItems, function(lineItem) {
                     if (!(lineItem.skipped)) {
                         lineItem.approvedQuantity = lineItem.requestedQuantity;
                     }
@@ -733,7 +752,7 @@
         function handleFailure(data, requisition) {
             if (data.status !== 409) {
                 generateIdempotencyKey(requisition);
-            } 
+            }
         }
 
         function transformLineItem(lineItem, columns) {
