@@ -66,7 +66,7 @@
         return directive;
 
         function link(scope, element, attr, vm) {
-            scope.$watch(function(){
+            scope.$watch(function() {
                 return attr.disabled;
             }, function(disabled) {
                 vm.isDisabled = !!disabled;

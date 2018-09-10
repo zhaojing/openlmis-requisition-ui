@@ -30,12 +30,12 @@
         .controller('RequisitionApprovalListController', controller);
 
     controller.$inject = [
-        '$controller', '$state', 'requisitions', '$stateParams', 'programs', 'selectedProgram',
-        'alertService', 'offlineService', 'localStorageFactory', 'isBatchApproveScreenActive'
+        '$state', 'requisitions', '$stateParams', 'programs', 'selectedProgram', 'alertService', 'offlineService',
+        'localStorageFactory', 'isBatchApproveScreenActive'
     ];
 
-    function controller($controller, $state, requisitions, $stateParams, programs, selectedProgram,
-        alertService, offlineService, localStorageFactory, isBatchApproveScreenActive) {
+    function controller($state, requisitions, $stateParams, programs, selectedProgram, alertService, offlineService,
+                        localStorageFactory, isBatchApproveScreenActive) {
 
         var vm = this,
             offlineRequisitions = localStorageFactory('requisitions');
@@ -174,7 +174,7 @@
          * @name viewSelectedRequisitions
          *
          * @description
-         * Redirects to page for modyfing all selected requisitions.
+         * Redirects to page for modifying all selected requisitions.
          */
         function viewSelectedRequisitions() {
             var selectedRequisitionIds = [],
@@ -183,7 +183,7 @@
 
             angular.forEach(vm.requisitions, function(requisition) {
                 if (requisition.$selected) {
-                    if (requiredProgramId && requisition.program.id != requiredProgramId) {
+                    if (requiredProgramId && requisition.program.id !== requiredProgramId) {
                         requisitionsFromOneProgram = false;
                     }
                     selectedRequisitionIds.push(requisition.id);
@@ -195,10 +195,10 @@
                 $state.go('openlmis.requisitions.batchApproval', {
                     ids: selectedRequisitionIds.join(',')
                 });
-            } else if (!requisitionsFromOneProgram) {
-                alertService.error('requisitionApproval.selectRequisitionsFromTheSameProgram');
-            } else {
+            } else if (requisitionsFromOneProgram) {
                 alertService.error('requisitionApproval.selectAtLeastOneRnr');
+            } else {
+                alertService.error('requisitionApproval.selectRequisitionsFromTheSameProgram');
             }
         }
 
@@ -213,7 +213,9 @@
          * @param {Boolean} requisitionId Requisition that will be searched in storage
          */
         function isFullRequisitionAvailable(requisitionId) {
-            var offlineRequisition = offlineRequisitions.search({id: requisitionId});
+            var offlineRequisition = offlineRequisitions.search({
+                id: requisitionId
+            });
             return !vm.offline || vm.offline && offlineRequisition.length > 0;
         }
     }

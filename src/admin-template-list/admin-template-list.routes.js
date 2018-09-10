@@ -43,9 +43,9 @@
                     return facilityTypeService.query({
                         active: true
                     })
-                    .then(function(response) {
-                        return response.content;
-                    });
+                        .then(function(response) {
+                            return response.content;
+                        });
                 },
                 templateFacilityTypes: function(templates, facilityTypes, templateListFactory) {
                     return templateListFactory.getTemplateFacilityTypes(templates, facilityTypes);

@@ -15,56 +15,57 @@
 
 (function() {
 
-	'use strict';
+    'use strict';
 
-	angular.module('requisition-search').config(routes);
+    angular.module('requisition-search').config(routes);
 
-	routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
 
-	function routes($stateProvider, REQUISITION_RIGHTS) {
+    function routes($stateProvider, REQUISITION_RIGHTS) {
 
-		$stateProvider.state('openlmis.requisitions.search', {
-			showInNavigation: true,
-			isOffline: true,
-			label: 'requisitionSearch.view',
-			url: '/view?program&facility&initiatedDateFrom&initiatedDateTo&page&size&offline&sort',
-			params: {
-			    sort: 'createdDate,desc'
-			},
-			controller: 'RequisitionSearchController',
-			templateUrl: 'requisition-search/requisition-search.html',
-			accessRights: [
-				REQUISITION_RIGHTS.REQUISITION_VIEW
-			],
-			controllerAs: 'vm',
-			resolve: {
-				user: function(authorizationService) {
+        $stateProvider.state('openlmis.requisitions.search', {
+            showInNavigation: true,
+            isOffline: true,
+            label: 'requisitionSearch.view',
+            url: '/view?program&facility&initiatedDateFrom&initiatedDateTo&page&size&offline&sort',
+            params: {
+                sort: 'createdDate,desc'
+            },
+            controller: 'RequisitionSearchController',
+            templateUrl: 'requisition-search/requisition-search.html',
+            accessRights: [
+                REQUISITION_RIGHTS.REQUISITION_VIEW
+            ],
+            controllerAs: 'vm',
+            resolve: {
+                user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-		        facilities: function (facilityFactory, user, $q) {
-					var deferred = $q.defer();
+                facilities: function(facilityFactory, user, $q) {
+                    var deferred = $q.defer();
 
-					facilityFactory.getAllUserFacilities(user.user_id).then(function(response) {
-						deferred.resolve(response);
-					}).catch(function() {
-						deferred.resolve([]);
-					});
+                    facilityFactory.getAllUserFacilities(user.user_id).then(function(response) {
+                        deferred.resolve(response);
+                    })
+                        .catch(function() {
+                            deferred.resolve([]);
+                        });
 
-		        	return deferred.promise;
-		        },
-				requisitions: function(paginationService, requisitionService, $stateParams) {
-					return paginationService.registerUrl($stateParams, function(stateParams) {
-						if (stateParams.facility) {
-							var offlineFlag = stateParams.offline; 
-							delete stateParams.offline;
-							return requisitionService.search(offlineFlag === 'true', stateParams);
-						}
-						return undefined;
-					});
-				}
-		    }
-		});
+                    return deferred.promise;
+                },
+                requisitions: function(paginationService, requisitionService, $stateParams) {
+                    return paginationService.registerUrl($stateParams, function(stateParams) {
+                        if (stateParams.facility) {
+                            var offlineFlag = stateParams.offline;
+                            delete stateParams.offline;
+                            return requisitionService.search(offlineFlag === 'true', stateParams);
+                        }
+                        return undefined;
+                    });
+                }
+            }
+        });
 
-	}
+    }
 
 })();

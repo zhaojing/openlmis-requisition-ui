@@ -57,12 +57,12 @@
                 programId: programId,
                 facilityId: facilityId
             })
-            .then(function() {
-                return $q.resolve(true);
-            })
-            .catch(function() {
-                return $q.resolve(false);
-            });
+                .then(function() {
+                    return $q.resolve(true);
+                })
+                .catch(function() {
+                    return $q.resolve(false);
+                });
         }
     }
 

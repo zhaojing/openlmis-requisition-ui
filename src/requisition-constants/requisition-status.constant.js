@@ -56,7 +56,7 @@
                 id = 0;
             angular.forEach(this, function(status) {
                 if (!angular.isFunction(status)) {
-                    list.push( {
+                    list.push({
                         id: id,
                         label: status
                     });
@@ -76,21 +76,21 @@
          */
         function getDisplayName(status) {
             var displayName;
-            if (status == this.INITIATED) {
-               displayName = 'Initiated';
-            } else if (status == this.SUBMITTED) {
-               displayName = 'Submitted';
-            } else if (status == this.AUTHORIZED) {
+            if (status === this.INITIATED) {
+                displayName = 'Initiated';
+            } else if (status === this.SUBMITTED) {
+                displayName = 'Submitted';
+            } else if (status === this.AUTHORIZED) {
                 displayName = 'Authorized';
-            } else if (status == this.IN_APPROVAL) {
+            } else if (status === this.IN_APPROVAL) {
                 displayName = 'In approval';
-            } else if (status == this.APPROVED) {
+            } else if (status === this.APPROVED) {
                 displayName = 'Approved';
-            } else if (status == this.RELEASED) {
+            } else if (status === this.RELEASED) {
                 displayName = 'Released';
-            } else if (status == this.SKIPPED) {
+            } else if (status === this.SKIPPED) {
                 displayName = 'Skipped';
-            } else if (status == this.REJECTED) {
+            } else if (status === this.REJECTED) {
                 displayName = 'Rejected';
             }
             return displayName;

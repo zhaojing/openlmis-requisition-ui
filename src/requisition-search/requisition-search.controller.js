@@ -28,12 +28,12 @@
         .controller('RequisitionSearchController', RequisitionSearchController);
 
     RequisitionSearchController.$inject = [
-        '$state', '$filter', '$stateParams', 'facilities', 'notificationService',
-        'offlineService', 'localStorageFactory', 'confirmService', 'requisitions'
+        '$state', '$filter', '$stateParams', 'facilities', 'offlineService', 'localStorageFactory', 'confirmService',
+        'requisitions'
     ];
 
-    function RequisitionSearchController($state, $filter, $stateParams, facilities,
-        notificationService, offlineService, localStorageFactory, confirmService, requisitions) {
+    function RequisitionSearchController($state, $filter, $stateParams, facilities, offlineService, localStorageFactory,
+                                         confirmService, requisitions) {
 
         var vm = this,
             offlineRequisitions = localStorageFactory('requisitions');
@@ -184,7 +184,9 @@
          * @return {Boolean} true if offline is disabled, false otherwise
          */
         function isOfflineDisabled() {
-            if(offlineService.isOffline()) vm.offline = true;
+            if (offlineService.isOffline()) {
+                vm.offline = true;
+            }
             return offlineService.isOffline();
         }
 

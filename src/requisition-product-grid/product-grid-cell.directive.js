@@ -37,12 +37,10 @@
         .directive('productGridCell', productGridCell);
 
     productGridCell.$inject = [
-        '$q', '$timeout', '$templateRequest', '$compile', 'requisitionValidator',
-        'TEMPLATE_COLUMNS', 'COLUMN_TYPES', 'REQUISITION_RIGHTS'
+        '$templateRequest', '$compile', 'requisitionValidator', 'TEMPLATE_COLUMNS', 'COLUMN_TYPES'
     ];
 
-    function productGridCell($q, $timeout, $templateRequest, $compile, requisitionValidator,
-                            TEMPLATE_COLUMNS, COLUMN_TYPES, REQUISITION_RIGHTS) {
+    function productGridCell($templateRequest, $compile, requisitionValidator, TEMPLATE_COLUMNS, COLUMN_TYPES) {
 
         return {
             restrict: 'A',
@@ -67,8 +65,8 @@
             scope.isReadOnly = isReadOnly();
             scope.canSkip = canSkip;
 
-            if(!scope.isReadOnly){
-                scope.$watch(function(){
+            if (!scope.isReadOnly) {
+                scope.$watch(function() {
                     return lineItem[column.name];
                 }, function(newValue, oldValue) {
                     if (newValue !== oldValue) {
@@ -77,12 +75,12 @@
                 });
             }
 
-            scope.$watch(function(){
-                if(lineItem.skipped){
+            scope.$watch(function() {
+                if (lineItem.skipped) {
                     return false;
                 }
                 return lineItem.$errors[column.name];
-            }, function(error){
+            }, function(error) {
                 scope.invalidMessage = error ? error : undefined;
             });
 
@@ -92,15 +90,16 @@
 
             function updateCellContents() {
                 var templateUrl = '';
-                if(column.name === TEMPLATE_COLUMNS.SKIPPED) {
+                if (column.name === TEMPLATE_COLUMNS.SKIPPED) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-skip.html';
-                } else if(column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS && !requisition.template.populateStockOnHandFromStockCards) {
+                } else if (column.name === TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS &&
+                    !requisition.template.populateStockOnHandFromStockCards) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-total-losses-and-adjustments.html';
-                } else if(column.$type === COLUMN_TYPES.NUMERIC && !scope.isReadOnly){
+                } else if (column.$type === COLUMN_TYPES.NUMERIC && !scope.isReadOnly) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-input-numeric.html';
-                } else if(!scope.isReadOnly) {
+                } else if (!scope.isReadOnly) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-input-text.html';
-                } else if(column.$type === COLUMN_TYPES.CURRENCY) {
+                } else if (column.$type === COLUMN_TYPES.CURRENCY) {
                     templateUrl = 'requisition-product-grid/product-grid-cell-currency.html';
                 } else {
                     templateUrl = 'requisition-product-grid/product-grid-cell-text.html';
@@ -110,7 +109,7 @@
 
             function replaceCell(newTemplate) {
                 var cellWrapperPath = 'requisition-product-grid/product-grid-cell.html';
-                $templateRequest(cellWrapperPath).then(function(template){
+                $templateRequest(cellWrapperPath).then(function(template) {
                     template = angular.element(template);
                     template.html(newTemplate);
 

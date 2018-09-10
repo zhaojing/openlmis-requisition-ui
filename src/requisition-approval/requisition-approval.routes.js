@@ -38,13 +38,16 @@
                 requisitions: function(paginationService, requisitionService, $stateParams) {
                     return paginationService.registerUrl($stateParams, function(stateParams) {
                         if (stateParams.program) {
-                            if (stateParams.offline == 'true') {
-                                stateParams.requisitionStatus = [REQUISITION_STATUS.AUTHORIZED, REQUISITION_STATUS.IN_APPROVAL];
+                            if (stateParams.offline === 'true') {
+                                stateParams.requisitionStatus = [
+                                    REQUISITION_STATUS.AUTHORIZED,
+                                    REQUISITION_STATUS.IN_APPROVAL
+                                ];
                                 stateParams.showBatchRequisitions = true;
-                                return requisitionService.search(stateParams.offline == 'true', stateParams);
-                            } else {
-                                return requisitionService.forApproval(stateParams);
+                                return requisitionService.search(stateParams.offline === 'true', stateParams);
                             }
+                            return requisitionService.forApproval(stateParams);
+
                         }
                         return requisitionService.forApproval(stateParams);
                     });
@@ -52,12 +55,12 @@
                 user: function(authorizationService) {
                     return authorizationService.getUser();
                 },
-                programs: function(programService, user, alertService) {
+                programs: function(programService, user, alertService, $q) {
                     return programService.getUserPrograms(user.user_id)
-                    .catch(function() {
-                        alertService.error('error.noOfflineData');
-                        return $q.reject();
-                    });
+                        .catch(function() {
+                            alertService.error('error.noOfflineData');
+                            return $q.reject();
+                        });
                 },
                 selectedProgram: function($stateParams, $filter, programs) {
                     if ($stateParams.program) {

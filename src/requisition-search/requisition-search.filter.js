@@ -49,35 +49,68 @@
     filter.$inject = ['dateUtils'];
 
     function filter(dateUtils) {
-        return function(input, params) {
-            if(!angular.isObject(input)) return input;
-
-            var requisitions = [];
-
-            angular.forEach(input, function(requisition) {
-                var match = true,
-                    createdDate = dateUtils.toDate(requisition.createdDate);
-
-                if(params.program && params.program != requisition.program.id) match = false;
-                if(params.facility && params.facility != requisition.facility.id) match = false;
-                if(params.initiatedDateFrom && new Date(params.initiatedDateFrom) > new Date(createdDate)) match = false;
-                if(params.initiatedDateTo && new Date(params.initiatedDateTo) < new Date(createdDate)) match = false;
-                if(params.emergency && params.emergency != requisition.emergency) match = false;
-                if(params.requisitionStatus && !matchStatus(requisition.status, params.requisitionStatus)) match = false;
-
-                if(match) requisitions.push(requisition);
-            });
-
-            return requisitions;
-
-            function matchStatus(requisitionStatus, statuses) {
-                var match = false;
-                angular.forEach(statuses, function(status) {
-                    if(requisitionStatus === status) match = true;
-                });
-                return match;
+        return function(requisitions, params) {
+            if (!angular.isObject(requisitions)) {
+                return requisitions;
             }
+
+            return requisitions
+                .filter(byProgram(params.program))
+                .filter(byFacility(params.facility))
+                .filter(byInitiatedDateFrom(params.initiatedDateFrom))
+                .filter(byInitiatedDateTo(params.initiatedDateTo))
+                .filter(byEmergency(params.emergency))
+                .filter(byStatus(params.status));
+        };
+
+        function byProgram(program) {
+            return function(requisition) {
+                return !program || program === requisition.program.id;
+            };
         }
+
+        function byFacility(facility) {
+            return function(requisition) {
+                return !facility || facility === requisition.facility.id;
+            };
+        }
+
+        function byInitiatedDateFrom(initiatedDateFrom) {
+            return function(requisition) {
+                var createdDate = dateUtils.toDate(requisition.createdDate);
+                return !initiatedDateFrom || new Date(initiatedDateFrom) <= new Date(createdDate);
+            };
+        }
+
+        function byInitiatedDateTo(initiatedDateTo) {
+            return function(requisition) {
+                var createdDate = dateUtils.toDate(requisition.createdDate);
+                return initiatedDateTo && new Date(initiatedDateTo) >= new Date(createdDate);
+            };
+        }
+
+        function byEmergency(emergency) {
+            return function(requisition) {
+                return !emergency || emergency === requisition.emergency;
+            };
+        }
+
+        function byStatus(status) {
+            return function(requisition) {
+                return !status || matchStatus(requisition.status, status);
+            };
+        }
+
+        function matchStatus(requisitionStatus, statuses) {
+            var match = false;
+            angular.forEach(statuses, function(status) {
+                if (requisitionStatus === status) {
+                    match = true;
+                }
+            });
+            return match;
+        }
+
     }
 
 })();

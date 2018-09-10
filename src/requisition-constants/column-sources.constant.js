@@ -25,25 +25,25 @@
      * This is constant for requisition template column sources.
      */
     angular
-    .module('requisition-constants')
-    .constant('COLUMN_SOURCES', source());
+        .module('requisition-constants')
+        .constant('COLUMN_SOURCES', source());
 
     function source() {
 
         var Source = {
-            USER_INPUT: 'USER_INPUT',
-            CALCULATED: 'CALCULATED',
-            REFERENCE_DATA: 'REFERENCE_DATA',
-            STOCK_CARDS: 'STOCK_CARDS',
-            PREVIOUS_REQUISITION: 'PREVIOUS_REQUISITION'
-        },
-        labels = {
-            USER_INPUT: 'requisitionConstants.userInput',
-            CALCULATED: 'requisitionConstants.calculated',
-            REFERENCE_DATA: 'requisitionConstants.referenceData',
-            STOCK_CARDS: 'requisitionConstants.stockCards',
-            PREVIOUS_REQUISITION: 'requisitionConstants.previousRequisition'
-        };
+                USER_INPUT: 'USER_INPUT',
+                CALCULATED: 'CALCULATED',
+                REFERENCE_DATA: 'REFERENCE_DATA',
+                STOCK_CARDS: 'STOCK_CARDS',
+                PREVIOUS_REQUISITION: 'PREVIOUS_REQUISITION'
+            },
+            labels = {
+                USER_INPUT: 'requisitionConstants.userInput',
+                CALCULATED: 'requisitionConstants.calculated',
+                REFERENCE_DATA: 'requisitionConstants.referenceData',
+                STOCK_CARDS: 'requisitionConstants.stockCards',
+                PREVIOUS_REQUISITION: 'requisitionConstants.previousRequisition'
+            };
 
         Source.getLabel = getLabel;
 

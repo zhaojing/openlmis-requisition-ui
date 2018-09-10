@@ -28,14 +28,12 @@
         .module('admin-template-list')
         .factory('templateListFactory', factory);
 
-    factory.$inject = ['$filter', 'facilityTypeService', '$q'];
-
-    function factory($filter, facilityTypeService, $q) {
+    function factory() {
 
         var factory = {
-                getProgramTemplates: getProgramTemplates,
-                getTemplateFacilityTypes: getTemplateFacilityTypes
-            };
+            getProgramTemplates: getProgramTemplates,
+            getTemplateFacilityTypes: getTemplateFacilityTypes
+        };
 
         return factory;
 
@@ -56,7 +54,7 @@
             programs.forEach(function(program) {
                 programTemplates[program.id] = [];
                 templates.filter(function(template) {
-                    if (template.program.id == program.id) {
+                    if (template.program.id === program.id) {
                         programTemplates[program.id].push(template);
                     }
                 });
@@ -82,7 +80,7 @@
                 templateTypes[template.id] = [];
                 template.facilityTypes.forEach(function(type) {
                     var filtered = facilityTypes.filter(function(facilityType) {
-                        return facilityType.id == type.id;
+                        return facilityType.id === type.id;
                     });
                     if (filtered[0]) {
                         templateTypes[template.id].push(filtered[0]);
