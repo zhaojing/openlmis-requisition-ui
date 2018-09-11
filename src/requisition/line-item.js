@@ -140,7 +140,7 @@
          * @param {Object} lineItem Reference to the lineItem being updated
          * @param {Object} column Requisition template column
          * @param {Object} requisition Requisition to which line item belongs
-         * @param {Array} updatedColumns Arry of column names that have already been updated
+         * @param {Array} updatedColumns Array of column names that have already been updated
          *
          */
         function updateDependentFieldsHelper(lineItem, column, requisition, updatedColumns) {
