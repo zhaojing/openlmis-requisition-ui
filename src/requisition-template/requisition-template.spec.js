@@ -16,7 +16,7 @@
 describe('RequisitionTemplate', function() {
 
     var requisitionTemplate, RequisitionDataBuilder, RequisitionTemplateDataBuilder,
-        RequisitionTemplate, requisition, json, TEMPLATE_COLUMNS;
+        RequisitionTemplate, TEMPLATE_COLUMNS;
 
     beforeEach(function() {
         module('requisition');
@@ -28,9 +28,6 @@ describe('RequisitionTemplate', function() {
             RequisitionTemplate = $injector.get('RequisitionTemplate');
             TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
         });
-
-        json = new RequisitionTemplateDataBuilder().buildJson();
-        requisition = new RequisitionDataBuilder().build();
     });
 
     describe('getColumns', function() {
@@ -94,7 +91,8 @@ describe('RequisitionTemplate', function() {
 
         it('should return true if template has skip column', function() {
             requisitionTemplate = new RequisitionTemplate(
-                new RequisitionTemplateDataBuilder().withSkipColumn().buildJson(),
+                new RequisitionTemplateDataBuilder().withSkipColumn()
+                    .buildJson(),
                 new RequisitionDataBuilder().buildJson()
             );
 
@@ -116,18 +114,20 @@ describe('RequisitionTemplate', function() {
 
         it('should return true if template has skip column and is configured to hide line items',
             function() {
-            requisitionTemplate = new RequisitionTemplate(
-                new RequisitionTemplateDataBuilder().withSkipColumn(true).buildJson(),
-                new RequisitionDataBuilder().buildJson()
-            );
+                requisitionTemplate = new RequisitionTemplate(
+                    new RequisitionTemplateDataBuilder().withSkipColumn(true)
+                        .buildJson(),
+                    new RequisitionDataBuilder().buildJson()
+                );
 
-            expect(requisitionTemplate.hideSkippedLineItems()).toBe(true);
-        });
+                expect(requisitionTemplate.hideSkippedLineItems()).toBe(true);
+            });
 
         it('should return false if template has skip column and is configured to disable line items',
             function() {
                 requisitionTemplate = new RequisitionTemplate(
-                    new RequisitionTemplateDataBuilder().withSkipColumn(false).buildJson(),
+                    new RequisitionTemplateDataBuilder().withSkipColumn(false)
+                        .buildJson(),
                     new RequisitionDataBuilder().buildJson()
                 );
 

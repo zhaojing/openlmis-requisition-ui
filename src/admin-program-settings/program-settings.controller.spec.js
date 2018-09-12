@@ -16,7 +16,7 @@
 describe('ProgramSettingsController', function() {
 
     var $q, $rootScope, $state, confirmService, loadingModalService, programService, notificationService,
-        program, vm, ProgramDataBuilder, $controller,stateParams;
+        program, vm, ProgramDataBuilder, $controller, stateParams;
 
     beforeEach(function() {
         module('admin-program-settings', function($provide) {
@@ -117,15 +117,16 @@ describe('ProgramSettingsController', function() {
             vm.saveProgram();
             $rootScope.$apply();
 
-            expect(notificationService.success).toHaveBeenCalledWith('adminProgramSettings.programSettingsSavedSuccessfully');
+            expect(notificationService.success)
+                .toHaveBeenCalledWith('adminProgramSettings.programSettingsSavedSuccessfully');
         });
 
         it('should redirect to program list after successful save', function() {
             vm.saveProgram();
             $rootScope.$apply();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs',stateParams,{
-                reload:true
+            expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs', stateParams, {
+                reload: true
             });
         });
 

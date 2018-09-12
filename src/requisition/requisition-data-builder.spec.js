@@ -87,9 +87,12 @@
             ];
 
             this.availableNonFullSupplyProducts = [
-                new OrderableDataBuilder().withPrograms(programs).buildJson(),
-                new OrderableDataBuilder().withPrograms(programs).buildJson(),
-                new OrderableDataBuilder().withPrograms(programs).buildJson()
+                new OrderableDataBuilder().withPrograms(programs)
+                    .buildJson(),
+                new OrderableDataBuilder().withPrograms(programs)
+                    .buildJson(),
+                new OrderableDataBuilder().withPrograms(programs)
+                    .buildJson()
             ];
 
             programs = [
@@ -109,9 +112,12 @@
             ];
 
             this.availableFullSupplyProducts = [
-                new OrderableDataBuilder().withPrograms(programs).buildJson(),
-                new OrderableDataBuilder().withPrograms(programs).buildJson(),
-                new OrderableDataBuilder().withPrograms(programs).buildJson()
+                new OrderableDataBuilder().withPrograms(programs)
+                    .buildJson(),
+                new OrderableDataBuilder().withPrograms(programs)
+                    .buildJson(),
+                new OrderableDataBuilder().withPrograms(programs)
+                    .buildJson()
             ];
             this.statusChange = {
                 INITIATED: {

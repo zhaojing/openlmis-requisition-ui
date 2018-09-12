@@ -49,7 +49,7 @@ describe('openlmis.requisitions.initRnr state', function() {
     });
 
     describe('periods resolve', function() {
-    
+
         it('should return undefined if program is not set', function() {
             $stateParams.program = undefined;
 
@@ -101,11 +101,11 @@ describe('openlmis.requisitions.initRnr state', function() {
                 true
             );
         });
-    
+
     });
 
     describe('canInitiateRnr', function() {
-    
+
         it('should return false if program is not given', function() {
             $stateParams.program = undefined;
 
@@ -145,7 +145,7 @@ describe('openlmis.requisitions.initRnr state', function() {
                 $stateParams.program, $stateParams.facility
             );
         });
-    
+
     });
 
     function goToState() {

@@ -13,13 +13,11 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 describe('RequisitionViewController', function() {
 
-    var $scope, $q, $state, notificationService, alertService, confirmService, vm, requisition,
-        loadingModalService, deferred, requisitionUrlFactoryMock, requisitionValidatorMock,
-        fullSupplyItems, nonFullSupplyItems, authorizationServiceSpy, confirmSpy,
-        accessTokenFactorySpy, $window, stateTrackerService, messageService,
+    var $scope, $q, $state, notificationService, alertService, confirmService, vm, requisition, loadingModalService,
+        deferred, requisitionUrlFactoryMock, requisitionValidatorMock, fullSupplyItems, nonFullSupplyItems,
+        authorizationServiceSpy, confirmSpy, accessTokenFactorySpy, $window, stateTrackerService, messageService,
         RequisitionStockCountDateModal, RequisitionWatcher, watcher;
 
     beforeEach(function() {
@@ -93,8 +91,9 @@ describe('RequisitionViewController', function() {
             });
 
             deferred = $q.defer();
-            requisition = jasmine.createSpyObj('requisition',
-                ['$skip', '$isInitiated', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased', '$isRejected', '$isSkipped', '$save', '$authorize', '$submit', '$remove', '$approve', '$reject']);
+            requisition = jasmine.createSpyObj('requisition', ['$skip', '$isInitiated', '$isSubmitted', '$isAuthorized',
+                '$isInApproval', '$isReleased', '$isRejected', '$isSkipped', '$save', '$authorize', '$submit',
+                '$remove', '$approve', '$reject']);
             requisition.id = '1';
             requisition.program = {
                 id: '2',
@@ -156,17 +155,19 @@ describe('RequisitionViewController', function() {
 
     describe('$onInit', function() {
 
-        it('should display submit button when user can submit requisition and skip authorization is not configured', function() {
-            vm.canSubmit = true;
-            vm.requisition.program.skipAuthorization = false;
+        it('should display submit button when user can submit requisition and skip authorization is not configured',
+            function() {
+                vm.canSubmit = true;
+                vm.requisition.program.skipAuthorization = false;
 
-            vm.$onInit();
+                vm.$onInit();
 
-            expect(vm.displaySubmitButton).toBe(true);
-            expect(vm.displaySubmitAndAuthorizeButton).toBe(false);
-        });
+                expect(vm.displaySubmitButton).toBe(true);
+                expect(vm.displaySubmitAndAuthorizeButton).toBe(false);
+            });
 
-        it('should display submit and authorize button when user can submit requisition and skip authorization is configured', function() {
+        it('should display submit and authorize button when user can submit requisition and skip authorization is' +
+            ' configured', function() {
             vm.canSubmit = true;
             vm.requisition.program.skipAuthorization = true;
 
@@ -212,7 +213,6 @@ describe('RequisitionViewController', function() {
             stateGoSpy = jasmine.createSpy(),
             loadingDeferred = $q.defer();
 
-
         spyOn(notificationService, 'success').andCallFake(notificationServiceSpy);
         spyOn(loadingModalService, 'open').andReturn(loadingDeferred.promise);
         spyOn($state, 'go').andCallFake(stateGoSpy);
@@ -248,11 +248,11 @@ describe('RequisitionViewController', function() {
     describe('Sync error handling', function() {
 
         it('should reload requisition when conflict response received', function() {
-            verifyReloadOnErrorAndNotificationSent(409, 'requisitionView.versionMismatch')
+            verifyReloadOnErrorAndNotificationSent(409, 'requisitionView.versionMismatch');
         });
 
         it('should reload requisition when forbidden response received', function() {
-            verifyReloadOnErrorAndNotificationSent(403, 'requisitionView.updateForbidden')
+            verifyReloadOnErrorAndNotificationSent(403, 'requisitionView.updateForbidden');
         });
 
         it('should not reload requisition when bad request response received', function() {
@@ -264,26 +264,30 @@ describe('RequisitionViewController', function() {
         });
 
         function verifyReloadOnErrorAndNotificationSent(responseStatus, messageKey) {
-          var notificationServiceSpy = jasmine.createSpy(),
-              stateSpy = jasmine.createSpy(),
-              conflictResponse = { status: responseStatus };
+            var notificationServiceSpy = jasmine.createSpy(),
+                stateSpy = jasmine.createSpy(),
+                conflictResponse = {
+                    status: responseStatus
+                };
 
-          spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
-          spyOn($state, 'reload').andCallFake(stateSpy);
+            spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
+            spyOn($state, 'reload').andCallFake(stateSpy);
 
-          vm.syncRnr();
+            vm.syncRnr();
 
-          deferred.reject(conflictResponse);
-          $scope.$apply();
+            deferred.reject(conflictResponse);
+            $scope.$apply();
 
-          expect(notificationServiceSpy).toHaveBeenCalledWith(messageKey);
-          expect(stateSpy).toHaveBeenCalled();
+            expect(notificationServiceSpy).toHaveBeenCalledWith(messageKey);
+            expect(stateSpy).toHaveBeenCalled();
         }
 
         function verifyNoReloadOnError(responseStatus) {
             var notificationServiceSpy = jasmine.createSpy(),
                 stateSpy = jasmine.createSpy(),
-                conflictResponse = { status: responseStatus };
+                conflictResponse = {
+                    status: responseStatus
+                };
 
             spyOn(alertService, 'error').andCallFake(notificationServiceSpy);
             spyOn($state, 'reload').andCallFake(stateSpy);
@@ -640,7 +644,9 @@ describe('RequisitionViewController', function() {
         });
 
         it('should display error message when sync failed', function() {
-            requisition.$save.andReturn($q.reject({status: 400}));
+            requisition.$save.andReturn($q.reject({
+                status: 400
+            }));
             var notificationServiceSpy = jasmine.createSpy();
             spyOn(alertService, 'error').andCallFake(notificationServiceSpy);
 
@@ -670,14 +676,14 @@ describe('RequisitionViewController', function() {
         });
     });
 
-    describe('update requisition', function(){
+    describe('update requisition', function() {
         var offlineService, isOffline,
             requisitionService;
 
         beforeEach(inject(function(_offlineService_, _requisitionService_) {
             isOffline = false;
             offlineService = _offlineService_;
-            spyOn(offlineService, 'isOffline').andCallFake(function(){
+            spyOn(offlineService, 'isOffline').andCallFake(function() {
                 return isOffline;
             });
 
@@ -714,7 +720,7 @@ describe('RequisitionViewController', function() {
 
         });
 
-        it('will not remove the requisition while offline', function(offlineService){
+        it('will not remove the requisition while offline', function() {
             isOffline = true;
 
             vm.updateRequisition();

@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('RequisitionInitiateController', function(){
+describe('RequisitionInitiateController', function() {
 
     var vm, $q, programs, $rootScope, requisitionService, authorizationService, $state, facility,
         REQUISITION_RIGHTS, loadingModalService, permissionService, periods, $stateParams,
@@ -32,23 +32,26 @@ describe('RequisitionInitiateController', function(){
             loadingModalService = $injector.get('loadingModalService');
             UuidGenerator = $injector.get('UuidGenerator');
 
-            user = {'user_id': 'user_id'};
+            user = {
+                //eslint-disable-next-line camelcase
+                user_id: 'user_id'
+            };
             programs = [
                 {
-                    'code': 'HIV', 
-                    'id': 1
-                }, 
+                    code: 'HIV',
+                    id: 1
+                },
                 {
-                    'code': 'programCode', 
-                    'id': 2
+                    code: 'programCode',
+                    id: 2
                 }
             ];
             facility = {
-                'id': '10134',
-                'name': 'National Warehouse',
-                'description': null,
-                'code': 'CODE',
-                'supportedPrograms': programs
+                id: '10134',
+                name: 'National Warehouse',
+                description: null,
+                code: 'CODE',
+                supportedPrograms: programs
             };
             periods = [];
             $stateParams = {
@@ -60,7 +63,7 @@ describe('RequisitionInitiateController', function(){
             permissionService = $injector.get('permissionService');
             spyOn(permissionService, 'hasPermission').andReturn($q.resolve());
 
-            spyOn(authorizationService, 'getUser').andReturn(user); 
+            spyOn(authorizationService, 'getUser').andReturn(user);
 
             key = 'key';
             spyOn(UuidGenerator.prototype, 'generate').andCallFake(function() {
@@ -80,52 +83,60 @@ describe('RequisitionInitiateController', function(){
 
         vm.goToRequisition(1);
 
-        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
-    });
-
-    it('should change page to requisition full supply for newly initialized requisition in selected period', function() {
-        var selectedPeriod = {'id':1};
-        vm.$onInit();
-        spyOn($state, 'go');
-        spyOn(requisitionService, 'initiate').andReturn($q.when({
-            'id': 1
-        }));
-        vm.program = programs[0];
-        vm.facility = facility;
-
-        vm.initRnr(selectedPeriod);
-        $rootScope.$apply();
-
-        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: 1});
-        expect(permissionService.hasPermission).toHaveBeenCalledWith('user_id', {
-            right:REQUISITION_RIGHTS.REQUISITION_CREATE,
-            programId: programs[0].id,
-            facilityId: facility.id
+        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
+            rnr: 1
         });
     });
 
+    it('should change page to requisition full supply for newly initialized requisition in selected period',
+        function() {
+            var selectedPeriod = {
+                id: 1
+            };
+            vm.$onInit();
+            spyOn($state, 'go');
+            spyOn(requisitionService, 'initiate').andReturn($q.when({
+                id: 1
+            }));
+            vm.program = programs[0];
+            vm.facility = facility;
+
+            vm.initRnr(selectedPeriod);
+            $rootScope.$apply();
+
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
+                rnr: 1
+            });
+            expect(permissionService.hasPermission).toHaveBeenCalledWith('user_id', {
+                right: REQUISITION_RIGHTS.REQUISITION_CREATE,
+                programId: programs[0].id,
+                facilityId: facility.id
+            });
+        });
+
     it('should initiate requisition with idempotency key', function() {
         var selectedPeriod = {
-            'id':1
+            id: 1
         };
-        
+
         vm.$onInit();
         spyOn($state, 'go');
         spyOn(requisitionService, 'initiate').andReturn($q.when({
-            'id': 1
+            id: 1
         }));
-        
+
         vm.program = programs[0];
         vm.facility = facility;
 
         vm.initRnr(selectedPeriod);
         $rootScope.$apply();
-        expect(requisitionService.initiate).toHaveBeenCalledWith(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency, key);
+        expect(requisitionService.initiate)
+            .toHaveBeenCalledWith(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency, key);
     });
 
     it('should display error when user has no right to init requisition', function() {
         var selectedPeriod = {
-            'id':1
+            id: 1
         };
 
         permissionService.hasPermission.andReturn($q.reject());
@@ -144,10 +155,11 @@ describe('RequisitionInitiateController', function(){
         expect(requisitionService.initiate).not.toHaveBeenCalled();
     });
 
-    it('should not change page to requisitions.requisition with selected period without rnrId and when invalid response from service', function() {
+    it('should not change page to requisitions.requisition with selected period without rnrId and when invalid' +
+        ' response from service', function() {
         var selectedPeriod = {};
-        spyOn(requisitionService,'initiate').andReturn($q.reject({
-            'id': 1
+        spyOn(requisitionService, 'initiate').andReturn($q.reject({
+            id: 1
         }));
         spyOn($state, 'go');
         vm.program = programs[0];
@@ -161,7 +173,9 @@ describe('RequisitionInitiateController', function(){
     });
 
     it('should open loading modal', function() {
-        var selectedPeriod = {'id':1};
+        var selectedPeriod = {
+            id: 1
+        };
         spyOn(loadingModalService, 'open');
         vm.program = programs[0];
         vm.facility = facility;

@@ -21,11 +21,9 @@
         .module('admin-template')
         .factory('TemplateDataBuilder', TemplateDataBuilder);
 
-    TemplateDataBuilder.$inject = ['Template', 'TemplateColumnDataBuilder', 'COLUMN_SOURCES',
-        'ObjectReferenceDataBuilder', 'FacilityTypeDataBuilder'];
+    TemplateDataBuilder.$inject = ['Template', 'TemplateColumnDataBuilder', 'ObjectReferenceDataBuilder'];
 
-    function TemplateDataBuilder(Template, TemplateColumnDataBuilder, COLUMN_SOURCES,
-        ObjectReferenceDataBuilder, FacilityTypeDataBuilder) {
+    function TemplateDataBuilder(Template, TemplateColumnDataBuilder, ObjectReferenceDataBuilder) {
 
         TemplateDataBuilder.prototype.build = build;
         TemplateDataBuilder.prototype.withColumn = withColumn;
@@ -43,7 +41,8 @@
             this.id = 'template-' + TemplateDataBuilder.instanceNumber;
             this.numberOfPeriodsToAverage = 3;
             this.program = new ObjectReferenceDataBuilder()
-                .withId('program-' + TemplateDataBuilder.instanceNumber).build();
+                .withId('program-' + TemplateDataBuilder.instanceNumber)
+                .build();
             this.populateStockOnHandFromStockCards = false;
             this.columnsMap = {};
             this.facilityTypes = [];
@@ -66,7 +65,7 @@
             return this;
         }
 
-        function withPopulateStockOnHandFromStockCards(column) {
+        function withPopulateStockOnHandFromStockCards() {
             this.populateStockOnHandFromStockCards = true;
             return this;
         }

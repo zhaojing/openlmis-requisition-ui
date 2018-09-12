@@ -29,8 +29,10 @@ describe('TemplateListAdminController', function() {
             FacilityTypeDataBuilder = $injector.get('FacilityTypeDataBuilder');
         });
 
-        program = new ProgramDataBuilder().withId('program-1').build();
-        programTwo = new ProgramDataBuilder().withId('program-2').build();
+        program = new ProgramDataBuilder().withId('program-1')
+            .build();
+        programTwo = new ProgramDataBuilder().withId('program-2')
+            .build();
 
         districtHospital = FacilityTypeDataBuilder.buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder().build();

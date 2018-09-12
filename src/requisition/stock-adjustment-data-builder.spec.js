@@ -33,7 +33,7 @@
             StockAdjustmentDataBuilder.instanceNumber = (StockAdjustmentDataBuilder.instanceNumber || 0) + 1;
 
             var instanceNumber = StockAdjustmentDataBuilder.instanceNumber;
-            this.reasonId = "reason-id-" + instanceNumber;
+            this.reasonId = 'reason-id-' + instanceNumber;
             this.quantity = 10 + instanceNumber;
         }
 

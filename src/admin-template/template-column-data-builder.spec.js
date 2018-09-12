@@ -36,9 +36,11 @@
         TemplateColumnDataBuilder.prototype.buildAverageConsumptionColumn = buildAverageConsumptionColumn;
         TemplateColumnDataBuilder.prototype.buildMaximumStockQuantityColumn = buildMaximumStockQuantityColumn;
         TemplateColumnDataBuilder.prototype.buildTotalConsumedQuantityColumn = buildTotalConsumedQuantityColumn;
-        TemplateColumnDataBuilder.prototype.buildAdditionalQuantityRequiredColumn = buildAdditionalQuantityRequiredColumn;
+        TemplateColumnDataBuilder.prototype.buildAdditionalQuantityRequiredColumn =
+            buildAdditionalQuantityRequiredColumn;
         TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityColumn = buildCalculatedOrderQuantityColumn;
-        TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityIsaColumn = buildCalculatedOrderQuantityIsaColumn;
+        TemplateColumnDataBuilder.prototype.buildCalculatedOrderQuantityIsaColumn =
+            buildCalculatedOrderQuantityIsaColumn;
         TemplateColumnDataBuilder.prototype.buildBeginningBalanceColumn = buildBeginningBalanceColumn;
         TemplateColumnDataBuilder.prototype.buildRemarksColumn = buildRemarksColumn;
         TemplateColumnDataBuilder.prototype.buildTotalColumn = buildTotalColumn;

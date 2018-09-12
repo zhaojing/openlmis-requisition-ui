@@ -15,8 +15,8 @@
 
 describe('requisitionBatchApprovalService', function() {
 
-    var $rootScope, httpBackend, requisitionBatchApprovalService, q, requisitionUrlFactory, batchRequisitionsStorage,
-        dateUtils, requisitionsStorage, offlineService, localStorageFactory;
+    var $rootScope, httpBackend, requisitionBatchApprovalService, requisitionUrlFactory, batchRequisitionsStorage,
+        dateUtils, requisitionsStorage, offlineService, requisitions, $q;
 
     beforeEach(function() {
         module('requisition-batch-approval');
@@ -124,19 +124,24 @@ describe('requisitionBatchApprovalService', function() {
             return requisition;
         });
 
-        module(function($provide){
+        module(function($provide) {
             $provide.factory('Requisition', function() {
                 return requisitionFactoryMock;
             });
 
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
-            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy',
+                'removeBy']);
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
-                if (resourceName === 'offlineFlag') return offlineFlag;
-                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
+                if (resourceName === 'offlineFlag') {
+                    return offlineFlag;
+                }
+                if (resourceName === 'batchApproveRequisitions') {
+                    return batchRequisitionsStorage;
+                }
                 return requisitionsStorage;
             });
 
@@ -146,10 +151,10 @@ describe('requisitionBatchApprovalService', function() {
         });
 
         inject(function($injector) {
+            $q = $injector.get('$q');
             httpBackend = $injector.get('$httpBackend');
             $rootScope = $injector.get('$rootScope');
             requisitionBatchApprovalService = $injector.get('requisitionBatchApprovalService');
-            q = $injector.get('$q');
             requisitionUrlFactory = $injector.get('requisitionUrlFactory');
             dateUtils = $injector.get('dateUtils');
             offlineService = $injector.get('offlineService');
@@ -165,10 +170,12 @@ describe('requisitionBatchApprovalService', function() {
     it('should get requisition by id', function() {
         var getRequisitionUrl = '/api/requisitions?retrieveAll&id=' + requisitions[0].id + ',' + requisitions[1].id;
 
-        httpBackend.when('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, {requisitionDtos: requisitions});
+        httpBackend.when('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, {
+            requisitionDtos: requisitions
+        });
 
         var data = {};
-        requisitionBatchApprovalService.get(['1','2']).then(function(response) {
+        requisitionBatchApprovalService.get(['1', '2']).then(function(response) {
             data = response;
         });
 
@@ -182,7 +189,9 @@ describe('requisitionBatchApprovalService', function() {
     it('should return empty array if requisition was not found', function() {
         var getRequisitionUrl = '/api/requisitions?retrieveAll&id=3';
 
-        httpBackend.when('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, {requisitionDtos: []});
+        httpBackend.when('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, {
+            requisitionDtos: []
+        });
 
         var data = {};
         requisitionBatchApprovalService.get(['3']).then(function(response) {
@@ -199,10 +208,12 @@ describe('requisitionBatchApprovalService', function() {
     it('should return only existing requisitions', function() {
         var getRequisitionUrl = '/api/requisitions?retrieveAll&id=3,' + requisitions[0].id;
 
-        httpBackend.when('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, {requisitionDtos: [requisitions[0]]});
+        httpBackend.when('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, {
+            requisitionDtos: [requisitions[0]]
+        });
 
         var data = {};
-        requisitionBatchApprovalService.get(['3','1']).then(function(response) {
+        requisitionBatchApprovalService.get(['3', '1']).then(function(response) {
             data = response;
         });
 
@@ -214,8 +225,6 @@ describe('requisitionBatchApprovalService', function() {
     });
 
     it('should get requisition by id from storage while offline', function() {
-        var getRequisitionUrl = '/api/requisitions?retrieveAll&id=' + requisitions[0].id;
-
         spyOn(offlineService, 'isOffline').andReturn(true);
         batchRequisitionsStorage.getBy.andReturn(requisitions[0]);
 
@@ -232,7 +241,9 @@ describe('requisitionBatchApprovalService', function() {
     it('should save all selected requisitions', function() {
         var getRequisitionUrl = '/api/requisitions?saveAll';
 
-        httpBackend.when('PUT', requisitionUrlFactory(getRequisitionUrl)).respond(200, {requisitionDtos: requisitions});
+        httpBackend.when('PUT', requisitionUrlFactory(getRequisitionUrl)).respond(200, {
+            requisitionDtos: requisitions
+        });
 
         var data = {};
         requisitionBatchApprovalService.saveAll(requisitions).then(function(response) {
@@ -249,10 +260,12 @@ describe('requisitionBatchApprovalService', function() {
     it('should approve all selected requisitions', function() {
         var getRequisitionUrl = '/api/requisitions?approveAll&id=' + requisitions[0].id + ',' + requisitions[1].id;
 
-        httpBackend.when('POST', requisitionUrlFactory(getRequisitionUrl)).respond(200, {requisitionDtos: requisitions});
+        httpBackend.when('POST', requisitionUrlFactory(getRequisitionUrl)).respond(200, {
+            requisitionDtos: requisitions
+        });
 
         var data = {};
-        requisitionBatchApprovalService.approveAll(['1','2']).then(function(response) {
+        requisitionBatchApprovalService.approveAll(['1', '2']).then(function(response) {
             data = response;
         });
 
@@ -261,8 +274,8 @@ describe('requisitionBatchApprovalService', function() {
 
         expect(data.requisitionDtos[0].id).toBe(requisitions[0].id);
     });
-});
 
-function checkConnection() {
-    return $q.when(true);
-}
+    function checkConnection() {
+        return $q.when(true);
+    }
+});

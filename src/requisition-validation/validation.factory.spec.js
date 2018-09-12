@@ -106,9 +106,15 @@ describe('validationFactory', function() {
 
             messageServiceMock.get.andReturn('required');
             requisitionMock.template.getColumn.andCallFake(function(name) {
-                if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) return jColumn;
-                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) return iColumn;
-                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) return sColumn;
+                if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) {
+                    return jColumn;
+                }
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) {
+                    return iColumn;
+                }
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) {
+                    return sColumn;
+                }
             });
         });
 
@@ -126,7 +132,8 @@ describe('validationFactory', function() {
                 .toBeUndefined();
         });
 
-        it('should return undefined if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not displayed', function() {
+        it('should return undefined if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not' +
+            ' displayed', function() {
             lineItem.requestedQuantity = 10;
             lineItem.requestedQuantityExplanation = undefined;
             iColumn.$display = false;
@@ -176,7 +183,8 @@ describe('validationFactory', function() {
                 .toEqual('required');
         });
 
-        it('should return undefined if requestedQuantity has value, explanation is missing and line item is non full supply', function() {
+        it('should return undefined if requestedQuantity has value, explanation is missing and line item is non full' +
+            ' supply', function() {
             lineItem.requestedQuantity = 10;
             lineItem.isNonFullSupply.andReturn(true);
 
@@ -213,8 +221,12 @@ describe('validationFactory', function() {
 
             messageServiceMock.get.andReturn('required');
             requisitionMock.template.getColumn.andCallFake(function(name) {
-                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) return calculatedOrderQuantityColumn;
-                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) return calculatedOrderQuantityIsaColumn;
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) {
+                    return calculatedOrderQuantityColumn;
+                }
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) {
+                    return calculatedOrderQuantityIsaColumn;
+                }
             });
 
             lineItem.requestedQuantity = null;
@@ -230,44 +242,51 @@ describe('validationFactory', function() {
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
         });
 
-        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not displayed and requestedQuantity is null', function() {
+        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not' +
+            ' displayed and requestedQuantity is null', function() {
             calculatedOrderQuantityIsaColumn.$display = false;
             calculatedOrderQuantityColumn.$display = false;
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
-        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not displayed and requestedQuantity is undefined', function() {
+        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not' +
+            ' displayed and requestedQuantity is undefined', function() {
             lineItem.requestedQuantity = undefined;
             calculatedOrderQuantityIsaColumn.$display = false;
             calculatedOrderQuantityColumn.$display = false;
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
-        it('should return undefined if calculatedOrderQuantity column is displayed and requestedQuantity is undefined', function() {
-            lineItem.requestedQuantity = undefined;
-            calculatedOrderQuantityIsaColumn.$display = false;
-            expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
-        });
+        it('should return undefined if calculatedOrderQuantity column is displayed and requestedQuantity is undefined',
+            function() {
+                lineItem.requestedQuantity = undefined;
+                calculatedOrderQuantityIsaColumn.$display = false;
+                expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
+            });
 
-        it('should return undefined if calculatedOrderQuantityIsa column is displayed and requestedQuantity is undefined', function() {
+        it('should return undefined if calculatedOrderQuantityIsa column is displayed and requestedQuantity is' +
+            ' undefined', function() {
             lineItem.requestedQuantity = undefined;
             calculatedOrderQuantityColumn.$display = false;
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
         });
 
-        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not present and requestedQuantity is null', function() {
+        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not' +
+            ' present and requestedQuantity is null', function() {
             requisitionMock.template.getColumn.andReturn(undefined);
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock))
                 .toEqual('required');
         });
 
-        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not present and requestedQuantity is undefined', function() {
+        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not present' +
+            ' and requestedQuantity is undefined', function() {
             lineItem.requestedQuantity = undefined;
             requisitionMock.template.getColumn.andReturn(undefined);
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
-        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not present and requestedQuantity is undefined', function() {
+        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not present' +
+            ' and requestedQuantity is undefined', function() {
             lineItem.requestedQuantity = undefined;
             requisitionMock.template.getColumn.andReturn(undefined);
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
@@ -305,15 +324,20 @@ describe('validationFactory', function() {
         it('should return undefined if total stock out days are non negative', function() {
             lineItem.totalStockoutDays = 0;
 
-            expect(validationFactory.totalStockoutDays(lineItem, {processingPeriod: period})).toBeUndefined();
+            expect(validationFactory.totalStockoutDays(lineItem, {
+                processingPeriod: period
+            })).toBeUndefined();
         });
 
-        it('should return "valueExceedPeriodDuration" if total stock out days exceed number of days in period', function() {
-            lineItem.totalStockoutDays = 100;
+        it('should return "valueExceedPeriodDuration" if total stock out days exceed number of days in period',
+            function() {
+                lineItem.totalStockoutDays = 100;
 
-            expect(validationFactory.totalStockoutDays(lineItem, {processingPeriod: period}))
-                .toEqual('valueExceedPeriodDuration');
-        });
+                expect(validationFactory.totalStockoutDays(lineItem, {
+                    processingPeriod: period
+                }))
+                    .toEqual('valueExceedPeriodDuration');
+            });
 
     });
 

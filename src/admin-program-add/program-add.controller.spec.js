@@ -13,10 +13,10 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('ProgramAddController', function () {
+describe('ProgramAddController', function() {
 
-    var $q, $state, $controller, $rootScope, confirmService, loadingModalService, programService, notificationService, messageService, ProgramDataBuilder,
-        vm, program, stateParams;
+    var $q, $state, $controller, $rootScope, confirmService, loadingModalService, programService, notificationService,
+        messageService, ProgramDataBuilder, vm, program, stateParams;
 
     beforeEach(function() {
         module('admin-program-add');
@@ -76,7 +76,8 @@ describe('ProgramAddController', function () {
             vm.saveProgram();
             $rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
+            expect(confirmService.confirm)
+                .toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(programService.create).toHaveBeenCalledWith(program);
             expect(notificationService.success).toHaveBeenCalledWith('adminProgramAdd.createProgram.success');
@@ -92,7 +93,8 @@ describe('ProgramAddController', function () {
             vm.saveProgram();
             $rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
+            expect(confirmService.confirm)
+                .toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(programService.create).not.toHaveBeenCalled();
             expect(notificationService.success).not.toHaveBeenCalled();
@@ -107,7 +109,8 @@ describe('ProgramAddController', function () {
             vm.saveProgram();
             $rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
+            expect(confirmService.confirm)
+                .toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(programService.create).toHaveBeenCalledWith(program);
             expect(notificationService.success).not.toHaveBeenCalled();

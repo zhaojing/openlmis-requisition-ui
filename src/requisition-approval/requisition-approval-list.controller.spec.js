@@ -13,11 +13,10 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('RequisitionApprovalListController', function () {
+describe('RequisitionApprovalListController', function() {
 
     //injects
-    var vm, $state, $stateParams, alertService, $controller, offlineService, confirmService, $rootScope, $q,
-        localStorageFactorySpy, requisitionsStorage, batchRequisitionsStorage, templateOffline, approvedProductsOffline;
+    var vm, $state, alertService, $controller, requisitionsStorage, batchRequisitionsStorage;
 
     //variables
     var requisitions, programs;
@@ -25,15 +24,20 @@ describe('RequisitionApprovalListController', function () {
     beforeEach(function() {
         module('requisition-approval');
 
-        module(function($provide){
+        module(function($provide) {
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
-            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy',
+                'removeBy']);
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
-                if (resourceName === 'offlineFlag') return offlineFlag;
-                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
+                if (resourceName === 'offlineFlag') {
+                    return offlineFlag;
+                }
+                if (resourceName === 'batchApproveRequisitions') {
+                    return batchRequisitionsStorage;
+                }
                 return requisitionsStorage;
             });
 
@@ -46,25 +50,19 @@ describe('RequisitionApprovalListController', function () {
 
             $controller = $injector.get('$controller');
             $state = $injector.get('$state');
-            $stateParams = $injector.get('$stateParams');
             alertService = $injector.get('alertService');
-            offlineService = $injector.get('offlineService');
-            confirmService = $injector.get('confirmService');
-            $rootScope = $injector.get('$rootScope');
-            $q = $injector.get('$q');
         });
 
         programs = [{
-                id: '1',
-                code: 'PRG001',
-                name: 'Family Planning'
-            },
-            {
-                id: '2',
-                code: 'PRG002',
-                name: 'Essential Meds'
-            }
-        ];
+            id: '1',
+            code: 'PRG001',
+            name: 'Family Planning'
+        },
+        {
+            id: '2',
+            code: 'PRG002',
+            name: 'Essential Meds'
+        }];
 
         requisitions = [
             {
@@ -88,19 +86,6 @@ describe('RequisitionApprovalListController', function () {
 
             }
         ];
-
-        batchRequisition = {
-            $outdated: undefined,
-            $modified: undefined,
-            $availableOffline: undefined,
-            id: requisitions[0].id,
-            status: undefined,
-            statusChanges: undefined,
-            program: requisitions[0].program,
-            facility: requisitions[0].facility,
-            processingPeriod: undefined,
-            requisitionLineItems: []
-        }
     });
 
     describe('$onInit', function() {
@@ -135,7 +120,7 @@ describe('RequisitionApprovalListController', function () {
         });
     });
 
-    describe ('search', function() {
+    describe('search', function() {
 
         beforeEach(function() {
             initController();
@@ -151,7 +136,9 @@ describe('RequisitionApprovalListController', function () {
             expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
                 program: vm.selectedProgram.id,
                 offline: false
-            }, {reload: true});
+            }, {
+                reload: true
+            });
         });
 
         it('should set offline flag correctly', function() {
@@ -163,9 +150,10 @@ describe('RequisitionApprovalListController', function () {
             expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.approvalList', {
                 program: vm.selectedProgram.id,
                 offline: true
-            }, {reload: true});
+            }, {
+                reload: true
+            });
         });
-
 
         it('should reload state', function() {
             vm.search();
@@ -174,8 +162,7 @@ describe('RequisitionApprovalListController', function () {
         });
     });
 
-
-    describe ('openRnr', function() {
+    describe('openRnr', function() {
 
         beforeEach(function() {
             initController();
@@ -183,10 +170,12 @@ describe('RequisitionApprovalListController', function () {
             spyOn($state, 'go');
         });
 
-        it('should go to fullSupply state', function () {
+        it('should go to fullSupply state', function() {
             vm.openRnr(requisitions[0].id);
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {rnr: requisitions[0].id});
+            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
+                rnr: requisitions[0].id
+            });
         });
     });
 

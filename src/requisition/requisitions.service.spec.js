@@ -15,12 +15,11 @@
 
 describe('requisitionService', function() {
 
-    var $rootScope, httpBackend, requisitionService, dateUtils, q, allStatuses, $templateCache,
-        requisitionUrlFactory, requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate,
-        endDate, startDate1, endDate1, modifiedDate, createdDate, processingSchedule, facility,
-        program, period, emergency, requisition, requisitionDto, requisitionDto2, createdDate2,
-        requisitionToConvert,  statusMessage, statusMessagesStorage,
-        reasonWithoutHidden, reasonNotHidden, reasonHidden, offlineService;
+    var $rootScope, httpBackend, requisitionService, dateUtils, q, allStatuses, $templateCache, requisitionUrlFactory,
+        requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate, endDate, startDate1, endDate1,
+        modifiedDate, createdDate, processingSchedule, facility, program, period, emergency, requisition,
+        requisitionDto, requisitionDto2, createdDate2,  statusMessage, statusMessagesStorage, reasonWithoutHidden,
+        reasonNotHidden, reasonHidden, offlineService;
 
     beforeEach(function() {
         module('requisition');
@@ -97,25 +96,21 @@ describe('requisitionService', function() {
             processingPeriod: period,
             createdDate: createdDate2
         };
-        requisitionToConvert = {
-            requisitionId: requisition.id,
-            supplyingDepotId: requisition.supplyingFacility
-        };
         statusMessage = {
-            id: "123"
+            id: '123'
         };
 
-        module(function($provide){
-            var RequisitionSpy = jasmine.createSpy('Requisition').andCallFake(function (requisition) {
+        module(function($provide) {
+            var RequisitionSpy = jasmine.createSpy('Requisition').andCallFake(function(requisition) {
                     return requisition;
                 }),
                 confirmServiceMock = jasmine.createSpyObj('confirmService', ['confirm']);
 
-            confirmServiceMock.confirm.andCallFake(function(argumentObject) {
+            confirmServiceMock.confirm.andCallFake(function() {
                 return q.when(true);
             });
 
-        	$provide.service('Requisition', function() {
+            $provide.service('Requisition', function() {
                 return RequisitionSpy;
             });
 
@@ -124,17 +119,27 @@ describe('requisitionService', function() {
             });
 
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
-            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
-            statusMessagesStorage = jasmine.createSpyObj('statusMessagesStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine
+                .createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            statusMessagesStorage = jasmine
+                .createSpyObj('statusMessagesStorage', ['search', 'put', 'getBy', 'removeBy']);
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
-                if (resourceName === 'offlineFlag') return offlineFlag;
-                if (resourceName === 'onlineOnly') return onlineOnlyRequisitions;
-                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
-                if (resourceName === 'statusMessages') return statusMessagesStorage;
+                if (resourceName === 'offlineFlag') {
+                    return offlineFlag;
+                }
+                if (resourceName === 'onlineOnly') {
+                    return onlineOnlyRequisitions;
+                }
+                if (resourceName === 'batchApproveRequisitions') {
+                    return batchRequisitionsStorage;
+                }
+                if (resourceName === 'statusMessages') {
+                    return statusMessagesStorage;
+                }
                 return requisitionsStorage;
             });
 
@@ -147,23 +152,25 @@ describe('requisitionService', function() {
             httpBackend = $injector.get('$httpBackend');
             $rootScope = $injector.get('$rootScope');
             requisitionService = $injector.get('requisitionService');
-            allStatuses = REQUISITION_STATUS.$toList();
+            allStatuses = $injector.get('REQUISITION_STATUS').$toList();
             dateUtils = $injector.get('dateUtils');
             q = $injector.get('$q');
             requisitionUrlFactory = $injector.get('requisitionUrlFactory');
             offlineService = $injector.get('offlineService');
             $templateCache = $injector.get('$templateCache');
 
-            $templateCache.put('common/notification-modal.html', "something");
+            $templateCache.put('common/notification-modal.html', 'something');
         });
 
         spyOn(offlineService, 'isOffline').andReturn(false);
     });
 
-    describe('get', function () {
+    describe('get', function() {
 
         var getRequisitionUrl,
-            headers = { 'eTag': 'W/1' };
+            headers = {
+                eTag: 'W/1'
+            };
 
         beforeEach(function() {
             var getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
@@ -206,11 +213,11 @@ describe('requisitionService', function() {
         it('should get requisition by id from offline resources', function() {
             offlineService.isOffline.andReturn(true);
             requisitionsStorage.getBy.andCallFake(function(param, value) {
-              if (param === 'id' && value === requisition.id) {
-                return requisition;
-              }
+                if (param === 'id' && value === requisition.id) {
+                    return requisition;
+                }
 
-              return undefined;
+                return undefined;
             });
 
             var data = {};
@@ -259,9 +266,9 @@ describe('requisitionService', function() {
 
             var result;
             requisitionService.get(requisition.id)
-            .then(function(response) {
-                result = response;
-            });
+                .then(function(response) {
+                    result = response;
+                });
             $rootScope.$apply();
 
             expect(result.id).toEqual(requisition.id);
@@ -273,7 +280,7 @@ describe('requisitionService', function() {
 
         httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/initiate?emergency=' + emergency +
             '&facility=' + facility.id + '&program=' + program.id + '&suggestedPeriod=' + period.id))
-        .respond(200, requisition);
+            .respond(200, requisition);
 
         requisitionService.initiate(facility.id, program.id, period.id, emergency).then(function(response) {
             data = response;
@@ -300,9 +307,14 @@ describe('requisitionService', function() {
                 descending: 'true'
             };
 
-        httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/requisitionsForConvert?descending=' + params.descending +
-            '&filterBy=' + params.filterBy + '&filterValue=' + params.filterValue + '&sortBy=' + params.sortBy))
-        .respond(200, {content: [{requisition: requisitionDto}]});
+        httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/requisitionsForConvert?descending=' +
+            params.descending + '&filterBy=' + params.filterBy + '&filterValue=' + params.filterValue + '&sortBy=' +
+            params.sortBy))
+            .respond(200, {
+                content: [{
+                    requisition: requisitionDto
+                }]
+            });
 
         requisitionService.forConvert(params).then(function(response) {
             data = response;
@@ -322,11 +334,13 @@ describe('requisitionService', function() {
         var callback = jasmine.createSpy();
 
         httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/batchReleases'))
-        .respond(function(method, url, data){
-            return [200, angular.toJson({})];
-        });
+            .respond(function() {
+                return [200, angular.toJson({})];
+            });
 
-        requisitionService.convertToOrder([{requisition: requisition}]).then(callback);
+        requisitionService.convertToOrder([{
+            requisition: requisition
+        }]).then(callback);
 
         $rootScope.$apply();
         httpBackend.flush();
@@ -340,11 +354,13 @@ describe('requisitionService', function() {
         var callback = jasmine.createSpy();
 
         httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/batchReleases'))
-            .respond(function(method, url, data){
+            .respond(function() {
                 return [200, angular.toJson({})];
             });
 
-        requisitionService.releaseWithoutOrder([{requisition: requisition}]).then(callback);
+        requisitionService.releaseWithoutOrder([{
+            requisition: requisition
+        }]).then(callback);
 
         $rootScope.$apply();
         httpBackend.flush();
@@ -367,17 +383,19 @@ describe('requisitionService', function() {
             },
             requisitionCopy = formatDatesInRequisition(angular.copy(requisitionDto));
 
-        httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/search?initiatedDateFrom=' + startDate1.toISOString() +
-            '&initiatedDateTo=' + endDate1.toISOString() + '&emergency=' + params.emergency +
-            '&facility=' + facility.id + '&program=' + program.id +
-            '&requisitionStatus=' + allStatuses[0].label + '&requisitionStatus=' + allStatuses[1].label + '&sort=' + params.sort))
-        .respond(200, {content: [requisitionDto]});
+        httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/search?initiatedDateFrom=' +
+            startDate1.toISOString() + '&initiatedDateTo=' + endDate1.toISOString() + '&emergency=' + params.emergency +
+            '&facility=' + facility.id + '&program=' + program.id + '&requisitionStatus=' + allStatuses[0].label +
+            '&requisitionStatus=' + allStatuses[1].label + '&sort=' + params.sort))
+            .respond(200, {
+                content: [requisitionDto]
+            });
 
         requisitionsStorage.getBy.andReturn(false);
 
         requisitionService.search(false, params).then(function(response) {
             data = response;
-        }, function(response) {
+        }, function() {
         });
 
         httpBackend.flush();
@@ -398,7 +416,9 @@ describe('requisitionService', function() {
             };
 
         httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/search?facility=' + facility.id))
-        .respond(200, {content: [requisitionDto2]});
+            .respond(200, {
+                content: [requisitionDto2]
+            });
 
         requisitionsStorage.getBy.andReturn(false);
 
@@ -549,7 +569,7 @@ describe('requisitionService', function() {
             expect(data.content[0].processingPeriod.processingSchedule).toEqual(null);
         });
 
-        it('will mark the offline version of the requisition as $outdated, if modifiedDates do not match', function(){
+        it('will mark the offline version of the requisition as $outdated, if modifiedDates do not match', function() {
             var offlineRequisition = {
                 id: '1',
                 modifiedDate: [2016, 4, 30, 16, 21, 33]
@@ -559,8 +579,7 @@ describe('requisitionService', function() {
             requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
             httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')
-            ).respond(200, {
+                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
                 content: [
                     requisition
                 ]
@@ -585,14 +604,13 @@ describe('requisitionService', function() {
             expect(requisitionsStorage.put.calls.length).toBe(2);
         });
 
-        it('will put requisition to the batch requisitions storage if modifiedDates do not match', function(){
+        it('will put requisition to the batch requisitions storage if modifiedDates do not match', function() {
             requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
             batchRequisitionsStorage.getBy.andReturn(requisition);
 
             httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')
-            ).respond(200, {
+                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
                 content: [
                     requisition
                 ]
@@ -606,14 +624,13 @@ describe('requisitionService', function() {
             expect(requisitionsStorage.put).not.toHaveBeenCalled();
         });
 
-        it('will put requisition to the requisitions storage if modifiedDates do not match', function(){
+        it('will put requisition to the requisitions storage if modifiedDates do not match', function() {
             requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
             requisitionsStorage.getBy.andReturn(requisition);
 
             httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')
-            ).respond(200, {
+                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
                 content: [
                     requisition
                 ]
@@ -627,14 +644,13 @@ describe('requisitionService', function() {
             expect(batchRequisitionsStorage.put).not.toHaveBeenCalled();
         });
 
-        it('will set requisition as available offline if was found the batch requisitions storage', function(){
+        it('will set requisition as available offline if was found the batch requisitions storage', function() {
             batchRequisitionsStorage.getBy.andReturn(requisition);
 
             var data = {};
 
             httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')
-            ).respond(200, {
+                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
                 content: [
                     requisition
                 ]
@@ -650,14 +666,13 @@ describe('requisitionService', function() {
             expect(data.content[0].$availableOffline).toBe(true);
         });
 
-        it('will set requisition as available offline if was found the requisitions storage', function(){
+        it('will set requisition as available offline if was found the requisitions storage', function() {
             requisitionsStorage.getBy.andReturn(requisition);
 
             var data = {};
 
             httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')
-            ).respond(200, {
+                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
                 content: [
                     requisition
                 ]
@@ -673,12 +688,11 @@ describe('requisitionService', function() {
             expect(data.content[0].$availableOffline).toBe(true);
         });
 
-        it('will not set requisition as available offline if was not found in any storage', function(){
+        it('will not set requisition as available offline if was not found in any storage', function() {
             var data = {};
 
             httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')
-            ).respond(200, {
+                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
                 content: [
                     requisition
                 ]
@@ -699,7 +713,8 @@ describe('requisitionService', function() {
     });
 
     function formatDatesInRequisition(requisition) {
-        requisition.processingPeriod.processingSchedule.modifiedDate = dateUtils.toDate(requisition.processingPeriod.processingSchedule.modifiedDate);
+        requisition.processingPeriod.processingSchedule.modifiedDate = dateUtils
+            .toDate(requisition.processingPeriod.processingSchedule.modifiedDate);
         requisition.processingPeriod.endDate = dateUtils.toDate(requisition.processingPeriod.endDate);
         requisition.processingPeriod.startDate = dateUtils.toDate(requisition.processingPeriod.startDate);
         requisition.createdDate = dateUtils.toDate(requisition.createdDate);

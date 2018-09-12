@@ -13,7 +13,6 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 describe('openlmis.requisitions.batchApproval state', function() {
 
     var $q, $state, $rootScope, requisitionBatchApprovalService, state, $stateParams,
@@ -26,7 +25,6 @@ describe('openlmis.requisitions.batchApproval state', function() {
         prepareSpies();
     });
 
-
     it('should accept ids through query params', function() {
         expect(state.url.split('?')[1].indexOf('ids') > -1).toBe(true);
     });
@@ -36,18 +34,18 @@ describe('openlmis.requisitions.batchApproval state', function() {
 
         var result;
 
-        state.resolve.requisitions($stateParams, requisitionBatchApprovalService).then(function(requisitions){
+        state.resolve.requisitions($stateParams, requisitionBatchApprovalService).then(function(requisitions) {
             result = requisitions;
         });
         $rootScope.$apply();
 
         expect(result).toEqual(requisitions);
-        expect(requisitionBatchApprovalService.get).toHaveBeenCalledWith(['1','2']);
+        expect(requisitionBatchApprovalService.get).toHaveBeenCalledWith(['1', '2']);
     });
 
     it('should require REQUISITION_RIGHTS right to enter', function() {
         expect(state.accessRights).toEqual([REQUISITION_RIGHTS.REQUISITION_APPROVE]);
-});
+    });
 
     function loadModules() {
         module('openlmis-main-state');
@@ -68,7 +66,11 @@ describe('openlmis.requisitions.batchApproval state', function() {
     function prepareTestData() {
         state = $state.get('openlmis.requisitions.batchApproval');
         $stateParams = {};
-        requisitions = [{id: 1}, {id: 2}];
+        requisitions = [{
+            id: 1
+        }, {
+            id: 2
+        }];
     }
 
     function prepareSpies() {

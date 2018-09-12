@@ -13,7 +13,6 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 describe('RequisitionBatchSaveFactory', function() {
 
     //variables
@@ -129,19 +128,24 @@ describe('RequisitionBatchSaveFactory', function() {
             return requisition;
         });
 
-        module(function($provide){
+        module(function($provide) {
             $provide.factory('Requisition', function() {
                 return requisitionFactoryMock;
             });
 
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
-            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy',
+                'removeBy']);
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
-                if (resourceName === 'offlineFlag') return offlineFlag;
-                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
+                if (resourceName === 'offlineFlag') {
+                    return offlineFlag;
+                }
+                if (resourceName === 'batchApproveRequisitions') {
+                    return batchRequisitionsStorage;
+                }
                 return requisitionsStorage;
             });
 
@@ -150,7 +154,7 @@ describe('RequisitionBatchSaveFactory', function() {
             });
         });
 
-        inject(function ($injector) {
+        inject(function($injector) {
             requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
             requisitionBatchApprovalService = $injector.get('requisitionBatchApprovalService');
             $rootScope = $injector.get('$rootScope');
@@ -165,7 +169,6 @@ describe('RequisitionBatchSaveFactory', function() {
             return parameter;
         });
     });
-
 
     it('returns an empty array if input is invalid', function() {
         var data;
@@ -196,16 +199,21 @@ describe('RequisitionBatchSaveFactory', function() {
             data = response;
         });
 
-        deferred.resolve({requisitionDtos: requisitions});
+        deferred.resolve({
+            requisitionDtos: requisitions
+        });
         $rootScope.$apply();
 
         expect(data).toEqual(requisitions);
     });
 
-    it('when successful, it mark all requisitions as available offline and then saves them to the batch requisition storage', function() {
+    it('when successful, it mark all requisitions as available offline and then saves them to the batch requisition' +
+        ' storage', function() {
         requisitionBatchSaveFactory.saveRequisitions(requisitions);
 
-        deferred.resolve({requisitionDtos: requisitions});
+        deferred.resolve({
+            requisitionDtos: requisitions
+        });
         $rootScope.$apply();
 
         requisitions[0].$availableOffline = true;
@@ -274,23 +282,24 @@ describe('RequisitionBatchSaveFactory', function() {
         expect(batchRequisitionsStorage.removeBy).toHaveBeenCalledWith('id', requisitions[1].id);
     });
 
-    it('mark only successful requisitions as available offline and then saves them to the batch requisitions storage', function() {
-        requisitionBatchSaveFactory.saveRequisitions(requisitions);
+    it('mark only successful requisitions as available offline and then saves them to the batch requisitions storage',
+        function() {
+            requisitionBatchSaveFactory.saveRequisitions(requisitions);
 
-        deferred.reject({
-            requisitionDtos: [requisitions[0]],
-            requisitionErrors: [{
-                requisitionId: requisitions[1].id,
-                errorMessage: {
-                    message: 'This requisition is invalid!'
-                }
-            }]
+            deferred.reject({
+                requisitionDtos: [requisitions[0]],
+                requisitionErrors: [{
+                    requisitionId: requisitions[1].id,
+                    errorMessage: {
+                        message: 'This requisition is invalid!'
+                    }
+                }]
+            });
+            $rootScope.$apply();
+
+            requisitions[0].$availableOffline = true;
+
+            expect(batchRequisitionsStorage.put.calls.length).toEqual(1);
+            expect(batchRequisitionsStorage.put).toHaveBeenCalledWith(requisitions[0]);
         });
-        $rootScope.$apply();
-
-        requisitions[0].$availableOffline = true;
-
-        expect(batchRequisitionsStorage.put.calls.length).toEqual(1);
-        expect(batchRequisitionsStorage.put).toHaveBeenCalledWith(requisitions[0]);
-    });
 });

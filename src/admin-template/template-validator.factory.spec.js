@@ -179,26 +179,26 @@ describe('templateValidator', function() {
                 column.columnDefinition.supportsTag = true;
                 template.populateStockOnHandFromStockCards = true;
             });
-            
+
             it('should return error if tag is required and not set', function() {
                 expect(templateValidator.getColumnError(column, template)).toBe('adminProgramTemplate.columnTagEmpty');
             });
 
             it('should return false if column does not supports tag', function() {
                 column.columnDefinition.supportsTag = false;
-    
+
                 expect(templateValidator.getColumnError(column, template)).toBeUndefined();
             });
 
             it('should return false if template is not stock based', function() {
                 template.populateStockOnHandFromStockCards = false;
-    
+
                 expect(templateValidator.getColumnError(column, template)).toBeUndefined();
             });
 
             it('should return false if column does not supports tag', function() {
                 column.tag = 'some-tag';
-    
+
                 expect(templateValidator.getColumnError(column, template)).toBeUndefined();
             });
         });
@@ -311,7 +311,7 @@ describe('templateValidator', function() {
                     stockOnHand: {
                         displayOrder: 3,
                         isDisplayed: true,
-                        label: "Stock on Hand"
+                        label: 'Stock on Hand'
                     }
                 };
             });
@@ -341,7 +341,7 @@ describe('templateValidator', function() {
                     displayOrder: 5,
                     isDisplayed: false,
                     source: COLUMN_SOURCES.USER_INPUT,
-                    definition : '',
+                    definition: '',
                     label: 'Stock on Hand',
                     columnDefinition: {
                         options: [],
@@ -492,10 +492,9 @@ describe('templateValidator', function() {
                 spyOn(messageService, 'get').andCallThrough();
 
                 messageService.get.andCallFake(function(message) {
-                        return message;
+                    return message;
                 });
             });
-
 
             it('should return error if the column is visible and adjusted consumption is hidden', function() {
                 additionalQuantityRequiredColumn.isDisplayed = true;
@@ -517,7 +516,6 @@ describe('templateValidator', function() {
             });
 
         });
-
 
         describe('for calculated order quantity', function() {
 
@@ -555,20 +553,22 @@ describe('templateValidator', function() {
                 expect(result).toBe('adminProgramTemplate.shouldDisplayRequestedQuantity');
             });
 
-            it('should return error if both requested quantity explanation and calculated order quantity are hidden', function() {
-                column.isDisplayed = false;
-                template.columnsMap.requestedQuantity.isDisplayed = true;
+            it('should return error if both requested quantity explanation and calculated order quantity are hidden',
+                function() {
+                    column.isDisplayed = false;
+                    template.columnsMap.requestedQuantity.isDisplayed = true;
 
-                var result = templateValidator.getColumnError(column, template);
+                    var result = templateValidator.getColumnError(column, template);
 
-                expect(result).toBe('adminProgramTemplate.shouldDisplayRequestedQuantity');
-            });
+                    expect(result).toBe('adminProgramTemplate.shouldDisplayRequestedQuantity');
+                });
 
         });
 
         describe('for calculated order quantity isa', function() {
 
-            it('should return error if populateStockOnHandFromStockCards is false and calculatedOrderQuantityIsa is displayed', function() {
+            it('should return error if populateStockOnHandFromStockCards is false and calculatedOrderQuantityIsa is' +
+                ' displayed', function() {
                 column.name = TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA;
                 column.isDisplayed = true;
                 template.populateStockOnHandFromStockCards = false;

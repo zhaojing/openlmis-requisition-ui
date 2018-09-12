@@ -14,8 +14,7 @@
  */
 describe('RequisitionSearchController', function() {
 
-    var vm, $q, $rootScope, $controller, $stateParams, $state, offlineService, confirmService,
-        facilities, items;
+    var vm, $q, $rootScope, $controller, $stateParams, $state, offlineService, confirmService, facilities, items;
 
     beforeEach(function() {
         module('requisition-search');
@@ -48,11 +47,6 @@ describe('RequisitionSearchController', function() {
         items = [
             'itemOne', 'itemTwo'
         ];
-
-        stateParams = {
-            page: 0,
-            size: 10
-        };
     });
 
     describe('$onInit', function() {
@@ -94,14 +88,15 @@ describe('RequisitionSearchController', function() {
             expect(vm.offline).toEqual(true);
         });
 
-        it('should set searchOffline to false if false was passed the URL and application is not in offline mode', function() {
-            $stateParams.offline = 'false';
-            spyOn(offlineService, 'isOffline').andReturn(false);
+        it('should set searchOffline to false if false was passed the URL and application is not in offline mode',
+            function() {
+                $stateParams.offline = 'false';
+                spyOn(offlineService, 'isOffline').andReturn(false);
 
-            vm.$onInit();
+                vm.$onInit();
 
-            expect(vm.offline).toEqual(false);
-        });
+                expect(vm.offline).toEqual(false);
+            });
 
         it('should set selectedFacility if facility ID was passed the URL', function() {
             $stateParams.facility = 'facility-two';
@@ -202,7 +197,9 @@ describe('RequisitionSearchController', function() {
                 initiatedDateFrom: null,
                 initiatedDateTo: null,
                 offline: false
-            }, {reload: true});
+            }, {
+                reload: true
+            });
         });
 
         it('should set facility', function() {
@@ -219,7 +216,9 @@ describe('RequisitionSearchController', function() {
                 initiatedDateFrom: null,
                 initiatedDateTo: null,
                 offline: false
-            }, {reload: true});
+            }, {
+                reload: true
+            });
         });
 
         it('should set initiatedDateFrom', function() {
@@ -233,7 +232,9 @@ describe('RequisitionSearchController', function() {
                 initiatedDateFrom: '2017-01-31',
                 initiatedDateTo: null,
                 offline: false
-            }, {reload: true});
+            }, {
+                reload: true
+            });
         });
 
         it('should set initiatedDateTo', function() {
@@ -247,7 +248,9 @@ describe('RequisitionSearchController', function() {
                 initiatedDateFrom: null,
                 initiatedDateTo: '2017-01-31',
                 offline: false
-            }, {reload: true});
+            }, {
+                reload: true
+            });
         });
 
         it('should set offline', function() {
@@ -286,7 +289,7 @@ describe('RequisitionSearchController', function() {
 
     describe('removeOfflineRequisition', function() {
 
-        var requisition, confirmPromise, localStorageFactoryMock, offlineRequisitionsMock;
+        var requisition, confirmDeferred, localStorageFactoryMock, offlineRequisitionsMock;
 
         beforeEach(function() {
             offlineRequisitionsMock = jasmine.createSpyObj('offlineRequisitions', ['removeBy']);
@@ -301,7 +304,7 @@ describe('RequisitionSearchController', function() {
             });
 
             requisition = {
-                id: 'requisition-id',
+                id: 'requisition-id'
             };
 
             confirmDeferred = $q.defer();

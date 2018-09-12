@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('TemplateAddController', function () {
+describe('TemplateAddController', function() {
 
     var $rootScope, $q, $state, $controller, ProgramDataBuilder, vm, program, FacilityTypeDataBuilder,
         TemplateDataBuilder, TemplateColumnDataBuilder, facilityTypes, productCodeColumn, Template,
@@ -39,15 +39,17 @@ describe('TemplateAddController', function () {
             Template = $injector.get('Template');
         });
 
-        program = new ProgramDataBuilder().withId('program-1').build();
-        programTwo = new ProgramDataBuilder().withId('program-2').build();
-        
+        program = new ProgramDataBuilder().withId('program-1')
+            .build();
+        programTwo = new ProgramDataBuilder().withId('program-2')
+            .build();
+
         calculatedOrderQuantityIsaColumn = new TemplateColumnDataBuilder()
             .buildCalculatedOrderQuantityIsaColumn();
         productCodeColumn = new TemplateColumnDataBuilder().build();
         skippedColumn = new TemplateColumnDataBuilder()
             .buildSkipped();
-        
+
         districtHospital = new FacilityTypeDataBuilder.buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder().build();
 
@@ -158,7 +160,8 @@ describe('TemplateAddController', function () {
             expect(vm.template.addColumn.callCount).toBe(3);
             expect(vm.template.addColumn.calls[0].args).toEqual([skippedColumn.columnDefinition, true]);
             expect(vm.template.addColumn.calls[1].args).toEqual([productCodeColumn.columnDefinition, true]);
-            expect(vm.template.addColumn.calls[2].args).toEqual([calculatedOrderQuantityIsaColumn.columnDefinition, false]);
+            expect(vm.template.addColumn.calls[2].args)
+                .toEqual([calculatedOrderQuantityIsaColumn.columnDefinition, false]);
             expect(vm.template.columnsMap).not.toBeUndefined();
             expect(vm.template.numberOfPeriodsToAverage).toEqual(3);
         });
@@ -167,7 +170,8 @@ describe('TemplateAddController', function () {
             vm.create();
             $rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
+            expect(confirmService.confirm)
+                .toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
             expect(vm.template.create).toHaveBeenCalled();
         });
 
@@ -177,7 +181,8 @@ describe('TemplateAddController', function () {
             vm.create();
             $rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
+            expect(confirmService.confirm)
+                .toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
             expect(vm.template.create).not.toHaveBeenCalled();
         });
     });

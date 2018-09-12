@@ -34,7 +34,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         state.resolve.user(currentUserService).then(function(response) {
             result = response;
-        })
+        });
 
         $rootScope.$apply();
         expect(result).toBe(user);
@@ -45,7 +45,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         state.resolve.requisition($stateParams, requisitionService).then(function(response) {
             result = response;
-        })
+        });
 
         $rootScope.$apply();
         expect(result).toBe(requisition);
@@ -56,7 +56,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         state.resolve.canSubmit(requisitionViewFactory, user, requisition).then(function(response) {
             result = response;
-        })
+        });
 
         $rootScope.$apply();
         expect(result).toBe(true);
@@ -67,7 +67,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         state.resolve.canAuthorize(requisitionViewFactory, user, requisition).then(function(response) {
             result = response;
-        })
+        });
 
         $rootScope.$apply();
         expect(result).toBe(true);
@@ -78,7 +78,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         state.resolve.canApproveAndReject(requisitionViewFactory, user, requisition).then(function(response) {
             result = response;
-        })
+        });
 
         $rootScope.$apply();
         expect(result).toBe(true);
@@ -89,7 +89,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         state.resolve.canDelete(requisitionViewFactory, user, requisition).then(function(response) {
             result = response;
-        })
+        });
 
         $rootScope.$apply();
         expect(result).toBe(true);
@@ -100,7 +100,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         state.resolve.canSkip(requisitionViewFactory, user, requisition).then(function(response) {
             result = response;
-        })
+        });
 
         $rootScope.$apply();
         expect(result).toBe(true);
@@ -111,7 +111,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         state.resolve.canSync(requisitionViewFactory, user, requisition).then(function(response) {
             result = response;
-        })
+        });
 
         $rootScope.$apply();
         expect(result).toBe(true);

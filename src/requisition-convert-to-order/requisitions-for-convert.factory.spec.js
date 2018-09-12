@@ -263,9 +263,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 10,
                 page: 2
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.content).toEqual(createDummyRequisitionsWithDates(10));
@@ -289,9 +289,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 7,
                 page: 7
             })
-            .then(function(page) {
-                result = page;
-            });
+                .then(function(page) {
+                    result = page;
+                });
             $rootScope.$apply();
 
             expect(result.last).toEqual(true);
@@ -319,9 +319,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 15,
                 page: 5
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.last).toEqual(false);
@@ -349,9 +349,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 3,
                 page: 1
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.first).toEqual(false);
@@ -379,9 +379,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 3,
                 page: 0
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.first).toEqual(true);
@@ -409,9 +409,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 11,
                 page: 1
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.totalPages).toEqual(4);
@@ -439,9 +439,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 12,
                 page: 1
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.totalPages).toEqual(4);
@@ -469,9 +469,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 6,
                 page: 2
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.numberOfElements).toEqual(6);
@@ -494,13 +494,14 @@ describe('requisitionsForConvertFactory', function() {
                 content: createDummyRequisitionsWithDates(1)
             }));
 
+            var result;
             requisitionsForConvertFactory.forConvert({
                 size: 8,
                 page: 4
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.numberOfElements).toEqual(1);
@@ -533,9 +534,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 10,
                 page: 6
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.content).toEqual(createDummyRequisitionsWithDates(10, 20));
@@ -569,9 +570,9 @@ describe('requisitionsForConvertFactory', function() {
                 size: 10,
                 page: 3
             })
-            .then(function(requisitions) {
-                result = requisitions;
-            });
+                .then(function(requisitions) {
+                    result = requisitions;
+                });
             $rootScope.$apply();
 
             expect(result.content).toEqual(createDummyRequisitionsWithDates(5, 10));
@@ -627,12 +628,12 @@ describe('requisitionsForConvertFactory', function() {
                 totalElements: 60,
                 totalPages: 3,
                 content: createDummyRequisitionsWithDates(20)
-           }));
+            }));
 
             requisitionsForConvertFactory.forConvert({
                 page: 0,
                 size: 10
-             });
+            });
             $rootScope.$apply();
 
             requisitionsForConvertFactory.forConvert({
@@ -698,10 +699,10 @@ describe('requisitionsForConvertFactory', function() {
             requisitionsForConvertFactory.forConvert({
                 page: 0,
                 size: 10
-             })
-            .then(function(response) {
-                result = response;
-            });
+            })
+                .then(function(response) {
+                    result = response;
+                });
             $rootScope.$apply();
 
             expect(result.content).toEqual(createDummyRequisitionsWithDates(10, 10));
@@ -797,9 +798,9 @@ describe('requisitionsForConvertFactory', function() {
                 page: 0,
                 size: 10
             })
-            .then(function(response) {
-                result = response;
-            });
+                .then(function(response) {
+                    result = response;
+                });
             $rootScope.$apply();
 
             expect(result.content).toEqual(createDummyRequisitionsWithDates(10, 10));

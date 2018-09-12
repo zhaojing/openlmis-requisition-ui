@@ -52,7 +52,7 @@ describe('RequisitionTemplateAdminController', function() {
         tags = [
             'tag-1',
             'tag-2',
-            'tag-3',
+            'tag-3'
         ];
 
         vm = $controller('RequisitionTemplateAdminController', {
@@ -89,7 +89,9 @@ describe('RequisitionTemplateAdminController', function() {
             vm.goToTemplateList();
 
             expect(state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates',
-                {}, {reload: true});
+                {}, {
+                    reload: true
+                });
         });
     });
 
@@ -137,7 +139,8 @@ describe('RequisitionTemplateAdminController', function() {
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.title');
+                undefined, 'adminProgramTemplate.templateSave.title'
+            );
             expect(stateGoSpy).not.toHaveBeenCalled();
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(successNotificationServiceSpy).not.toHaveBeenCalled();
@@ -150,7 +153,8 @@ describe('RequisitionTemplateAdminController', function() {
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.title');
+                undefined, 'adminProgramTemplate.templateSave.title'
+            );
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(stateGoSpy).toHaveBeenCalled();
@@ -165,7 +169,8 @@ describe('RequisitionTemplateAdminController', function() {
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
-                undefined, 'adminProgramTemplate.templateSave.title');
+                undefined, 'adminProgramTemplate.templateSave.title'
+            );
             expect(loadingModalService.close).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(errorNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.failure');
@@ -209,7 +214,7 @@ describe('RequisitionTemplateAdminController', function() {
     });
 
     describe('refreshAvailableTags', function() {
-        
+
         beforeEach(function() {
             vm.template.columnsMap.maximumStockQuantity = new TemplateColumnDataBuilder()
                 .withTag('tag-1')

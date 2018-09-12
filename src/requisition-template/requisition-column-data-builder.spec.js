@@ -36,7 +36,8 @@
             buildRequestedQuantityExplanationColumn;
         RequisitionColumnDataBuilder.prototype.buildBeginningBalanceColumn =
             buildBeginningBalanceColumn;
-        RequisitionColumnDataBuilder.prototype.buildTotalLossesAndAdjustmentsColumn = buildTotalLossesAndAdjustmentsColumn;
+        RequisitionColumnDataBuilder
+            .prototype.buildTotalLossesAndAdjustmentsColumn = buildTotalLossesAndAdjustmentsColumn;
 
         return RequisitionColumnDataBuilder;
 
@@ -57,7 +58,7 @@
             this.columnDefinition = {
                 canChangeOrder: true,
                 columnType: COLUMN_TYPES.TEXT
-            }
+            };
         }
 
         function build() {
@@ -163,14 +164,15 @@
         function buildBeginningBalanceColumn() {
             var builder = this;
 
-            builder.name = "beginningBalance",
-            builder.label = "Beginning balance",
-            builder.indicator = "A",
-            builder.displayOrder = 4,
-            builder.isDisplayed = true,
-            builder.source = "USER_INPUT",
-            builder.option = null,
-            builder.definition = "Based on the Stock On Hand from the previous period. This is quantified in dispensing units.",
+            builder.name = 'beginningBalance';
+            builder.label = 'Beginning balance';
+            builder.indicator = 'A';
+            builder.displayOrder = 4;
+            builder.isDisplayed = true;
+            builder.source = 'USER_INPUT';
+            builder.option = null;
+            builder.definition = 'Based on the Stock On Hand from the previous period. This is quantified in' +
+                ' dispensing units.';
             builder.columnDefinition = {
                 canChangeOrder: true,
                 columnType: COLUMN_TYPES.NUMERIC
@@ -181,21 +183,26 @@
         function buildSkipColumn(hideOptionSelected) {
             var builder = this;
 
-            builder.name = "skipped";
-            builder.label = "Skip";
-            builder.indicator = "S";
+            builder.name = 'skipped';
+            builder.label = 'Skip';
+            builder.indicator = 'S';
             builder.displayOrder = 1;
             builder.isDisplayed = true;
-            builder.source = "USER_INPUT";
+            builder.source = 'USER_INPUT';
             if (hideOptionSelected !== undefined && hideOptionSelected === true) {
-                builder.option = {optionName: 'hideSkippedLineItems'}
+                builder.option = {
+                    optionName: 'hideSkippedLineItems'
+                };
             } else {
-                builder.option = {optionName: 'disableSkippedLineItems'}
+                builder.option = {
+                    optionName: 'disableSkippedLineItems'
+                };
             }
-            builder.definition = "Select the check box below to skip a single product. Remove all data from the row prior to selection.";
+            builder.definition = 'Select the check box below to skip a single product. Remove all data from the row' +
+                ' prior to selection.';
             builder.columnDefinition = {
                 canChangeOrder: false,
-                columnType: "BOOLEAN"
+                columnType: 'BOOLEAN'
             };
             return builder.build();
         }
@@ -203,14 +210,14 @@
         function buildTotalLossesAndAdjustmentsColumn() {
             var builder = this;
 
-            builder.name = "totalLossesAndAdjustments";
-            builder.label = "Total Losses and Adjustments";
-            builder.indicator = "D";
+            builder.name = 'totalLossesAndAdjustments';
+            builder.label = 'Total Losses and Adjustments';
+            builder.indicator = 'D';
             builder.displayOrder = 7;
             builder.isDisplayed = true;
-            builder.source = "STOCK_CARDS";
+            builder.source = 'STOCK_CARDS';
             builder.option = null;
-            builder.definition = "All kind of losses/adjustments made at the facility.";
+            builder.definition = 'All kind of losses/adjustments made at the facility.';
             builder.columnDefinition = {
                 canChangeOrder: true,
                 columnType: COLUMN_TYPES.NUMERIC

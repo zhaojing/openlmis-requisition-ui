@@ -59,14 +59,30 @@ describe('calculationFactory', function() {
         requisitionMock.template = templateMock;
 
         templateMock.getColumn.andCallFake(function(name) {
-            if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) return calculatedOrderQuantityColumn;
-            if (name === TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY) return totalConsumedQuantityColumn;
-            if (name === TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY) return maximumStockQuantityColumn;
-            if (name === TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION) return averageConsumptionColumn;
-            if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) return requestedQuantityColumn;
-            if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) return stockOnHandColumn;
-            if (name === TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT) return isaColumn;
-            if (name === TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED) return additionalQuantityRequiredColumn;
+            if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) {
+                return calculatedOrderQuantityColumn;
+            }
+            if (name === TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY) {
+                return totalConsumedQuantityColumn;
+            }
+            if (name === TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY) {
+                return maximumStockQuantityColumn;
+            }
+            if (name === TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION) {
+                return averageConsumptionColumn;
+            }
+            if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) {
+                return requestedQuantityColumn;
+            }
+            if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) {
+                return stockOnHandColumn;
+            }
+            if (name === TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT) {
+                return isaColumn;
+            }
+            if (name === TEMPLATE_COLUMNS.ADDITIONAL_QUANTITY_REQUIRED) {
+                return additionalQuantityRequiredColumn;
+            }
         });
     });
 
@@ -104,7 +120,7 @@ describe('calculationFactory', function() {
             expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(1);
         });
 
-        it ('should round packs to ship if threshold is exceeded', function() {
+        it('should round packs to ship if threshold is exceeded', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = 15;
@@ -114,7 +130,7 @@ describe('calculationFactory', function() {
             expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(2);
         });
 
-        it ('should return zero if round to zero is set', function() {
+        it('should return zero if round to zero is set', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = 1;
@@ -125,7 +141,7 @@ describe('calculationFactory', function() {
             expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(0);
         });
 
-        it ('should return one if round to zero is not set', function() {
+        it('should return one if round to zero is not set', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = 1;
@@ -136,19 +152,19 @@ describe('calculationFactory', function() {
             expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(1);
         });
 
-        it ('should calculate total properly', function() {
+        it('should calculate total properly', function() {
             expect(calculationFactory.total(lineItem)).toBe(30);
         });
 
-        it ('should calculate stock on hand properly', function() {
+        it('should calculate stock on hand properly', function() {
             expect(calculationFactory.stockOnHand(lineItem)).toBe(40);
         });
 
-        it ('should calculate total consumed quantity', function() {
+        it('should calculate total consumed quantity', function() {
             expect(calculationFactory.totalConsumedQuantity(lineItem)).toBe(50);
         });
 
-        it ('should calculate total cost', function() {
+        it('should calculate total cost', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.pricePerPack = 30.20;
@@ -159,7 +175,7 @@ describe('calculationFactory', function() {
             expect(calculationFactory.totalCost(lineItem, requisitionMock)).toBe(60.4);
         });
 
-        it ('should calculate zero total cost if price per pack value missing', function() {
+        it('should calculate zero total cost if price per pack value missing', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.pricePerPack = undefined;
@@ -170,7 +186,7 @@ describe('calculationFactory', function() {
             expect(calculationFactory.totalCost(lineItem, requisitionMock)).toBe(0);
         });
 
-        it ('should use ordered quantity when requested quantity is no present', function() {
+        it('should use ordered quantity when requested quantity is no present', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
             requestedQuantityColumn.$display = false;
@@ -185,7 +201,7 @@ describe('calculationFactory', function() {
             expect(calculationFactory.packsToShip(lineItem, requisitionMock)).toBe(9);
         });
 
-        it ('should use ordered quantity when requested quantity is empty', function() {
+        it('should use ordered quantity when requested quantity is empty', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
             lineItem.requestedQuantity = null;
@@ -235,47 +251,49 @@ describe('calculationFactory', function() {
     describe('Calculate total losses and adjustments', function() {
         var adjustments, reasons;
 
-        it ('should return zero when calculating totalLossesAndAdjustments and no reason present', function() {
+        it('should return zero when calculating totalLossesAndAdjustments and no reason present', function() {
             expect(calculationFactory.totalLossesAndAdjustments([], [])).toBe(0);
         });
 
-        it ('should use positive values when calculating totalLossesAndAdjustments and additive parameter is CREDIT', function() {
-            reasons = [
-                new ReasonDataBuilder().buildCreditReason(),
-                new ReasonDataBuilder().buildCreditReason()
-            ];
+        it('should use positive values when calculating totalLossesAndAdjustments and additive parameter is CREDIT',
+            function() {
+                reasons = [
+                    new ReasonDataBuilder().buildCreditReason(),
+                    new ReasonDataBuilder().buildCreditReason()
+                ];
 
-            adjustments = [
-                new StockAdjustmentDataBuilder()
-                    .withReasonId(reasons[0].id)
-                    .withQuantity(10)
-                    .build(),
-                new StockAdjustmentDataBuilder()
-                    .withReasonId(reasons[1].id)
-                    .withQuantity(1)
-                    .build(),
-            ];
-            expect(calculationFactory.totalLossesAndAdjustments(adjustments, reasons)).toBe(11);
-        });
+                adjustments = [
+                    new StockAdjustmentDataBuilder()
+                        .withReasonId(reasons[0].id)
+                        .withQuantity(10)
+                        .build(),
+                    new StockAdjustmentDataBuilder()
+                        .withReasonId(reasons[1].id)
+                        .withQuantity(1)
+                        .build()
+                ];
+                expect(calculationFactory.totalLossesAndAdjustments(adjustments, reasons)).toBe(11);
+            });
 
-        it ('should use negative values when calculating totalLossesAndAdjustments and additive parameter is DEBIT', function() {
-            reasons = [
-                new ReasonDataBuilder().buildDebitReason(),
-                new ReasonDataBuilder().buildDebitReason()
-            ];
+        it('should use negative values when calculating totalLossesAndAdjustments and additive parameter is DEBIT',
+            function() {
+                reasons = [
+                    new ReasonDataBuilder().buildDebitReason(),
+                    new ReasonDataBuilder().buildDebitReason()
+                ];
 
-            adjustments = [
-                new StockAdjustmentDataBuilder()
-                    .withReasonId(reasons[0].id)
-                    .withQuantity(10)
-                    .build(),
-                new StockAdjustmentDataBuilder()
-                    .withReasonId(reasons[1].id)
-                    .withQuantity(1)
-                    .build(),
-            ];
-            expect(calculationFactory.totalLossesAndAdjustments(adjustments, reasons)).toBe(-11);
-        });
+                adjustments = [
+                    new StockAdjustmentDataBuilder()
+                        .withReasonId(reasons[0].id)
+                        .withQuantity(10)
+                        .build(),
+                    new StockAdjustmentDataBuilder()
+                        .withReasonId(reasons[1].id)
+                        .withQuantity(1)
+                        .build()
+                ];
+                expect(calculationFactory.totalLossesAndAdjustments(adjustments, reasons)).toBe(-11);
+            });
     });
 
     describe('Calculate adjusted consumption', function() {
@@ -328,19 +346,19 @@ describe('calculationFactory', function() {
         });
     });
 
-    describe('Calculate Maximum Stock Quantity', function () {
+    describe('Calculate Maximum Stock Quantity', function() {
 
-        it('should return zero if requisition template does not contain maximumStockQuantity column', function () {
+        it('should return zero if requisition template does not contain maximumStockQuantity column', function() {
             templateMock.getColumn.andReturn(undefined);
             expect(calculationFactory.maximumStockQuantity(lineItem, requisitionMock)).toBe(0);
         });
 
-        it ('should return zero if selected option is not equal to default', function () {
+        it('should return zero if selected option is not equal to default', function() {
             maximumStockQuantityColumn.option.optionName = 'test_option';
             expect(calculationFactory.maximumStockQuantity(lineItem, requisitionMock)).toBe(0);
         });
 
-        it('should return maximum stock quantity when default option was selected', function () {
+        it('should return maximum stock quantity when default option was selected', function() {
             lineItem.maxPeriodsOfStock = 7.25;
             lineItem.averageConsumption = 2;
 
@@ -359,14 +377,18 @@ describe('calculationFactory', function() {
 
         it('should return null if stock on hand column is not present', function() {
             templateMock.getColumn.andCallFake(function(name) {
-                if (name === TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY) return maximumStockQuantityColumn;
+                if (name === TEMPLATE_COLUMNS.MAXIMUM_STOCK_QUANTITY) {
+                    return maximumStockQuantityColumn;
+                }
             });
             expect(calculationFactory.calculatedOrderQuantity(lineItem, requisitionMock)).toBe(null);
         });
 
         it('should return null if maximum stock quantity column is not present', function() {
             templateMock.getColumn.andCallFake(function(name) {
-                if(name === TEMPLATE_COLUMNS.STOCK_ON_HAND) return stockOnHandColumn;
+                if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) {
+                    return stockOnHandColumn;
+                }
             });
             expect(calculationFactory.calculatedOrderQuantity(lineItem, requisitionMock)).toBe(null);
         });
@@ -490,11 +512,21 @@ describe('calculationFactory', function() {
             spyOn(calculationFactory, TEMPLATE_COLUMNS.STOCK_ON_HAND);
 
             templateMock.getColumn.andCallFake(function(name) {
-                if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) return stockOnHandColumn;
-                if (name === TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT) return isaColumn;
-                if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) return requestedQuantityColumn;
-                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) return null;
-                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) return calculatedOrderQuantityIsaColumn;
+                if (name === TEMPLATE_COLUMNS.STOCK_ON_HAND) {
+                    return stockOnHandColumn;
+                }
+                if (name === TEMPLATE_COLUMNS.IDEAL_STOCK_AMOUNT) {
+                    return isaColumn;
+                }
+                if (name === TEMPLATE_COLUMNS.REQUESTED_QUANTITY) {
+                    return requestedQuantityColumn;
+                }
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) {
+                    return null;
+                }
+                if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY_ISA) {
+                    return calculatedOrderQuantityIsaColumn;
+                }
             });
 
             requisitionMock.$isAfterAuthorize.andReturn(false);

@@ -43,13 +43,13 @@ describe('LineItem', function() {
                 if (userAlwaysHasRight) {
                     return true;
                 }
-                if (userHasApprovedRight && right == REQUISITION_RIGHTS.REQUISITION_APPROVE) {
+                if (userHasApprovedRight && right === REQUISITION_RIGHTS.REQUISITION_APPROVE) {
                     return true;
                 }
-                if (userHasAuthorizedRight && right == REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
+                if (userHasAuthorizedRight && right === REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
                     return true;
                 }
-                if (userHasCreateRight && right == REQUISITION_RIGHTS.REQUISITION_CREATE) {
+                if (userHasCreateRight && right === REQUISITION_RIGHTS.REQUISITION_CREATE) {
                     return true;
                 }
                 return false;
@@ -109,7 +109,7 @@ describe('LineItem', function() {
             }
 
         ];
-        template.getColumns.andCallFake(function (nonFullSupply) {
+        template.getColumns.andCallFake(function() {
             return template.columnsMap;
         });
 
@@ -139,7 +139,8 @@ describe('LineItem', function() {
             requestedQuantity: 10,
             requestedQuantityExplanation: 'explanation'
         };
-        requisition = jasmine.createSpyObj('requisition', ['$isApproved', '$isAuthorized', '$isInApproval', '$isReleased', '$isInitiated', '$isSubmitted', '$isRejected']);
+        requisition = jasmine.createSpyObj('requisition', ['$isApproved', '$isAuthorized', '$isInApproval',
+            '$isReleased', '$isInitiated', '$isSubmitted', '$isRejected']);
         requisition.$isApproved.andReturn(false);
         requisition.$isAuthorized.andReturn(false);
         requisition.$isInitiated.andReturn(false);
@@ -198,11 +199,12 @@ describe('LineItem', function() {
             expect(calculationFactory.adjustedConsumption).toHaveBeenCalledWith(lineItem, requisition);
         });
 
-        it('should call proper calculation method when column name is calculated and not Adjusted Consumption', function() {
-            lineItem.updateFieldValue(requisition.template.columnsMap[2], requisition);
+        it('should call proper calculation method when column name is calculated and not Adjusted Consumption',
+            function() {
+                lineItem.updateFieldValue(requisition.template.columnsMap[2], requisition);
 
-            expect(calculationFactory.totalCost).toHaveBeenCalledWith(lineItem, requisition);
-        });
+                expect(calculationFactory.totalCost).toHaveBeenCalledWith(lineItem, requisition);
+            });
 
         it('should set null if there is no calculation method for given column', function() {
             lineItem.columnWithoutCalculations = 100;
@@ -222,16 +224,16 @@ describe('LineItem', function() {
             var result = lineItem.canBeSkipped(requisition);
 
             expect(result).toBe(true);
-       });
+        });
 
-       it('should return false if line item cannot be skipped', function() {
+        it('should return false if line item cannot be skipped', function() {
             lineItem.requestedQuantity = 100;
             lineItem.requestedQuantityExplanation = 'we need more';
 
             var result = lineItem.canBeSkipped(requisition);
 
             expect(result).toBe(false);
-       });
+        });
 
         it('should return false if requisition status is authorized', function() {
             lineItem.requestedQuantity = 0;
@@ -356,7 +358,7 @@ describe('LineItem', function() {
             expect(result).toBe(false);
         });
 
-        it('should return false if initiated and user can submit', function(){
+        it('should return false if initiated and user can submit', function() {
             requisition.$isInitiated.andReturn(true);
             requisition.$isRejected.andReturn(false);
             requisition.$isApproved.andReturn(false);
@@ -366,11 +368,11 @@ describe('LineItem', function() {
 
             userAlwaysHasRight = false;
             userHasCreateRight = false;
-            
+
             var result = lineItem.isReadOnly(requisition, column);
 
             expect(result).toBe(true);
-            
+
             userHasCreateRight = true;
 
             result = lineItem.isReadOnly(requisition, column);
@@ -378,7 +380,7 @@ describe('LineItem', function() {
             expect(result).toBe(false);
         });
 
-        it('should return false if rejected and user can submit', function(){
+        it('should return false if rejected and user can submit', function() {
             requisition.$isInitiated.andReturn(false);
             requisition.$isRejected.andReturn(true);
             requisition.$isApproved.andReturn(false);
@@ -400,7 +402,7 @@ describe('LineItem', function() {
             expect(result).toBe(false);
         });
 
-        it('should return false if submitted and user can approve', function(){
+        it('should return false if submitted and user can approve', function() {
             requisition.$isInitiated.andReturn(false);
             requisition.$isSubmitted.andReturn(true);
             requisition.$isApproved.andReturn(false);
@@ -410,7 +412,7 @@ describe('LineItem', function() {
 
             userAlwaysHasRight = false;
 
-            result = lineItem.isReadOnly(requisition, column);
+            var result = lineItem.isReadOnly(requisition, column);
 
             expect(result).toBe(true);
 
@@ -421,5 +423,5 @@ describe('LineItem', function() {
             expect(result).toBe(false);
         });
 
-    })
+    });
 });

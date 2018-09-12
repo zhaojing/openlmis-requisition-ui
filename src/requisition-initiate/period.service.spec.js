@@ -15,10 +15,11 @@
 
 describe('periodService', function() {
 
-    var $rootScope, $httpBackend, requisitionUrlFactoryMock, dateUtilsMock, alertServiceMock, periodService, periodOne, periodTwo;
+    var $rootScope, $httpBackend, requisitionUrlFactoryMock, dateUtilsMock, alertServiceMock, periodService, periodOne,
+        periodTwo;
 
     beforeEach(function() {
-        module('requisition-initiate', function($provide){
+        module('requisition-initiate', function($provide) {
             requisitionUrlFactoryMock = jasmine.createSpy();
             $provide.factory('requisitionUrlFactory', function() {
                 return requisitionUrlFactoryMock;
@@ -64,11 +65,12 @@ describe('periodService', function() {
         var programId = '1',
             facilityId = '2',
             emergency = false,
-            data;
+            promise;
 
         it('should return promise', function() {
-            $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' + emergency +
-                "&facilityId=" + facilityId + "&programId=" + programId)).respond(200, [periodOne, periodTwo]);
+            $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' +
+                emergency + '&facilityId=' + facilityId + '&programId=' + programId))
+                .respond(200, [periodOne, periodTwo]);
 
             promise = periodService.getPeriodsForInitiate(programId, facilityId, emergency);
 
@@ -78,8 +80,9 @@ describe('periodService', function() {
         });
 
         it('should return proper response', function() {
-            $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' + emergency +
-                "&facilityId=" + facilityId + "&programId=" + programId)).respond(200, [periodOne, periodTwo]);
+            $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' +
+                emergency + '&facilityId=' + facilityId + '&programId=' + programId))
+                .respond(200, [periodOne, periodTwo]);
 
             promise = periodService.getPeriodsForInitiate(programId, facilityId, emergency);
 
@@ -98,8 +101,9 @@ describe('periodService', function() {
         });
 
         it('should call date utils', function() {
-            $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' + emergency +
-                "&facilityId=" + facilityId + "&programId=" + programId)).respond(200, [periodOne, periodTwo]);
+            $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' +
+                emergency + '&facilityId=' + facilityId + '&programId=' + programId))
+                .respond(200, [periodOne, periodTwo]);
 
             promise = periodService.getPeriodsForInitiate(programId, facilityId, emergency);
 
@@ -112,15 +116,19 @@ describe('periodService', function() {
         });
 
         it('should show an alert if facility is not supported', function() {
-            $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' + emergency +
-                "&facilityId=" + facilityId + "&programId=" + programId))
-            .respond(400, {"messageKey": "requisition.error.facilityDoesNotSupportProgram"});
+            $httpBackend.when('GET', requisitionUrlFactoryMock('/api/requisitions/periodsForInitiate?emergency=' +
+                emergency + '&facilityId=' + facilityId + '&programId=' + programId))
+                .respond(400, {
+                    messageKey: 'requisition.error.facilityDoesNotSupportProgram'
+                });
 
             promise = periodService.getPeriodsForInitiate(programId, facilityId, emergency);
 
             $httpBackend.flush();
             expect(angular.isFunction(promise.then)).toBe(true);
-            expect(alertServiceMock.error).toHaveBeenCalledWith('requisitionInitiate.programNotSupported.label', 'requisitionInitiate.programNotSupported.message');
+            expect(alertServiceMock.error).toHaveBeenCalledWith(
+                'requisitionInitiate.programNotSupported.label', 'requisitionInitiate.programNotSupported.message'
+            );
         });
     });
 

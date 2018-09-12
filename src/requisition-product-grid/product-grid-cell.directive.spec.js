@@ -26,7 +26,7 @@ describe('ProductGridCell', function() {
                     priority: 100,
                     terminal: true,
                     restrict: 'EAC',
-                    template: '<a></a>',
+                    template: '<a></a>'
                 };
                 return def;
             });
@@ -50,7 +50,7 @@ describe('ProductGridCell', function() {
                 if (userAlwaysHasRight) {
                     return true;
                 }
-                if (userHasAuthorizedRight && right == REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
+                if (userHasAuthorizedRight && right === REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
                     return true;
                 }
                 return false;
@@ -68,7 +68,7 @@ describe('ProductGridCell', function() {
 
             fullSupplyColumns = [{
                 type: $injector.get('COLUMN_TYPES').NUMERIC,
-                name: "beginningBalance",
+                name: 'beginningBalance',
                 source: $injector.get('COLUMN_SOURCES').USER_INPUT
             }];
 
@@ -104,7 +104,7 @@ describe('ProductGridCell', function() {
             scope.column = fullSupplyColumns[0];
 
             scope.lineItem = jasmine.createSpyObj('lineItem', [
-                'getFieldValue','updateDependentFields', 'canBeSkipped', 'isReadOnly'
+                'getFieldValue', 'updateDependentFields', 'canBeSkipped', 'isReadOnly'
             ]);
 
             scope.lineItem.$program = {
@@ -112,7 +112,7 @@ describe('ProductGridCell', function() {
             };
 
             scope.lineItem.getFieldValue.andCallFake(function() {
-                return "readOnlyFieldValue";
+                return 'readOnlyFieldValue';
             });
 
             scope.lineItem.$errors = {};
@@ -124,8 +124,8 @@ describe('ProductGridCell', function() {
 
         directiveElem = getCompiledElement();
 
-        expect(directiveElem.html()).toContain("readOnlyFieldValue");
-        expect(directiveElem.find("input").length).toEqual(0);
+        expect(directiveElem.html()).toContain('readOnlyFieldValue');
+        expect(directiveElem.find('input').length).toEqual(0);
     });
 
     it('should produce editable cell if line item is not readonly', function() {
@@ -133,34 +133,34 @@ describe('ProductGridCell', function() {
 
         directiveElem = getCompiledElement();
 
-        expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
-        expect(directiveElem.find("input").length).toEqual(1);
+        expect(directiveElem.html()).not.toContain('readOnlyFieldValue');
+        expect(directiveElem.find('input').length).toEqual(1);
     });
 
     it('should produce losesAndAdjustment cell', function() {
         scope.requisition.$isApproved.andReturn(false);
         scope.requisition.$isReleased.andReturn(false);
         scope.requisition.$isAuthorized.andReturn(false);
-        scope.column.name = "totalLossesAndAdjustments";
+        scope.column.name = 'totalLossesAndAdjustments';
 
         directiveElem = getCompiledElement();
 
-        expect(directiveElem.html()).not.toContain("readOnlyFieldValue");
-        expect(directiveElem.find("a").length).toEqual(1);
+        expect(directiveElem.html()).not.toContain('readOnlyFieldValue');
+        expect(directiveElem.find('a').length).toEqual(1);
     });
 
     it('should produce read only for losesAndAdjustment and stock based requisition', function() {
         scope.requisition.$isApproved.andReturn(false);
         scope.requisition.$isReleased.andReturn(false);
         scope.requisition.$isAuthorized.andReturn(false);
-        scope.column.name = "totalLossesAndAdjustments";
+        scope.column.name = 'totalLossesAndAdjustments';
         scope.lineItem.isReadOnly.andReturn(true);
         scope.requisition.template.populateStockOnHandFromStockCards = true;
 
         directiveElem = getCompiledElement();
 
-        expect(directiveElem.html()).toContain("readOnlyFieldValue");
-        expect(directiveElem.find("input").length).toEqual(0);
+        expect(directiveElem.html()).toContain('readOnlyFieldValue');
+        expect(directiveElem.find('input').length).toEqual(0);
     });
 
     it('should validate full supply line item columns after updating fields', function() {
@@ -168,29 +168,33 @@ describe('ProductGridCell', function() {
         var element = getCompiledElement(),
             input = element.find('input');
 
-        input.controller('ngModel').$setViewValue("1000");
+        input.controller('ngModel').$setViewValue('1000');
         scope.$apply();
 
         expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalledWith(
-            scope.lineItem, fullSupplyColumns, requisition);
+            scope.lineItem, fullSupplyColumns, requisition
+        );
         expect(scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
-            scope.column, requisition);
+            scope.column, requisition
+        );
     });
 
     it('should validate non full supply line item columns after updating fields', function() {
-       scope.requisition.$isInitiated.andReturn(true);
+        scope.requisition.$isInitiated.andReturn(true);
         var element = getCompiledElement(),
             input = element.find('input');
 
         scope.lineItem.$program.fullSupply = false;
 
-        input.controller('ngModel').$setViewValue("1000");
+        input.controller('ngModel').$setViewValue('1000');
         scope.$apply();
 
         expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalledWith(
-            scope.lineItem, nonFullSupplyColumns, requisition);
+            scope.lineItem, nonFullSupplyColumns, requisition
+        );
         expect(scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
-            scope.column, requisition);
+            scope.column, requisition
+        );
     });
 
     describe('Skip Column', function() {
@@ -247,7 +251,8 @@ describe('ProductGridCell', function() {
     });
 
     function getCompiledElement() {
-        var rootElement = angular.element('<div><div product-grid-cell requisition="requisition" column="column" line-item="lineItem" user-can-edit="userCanEdit"></div></div>');
+        var rootElement = angular.element('<div><div product-grid-cell requisition="requisition" column="column"' +
+            ' line-item="lineItem" user-can-edit="userCanEdit"></div></div>');
         var compiledElement = $compile(rootElement)(scope);
         angular.element('body').append(compiledElement);
         scope.$digest();

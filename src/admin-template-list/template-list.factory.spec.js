@@ -30,9 +30,12 @@ describe('templateListFactory', function() {
             templateListFactory = $injector.get('templateListFactory');
         });
 
-        program = new ProgramDataBuilder().withId('program-1').build();
-        programTwo = new ProgramDataBuilder().withId('program-2').build();
-        programThree = new ProgramDataBuilder().withId('program-3').build();
+        program = new ProgramDataBuilder().withId('program-1')
+            .build();
+        programTwo = new ProgramDataBuilder().withId('program-2')
+            .build();
+        programThree = new ProgramDataBuilder().withId('program-3')
+            .build();
 
         districtHospital = FacilityTypeDataBuilder.buildDistrictHospital();
         healthCenter = new FacilityTypeDataBuilder();

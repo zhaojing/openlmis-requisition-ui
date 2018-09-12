@@ -13,15 +13,15 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('ConvertToOrderController', function(){
+describe('ConvertToOrderController', function() {
 
     var vm, $rootScope, $q, $state, requisitionService, notificationService,
         requisitions, supplyingDepots, stateParams, key, UuidGenerator;
 
-    beforeEach( function() {
+    beforeEach(function() {
         module('requisition-convert-to-order');
 
-        inject(function ($injector) {
+        inject(function($injector) {
             $q = $injector.get('$q');
             $rootScope = $injector.get('$rootScope');
             requisitionService = $injector.get('requisitionService');
@@ -43,27 +43,27 @@ describe('ConvertToOrderController', function(){
             requisitions = [
                 {
                     requisition: {
-                    id: 'requisitionId1',
-                    facility: {
-                        name: 'facility1',
-                        code: 'code1'
-                    },
-                    program: {
-                        name: 'program1'
-                    }
+                        id: 'requisitionId1',
+                        facility: {
+                            name: 'facility1',
+                            code: 'code1'
+                        },
+                        program: {
+                            name: 'program1'
+                        }
                     },
                     supplyingDepots: supplyingDepots
                 },
                 {
                     requisition: {
-                    id: 'requisitonId2',
-                    facility: {
-                        name: 'facility2',
-                        code: 'code2'
-                    },
-                    program: {
-                        name: 'program2'
-                    }
+                        id: 'requisitonId2',
+                        facility: {
+                            name: 'facility2',
+                            code: 'code2'
+                        },
+                        program: {
+                            name: 'program2'
+                        }
                     },
                     supplyingDepots: supplyingDepots
                 }
@@ -384,7 +384,6 @@ describe('ConvertToOrderController', function(){
 
     });
 
-
     it('should show error when trying to convert to order with no supplying depot selected', function() {
         vm.requisitions[0].$selected = true;
 
@@ -410,10 +409,10 @@ describe('ConvertToOrderController', function(){
     });
 
     it('should select all requisitions', function() {
-       vm.toggleSelectAll(true);
+        vm.toggleSelectAll(true);
 
-       expect(vm.requisitions[0].$selected).toBe(true);
-       expect(vm.requisitions[1].$selected).toBe(true);
+        expect(vm.requisitions[0].$selected).toBe(true);
+        expect(vm.requisitions[1].$selected).toBe(true);
     });
 
     it('should deselect all requisitions', function() {
@@ -424,12 +423,12 @@ describe('ConvertToOrderController', function(){
     });
 
     it('should set "select all" option when all requisitions are selected by user', function() {
-       vm.requisitions[0].$selected = true;
-       vm.requisitions[1].$selected = true;
+        vm.requisitions[0].$selected = true;
+        vm.requisitions[1].$selected = true;
 
-       vm.setSelectAll();
+        vm.setSelectAll();
 
-       expect(vm.selectAll).toBe(true);
+        expect(vm.selectAll).toBe(true);
     });
 
     it('should not set "select all" option when not all requisitions are selected by user', function() {
@@ -458,9 +457,9 @@ describe('ConvertToOrderController', function(){
 
         it('should call state go method with changed params', function() {
             vm.filterBy = 'filterBy';
-			vm.filterValue = 'filterValue';
-			vm.sortBy = 'sortBy';
-			vm.descending = true;
+            vm.filterValue = 'filterValue';
+            vm.sortBy = 'sortBy';
+            vm.descending = true;
 
             vm.search();
 
@@ -471,7 +470,9 @@ describe('ConvertToOrderController', function(){
                 descending: true,
                 page: 0,
                 size: 10
-            }, {reload: true});
+            }, {
+                reload: true
+            });
         });
     });
 });

@@ -33,15 +33,17 @@ describe('requisitionTemplateService', function() {
 
         program1 = new ProgramDataBuilder().build();
         program2 = new ProgramDataBuilder().build();
-        template1 = new TemplateDataBuilder().withProgram(program1).build();
-        template2 = new TemplateDataBuilder().withProgram(program2).build();
+        template1 = new TemplateDataBuilder().withProgram(program1)
+            .build();
+        template2 = new TemplateDataBuilder().withProgram(program2)
+            .build();
     });
 
     it('should get requisition template by id', function() {
         var data;
 
         httpBackend.when('GET', requisitionUrlFactory('/api/requisitionTemplates/' + template1.id))
-        .respond(200, template1);
+            .respond(200, template1);
 
         requisitionTemplateService.get(template1.id).then(function(response) {
             data = response;
@@ -58,7 +60,7 @@ describe('requisitionTemplateService', function() {
         var data;
 
         httpBackend.when('GET', requisitionUrlFactory('/api/requisitionTemplates'))
-        .respond(200, [template1, template2]);
+            .respond(200, [template1, template2]);
 
         requisitionTemplateService.getAll().then(function(response) {
             data = response;
@@ -76,8 +78,9 @@ describe('requisitionTemplateService', function() {
     xit('should search requisition template by program id', function() {
         var data;
 
-        httpBackend.when('GET', requisitionUrlFactory('/api/requisitionTemplates/search?program=' + template2.programId))
-        .respond(200, template2);
+        httpBackend.when(
+            'GET', requisitionUrlFactory('/api/requisitionTemplates/search?program=' + template2.programId)
+        ).respond(200, template2);
 
         requisitionTemplateService.search(template2.programId).then(function(response) {
             data = response;
@@ -94,7 +97,7 @@ describe('requisitionTemplateService', function() {
         var data;
 
         httpBackend.when('PUT', requisitionUrlFactory('/api/requisitionTemplates/' + template1.id))
-        .respond(200, template1);
+            .respond(200, template1);
 
         requisitionTemplateService.save(template1).then(function(response) {
             data = response;
@@ -109,10 +112,12 @@ describe('requisitionTemplateService', function() {
 
     it('should create requisition template', function() {
         var data,
-            template2 = new TemplateDataBuilder().withProgram(program2).withoutId().build();
+            template2 = new TemplateDataBuilder().withProgram(program2)
+                .withoutId()
+                .build();
 
         httpBackend.when('POST', requisitionUrlFactory('/api/requisitionTemplates'))
-        .respond(201, template2);
+            .respond(201, template2);
 
         requisitionTemplateService.create(template2).then(function(response) {
             data = response;

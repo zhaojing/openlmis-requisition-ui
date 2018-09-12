@@ -46,7 +46,8 @@ describe('templateFacilityTypeFactory', function() {
 
         it('should return programs with its templates', function() {
             result = templateFacilityTypeFactory.getAvailableFacilityTypesForProgram(
-                [template, templateTwo], facilityTypes);
+                [template, templateTwo], facilityTypes
+            );
 
             expect(result, [districtHospital]);
         });

@@ -15,7 +15,7 @@
 
 describe('RequisitionWatcher', function() {
 
-    var RequisitionWatcher, requisitionsStorage, scope, watcher, $timeout, $rootScope;
+    var RequisitionWatcher, requisitionsStorage, scope, $timeout, $rootScope;
 
     beforeEach(function() {
         module('requisition-view', function($provide) {
@@ -23,7 +23,9 @@ describe('RequisitionWatcher', function() {
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll', 'clearAll', 'put']);
             offlineFlag.getAll.andReturn([false]);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(name) {
-                if(name === 'offlineFlag') return offlineFlag;
+                if (name === 'offlineFlag') {
+                    return offlineFlag;
+                }
                 return requisitionsStorage;
             });
             $provide.service('localStorageFactory', function() {
@@ -47,7 +49,7 @@ describe('RequisitionWatcher', function() {
             draftStatusMessage: 'message'
         };
 
-        watcher = new RequisitionWatcher(scope, scope.requisition, requisitionsStorage);
+        new RequisitionWatcher(scope, scope.requisition, requisitionsStorage);
         scope.$digest();
     });
 

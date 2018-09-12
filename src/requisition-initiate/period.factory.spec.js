@@ -15,10 +15,10 @@
 
 describe('periodFactory', function() {
 
-    var $rootScope, $q, periodServiceMock, periodFactory, periodOne, periodTwo;
+    var $rootScope, $q, periodServiceMock, periodFactory, periodOne, periodTwo, REQUISITION_STATUS;
 
     beforeEach(function() {
-        module('requisition-initiate', function($provide){
+        module('requisition-initiate', function($provide) {
             periodServiceMock = jasmine.createSpyObj('periodService', ['getPeriodsForInitiate']);
             $provide.service('periodService', function() {
                 return periodServiceMock;

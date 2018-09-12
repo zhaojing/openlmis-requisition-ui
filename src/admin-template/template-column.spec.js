@@ -78,7 +78,6 @@ describe('TemplateColumn', function() {
             templateColumn.source = COLUMN_SOURCES.USER_INPUT;
             templateColumn.columnDefinition.sources.includes.andReturn(true);
 
-
             templateColumn.disableColumnsAndChangeSource();
 
             expect(templateColumn.source).toBe(COLUMN_SOURCES.REFERENCE_DATA);
@@ -89,7 +88,9 @@ describe('TemplateColumn', function() {
         it('should fallback to CALCULATED if REFERENCE_DATA is not available and currently is USER_INPUT', function() {
             templateColumn.source = COLUMN_SOURCES.USER_INPUT;
             templateColumn.columnDefinition.sources.includes.andCallFake(function(source) {
-                if (source === COLUMN_SOURCES.CALCULATED) return true;
+                if (source === COLUMN_SOURCES.CALCULATED) {
+                    return true;
+                }
             });
 
             templateColumn.disableColumnsAndChangeSource();

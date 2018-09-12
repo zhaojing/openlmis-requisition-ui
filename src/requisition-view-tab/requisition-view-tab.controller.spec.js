@@ -15,8 +15,8 @@
 
 describe('ViewTabController', function() {
 
-    var vm, addProductModalService, addFullSupplyProductModalService, requisition, $q, requisitionValidator, $rootScope, $controller,
-        LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
+    var vm, addProductModalService, addFullSupplyProductModalService, requisition, $q, requisitionValidator, $rootScope,
+        $controller, LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
         RequisitionColumnDataBuilder, fullSupply, categoryFactory, messageService;
 
     beforeEach(function() {
@@ -38,7 +38,7 @@ describe('ViewTabController', function() {
         addProductModalService = jasmine.createSpyObj('addProductModalService', ['show']);
         addFullSupplyProductModalService = jasmine.createSpyObj('addFullSupplyProductModalService', ['show']);
 
-        requisition = jasmine.createSpyObj('requisition', ['$isInitiated' , '$isRejected',
+        requisition = jasmine.createSpyObj('requisition', ['$isInitiated', '$isRejected',
             '$isApproved', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased',
             '$isAfterAuthorize', '$getProducts', 'addLineItem', 'deleteLineItem',
             'getAvailableFullSupplyProducts', 'getAvailableNonFullSupplyProducts']);
@@ -94,13 +94,14 @@ describe('ViewTabController', function() {
             expect(vm.showAddProductButton).toBe(true);
         });
 
-        it('should not display add product button if requisition is initiated and user has no create right', function() {
-            canSubmit = false;
+        it('should not display add product button if requisition is initiated and user has no create right',
+            function() {
+                canSubmit = false;
 
-            initController();
+                initController();
 
-            expect(vm.showAddProductButton).toBe(false);
-        });
+                expect(vm.showAddProductButton).toBe(false);
+            });
 
         it('should display add product button if requisition is rejected and user has create right', function() {
             canSubmit = true;
@@ -126,13 +127,14 @@ describe('ViewTabController', function() {
             expect(vm.showAddProductButton).toBe(true);
         });
 
-        it('should not display add product button if requisition is submitted and user has no authorize rights', function() {
-            canAuthorize = false;
+        it('should not display add product button if requisition is submitted and user has no authorize rights',
+            function() {
+                canAuthorize = false;
 
-            initController();
+                initController();
 
-            expect(vm.showAddProductButton).toBe(false);
-        });
+                expect(vm.showAddProductButton).toBe(false);
+            });
 
         it('should not display add product button if requisition is authorized', function() {
 
@@ -154,7 +156,6 @@ describe('ViewTabController', function() {
 
             expect(vm.showAddProductButton).toBe(false);
         });
-
 
         it('should not display add product button if requisition is released', function() {
 
@@ -179,15 +180,15 @@ describe('ViewTabController', function() {
             expect(vm.showAddFullSupplyProductControls).toBe(false);
         });
 
+        it('should not display add full supply product button if requisition configured to disable skipped option',
+            function() {
 
-        it('should not display add full supply product button if requisition configured to disable skipped option', function() {
+                requisition.template.hideSkippedLineItems.andReturn(false);
 
-            requisition.template.hideSkippedLineItems.andReturn(false);
+                initController();
 
-            initController();
-
-            expect(vm.showAddFullSupplyProductControls).toBe(false);
-        });
+                expect(vm.showAddFullSupplyProductControls).toBe(false);
+            });
 
         it('should set correct noProductsMessage for full supply tab', function() {
             fullSupply = true;
@@ -251,13 +252,14 @@ describe('ViewTabController', function() {
             expect(vm.showSkipControls).toBe(true);
         });
 
-        it('should not show skip controls if requisition status is INITIATED but user does not have right to submit', function() {
-            requisition.template.hasSkipColumn.andReturn(true);
+        it('should not show skip controls if requisition status is INITIATED but user does not have right to submit',
+            function() {
+                requisition.template.hasSkipColumn.andReturn(true);
 
-            initController();
+                initController();
 
-            expect(vm.showSkipControls).toBe(false);
-        });
+                expect(vm.showSkipControls).toBe(false);
+            });
 
         it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function() {
             canAuthorize = true;
@@ -294,7 +296,6 @@ describe('ViewTabController', function() {
 
             expect(vm.showSkipControls).toBe(true);
         });
-
 
         it('should not show skip controls if the requisition template does not have a skip column', function() {
             requisition.template.hasSkipColumn.andReturn(false);
@@ -336,13 +337,13 @@ describe('ViewTabController', function() {
 
     describe('addFullSupplyProduct', function() {
 
-        beforeEach(function(){
+        beforeEach(function() {
             addFullSupplyProductModalService.show.andReturn($q.resolve({
-               items: [lineItemSpy(1,'one',true)]
+                items: [lineItemSpy(1, 'one', true)]
             }));
         });
 
-        it('should show the full supply add product modal', function(){
+        it('should show the full supply add product modal', function() {
             initController();
             vm.addFullSupplyProduct();
             $rootScope.$apply();
@@ -350,7 +351,7 @@ describe('ViewTabController', function() {
             expect(addFullSupplyProductModalService.show).toHaveBeenCalled();
         });
 
-        it('should insert selected products to the beginning of full supply table', function(){
+        it('should insert selected products to the beginning of full supply table', function() {
             initController();
 
             vm.items = jasmine.createSpyObj('items', ['unshift']);
@@ -360,7 +361,6 @@ describe('ViewTabController', function() {
 
             expect(vm.items.unshift).toHaveBeenCalled();
         });
-
 
     });
 
@@ -536,39 +536,39 @@ describe('ViewTabController', function() {
 
     });
 
-    describe('skippedFullSupplyProductCountMessage', function(){
-       it('should count the number of skipped line items and return the right message', function(){
-           initController();
-           messageService.get.isSpy = false;
-           spyOn(messageService, 'get').andCallFake(function(p1, p2){
-               return p2;
-           });
-           requisition.requisitionLineItems[0].skipped = true;
+    describe('skippedFullSupplyProductCountMessage', function() {
+        it('should count the number of skipped line items and return the right message', function() {
+            initController();
+            messageService.get.isSpy = false;
+            spyOn(messageService, 'get').andCallFake(function(p1, p2) {
+                return p2;
+            });
+            requisition.requisitionLineItems[0].skipped = true;
 
-           expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(1)
-       })
+            expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(1);
+        });
     });
 
-    describe('skippedFullSupplyProductCountMessage', function(){
-       it('should not count the number of skipped line items that are not full supply', function(){
-           initController();
+    describe('skippedFullSupplyProductCountMessage', function() {
+        it('should not count the number of skipped line items that are not full supply', function() {
+            initController();
 
-           messageService.get.isSpy = false;
-           spyOn(messageService, 'get').andCallFake(function(p1, p2){
-               return p2;
-           });
-           requisition.requisitionLineItems[0].skipped = true;
-           requisition.requisitionLineItems[0].$program.fullSupply = false;
+            messageService.get.isSpy = false;
+            spyOn(messageService, 'get').andCallFake(function(p1, p2) {
+                return p2;
+            });
+            requisition.requisitionLineItems[0].skipped = true;
+            requisition.requisitionLineItems[0].$program.fullSupply = false;
 
-           expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(0);
-       })
+            expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(0);
+        });
     });
 
     describe('getDescriptionForColumn', function() {
 
         it('should return column definition for regular columns', function() {
             initController();
-            
+
             expect(vm.getDescriptionForColumn(columns[0])).toEqual(columns[0].definition);
         });
 
@@ -578,7 +578,8 @@ describe('ViewTabController', function() {
 
             initController();
 
-            expect(vm.getDescriptionForColumn(columns[1])).toEqual(columns[1].definition + ' ' + 'requisitionViewTab.totalLossesAndAdjustment.disabled');
+            expect(vm.getDescriptionForColumn(columns[1]))
+                .toEqual(columns[1].definition + ' ' + 'requisitionViewTab.totalLossesAndAdjustment.disabled');
         });
     });
 

@@ -50,7 +50,7 @@ describe('TemplateAddService', function() {
         spyOn(loadingModalService, 'close');
         spyOn(notificationService, 'success');
         spyOn(notificationService, 'error');
-        
+
         templateMock = jasmine.createSpyObj('Template', ['create']);
         originalCreate = templateMock.create;
 
@@ -78,7 +78,7 @@ describe('TemplateAddService', function() {
     });
 
     describe('decorated create', function() {
-        
+
         it('should open loading modal', function() {
             originalCreate.andReturn($q.resolve());
 
@@ -129,9 +129,9 @@ describe('TemplateAddService', function() {
 
             var result;
             template.create()
-            .then(function(response) {
-                result = response;
-            });
+                .then(function(response) {
+                    result = response;
+                });
 
             expect($state.go).not.toHaveBeenCalled();
 
@@ -162,9 +162,9 @@ describe('TemplateAddService', function() {
 
             var result;
             template.create()
-            .then(function(response) {
-                result = response;
-            });
+                .then(function(response) {
+                    result = response;
+                });
             $rootScope.$apply();
 
             expect(result).toBe(createResult);
@@ -177,9 +177,9 @@ describe('TemplateAddService', function() {
 
             var result;
             template.create()
-            .catch(function(error) {
-                result = error;
-            });
+                .catch(function(error) {
+                    result = error;
+                });
             $rootScope.$apply();
 
             expect(result).toBe(error);

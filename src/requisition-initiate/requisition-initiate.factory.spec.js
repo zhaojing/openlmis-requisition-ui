@@ -40,6 +40,7 @@ describe('requisitionInitiateFactory', function() {
     describe('canInitiate', function() {
         beforeEach(function() {
             spyOn(authorizationService, 'getUser').andReturn({
+                //eslint-disable-next-line camelcase
                 user_id: 'user-id'
             });
         });
@@ -49,9 +50,9 @@ describe('requisitionInitiateFactory', function() {
             var result;
 
             requisitionInitiateFactory.canInitiate(program.id, facility.id)
-            .then(function(response) {
-                result = response;
-            });
+                .then(function(response) {
+                    result = response;
+                });
             $rootScope.$apply();
 
             expect(result).toBe(true);
@@ -75,9 +76,9 @@ describe('requisitionInitiateFactory', function() {
             var result;
 
             requisitionInitiateFactory.canInitiate(program.id, facility.id)
-            .then(function(response) {
-                result = response;
-            });
+                .then(function(response) {
+                    result = response;
+                });
             $rootScope.$apply();
 
             expect(result).toBe(false);

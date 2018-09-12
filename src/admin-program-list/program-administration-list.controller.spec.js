@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('ProgramAdministrationListController', function () {
+describe('ProgramAdministrationListController', function() {
 
     var $state, $controller, ProgramDataBuilder,
         vm, programList;

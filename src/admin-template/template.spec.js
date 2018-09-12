@@ -15,7 +15,8 @@
 
 describe('Template', function() {
 
-    var $rootScope, template, templateJson, Template, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS, TemplateDataBuilder, RequisitionColumnSpy;
+    var $rootScope, template, templateJson, Template, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS,
+        TemplateDataBuilder, RequisitionColumnSpy;
 
     beforeEach(function() {
         module('admin-template', function($provide) {
@@ -24,7 +25,7 @@ describe('Template', function() {
             ]);
 
             RequisitionColumnSpy.columnDependencies.andCallFake(function(column) {
-                if(column.name === 'remarks') {
+                if (column.name === 'remarks') {
                     return ['total'];
                 } else if (column.name === 'totalCost') {
                     return ['pricePerPack', 'packsToShip'];
@@ -40,9 +41,9 @@ describe('Template', function() {
                 return null;
             });
 
-            $provide.factory('RequisitionColumn', function(){
-        		return RequisitionColumnSpy;
-        	});
+            $provide.factory('RequisitionColumn', function() {
+                return RequisitionColumnSpy;
+            });
         });
 
         inject(function($injector) {
@@ -58,7 +59,9 @@ describe('Template', function() {
             createdDate: new Date(),
             id: 'template-1',
             numberOfPeriodsToAverage: 3,
-            program: { id: 'program-1' },
+            program: {
+                id: 'program-1'
+            },
             name: 'template-name',
             populateStockOnHandFromStockCards: false,
             columnsMap: {
@@ -110,7 +113,7 @@ describe('Template', function() {
                 id: '1',
                 programId: '2',
                 numberOfPeriodsToAverage: 2,
-                columnsMap : {
+                columnsMap: {
                     total: {
                         isDisplayed: true,
                         displayOrder: 1,
@@ -128,13 +131,13 @@ describe('Template', function() {
                                 {
                                     id: '2',
                                     optionLabel: 'option2'
-                                },
+                                }
                             ]
                         },
                         source: 'USER_INPUT',
                         option: {
-                            'id': '1',
-                            'optionLabel': 'option1'
+                            id: '1',
+                            optionLabel: 'option1'
                         }
                     },
                     remarks: {
@@ -167,7 +170,7 @@ describe('Template', function() {
                         name: 'requestedQuantity',
                         displayOrder: 4,
                         isDisplayed: true,
-                        label: "Requested Quantity",
+                        label: 'Requested Quantity',
                         source: 'USER_INPUT',
                         columnDefinition: {
                             canChangeOrder: true,
@@ -180,7 +183,7 @@ describe('Template', function() {
                         name: 'requestedQuantityExplanation',
                         displayOrder: 5,
                         isDisplayed: true,
-                        label: "Requested Quantity Explanation",
+                        label: 'Requested Quantity Explanation',
                         source: 'USER_INPUT',
                         columnDefinition: {
                             canChangeOrder: true,
@@ -279,13 +282,16 @@ describe('Template', function() {
 
         it('should change stock based columns sources to stock cards', function() {
             RequisitionColumnSpy.columnDependencies.andReturn([]);
-            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards().withColumn({
-                name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
-                source: COLUMN_SOURCES.USER_INPUT
-            }).withColumn({
-                name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-                source: COLUMN_SOURCES.USER_INPUT
-            }).build();
+            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
+                .withColumn({
+                    name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
+                    source: COLUMN_SOURCES.USER_INPUT
+                })
+                .withColumn({
+                    name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
+                    source: COLUMN_SOURCES.USER_INPUT
+                })
+                .build();
 
             spyOn(template.columnsMap.stockOnHand, 'isStockDisabledColumn').andReturn(false);
             spyOn(template.columnsMap.stockOnHand, 'isStockBasedColumn').andReturn(true);
@@ -302,10 +308,12 @@ describe('Template', function() {
 
         it('should disable stock columns', function() {
             RequisitionColumnSpy.columnDependencies.andReturn([]);
-            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards().withColumn({
-                name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
-                source: COLUMN_SOURCES.USER_INPUT
-            }).build();
+            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
+                .withColumn({
+                    name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
+                    source: COLUMN_SOURCES.USER_INPUT
+                })
+                .build();
 
             spyOn(template.columnsMap.stockOnHand, 'isStockDisabledColumn').andReturn(true);
             spyOn(template.columnsMap.stockOnHand, 'disableColumnsAndChangeSource').andReturn(true);
@@ -325,10 +333,12 @@ describe('Template', function() {
             template = new TemplateDataBuilder().withColumn({
                 name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
                 source: COLUMN_SOURCES.USER_INPUT
-            }).withColumn({
-                name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-                source: COLUMN_SOURCES.USER_INPUT
-            }).build();
+            })
+                .withColumn({
+                    name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
+                    source: COLUMN_SOURCES.USER_INPUT
+                })
+                .build();
 
             spyOn(template.columnsMap.stockOnHand, 'isStockBasedColumn').andReturn(true);
             spyOn(template.columnsMap.beginningBalance, 'isStockBasedColumn').andReturn(true);
@@ -345,7 +355,8 @@ describe('Template', function() {
 
         it('should return true if column is disabled', function() {
             RequisitionColumnSpy.columnDependencies.andReturn([]);
-            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards().build();
+            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
+                .build();
 
             spyOn(template.columnsMap.column1, 'isStockDisabledColumn').andReturn(true);
 
@@ -354,7 +365,8 @@ describe('Template', function() {
 
         it('should return false if column is not disabled', function() {
             RequisitionColumnSpy.columnDependencies.andReturn([]);
-            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards().build();
+            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
+                .build();
             spyOn(template.columnsMap.column1, 'isStockDisabledColumn').andReturn(false);
 
             expect(template.isColumnDisabled(template.columnsMap.column1)).toBe(false);
@@ -390,7 +402,7 @@ describe('Template', function() {
 
         it('should resolve if column removal was successful', function() {
             var spy = jasmine.createSpy();
-            
+
             template.removeColumn('someColumn').then(spy);
             $rootScope.$apply();
 
@@ -400,7 +412,7 @@ describe('Template', function() {
 
         it('should reject if column removal was not successful', function() {
             var spy = jasmine.createSpy();
-            
+
             template.removeColumn('notExistingColumn').catch(spy);
             $rootScope.$apply();
 
@@ -417,14 +429,14 @@ describe('Template', function() {
 
         it('should add displayed column', function() {
             var availableColumn = {
-                    name: 'newColumn',
-                    label: 'new column',
-                    indicator: 'newColumn',
-                    sources: ['USER_INPUT'],
-                    options: ['OPTION_1'],
-                    definition: 'definition'
-                };
-            
+                name: 'newColumn',
+                label: 'new column',
+                indicator: 'newColumn',
+                sources: ['USER_INPUT'],
+                options: ['OPTION_1'],
+                definition: 'definition'
+            };
+
             template.addColumn(availableColumn, true);
 
             expect(template.columnsMap.newColumn).toEqual({
@@ -442,13 +454,13 @@ describe('Template', function() {
 
         it('should add hidden column', function() {
             var availableColumn = {
-                    name: 'newColumn',
-                    label: 'new column',
-                    indicator: 'newColumn',
-                    sources: ['USER_INPUT'],
-                    options: ['OPTION_1'],
-                    definition: 'definition'
-                };
+                name: 'newColumn',
+                label: 'new column',
+                indicator: 'newColumn',
+                sources: ['USER_INPUT'],
+                options: ['OPTION_1'],
+                definition: 'definition'
+            };
 
             template.addColumn(availableColumn, false);
 
@@ -467,7 +479,7 @@ describe('Template', function() {
 
         it('should not add column if parameter is undefined', function() {
             template.columnsMap = {};
-            
+
             template.addColumn(undefined);
 
             expect(template.columnsMap).toEqual({});
@@ -558,9 +570,10 @@ describe('Template', function() {
             expect(template.canAssignTag('someColumn')).toBe(false);
         });
 
-        it('should return true if template has populateStockOnHandFromStockCards set to true and column supports tag', function() {
-            expect(template.canAssignTag('someColumn')).toBe(true);
-        });
+        it('should return true if template has populateStockOnHandFromStockCards set to true and column supports tag',
+            function() {
+                expect(template.canAssignTag('someColumn')).toBe(true);
+            });
 
         it('should return undefined if column with given name does not exist', function() {
             expect(template.canAssignTag('someNotExistingColumn')).toBeUndefined();

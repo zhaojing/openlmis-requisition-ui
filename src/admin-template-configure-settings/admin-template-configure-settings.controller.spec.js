@@ -39,7 +39,8 @@ describe('AdminTemplateConfigureSettingsController', function() {
         healthCenter = new FacilityTypeDataBuilder().build();
         districtStore = FacilityTypeDataBuilder.buildDistrictStore();
 
-        template = new TemplateDataBuilder().withFacilityTypes([healthCenter, districtHospital]).build();
+        template = new TemplateDataBuilder().withFacilityTypes([healthCenter, districtHospital])
+            .build();
 
         templateFacilityTypes = {};
         templateFacilityTypes[template.id] = [healthCenter, districtHospital];
@@ -93,7 +94,8 @@ describe('AdminTemplateConfigureSettingsController', function() {
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminTemplateConfigureSettings.templateSettingsSave.description',
                 'adminTemplateConfigureSettings.save',
-                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title');
+                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title'
+            );
             expect(stateGoSpy).not.toHaveBeenCalled();
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(successNotificationServiceSpy).not.toHaveBeenCalled();
@@ -107,12 +109,14 @@ describe('AdminTemplateConfigureSettingsController', function() {
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminTemplateConfigureSettings.templateSettingsSave.description',
                 'adminTemplateConfigureSettings.save',
-                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title');
+                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title'
+            );
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(stateGoSpy).toHaveBeenCalled();
             expect(successNotificationServiceSpy).toHaveBeenCalledWith(
-                'adminTemplateConfigureSettings.templateSettingsSave.success');
+                'adminTemplateConfigureSettings.templateSettingsSave.success'
+            );
         });
 
         it('should close loading modal if template save was unsuccessful', function() {
@@ -124,11 +128,13 @@ describe('AdminTemplateConfigureSettingsController', function() {
             expect(confirmService.confirm).toHaveBeenCalledWith(
                 'adminTemplateConfigureSettings.templateSettingsSave.description',
                 'adminTemplateConfigureSettings.save',
-                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title');
+                undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title'
+            );
             expect(loadingModalService.close).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(errorNotificationServiceSpy).toHaveBeenCalledWith(
-                'adminTemplateConfigureSettings.templateSettingsSave.failure');
+                'adminTemplateConfigureSettings.templateSettingsSave.failure'
+            );
         });
     });
 
@@ -187,7 +193,9 @@ describe('AdminTemplateConfigureSettingsController', function() {
 
             vm.goToTemplateList();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates', {}, {reload: true});
+            expect($state.go).toHaveBeenCalledWith('openlmis.administration.requisitionTemplates', {}, {
+                reload: true
+            });
         });
     });
 

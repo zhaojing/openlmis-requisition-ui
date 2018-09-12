@@ -84,9 +84,9 @@ describe('AddProductModalController', function() {
 
             var result;
             modalDeferred.promise
-            .then(function(response) {
-                result = response;
-            });
+                .then(function(response) {
+                    result = response;
+                });
 
             vm.addProduct();
             $rootScope.$apply();

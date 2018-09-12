@@ -16,10 +16,10 @@
 describe('RequisitionBatchApprovalController', function() {
 
     //injects
-    var vm, $stateParams, $rootScope, $q, confirmService, $controller, calculationFactory,
-        confirmDeferred, $scope, requisitionService, requisitionStatus, alertService, $state,
-        requisitionsStorage, batchRequisitionsStorage, notificationService, requisitionBatchSaveFactory,
-        notificationServiceSpy, requisitionBatchApproveFactory, loadingModalService, batchDeferred;
+    var vm, $stateParams, $rootScope, $q, confirmService, $controller, calculationFactory, confirmDeferred, $scope,
+        requisitionService, alertService, $state, requisitionsStorage, batchRequisitionsStorage, notificationService,
+        requisitionBatchSaveFactory, notificationServiceSpy, requisitionBatchApproveFactory, loadingModalService,
+        batchDeferred;
 
     //variables
     var requisitions, products, lineItems;
@@ -98,13 +98,18 @@ describe('RequisitionBatchApprovalController', function() {
             });
 
             requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
-            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+            batchRequisitionsStorage = jasmine.createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy',
+                'removeBy']);
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             var localStorageFactory = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
-                if (resourceName === 'offlineFlag') return offlineFlag;
-                if (resourceName === 'batchApproveRequisitions') return batchRequisitionsStorage;
+                if (resourceName === 'offlineFlag') {
+                    return offlineFlag;
+                }
+                if (resourceName === 'batchApproveRequisitions') {
+                    return batchRequisitionsStorage;
+                }
                 return requisitionsStorage;
             });
 
@@ -120,7 +125,6 @@ describe('RequisitionBatchApprovalController', function() {
             $q = $injector.get('$q');
             $scope = $injector.get('$rootScope').$new();
             requisitionService = $injector.get('requisitionService');
-            requisitionStatus = $injector.get('REQUISITION_STATUS');
             notificationService = $injector.get('notificationService');
             $stateParams = $injector.get('$stateParams');
             alertService = $injector.get('alertService');
@@ -138,7 +142,7 @@ describe('RequisitionBatchApprovalController', function() {
     describe('$onInit', function() {
 
         beforeEach(function() {
-            $stateParams.errors[requisitions[0].id] = "There was an error";
+            $stateParams.errors[requisitions[0].id] = 'There was an error';
 
             vm = $controller('RequisitionBatchApprovalController', {
                 requisitions: requisitions,
@@ -146,9 +150,13 @@ describe('RequisitionBatchApprovalController', function() {
                 $stateParams: $stateParams
             });
 
-            spyOn(calculationFactory, 'totalCost').andCallFake(function(lineItem, requisition) {
-                if (lineItem.id == 1) return requisitions[0].requisitionLineItems[0].totalCost;
-                if (lineItem.id == 2) return requisitions[0].requisitionLineItems[1].totalCost;
+            spyOn(calculationFactory, 'totalCost').andCallFake(function(lineItem) {
+                if (lineItem.id === 1) {
+                    return requisitions[0].requisitionLineItems[0].totalCost;
+                }
+                if (lineItem.id === 2) {
+                    return requisitions[0].requisitionLineItems[1].totalCost;
+                }
                 return null;
             });
         });
@@ -162,7 +170,7 @@ describe('RequisitionBatchApprovalController', function() {
         it('should assign errors to requisitions', function() {
             vm.$onInit();
             $rootScope.$apply();
-            expect(vm.requisitions[0].$error).toEqual("There was an error");
+            expect(vm.requisitions[0].$error).toEqual('There was an error');
         });
 
         it('should calculate total cost of requisition', function() {
@@ -226,7 +234,8 @@ describe('RequisitionBatchApprovalController', function() {
             $rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
-                'requisitionBatchApproval.revertConfirm', 'requisitionBatchApproval.revert');
+                'requisitionBatchApproval.revertConfirm', 'requisitionBatchApproval.revert'
+            );
         });
 
         it('should revert requisitions to original state', function() {
@@ -283,7 +292,8 @@ describe('RequisitionBatchApprovalController', function() {
             $rootScope.$apply();
 
             expect(confirmService.confirm).toHaveBeenCalledWith(
-                'requisitionBatchApproval.updateWarning', 'requisitionBatchApproval.update');
+                'requisitionBatchApproval.updateWarning', 'requisitionBatchApproval.update'
+            );
         });
 
         it('should reload current state', function() {

@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe("TEMPLATE_COLUMNS", function() {
+describe('TEMPLATE_COLUMNS', function() {
 
     var TEMPLATE_COLUMNS;
 

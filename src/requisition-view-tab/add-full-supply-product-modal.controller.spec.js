@@ -16,7 +16,7 @@
 describe('AddFullSupplyProductModalController', function() {
 
     var vm, $controller, RequisitionLineItemDataBuilder, ProgramDataBuilder, program,
-        $q, $rootScope, modalDeferred, requisitionLineItems, fullSupply;
+        $q, $rootScope, modalDeferred, requisitionLineItems;
 
     beforeEach(function() {
         module('requisition-view-tab');
@@ -36,11 +36,10 @@ describe('AddFullSupplyProductModalController', function() {
             .buildJson()];
 
         modalDeferred = $q.defer();
-        fullSupply = true;
 
         vm = $controller('AddFullSupplyProductModalController', {
             modalDeferred: modalDeferred,
-            requisitionLineItems: requisitionLineItems,
+            requisitionLineItems: requisitionLineItems
         });
     });
 
@@ -57,16 +56,16 @@ describe('AddFullSupplyProductModalController', function() {
             expect(vm.close).toBe(modalDeferred.reject);
         });
 
-        it('should initialize the lineItemsToAdd as empty array ', function(){
+        it('should initialize the lineItemsToAdd as empty array ', function() {
             vm.$onInit();
 
             expect(vm.lineItemsToAdd.length).toBe(0);
         });
     });
 
-    describe('toggleAddLineItem', function(){
+    describe('toggleAddLineItem', function() {
 
-        it('should add a line item if it does not exist in the to add list', function(){
+        it('should add a line item if it does not exist in the to add list', function() {
             vm.$onInit();
             var line = vm.requisitionLineItems[0];
             vm.toggleAddLineItem(line);
@@ -75,59 +74,58 @@ describe('AddFullSupplyProductModalController', function() {
             expect(vm.lineItemsToAdd[0]).toBe(line);
         });
 
-        it('should remove a line item if it does not exist in the to add list', function(){
+        it('should remove a line item if it does not exist in the to add list', function() {
             vm.$onInit();
             var line = vm.requisitionLineItems[0];
             vm.toggleAddLineItem(line);
             vm.toggleAddLineItem(line);
 
             expect(vm.lineItemsToAdd.length).toBe(0);
-        })
+        });
     });
 
-    describe('addProducts', function(){
-       it('should add resolve with lineItems', function(){
-           vm.$onInit();
-           var line = vm.requisitionLineItems[0];
-           vm.toggleAddLineItem(line);
+    describe('addProducts', function() {
+        it('should add resolve with lineItems', function() {
+            vm.$onInit();
+            var line = vm.requisitionLineItems[0];
+            vm.toggleAddLineItem(line);
 
-           var result;
-           modalDeferred.promise
-               .then(function(response) {
-                   result = response;
-               });
+            var result;
+            modalDeferred.promise
+                .then(function(response) {
+                    result = response;
+                });
 
-           vm.addProducts();
-           $rootScope.$apply();
+            vm.addProducts();
+            $rootScope.$apply();
 
-           expect(result.items[0]).toEqual(line);
-       })
+            expect(result.items[0]).toEqual(line);
+        });
     });
 
-    describe('refreshList', function () {
+    describe('refreshList', function() {
 
-        it('should filter by filter function when search text is different from empty string', function () {
+        it('should filter by filter function when search text is different from empty string', function() {
             vm.$onInit();
             vm.requisitionLineItems = jasmine.createSpyObj('requisitionLineItems', ['filter']);
             vm.searchText = 'xxx';
 
             vm.refreshList();
 
-           expect(vm.requisitionLineItems.filter).toHaveBeenCalled()
+            expect(vm.requisitionLineItems.filter).toHaveBeenCalled();
 
         });
 
-        it('should filter by filter function when search text is different from empty string', function () {
+        it('should filter by filter function when search text is different from empty string', function() {
             vm.$onInit();
             vm.requisitionLineItems = jasmine.createSpyObj('requisitionLineItems', ['filter']);
             vm.searchText = '';
 
             vm.refreshList();
 
-            expect(vm.requisitionLineItems.filter).not.toHaveBeenCalled()
+            expect(vm.requisitionLineItems.filter).not.toHaveBeenCalled();
 
         });
     });
-
 
 });

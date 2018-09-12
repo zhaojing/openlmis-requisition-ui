@@ -15,7 +15,7 @@
 
 describe('validateRequisition directive', function() {
 
-    var $scope, div;
+    var $scope, div, $rootScope, $compile, $timeout;
 
     beforeEach(function() {
         module('requisition-batch-approval');
@@ -48,7 +48,8 @@ describe('validateRequisition directive', function() {
         div = compileMarkup(
             '<div>' +
                 '<div ng-repeat="lineItem in requisition.requisitionLineItems">' +
-                    '<input ng-model="lineItem.approvedQuantity" validate-requisition="requisition" productId="lineItem.productId" required/>' +
+                    '<input ng-model="lineItem.approvedQuantity" validate-requisition="requisition"' +
+                        ' productId="lineItem.productId" required/>' +
                 '</div>' +
             '</div>'
         );
@@ -75,14 +76,12 @@ describe('validateRequisition directive', function() {
             input.triggerHandler('change');
             $scope.$apply();
 
-
             input.parent().trigger('openlmisInvalid.show');
             expect($scope.requisition.$error).not.toBeUndefined();
 
             input.val(15);
             input.triggerHandler('change');
             $scope.$apply();$timeout.flush();
-
 
             input.parent().trigger('openlmisInvalid.show');
             expect($scope.requisition.$error).toBeUndefined();
@@ -111,7 +110,6 @@ describe('validateRequisition directive', function() {
             input.triggerHandler('change');
             $scope.$apply();
 
-
             input.parent().trigger('openlmisInvalid.hide');
             expect($scope.requisition.$error).not.toBeUndefined();
 
@@ -119,13 +117,11 @@ describe('validateRequisition directive', function() {
             input.triggerHandler('change');
             $scope.$apply();$timeout.flush();
 
-
             input.parent().trigger('openlmisInvalid.hide');
             expect($scope.requisition.$error).toBeUndefined();
         });
 
     });
-
 
     function compileMarkup(markup) {
         var element = $compile(markup)($scope);

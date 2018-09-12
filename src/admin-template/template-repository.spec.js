@@ -15,7 +15,7 @@
 
 describe('TemplateRepository', function() {
 
-    var TemplateRepository, OpenlmisRepositoryMock, templateResourceMock;
+    var TemplateRepository, OpenlmisRepositoryMock, templateResourceMock, Template;
 
     beforeEach(function() {
         module('admin-template', function($provide) {

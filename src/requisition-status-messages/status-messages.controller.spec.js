@@ -53,7 +53,8 @@ describe('StatusMessagesController', function() {
 
     describe('displayAddComment', function() {
 
-        it('should show button if requisition has no draft for status message, text area is visible, and requisition is editable', function() {
+        it('should show button if requisition has no draft for status message, text area is visible, and requisition' +
+            ' is editable', function() {
             vm.requisition.draftStatusMessage = null;
             vm.isTextAreaVisible = false;
             vm.requisition.$isEditable = true;
@@ -93,7 +94,8 @@ describe('StatusMessagesController', function() {
 
     describe('displayEditComment', function() {
 
-        it('should show text area and remove button of comment if add comment is not displayed and requisition is editable', function() {
+        it('should show text area and remove button of comment if add comment is not displayed and requisition is' +
+            ' editable', function() {
             spyOn(vm, 'displayAddComment').andReturn(false);
             vm.requisition.$isEditable = true;
 

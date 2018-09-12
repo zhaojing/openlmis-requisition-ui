@@ -56,17 +56,17 @@
                     .build()
             ];
             this.columnsMap = {
-                'productCode': new RequisitionColumnDataBuilder()
+                productCode: new RequisitionColumnDataBuilder()
                     .buildProductCodeColumn(),
-                'productName': new RequisitionColumnDataBuilder()
+                productName: new RequisitionColumnDataBuilder()
                     .buildProductNameColumn(),
-                'stockOnHand': new RequisitionColumnDataBuilder()
+                stockOnHand: new RequisitionColumnDataBuilder()
                     .buildStockOnHandColumn(),
-                'requestedQuantity': new RequisitionColumnDataBuilder()
+                requestedQuantity: new RequisitionColumnDataBuilder()
                     .buildRequestedQuantityColumn(),
-                'requestedQuantityExplanation': new RequisitionColumnDataBuilder()
+                requestedQuantityExplanation: new RequisitionColumnDataBuilder()
                     .buildRequestedQuantityExplanationColumn(),
-                'beginningBalance': new RequisitionColumnDataBuilder()
+                beginningBalance: new RequisitionColumnDataBuilder()
                     .buildBeginningBalanceColumn()
             };
         }
@@ -85,7 +85,7 @@
                 program: this.program,
                 facilityTypes: this.facilityTypes,
                 columnsMap: this.columnsMap
-            }
+            };
         }
 
         function withSkipColumn(hideOptionSelected) {

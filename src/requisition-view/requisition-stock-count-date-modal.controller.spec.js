@@ -15,17 +15,18 @@
 
 describe('RequisitionStockCountDateModalController', function() {
 
-    var $controller, vm, requisition, modalDeferred;
+    var $controller, vm, requisition, modalDeferred, moment;
 
     beforeEach(function() {
         module('requisition-view');
 
         inject(function($injector) {
             $controller = $injector.get('$controller');
+            moment = $injector.get('moment');
         });
 
         requisition = {
-            datePhysicalStockCountCompleted: "2017-08-11"
+            datePhysicalStockCountCompleted: '2017-08-11'
         };
         modalDeferred = jasmine.createSpyObj('modalDeferred', ['resolve']);
 
@@ -48,7 +49,7 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should set datePhysicalStockCountCompleted', function() {
-            expect(vm.datePhysicalStockCountCompleted).toEqual("2017-08-11");
+            expect(vm.datePhysicalStockCountCompleted).toEqual('2017-08-11');
         });
     });
 
@@ -72,7 +73,7 @@ describe('RequisitionStockCountDateModalController', function() {
     });
 
     describe('validateDate', function() {
-    
+
         it('should return undefined if date is undefined', function() {
             vm.datePhysicalStockCountCompleted = undefined;
 
@@ -80,13 +81,15 @@ describe('RequisitionStockCountDateModalController', function() {
         });
 
         it('should return error if date is in the future', function() {
-            vm.datePhysicalStockCountCompleted = moment().add(1, 'days').toISOString();
+            vm.datePhysicalStockCountCompleted = moment().add(1, 'days')
+                .toISOString();
 
             expect(vm.validateDate()).toEqual('requisitionView.datePhysicalStockCountCompleted.inFuture');
         });
 
         it('should return undefined if date is in the past', function() {
-            vm.datePhysicalStockCountCompleted = moment().subtract(1, 'days').toISOString();
+            vm.datePhysicalStockCountCompleted = moment().subtract(1, 'days')
+                .toISOString();
 
             expect(vm.validateDate()).toBeUndefined();
         });
@@ -96,7 +99,7 @@ describe('RequisitionStockCountDateModalController', function() {
 
             expect(vm.validateDate()).toBeUndefined();
         });
-    
+
     });
 
 });

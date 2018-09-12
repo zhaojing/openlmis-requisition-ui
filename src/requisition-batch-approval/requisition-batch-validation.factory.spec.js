@@ -13,12 +13,11 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-
 describe('RequisitionBatchValidationFactory', function() {
 
-	var $rootScope, $httpBackend, requisitions, deferred, saveDeferred, requisitionBatchSaveFactory;
+    var $rootScope, requisitions, requisitionBatchValidationFactory;
 
-	beforeEach(function() {
+    beforeEach(function() {
         module('requisition-batch-approval');
 
         var requisitionLineItems = [
@@ -38,7 +37,7 @@ describe('RequisitionBatchValidationFactory', function() {
             {
                 id: 3,
                 skipped: false,
-                approvedQuantity: 90,
+                approvedQuantity: 90
             },
             {
                 id: 4,
@@ -61,54 +60,50 @@ describe('RequisitionBatchValidationFactory', function() {
 
         requisitions = [requisition, requisition2];
 
-        inject(function($injector){
-            $q = $injector.get('$q');
-        });
-
-        inject(function($injector){
+        inject(function($injector) {
             $rootScope = $injector.get('$rootScope');
             requisitionBatchValidationFactory = $injector.get('requisitionBatchValidationFactory');
         });
 
-	});
+    });
 
-	it('when successful, it returns an array of all requisitions', function() {
-		var response;
+    it('when successful, it returns an array of all requisitions', function() {
+        var response;
 
-		requisitionBatchValidationFactory.validateRequisitions(requisitions).then(function(returnedRequisitions){
-			response = returnedRequisitions;
-		});
-		$rootScope.$apply();
+        requisitionBatchValidationFactory.validateRequisitions(requisitions).then(function(returnedRequisitions) {
+            response = returnedRequisitions;
+        });
+        $rootScope.$apply();
 
-		expect(response.length).toEqual(requisitions.length);
-		expect(response[0].id).toEqual(requisitions[0].id);
-	});
+        expect(response.length).toEqual(requisitions.length);
+        expect(response[0].id).toEqual(requisitions[0].id);
+    });
 
-	it('returns only valid requisitions', function() {
-		var response;
+    it('returns only valid requisitions', function() {
+        var response;
 
-		requisitions[1].requisitionLineItems[1].approvedQuantity = null;
+        requisitions[1].requisitionLineItems[1].approvedQuantity = null;
 
-		requisitionBatchValidationFactory.validateRequisitions(requisitions).catch(function(returnedRequisitions){
-			response = returnedRequisitions;
-		});
-		$rootScope.$apply();
+        requisitionBatchValidationFactory.validateRequisitions(requisitions).catch(function(returnedRequisitions) {
+            response = returnedRequisitions;
+        });
+        $rootScope.$apply();
 
-		expect(response.length).toEqual(requisitions.length - 1);
-	});
+        expect(response.length).toEqual(requisitions.length - 1);
+    });
 
-	it('skipped requisitions are always valid', function() {
-		var response;
+    it('skipped requisitions are always valid', function() {
+        var response;
 
-		requisitions[1].requisitionLineItems[1].skipped = true;
+        requisitions[1].requisitionLineItems[1].skipped = true;
 
-		requisitionBatchValidationFactory.validateRequisitions(requisitions).then(function(returnedRequisitions){
-			response = returnedRequisitions;
-		});
-		$rootScope.$apply();
+        requisitionBatchValidationFactory.validateRequisitions(requisitions).then(function(returnedRequisitions) {
+            response = returnedRequisitions;
+        });
+        $rootScope.$apply();
 
-		expect(response.length).toEqual(requisitions.length);
-		expect(response[1].id).toEqual(requisitions[1].id);
-	});
+        expect(response.length).toEqual(requisitions.length);
+        expect(response[1].id).toEqual(requisitions[1].id);
+    });
 
 });

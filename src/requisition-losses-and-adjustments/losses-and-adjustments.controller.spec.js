@@ -15,8 +15,8 @@
 
 describe('LossesAndAdjustmentsController', function() {
 
-    var vm, $scope, adjustmentsModalService, lineItem, lineItem2, requisitionValidatorMock,
-        calculationFactory, columns, reasonOne, reasonTwo;
+    var vm, $scope, adjustmentsModalService, lineItem, lineItem2, requisitionValidatorMock, $q, calculationFactory,
+        columns, reasonOne, reasonTwo;
 
     beforeEach(function() {
         module('requisition-losses-and-adjustments');
@@ -53,7 +53,10 @@ describe('LossesAndAdjustmentsController', function() {
 
         lineItem2 = {
             id: 'line-item-id',
-            stockAdjustments: [{reasonId: 'reason-one', quantity: 20}]
+            stockAdjustments: [{
+                reasonId: 'reason-one',
+                quantity: 20
+            }]
         };
 
         reasonOne = {
@@ -100,13 +103,16 @@ describe('LossesAndAdjustmentsController', function() {
         vm.$onInit();
 
         vm.lineItem = jasmine.createSpyObj('lineItem', [
-            'getFieldValue','updateDependentFields'
+            'getFieldValue', 'updateDependentFields'
         ]);
 
         $scope.lineItem = lineItem2;
         $scope.$digest();
 
-        $scope.lineItem.stockAdjustments = [{reasonId: 'reason-one', quantity: 10}];
+        $scope.lineItem.stockAdjustments = [{
+            reasonId: 'reason-one',
+            quantity: 10
+        }];
         $scope.$digest();
 
         expect(calculationFactory.totalLossesAndAdjustments).toHaveBeenCalled();
@@ -128,14 +134,13 @@ describe('LossesAndAdjustmentsController', function() {
             $scope.lineItem = lineItem2;
             vm.$onInit();
         });
-        it('should call adjustmentsModalService', function () {
+        it('should call adjustmentsModalService', function() {
             vm.showModal();
 
             expect(adjustmentsModalService.open).toHaveBeenCalled();
         });
 
-
-        it('should call adjustmentsModalService with proper params', function () {
+        it('should call adjustmentsModalService with proper params', function() {
             vm.showModal();
 
             expect(adjustmentsModalService.open)

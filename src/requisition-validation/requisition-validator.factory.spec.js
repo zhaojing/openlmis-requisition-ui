@@ -15,8 +15,8 @@
 
 describe('requisitionValidator', function() {
 
-    var validator, TEMPLATE_COLUMNS, COLUMN_SOURCES, MAX_INTEGER_VALUE, COLUMN_TYPES, calculationFactory,
-        validationFactory, lineItem, lineItems, column, columns, requisition;
+    var validator, TEMPLATE_COLUMNS, COLUMN_SOURCES, MAX_INTEGER_VALUE, COLUMN_TYPES, validationFactory, lineItem,
+        lineItems, column, columns, requisition;
 
     beforeEach(function() {
         module('requisition-validation', function($provide) {
@@ -33,20 +33,18 @@ describe('requisitionValidator', function() {
         });
 
         inject(function(_requisitionValidator_, _TEMPLATE_COLUMNS_, _COLUMN_SOURCES_,
-                                   _calculationFactory_, _MAX_INTEGER_VALUE_, _COLUMN_TYPES_) {
-
+            _calculationFactory_, _MAX_INTEGER_VALUE_, _COLUMN_TYPES_) {
             validator = _requisitionValidator_;
             TEMPLATE_COLUMNS = _TEMPLATE_COLUMNS_;
             COLUMN_SOURCES = _COLUMN_SOURCES_;
             MAX_INTEGER_VALUE = _MAX_INTEGER_VALUE_;
             COLUMN_TYPES = _COLUMN_TYPES_;
-            calculationFactory = _calculationFactory_;
         });
 
         lineItem = lineItemSpy('One');
 
         var template = jasmine.createSpyObj('template', ['getColumns']);
-        template.getColumns.andCallFake(function (nonFullSupply) {
+        template.getColumns.andCallFake(function(nonFullSupply) {
             return nonFullSupply ? nonFullSupplyColumns() : fullSupplyColumns();
         });
 
@@ -58,7 +56,7 @@ describe('requisitionValidator', function() {
             $program: {
                 fullSupply: false
             }
-        },{
+        }, {
             $program: {
                 fullSupply: true
             }
@@ -129,7 +127,7 @@ describe('requisitionValidator', function() {
         it('should return true if requisition comment is longer than 255 chars', function() {
             spyOn(validator, 'validateLineItem').andReturn(true);
 
-            for(var i = 0; i < 10; i++) {
+            for (var i = 0; i < 10; i++) {
                 requisition.draftStatusMessage += 'abcdefghijklmnopqrstuvwxyz';
             }
 
@@ -141,9 +139,9 @@ describe('requisitionValidator', function() {
 
         beforeEach(function() {
             columns = [
-                column(TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY),
-                column(TEMPLATE_COLUMNS.BEGINNING_BALANCE),
-                column(TEMPLATE_COLUMNS.STOCK_ON_HAND)
+                mockColumn(TEMPLATE_COLUMNS.TOTAL_CONSUMED_QUANTITY),
+                mockColumn(TEMPLATE_COLUMNS.BEGINNING_BALANCE),
+                mockColumn(TEMPLATE_COLUMNS.STOCK_ON_HAND)
             ];
         });
 
@@ -171,7 +169,7 @@ describe('requisitionValidator', function() {
                 expect(validator.validateLineItemField)
                     .toHaveBeenCalledWith(lineItem, column, requisition);
             });
-        })
+        });
 
     });
 
@@ -191,7 +189,7 @@ describe('requisitionValidator', function() {
             var result = validator.validateLineItemField(lineItem, column, requisition);
 
             expect(result).toBe(true);
-        })
+        });
 
         it('should return true if column is Total Losses and Adjustments', function() {
             column.name = TEMPLATE_COLUMNS.TOTAL_LOSSES_AND_ADJUSTMENTS;
@@ -252,7 +250,6 @@ describe('requisitionValidator', function() {
 
             column.source = COLUMN_SOURCES.USER_INPUT;
             column.name = name;
-
 
             columns = {
                 stockOnHand: column,
@@ -356,44 +353,23 @@ describe('requisitionValidator', function() {
 
     });
 
-    function fullSupplyCategories() {
-        return [
-            category('CategoryOne', [lineItemSpy('One'), lineItemSpy('Two')]),
-            category('CategoryTwo', [lineItemSpy('Three'), lineItemSpy('Four')])
-        ];
-    }
-
-    function nonFullSupplyCategories() {
-        return [
-            category('CategoryThree', [lineItemSpy('Five'), lineItemSpy('Six')]),
-            category('CategoryFour', [lineItemSpy('Seven'), lineItemSpy('Eight')])
-        ];
-    }
-
     function nonFullSupplyColumns() {
         return [
-            column('Three'),
-            column('Four')
+            mockColumn('Three'),
+            mockColumn('Four')
         ];
     }
 
     function fullSupplyColumns() {
         return [
-            column('One'),
-            column('Two')
+            mockColumn('One'),
+            mockColumn('Two')
         ];
     }
 
-    function column(name) {
+    function mockColumn(name) {
         return {
             name: name
-        };
-    }
-
-    function category(name, lineItems) {
-        return {
-            name: name,
-            lineItems: lineItems
         };
     }
 

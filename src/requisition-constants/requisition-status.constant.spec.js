@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe("REQUISITION_STATUS", function() {
+describe('REQUISITION_STATUS', function() {
 
     var RequisitionStatus;
 

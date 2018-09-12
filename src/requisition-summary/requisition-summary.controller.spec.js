@@ -15,7 +15,7 @@
 
 describe('RequisitionSummaryController', function() {
 
-    var $filter, calculationFactory, lineItems, vm;
+    var calculationFactory, lineItems, vm;
 
     beforeEach(function() {
 
@@ -29,14 +29,20 @@ describe('RequisitionSummaryController', function() {
         ];
 
         inject(function(_$filter_, _calculationFactory_, $controller) {
-            $filter = _$filter_;
-
             calculationFactory = _calculationFactory_;
             spyOn(calculationFactory, 'totalCost').andCallFake(function(lineItem) {
-                if (lineItem === lineItems[0]) return 30.5;
-                if (lineItem === lineItems[1]) return 44;
-                if (lineItem === lineItems[2]) return 15;
-                if (lineItem === lineItems[3]) return 11.4;
+                if (lineItem === lineItems[0]) {
+                    return 30.5;
+                }
+                if (lineItem === lineItems[1]) {
+                    return 44;
+                }
+                if (lineItem === lineItems[2]) {
+                    return 15;
+                }
+                if (lineItem === lineItems[3]) {
+                    return 11.4;
+                }
             });
 
             var requisitionMock = jasmine.createSpyObj('requisition', ['$isAfterAuthorize']);
@@ -48,7 +54,9 @@ describe('RequisitionSummaryController', function() {
             requisitionMock.template = templateMock;
             requisitionMock.$isAfterAuthorize.andReturn(false);
             requisitionMock.requisitionLineItems = lineItems;
-            requisitionMock.program = {showNonFullSupplyTab: true};
+            requisitionMock.program = {
+                showNonFullSupplyTab: true
+            };
 
             vm = $controller('RequisitionSummaryController', {
                 $scope: {
@@ -64,7 +72,6 @@ describe('RequisitionSummaryController', function() {
         it('should expose requistion', function() {
             expect(vm.requisition).not.toBeUndefined();
         });
-
 
         it('should set showNonFullSupplySummary property', function() {
             expect(vm.showNonFullSupplySummary).not.toBeUndefined();
@@ -106,7 +113,7 @@ describe('RequisitionSummaryController', function() {
         it('should only include non full supply line items', function() {
             vm.calculateNonFullSupplyCost();
 
-            expect(calculationFactory.totalCost).not.toHaveBeenCalledWith(lineItems[0],vm.requisition);
+            expect(calculationFactory.totalCost).not.toHaveBeenCalledWith(lineItems[0], vm.requisition);
             expect(calculationFactory.totalCost).not.toHaveBeenCalledWith(lineItems[1], vm.requisition);
             expect(calculationFactory.totalCost).toHaveBeenCalledWith(lineItems[2], vm.requisition);
             expect(calculationFactory.totalCost).toHaveBeenCalledWith(lineItems[3], vm.requisition);
