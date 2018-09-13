@@ -49,7 +49,7 @@ describe('templateFacilityTypeFactory', function() {
                 [template, templateTwo], facilityTypes
             );
 
-            expect(result, [districtHospital]);
+            expect(result).toEqual([districtHospital]);
         });
     });
 

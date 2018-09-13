@@ -77,6 +77,7 @@ describe('validateRequisition directive', function() {
             $scope.$apply();
 
             input.parent().trigger('openlmisInvalid.show');
+
             expect($scope.requisition.$error).not.toBeUndefined();
 
             input.val(15);
@@ -84,6 +85,7 @@ describe('validateRequisition directive', function() {
             $scope.$apply();$timeout.flush();
 
             input.parent().trigger('openlmisInvalid.show');
+
             expect($scope.requisition.$error).toBeUndefined();
         });
 
@@ -111,6 +113,7 @@ describe('validateRequisition directive', function() {
             $scope.$apply();
 
             input.parent().trigger('openlmisInvalid.hide');
+
             expect($scope.requisition.$error).not.toBeUndefined();
 
             input.val(15);
@@ -118,6 +121,7 @@ describe('validateRequisition directive', function() {
             $scope.$apply();$timeout.flush();
 
             input.parent().trigger('openlmisInvalid.hide');
+
             expect($scope.requisition.$error).toBeUndefined();
         });
 

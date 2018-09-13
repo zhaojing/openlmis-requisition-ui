@@ -60,6 +60,7 @@ describe('StatusMessagesController', function() {
             vm.requisition.$isEditable = true;
 
             var result = vm.displayAddComment();
+
             expect(result).toBe(true);
         });
 
@@ -69,6 +70,7 @@ describe('StatusMessagesController', function() {
             vm.requisition.$isEditable = false;
 
             var result = vm.displayAddComment();
+
             expect(result).toBe(false);
         });
 
@@ -78,6 +80,7 @@ describe('StatusMessagesController', function() {
             vm.requisition.$isEditable = true;
 
             var result = vm.displayAddComment();
+
             expect(result).toBe(false);
         });
 
@@ -87,6 +90,7 @@ describe('StatusMessagesController', function() {
             vm.requisition.$isEditable = true;
 
             var result = vm.displayAddComment();
+
             expect(result).toBe(false);
         });
 
@@ -100,6 +104,7 @@ describe('StatusMessagesController', function() {
             vm.requisition.$isEditable = true;
 
             var result = vm.displayEditComment();
+
             expect(result).toBe(true);
         });
 
@@ -108,6 +113,7 @@ describe('StatusMessagesController', function() {
             vm.requisition.$isEditable = true;
 
             var result = vm.displayEditComment();
+
             expect(result).toBe(false);
         });
 
@@ -116,6 +122,7 @@ describe('StatusMessagesController', function() {
             vm.requisition.$isEditable = false;
 
             var result = vm.displayEditComment();
+
             expect(result).toBe(false);
         });
 
@@ -125,6 +132,7 @@ describe('StatusMessagesController', function() {
 
         it('should set draft to null when remove button was clicked', function() {
             vm.removeComment();
+
             expect(vm.requisition.draftStatusMessage).toBe(null);
         });
     });
@@ -133,11 +141,13 @@ describe('StatusMessagesController', function() {
 
         it('should set isTextAreaVisible as true when add button was clicked', function() {
             vm.addComment();
+
             expect(vm.isTextAreaVisible).toBe(true);
         });
 
         it('should set set isTextAreaVisible as false when remove button was clicked', function() {
             vm.removeComment();
+
             expect(vm.isTextAreaVisible).toBe(false);
         });
     });
@@ -155,6 +165,7 @@ describe('StatusMessagesController', function() {
         it('should call statusMessageService', function() {
             spyOn(statusMessagesHistoryModalServiceSpy, 'show');
             vm.displayRequisitionHistory();
+
             expect(statusMessagesHistoryModalServiceSpy.show).toHaveBeenCalled();
         });
     });

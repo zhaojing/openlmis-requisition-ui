@@ -96,6 +96,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
                 'adminTemplateConfigureSettings.save',
                 undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title'
             );
+
             expect(stateGoSpy).not.toHaveBeenCalled();
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(successNotificationServiceSpy).not.toHaveBeenCalled();
@@ -111,6 +112,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
                 'adminTemplateConfigureSettings.save',
                 undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title'
             );
+
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(stateGoSpy).toHaveBeenCalled();
@@ -130,6 +132,7 @@ describe('AdminTemplateConfigureSettingsController', function() {
                 'adminTemplateConfigureSettings.save',
                 undefined, 'adminTemplateConfigureSettings.templateSettingsSave.title'
             );
+
             expect(loadingModalService.close).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(errorNotificationServiceSpy).toHaveBeenCalledWith(

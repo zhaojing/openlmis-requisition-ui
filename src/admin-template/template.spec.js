@@ -206,6 +206,7 @@ describe('Template', function() {
             expect(requisitionTemplate.columnsMap.total.displayOrder).toBe(1);
 
             columnCopy = angular.copy(requisitionTemplate.columnsMap.total);
+
             expect(requisitionTemplate.moveColumn(columnCopy, 2)).toBe(true);
 
             expect(requisitionTemplate.columnsMap.remarks.displayOrder).toBe(1);
@@ -222,6 +223,7 @@ describe('Template', function() {
             expect(requisitionTemplate.columnsMap.total.displayOrder).toBe(1);
 
             columnCopy = angular.copy(requisitionTemplate.columnsMap.remarks);
+
             expect(requisitionTemplate.moveColumn(columnCopy, 0)).toBe(true);
 
             expect(requisitionTemplate.columnsMap.remarks.displayOrder).toBe(1);
@@ -240,6 +242,7 @@ describe('Template', function() {
             requisitionTemplate.columnsMap.remarks.columnDefinition.canChangeOrder = false;
 
             columnCopy = angular.copy(requisitionTemplate.columnsMap.remarks);
+
             expect(requisitionTemplate.moveColumn(columnCopy, 0)).toBe(false);
 
             expect(requisitionTemplate.columnsMap.remarks.displayOrder).toBe(2);
@@ -270,6 +273,7 @@ describe('Template', function() {
             expect(requisitionTemplate.columnsMap.total.displayOrder).toBe(1);
 
             columnCopy = angular.copy(requisitionTemplate.columnsMap.remarks);
+
             expect(requisitionTemplate.moveColumn(columnCopy, 0)).toBe(false);
 
             expect(requisitionTemplate.columnsMap.remarks.displayOrder).toBe(3);
@@ -390,6 +394,7 @@ describe('Template', function() {
 
         it('should return false if template has no columns', function() {
             template.columnsMap = {};
+
             expect(template.hasColumns()).toBe(false);
         });
     });
@@ -548,6 +553,7 @@ describe('Template', function() {
 
         it('should call repository', function() {
             template.create();
+
             expect(repository.create).toHaveBeenCalledWith(template);
         });
     });
@@ -562,11 +568,13 @@ describe('Template', function() {
 
         it('should return false if template has populateStockOnHandFromStockCards set to false', function() {
             template.populateStockOnHandFromStockCards = false;
+
             expect(template.canAssignTag('someColumn')).toBe(false);
         });
 
         it('should return false if column does not support tag', function() {
             template.columnsMap.someColumn.columnDefinition.supportsTag = false;
+
             expect(template.canAssignTag('someColumn')).toBe(false);
         });
 

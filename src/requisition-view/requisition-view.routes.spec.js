@@ -37,6 +37,7 @@ describe('openlmis.requisitions.requisition state', function() {
         });
 
         $rootScope.$apply();
+
         expect(result).toBe(user);
     });
 
@@ -48,6 +49,7 @@ describe('openlmis.requisitions.requisition state', function() {
         });
 
         $rootScope.$apply();
+
         expect(result).toBe(requisition);
     });
 
@@ -59,6 +61,7 @@ describe('openlmis.requisitions.requisition state', function() {
         });
 
         $rootScope.$apply();
+
         expect(result).toBe(true);
     });
 
@@ -70,6 +73,7 @@ describe('openlmis.requisitions.requisition state', function() {
         });
 
         $rootScope.$apply();
+
         expect(result).toBe(true);
     });
 
@@ -81,6 +85,7 @@ describe('openlmis.requisitions.requisition state', function() {
         });
 
         $rootScope.$apply();
+
         expect(result).toBe(true);
     });
 
@@ -92,6 +97,7 @@ describe('openlmis.requisitions.requisition state', function() {
         });
 
         $rootScope.$apply();
+
         expect(result).toBe(true);
     });
 
@@ -103,6 +109,7 @@ describe('openlmis.requisitions.requisition state', function() {
         });
 
         $rootScope.$apply();
+
         expect(result).toBe(true);
     });
 
@@ -114,6 +121,7 @@ describe('openlmis.requisitions.requisition state', function() {
         });
 
         $rootScope.$apply();
+
         expect(result).toBe(true);
     });
 

@@ -196,7 +196,7 @@ describe('templateValidator', function() {
                 expect(templateValidator.getColumnError(column, template)).toBeUndefined();
             });
 
-            it('should return false if column does not supports tag', function() {
+            it('should return undefined if tag is valid', function() {
                 column.tag = 'some-tag';
 
                 expect(templateValidator.getColumnError(column, template)).toBeUndefined();

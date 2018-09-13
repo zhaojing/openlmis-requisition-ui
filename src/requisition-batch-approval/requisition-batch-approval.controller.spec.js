@@ -164,36 +164,42 @@ describe('RequisitionBatchApprovalController', function() {
         it('should expose requisitions', function() {
             vm.$onInit();
             $rootScope.$apply();
+
             expect(vm.requisitions).toEqual(requisitions);
         });
 
         it('should assign errors to requisitions', function() {
             vm.$onInit();
             $rootScope.$apply();
+
             expect(vm.requisitions[0].$error).toEqual('There was an error');
         });
 
         it('should calculate total cost of requisition', function() {
             vm.$onInit();
             $rootScope.$apply();
+
             expect(vm.requisitions[0].$totalCost).toEqual(110);
         });
 
         it('should calculate total cost of all requisitions', function() {
             vm.$onInit();
             $rootScope.$apply();
+
             expect(vm.totalCost).toEqual(110);
         });
 
         it('should expose list of products', function() {
             vm.$onInit();
             $rootScope.$apply();
+
             expect(vm.products).toEqual(products);
         });
 
         it('should expose list of line items', function() {
             vm.$onInit();
             $rootScope.$apply();
+
             expect(vm.lineItems).toEqual(lineItems);
         });
     });

@@ -96,26 +96,31 @@ describe('RequisitionApprovalListController', function() {
 
         it('should expose requisitions', function() {
             vm.$onInit();
+
             expect(vm.requisitions).toBe(requisitions);
         });
 
         it('should expose programs', function() {
             vm.$onInit();
+
             expect(vm.programs).toBe(programs);
         });
 
         it('should expose selected program', function() {
             vm.$onInit();
+
             expect(vm.selectedProgram).toBe(programs[0]);
         });
 
         it('should expose offline flag', function() {
             vm.$onInit();
+
             expect(vm.offline).toBe(false);
         });
 
         it('should expose isBatchApproveScreenActive flag', function() {
             vm.$onInit();
+
             expect(vm.isBatchApproveScreenActive).toBe(true);
         });
     });
@@ -214,6 +219,7 @@ describe('RequisitionApprovalListController', function() {
             expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.batchApproval', {
                 ids: [ vm.requisitions[0].id ].join(',')
             });
+
             expect(alertService.error).not.toHaveBeenCalled();
         });
 

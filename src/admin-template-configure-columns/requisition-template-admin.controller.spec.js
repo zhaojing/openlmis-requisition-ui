@@ -141,6 +141,7 @@ describe('RequisitionTemplateAdminController', function() {
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
                 undefined, 'adminProgramTemplate.templateSave.title'
             );
+
             expect(stateGoSpy).not.toHaveBeenCalled();
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(successNotificationServiceSpy).not.toHaveBeenCalled();
@@ -155,6 +156,7 @@ describe('RequisitionTemplateAdminController', function() {
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
                 undefined, 'adminProgramTemplate.templateSave.title'
             );
+
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(stateGoSpy).toHaveBeenCalled();
@@ -171,6 +173,7 @@ describe('RequisitionTemplateAdminController', function() {
                 'adminProgramTemplate.templateSave.description', 'adminProgramTemplate.save',
                 undefined, 'adminProgramTemplate.templateSave.title'
             );
+
             expect(loadingModalService.close).toHaveBeenCalled();
             expect(requisitionTemplateService.save).toHaveBeenCalledWith(template);
             expect(errorNotificationServiceSpy).toHaveBeenCalledWith('adminProgramTemplate.templateSave.failure');
@@ -201,15 +204,18 @@ describe('RequisitionTemplateAdminController', function() {
         spyOn(stockOnHandColumn, 'isStockBasedColumn').andReturn(true);
 
         template.isColumnDisabled = jasmine.createSpy().andReturn(false);
+
         expect(vm.canChangeSource(beginningBalanceColumn)).toBe(true);
         expect(vm.canChangeSource(requestedQuantityColumn)).toBe(false);
 
         template.populateStockOnHandFromStockCards = true;
+
         expect(vm.canChangeSource(stockOnHandColumn)).toBe(false);
         expect(vm.canChangeSource(beginningBalanceColumn)).toBe(false);
 
         template.isColumnDisabled.andReturn(true);
         template.populateStockOnHandFromStockCards = false;
+
         expect(vm.canChangeSource(beginningBalanceColumn)).toBe(false);
     });
 

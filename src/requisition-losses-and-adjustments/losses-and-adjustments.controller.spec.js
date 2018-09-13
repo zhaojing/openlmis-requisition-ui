@@ -134,6 +134,7 @@ describe('LossesAndAdjustmentsController', function() {
             $scope.lineItem = lineItem2;
             vm.$onInit();
         });
+
         it('should call adjustmentsModalService', function() {
             vm.showModal();
 

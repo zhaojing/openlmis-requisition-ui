@@ -78,6 +78,7 @@ describe('ProgramAddController', function() {
 
             expect(confirmService.confirm)
                 .toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
+
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(programService.create).toHaveBeenCalledWith(program);
             expect(notificationService.success).toHaveBeenCalledWith('adminProgramAdd.createProgram.success');
@@ -95,6 +96,7 @@ describe('ProgramAddController', function() {
 
             expect(confirmService.confirm)
                 .toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
+
             expect(loadingModalService.open).not.toHaveBeenCalled();
             expect(programService.create).not.toHaveBeenCalled();
             expect(notificationService.success).not.toHaveBeenCalled();
@@ -111,6 +113,7 @@ describe('ProgramAddController', function() {
 
             expect(confirmService.confirm)
                 .toHaveBeenCalledWith('adminProgramAdd.createProgram.confirm', 'adminProgramAdd.create');
+
             expect(loadingModalService.open).toHaveBeenCalled();
             expect(programService.create).toHaveBeenCalledWith(program);
             expect(notificationService.success).not.toHaveBeenCalled();
@@ -124,6 +127,7 @@ describe('ProgramAddController', function() {
 
         it('should redirects to previous state', function() {
             vm.goToPreviousState();
+
             expect($state.go).toHaveBeenCalledWith('openlmis.administration.programs');
         });
     });

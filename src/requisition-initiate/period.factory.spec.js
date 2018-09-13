@@ -81,6 +81,7 @@ describe('periodFactory', function() {
                 activeForRnr: true,
                 rnrId: null
             });
+
             expect(data[1]).toEqual({
                 name: periodTwo.name,
                 startDate: periodTwo.startDate,

@@ -47,6 +47,7 @@ describe('AddFullSupplyProductModalController', function() {
 
         it('should expose requisitionLineItems', function() {
             vm.$onInit();
+
             expect(vm.requisitionLineItems).toEqual(requisitionLineItems);
         });
 
@@ -116,7 +117,7 @@ describe('AddFullSupplyProductModalController', function() {
 
         });
 
-        it('should filter by filter function when search text is different from empty string', function() {
+        it('should not filter for empty filter', function() {
             vm.$onInit();
             vm.requisitionLineItems = jasmine.createSpyObj('requisitionLineItems', ['filter']);
             vm.searchText = '';

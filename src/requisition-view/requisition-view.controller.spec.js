@@ -247,18 +247,22 @@ describe('RequisitionViewController', function() {
 
     describe('Sync error handling', function() {
 
+        //eslint-disable-next-line jasmine/missing-expect
         it('should reload requisition when conflict response received', function() {
             verifyReloadOnErrorAndNotificationSent(409, 'requisitionView.versionMismatch');
         });
 
+        //eslint-disable-next-line jasmine/missing-expect
         it('should reload requisition when forbidden response received', function() {
             verifyReloadOnErrorAndNotificationSent(403, 'requisitionView.updateForbidden');
         });
 
+        //eslint-disable-next-line jasmine/missing-expect
         it('should not reload requisition when bad request response received', function() {
             verifyNoReloadOnError(400);
         });
 
+        //eslint-disable-next-line jasmine/missing-expect
         it('should not reload requisition when internal server error request response received', function() {
             verifyNoReloadOnError(500);
         });
@@ -333,6 +337,7 @@ describe('RequisitionViewController', function() {
             expect(vm.isFullSupplyTabValid()).toBe(true);
             expect(requisitionValidatorMock.areLineItemsValid)
                 .toHaveBeenCalledWith([fullSupplyItems[0]]);
+
             expect(vm.invalidFullSupply).toBe(undefined);
         });
 
@@ -344,6 +349,7 @@ describe('RequisitionViewController', function() {
             expect(vm.isFullSupplyTabValid()).toBe(false);
             expect(requisitionValidatorMock.areLineItemsValid)
                 .toHaveBeenCalledWith([fullSupplyItems[0]]);
+
             expect(vm.invalidFullSupply).toBe(message);
             expect(messageService.get).toHaveBeenCalledWith('requisitionView.requisition.error');
         });
@@ -367,10 +373,11 @@ describe('RequisitionViewController', function() {
             expect(vm.isNonFullSupplyTabValid()).toBe(true);
             expect(requisitionValidatorMock.areLineItemsValid)
                 .toHaveBeenCalledWith([nonFullSupplyItems[0]]);
+
             expect(vm.invalidNonFullSupply).toBe(undefined);
         });
 
-        it('should return true if all line items are valid', function() {
+        it('should return false if any line item is invalid', function() {
             requisitionValidatorMock.areLineItemsValid.andCallFake(function(lineItems) {
                 return lineItems[0] !== nonFullSupplyItems[0];
             });
@@ -378,6 +385,7 @@ describe('RequisitionViewController', function() {
             expect(vm.isNonFullSupplyTabValid()).toBe(false);
             expect(requisitionValidatorMock.areLineItemsValid)
                 .toHaveBeenCalledWith([nonFullSupplyItems[0]]);
+
             expect(vm.invalidNonFullSupply).toBe(message);
             expect(messageService.get).toHaveBeenCalledWith('requisitionView.requisition.error');
         });

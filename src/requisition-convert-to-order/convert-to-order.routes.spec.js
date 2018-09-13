@@ -34,10 +34,12 @@ describe('convert-to-order run block', function() {
     it('should clear requisitionsForConvertFactory when leaving the convertToOrder state', function() {
         $state.go('openlmis.requisitions.convertToOrder');
         $rootScope.$apply();
+
         expect(requisitionsForConvertFactory.clearCache).not.toHaveBeenCalled();
 
         $state.go('openlmis');
         $rootScope.$apply();
+
         expect(requisitionsForConvertFactory.clearCache).toHaveBeenCalled();
 
         $state.go('openlmis.requisitions.convertToOrder');

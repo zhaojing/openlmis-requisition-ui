@@ -75,14 +75,14 @@ describe('requisitionTemplateService', function() {
         expect(data[1].program.id).toEqual(template2.program.id);
     });
 
-    xit('should search requisition template by program id', function() {
+    it('should search requisition template by program id', function() {
         var data;
 
         httpBackend.when(
-            'GET', requisitionUrlFactory('/api/requisitionTemplates/search?program=' + template2.programId)
+            'GET', requisitionUrlFactory('/api/requisitionTemplates/search?program=' + template2.program.id)
         ).respond(200, template2);
 
-        requisitionTemplateService.search(template2.programId).then(function(response) {
+        requisitionTemplateService.search(template2.program.id).then(function(response) {
             data = response;
         });
 
@@ -127,5 +127,10 @@ describe('requisitionTemplateService', function() {
         rootScope.$apply();
 
         expect(data.programId).toEqual(template2.programId);
+    });
+
+    afterEach(function() {
+        httpBackend.verifyNoOutstandingExpectation();
+        httpBackend.verifyNoOutstandingRequest();
     });
 });

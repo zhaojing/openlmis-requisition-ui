@@ -418,6 +418,7 @@ describe('ViewTabController', function() {
                 categories,
                 fullSupply
             );
+
             expect(requisition.addLineItem).toHaveBeenCalledWith(
                 orderable, 16, 'explanation'
             );
@@ -437,6 +438,7 @@ describe('ViewTabController', function() {
                 categories,
                 fullSupply
             );
+
             expect(requisition.addLineItem).not.toHaveBeenCalled();
         });
 
@@ -547,9 +549,7 @@ describe('ViewTabController', function() {
 
             expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(1);
         });
-    });
 
-    describe('skippedFullSupplyProductCountMessage', function() {
         it('should not count the number of skipped line items that are not full supply', function() {
             initController();
 

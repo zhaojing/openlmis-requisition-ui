@@ -125,6 +125,7 @@ describe('periodService', function() {
             promise = periodService.getPeriodsForInitiate(programId, facilityId, emergency);
 
             $httpBackend.flush();
+
             expect(angular.isFunction(promise.then)).toBe(true);
             expect(alertServiceMock.error).toHaveBeenCalledWith(
                 'requisitionInitiate.programNotSupported.label', 'requisitionInitiate.programNotSupported.message'

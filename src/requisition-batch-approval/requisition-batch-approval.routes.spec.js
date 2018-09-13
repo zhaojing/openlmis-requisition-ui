@@ -26,7 +26,7 @@ describe('openlmis.requisitions.batchApproval state', function() {
     });
 
     it('should accept ids through query params', function() {
-        expect(state.url.split('?')[1].indexOf('ids') > -1).toBe(true);
+        expect(state.url.split('?')[1].indexOf('ids')).toBeGreaterThan(-1);
     });
 
     it('should fetch a list of requisitions', function() {

@@ -107,6 +107,7 @@ describe('RequisitionInitiateController', function() {
             expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
                 rnr: 1
             });
+
             expect(permissionService.hasPermission).toHaveBeenCalledWith('user_id', {
                 right: REQUISITION_RIGHTS.REQUISITION_CREATE,
                 programId: programs[0].id,
@@ -130,6 +131,7 @@ describe('RequisitionInitiateController', function() {
 
         vm.initRnr(selectedPeriod);
         $rootScope.$apply();
+
         expect(requisitionService.initiate)
             .toHaveBeenCalledWith(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency, key);
     });

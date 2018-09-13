@@ -162,6 +162,7 @@ describe('TemplateAddController', function() {
             expect(vm.template.addColumn.calls[1].args).toEqual([productCodeColumn.columnDefinition, true]);
             expect(vm.template.addColumn.calls[2].args)
                 .toEqual([calculatedOrderQuantityIsaColumn.columnDefinition, false]);
+
             expect(vm.template.columnsMap).not.toBeUndefined();
             expect(vm.template.numberOfPeriodsToAverage).toEqual(3);
         });
@@ -172,6 +173,7 @@ describe('TemplateAddController', function() {
 
             expect(confirmService.confirm)
                 .toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
+
             expect(vm.template.create).toHaveBeenCalled();
         });
 
@@ -183,6 +185,7 @@ describe('TemplateAddController', function() {
 
             expect(confirmService.confirm)
                 .toHaveBeenCalledWith('adminTemplateAdd.createTemplate.confirm', 'adminTemplateAdd.create');
+
             expect(vm.template.create).not.toHaveBeenCalled();
         });
     });

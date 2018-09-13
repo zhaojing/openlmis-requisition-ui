@@ -234,11 +234,13 @@ describe('validationFactory', function() {
 
         it('should return undefined if calculatedOrderQuantity column is present and displayed', function() {
             calculatedOrderQuantityIsaColumn.$display = false;
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
         });
 
         it('should return undefined if calculatedOrderQuantityIsa column is present and displayed', function() {
             calculatedOrderQuantityColumn.$display = false;
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
         });
 
@@ -246,6 +248,7 @@ describe('validationFactory', function() {
             ' displayed and requestedQuantity is null', function() {
             calculatedOrderQuantityIsaColumn.$display = false;
             calculatedOrderQuantityColumn.$display = false;
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
@@ -254,6 +257,7 @@ describe('validationFactory', function() {
             lineItem.requestedQuantity = undefined;
             calculatedOrderQuantityIsaColumn.$display = false;
             calculatedOrderQuantityColumn.$display = false;
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
@@ -261,6 +265,7 @@ describe('validationFactory', function() {
             function() {
                 lineItem.requestedQuantity = undefined;
                 calculatedOrderQuantityIsaColumn.$display = false;
+
                 expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
             });
 
@@ -268,12 +273,14 @@ describe('validationFactory', function() {
             ' undefined', function() {
             lineItem.requestedQuantity = undefined;
             calculatedOrderQuantityColumn.$display = false;
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toBeUndefined();
         });
 
         it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not' +
             ' present and requestedQuantity is null', function() {
             requisitionMock.template.getColumn.andReturn(undefined);
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock))
                 .toEqual('required');
         });
@@ -282,31 +289,28 @@ describe('validationFactory', function() {
             ' and requestedQuantity is undefined', function() {
             lineItem.requestedQuantity = undefined;
             requisitionMock.template.getColumn.andReturn(undefined);
-            expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
-        });
 
-        it('should return required if calculatedOrderQuantity and calculatedOrderQuantityIsa columns are not present' +
-            ' and requestedQuantity is undefined', function() {
-            lineItem.requestedQuantity = undefined;
-            requisitionMock.template.getColumn.andReturn(undefined);
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
         it('should return true if line item is non full supply and requestedQuantity is null', function() {
             lineItem.isNonFullSupply.andReturn(true);
             lineItem.requestedQuantity = null;
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
         it('should return true if line item is non full supply and requestedQuantity is undefined', function() {
             lineItem.isNonFullSupply.andReturn(true);
             lineItem.requestedQuantity = undefined;
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
 
         it('should return required for emergency requisition', function() {
             calculatedOrderQuantityIsaColumn.$display = false;
             requisitionMock.emergency = true;
+
             expect(validationFactory.requestedQuantity(lineItem, requisitionMock)).toEqual('required');
         });
     });

@@ -178,6 +178,7 @@ describe('RequisitionBatchSaveFactory', function() {
         });
 
         $rootScope.$apply();
+
         expect(data).toEqual([]);
     });
 
@@ -189,6 +190,7 @@ describe('RequisitionBatchSaveFactory', function() {
         });
 
         $rootScope.$apply();
+
         expect(data).toEqual([]);
     });
 

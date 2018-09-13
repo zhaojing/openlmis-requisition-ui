@@ -136,6 +136,7 @@ describe('requisitionsForConvertFactory', function() {
                 size: 40,
                 page: 1
             });
+
             expect(requisitionService.forConvert).toHaveBeenCalledWith({
                 size: 40,
                 page: 1,
@@ -187,6 +188,7 @@ describe('requisitionsForConvertFactory', function() {
                 page: 1,
                 filterBy: 'program'
             });
+
             expect(requisitionService.forConvert).toHaveBeenCalledWith({
                 size: 40,
                 page: 1,
@@ -238,6 +240,7 @@ describe('requisitionsForConvertFactory', function() {
                 page: 1,
                 filterValue: 'Bala'
             });
+
             expect(requisitionService.forConvert).toHaveBeenCalledWith({
                 size: 40,
                 page: 1,
@@ -641,6 +644,7 @@ describe('requisitionsForConvertFactory', function() {
                 size: 10
             });
             $rootScope.$apply();
+
             expect(requisitionService.forConvert.calls.length).toBe(1);
 
             requisitionsForConvertFactory.releaseWithoutOrder([createDummyRequisitionWithDate(19)]);
@@ -668,6 +672,7 @@ describe('requisitionsForConvertFactory', function() {
                 size: 20,
                 page: 0
             });
+
             expect(requisitionService.forConvert).toHaveBeenCalledWith({
                 size: 30,
                 page: 0
@@ -739,6 +744,7 @@ describe('requisitionsForConvertFactory', function() {
                 size: 10
             });
             $rootScope.$apply();
+
             expect(requisitionService.forConvert.calls.length).toBe(1);
 
             requisitionsForConvertFactory.convertToOrder([createDummyRequisitionWithDate(19)]);
@@ -766,6 +772,7 @@ describe('requisitionsForConvertFactory', function() {
                 size: 20,
                 page: 0
             });
+
             expect(requisitionService.forConvert).toHaveBeenCalledWith({
                 size: 30,
                 page: 0

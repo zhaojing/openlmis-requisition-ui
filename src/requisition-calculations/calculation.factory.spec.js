@@ -272,6 +272,7 @@ describe('calculationFactory', function() {
                         .withQuantity(1)
                         .build()
                 ];
+
                 expect(calculationFactory.totalLossesAndAdjustments(adjustments, reasons)).toBe(11);
             });
 
@@ -292,6 +293,7 @@ describe('calculationFactory', function() {
                         .withQuantity(1)
                         .build()
                 ];
+
                 expect(calculationFactory.totalLossesAndAdjustments(adjustments, reasons)).toBe(-11);
             });
     });
@@ -306,23 +308,27 @@ describe('calculationFactory', function() {
 
         it('should return total consumed quantity when non-stockout days is zero', function() {
             lineItem.totalStockoutDays = 30;
+
             expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock))
                 .toBe(lineItem.totalConsumedQuantity);
         });
 
         it('should return zero when consumed quantity is not defined', function() {
             lineItem.totalConsumedQuantity = 0;
+
             expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(0);
         });
 
         it('should calculate adjusted consumption', function() {
             lineItem.totalStockoutDays = 15;
+
             expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(30);
         });
 
         it('should add additionalQuantityRequired to adjusted consumption', function() {
             lineItem.totalStockoutDays = 15;
             lineItem.additionalQuantityRequired = 15;
+
             expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(45);
         });
 
@@ -330,6 +336,7 @@ describe('calculationFactory', function() {
             additionalQuantityRequiredColumn.isDisplayed = false;
             lineItem.totalStockoutDays = 15;
             lineItem.additionalQuantityRequired = 15;
+
             expect(calculationFactory.adjustedConsumption(lineItem, requisitionMock)).toBe(30);
         });
 
@@ -350,11 +357,13 @@ describe('calculationFactory', function() {
 
         it('should return zero if requisition template does not contain maximumStockQuantity column', function() {
             templateMock.getColumn.andReturn(undefined);
+
             expect(calculationFactory.maximumStockQuantity(lineItem, requisitionMock)).toBe(0);
         });
 
         it('should return zero if selected option is not equal to default', function() {
             maximumStockQuantityColumn.option.optionName = 'test_option';
+
             expect(calculationFactory.maximumStockQuantity(lineItem, requisitionMock)).toBe(0);
         });
 
@@ -381,6 +390,7 @@ describe('calculationFactory', function() {
                     return maximumStockQuantityColumn;
                 }
             });
+
             expect(calculationFactory.calculatedOrderQuantity(lineItem, requisitionMock)).toBe(null);
         });
 
@@ -390,6 +400,7 @@ describe('calculationFactory', function() {
                     return stockOnHandColumn;
                 }
             });
+
             expect(calculationFactory.calculatedOrderQuantity(lineItem, requisitionMock)).toBe(null);
         });
 
@@ -496,7 +507,7 @@ describe('calculationFactory', function() {
             expect(result).toBe(8);
         });
 
-        it('should calculate properly if both fields are user inputs', function() {
+        it('should return null if the idea stock amount is null', function() {
             lineItem.stockOnHand = 5;
             lineItem.idealStockAmount = null;
 

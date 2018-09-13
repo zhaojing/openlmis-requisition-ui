@@ -274,6 +274,7 @@ describe('requisitionService', function() {
             expect(result.id).toEqual(requisition.id);
         });
 
+        //eslint-disable-next-line jasmine/missing-expect
         it('should retrieve requisition from the server if it is not modified', function() {
             requisition.$modified = false;
             requisitionsStorage.getBy.andReturn(requisition);
@@ -469,6 +470,7 @@ describe('requisitionService', function() {
             size: 10,
             sort: 'createdDate,desc'
         }));
+
         expect(requisitionsStorage.search).toHaveBeenCalledWith(params, 'requisitionSearch');
     });
 
@@ -496,6 +498,7 @@ describe('requisitionService', function() {
             totalElements: 2,
             size: 10
         }));
+
         expect(batchRequisitionsStorage.search).toHaveBeenCalledWith(params.program, 'requisitionSearch');
     });
 
@@ -523,6 +526,7 @@ describe('requisitionService', function() {
             totalElements: 1,
             size: 10
         }));
+
         expect(batchRequisitionsStorage.search).not.toHaveBeenCalled();
     });
 

@@ -174,6 +174,7 @@ describe('ProductGridCell', function() {
         expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalledWith(
             scope.lineItem, fullSupplyColumns, requisition
         );
+
         expect(scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
             scope.column, requisition
         );
@@ -192,6 +193,7 @@ describe('ProductGridCell', function() {
         expect(requisitionValidatorMock.validateLineItem).toHaveBeenCalledWith(
             scope.lineItem, nonFullSupplyColumns, requisition
         );
+
         expect(scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
             scope.column, requisition
         );
