@@ -273,6 +273,15 @@ describe('requisitionService', function() {
 
             expect(result.id).toEqual(requisition.id);
         });
+
+        it('should retrieve requisition from the server if it is not modified', function() {
+            requisition.$modified = false;
+            requisitionsStorage.getBy.andReturn(requisition);
+
+            requisitionService.get(requisition.id);
+            httpBackend.flush();
+            $rootScope.$apply();
+        });
     });
 
     it('should initiate requisition', function() {

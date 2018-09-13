@@ -114,7 +114,13 @@
 
             requisition = getOfflineRequisition(id);
 
-            if (!requisition || (offlineService.isOffline() && requisition.$modified)) {
+            if (requisition && (offlineService.isOffline() || requisition.$modified)) {
+                statusMessages = offlineStatusMessages.search({
+                    requisitionId: requisition.id
+                });
+
+                resolve(requisition, statusMessages);
+            } else {
                 getRequisition(id).then(function(requisition) {
                     filterRequisitionStockAdjustmentReasons(requisition);
 
@@ -131,12 +137,6 @@
                         resolve(requisition);
                     });
                 }, error);
-            } else {
-                statusMessages = offlineStatusMessages.search({
-                    requisitionId: requisition.id
-                });
-
-                resolve(requisition, statusMessages);
             }
 
             return deferred.promise;
