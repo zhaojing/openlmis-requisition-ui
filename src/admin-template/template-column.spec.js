@@ -15,14 +15,13 @@
 
 describe('TemplateColumn', function() {
 
-    var templateColumn, templateColumnJson, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS;
+    var templateColumn, templateColumnJson, TemplateColumn, TEMPLATE_COLUMNS;
 
     beforeEach(function() {
         module('admin-template');
 
         inject(function($injector) {
             TemplateColumn = $injector.get('TemplateColumn');
-            COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
             TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
         });
 

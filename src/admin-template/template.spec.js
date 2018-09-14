@@ -297,11 +297,8 @@ describe('Template', function() {
                 })
                 .build();
 
-            spyOn(template.columnsMap.stockOnHand, 'isStockDisabledColumn').andReturn(false);
             spyOn(template.columnsMap.stockOnHand, 'isStockBasedColumn').andReturn(true);
-            spyOn(template.columnsMap.beginningBalance, 'isStockDisabledColumn').andReturn(false);
             spyOn(template.columnsMap.beginningBalance, 'isStockBasedColumn').andReturn(true);
-            spyOn(template.columnsMap.column1, 'isStockDisabledColumn').andReturn(false);
             spyOn(template.columnsMap.column1, 'isStockBasedColumn').andReturn(false);
 
             template.changePopulateStockOnHandFromStockCards();
