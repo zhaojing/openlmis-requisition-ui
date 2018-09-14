@@ -34,7 +34,6 @@
         Template.prototype.moveColumn = moveColumn;
         Template.prototype.findCircularCalculatedDependencies = findCircularCalculatedDependencies;
         Template.prototype.changePopulateStockOnHandFromStockCards = changePopulateStockOnHandFromStockCards;
-        Template.prototype.isColumnDisabled = isColumnDisabled;
         Template.prototype.isValid = isValid;
         Template.prototype.hasColumns = hasColumns;
         Template.prototype.removeColumn = removeColumn;
@@ -349,10 +348,6 @@
                     if (column.isStockBasedColumn()) {
                         column.source = COLUMN_SOURCES.STOCK_CARDS;
                     }
-
-                    if (column.isStockDisabledColumn()) {
-                        column.disableColumnsAndChangeSource();
-                    }
                 }
             }
         }
@@ -367,21 +362,6 @@
                     }
                 }
             }
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf admin-template.Template
-         * @name isColumnDisabled
-         *
-         * @description
-         * Checks if column should be disabled.
-         *
-         * @param  {Object}  column template column to be checked
-         * @return {boolean}        true if column should be disabled
-         */
-        function isColumnDisabled(column) {
-            return this.populateStockOnHandFromStockCards && column.isStockDisabledColumn();
         }
 
         function checkForCircularCalculatedDependencies(columnNameToCheck, columnNameToFind, columnsVisited,

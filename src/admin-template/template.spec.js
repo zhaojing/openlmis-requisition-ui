@@ -310,28 +310,6 @@ describe('Template', function() {
             expect(template.columnsMap.beginningBalance.source).toEqual(COLUMN_SOURCES.STOCK_CARDS);
         });
 
-        it('should disable stock columns', function() {
-            RequisitionColumnSpy.columnDependencies.andReturn([]);
-            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
-                .withColumn({
-                    name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
-                    source: COLUMN_SOURCES.USER_INPUT
-                })
-                .build();
-
-            spyOn(template.columnsMap.stockOnHand, 'isStockDisabledColumn').andReturn(true);
-            spyOn(template.columnsMap.stockOnHand, 'disableColumnsAndChangeSource').andReturn(true);
-            spyOn(template.columnsMap.stockOnHand, 'isStockBasedColumn').andReturn(false);
-            spyOn(template.columnsMap.column1, 'isStockDisabledColumn').andReturn(true);
-            spyOn(template.columnsMap.column1, 'disableColumnsAndChangeSource').andReturn(true);
-            spyOn(template.columnsMap.column1, 'isStockBasedColumn').andReturn(false);
-
-            template.changePopulateStockOnHandFromStockCards();
-
-            expect(template.columnsMap.stockOnHand.disableColumnsAndChangeSource).toHaveBeenCalled();
-            expect(template.columnsMap.column1.disableColumnsAndChangeSource).toHaveBeenCalled();
-        });
-
         it('should change stock based columns sources to user input', function() {
             RequisitionColumnSpy.columnDependencies.andReturn([]);
             template = new TemplateDataBuilder().withColumn({
@@ -352,33 +330,6 @@ describe('Template', function() {
 
             expect(template.columnsMap.stockOnHand.source).toEqual(COLUMN_SOURCES.USER_INPUT);
             expect(template.columnsMap.beginningBalance.source).toEqual(COLUMN_SOURCES.USER_INPUT);
-        });
-    });
-
-    describe('isColumnDisabled', function() {
-
-        it('should return true if column is disabled', function() {
-            RequisitionColumnSpy.columnDependencies.andReturn([]);
-            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
-                .build();
-
-            spyOn(template.columnsMap.column1, 'isStockDisabledColumn').andReturn(true);
-
-            expect(template.isColumnDisabled(template.columnsMap.column1)).toBe(true);
-        });
-
-        it('should return false if column is not disabled', function() {
-            RequisitionColumnSpy.columnDependencies.andReturn([]);
-            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
-                .build();
-            spyOn(template.columnsMap.column1, 'isStockDisabledColumn').andReturn(false);
-
-            expect(template.isColumnDisabled(template.columnsMap.column1)).toBe(false);
-
-            template.populateStockOnHandFromStockCards = false;
-            template.columnsMap.column1.isStockDisabledColumn.andReturn(true);
-
-            expect(template.isColumnDisabled(template.columnsMap.column1)).toBe(false);
         });
     });
 

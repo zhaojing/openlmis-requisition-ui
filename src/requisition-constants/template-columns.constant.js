@@ -60,13 +60,6 @@
             getStockBasedColumns: getStockBasedColumns
         };
 
-        function getStockDisabledColumns() {
-            return [
-                this.MAXIMUM_STOCK_QUANTITY,
-                this.CALCULATED_ORDER_QUANTITY
-            ];
-        }
-
         function getStockBasedColumns() {
             return [
                 this.BEGINNING_BALANCE,

@@ -189,7 +189,6 @@
          */
         function canChangeSource(column) {
             return column.columnDefinition.sources.length > 1 &&
-                !vm.template.isColumnDisabled(column) &&
                 !(vm.template.populateStockOnHandFromStockCards && column.isStockBasedColumn());
         }
 

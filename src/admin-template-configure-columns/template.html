@@ -30,7 +30,7 @@
                             <div ng-if="column.columnDefinition.canChangeOrder" dnd-handle class="handle">:::</div>
                         </td>
                         <td>
-                            <input type="checkbox" ng-model="column.isDisplayed" ng-disabled="column.columnDefinition.isDisplayRequired || vm.template.isColumnDisabled(column)">
+                            <input type="checkbox" ng-model="column.isDisplayed" ng-disabled="column.columnDefinition.isDisplayRequired">
                         </td>
                         <td>
                             <div class="circle">
@@ -38,10 +38,10 @@
                             </div>
                         </td>
                         <td>
-                            <input disable-drag type="text" ng-model="column.label" class="form-control" ng-disabled="vm.template.isColumnDisabled(column)"></input>
+                            <input disable-drag type="text" ng-model="column.label" class="form-control"></input>
                         </td>
                         <td>
-                            <input characters-left ng-maxlength="{{vm.maxColumnDescriptionLength}}" disable-drag ng-model="column.definition" class="form-control" type="text" ng-disabled="vm.template.isColumnDisabled(column)"></input>
+                            <input characters-left ng-maxlength="{{vm.maxColumnDescriptionLength}}" disable-drag ng-model="column.definition" class="form-control" type="text"></input>
                         </td>
                         <td>
                             <div ng-if="!vm.canChangeSource(column)">{{vm.sourceDisplayName(column.source)}}</div>
@@ -52,7 +52,7 @@
                         <td>
                             <div ng-if="vm.isAverageConsumption(column)">
                                 <label for="numberOfPeriods">{{'adminProgramTemplate.numberOfPeriodsToAverage' | message}}</label>
-                                <input ng-disabled="vm.template.isColumnDisabled(column)" disable-drag positive-integer id="numberOfPeriods" ng-model="vm.template.numberOfPeriodsToAverage" class="form-control"/>
+                                <input disable-drag positive-integer id="numberOfPeriods" ng-model="vm.template.numberOfPeriodsToAverage" class="form-control"/>
                             </div>
                             <div ng-if="column.columnDefinition.options.length > 0">
                                 <div ng-if="!vm.canChangeSource(column)">{{column.option.optionLabel | message}}</div>

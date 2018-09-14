@@ -31,8 +31,6 @@
     TemplateColumn.$inject = ['$filter', 'COLUMN_SOURCES', 'TEMPLATE_COLUMNS'];
 
     function TemplateColumn($filter, COLUMN_SOURCES, TEMPLATE_COLUMNS) {
-        TemplateColumn.prototype.disableColumnsAndChangeSource = disableColumnsAndChangeSource;
-        TemplateColumn.prototype.isStockDisabledColumn = isStockDisabledColumn;
         TemplateColumn.prototype.isStockBasedColumn = isStockBasedColumn;
 
         return TemplateColumn;
@@ -40,38 +38,6 @@
         function TemplateColumn(column) {
             angular.merge(this, column);
             fixColumnOptionModelReference(this);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf admin-template.TemplateColumn
-         * @name disableColumnsAndChangeSource
-         *
-         * @description
-         * Turns off display and changes user input source for column.
-         */
-        function disableColumnsAndChangeSource() {
-            this.isDisplayed = false;
-
-            if (this.source === COLUMN_SOURCES.USER_INPUT) {
-                if (this.columnDefinition.sources.includes(COLUMN_SOURCES.REFERENCE_DATA)) {
-                    this.source = COLUMN_SOURCES.REFERENCE_DATA;
-                } else if (this.columnDefinition.sources.includes(COLUMN_SOURCES.CALCULATED)) {
-                    this.source = COLUMN_SOURCES.CALCULATED;
-                }
-            }
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf admin-template.TemplateColumn
-         * @name isStockDisabledColumn
-         *
-         * @description
-         * Checks if column is on stock disabled columns list.
-         */
-        function isStockDisabledColumn() {
-            return TEMPLATE_COLUMNS.getStockDisabledColumns().includes(this.name);
         }
 
         /**

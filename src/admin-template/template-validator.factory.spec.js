@@ -23,9 +23,8 @@ describe('templateValidator', function() {
             templateValidator = $injector.get('templateValidator');
         });
 
-        template = jasmine.createSpyObj('template', ['findCircularCalculatedDependencies', 'isColumnDisabled']);
+        template = jasmine.createSpyObj('template', ['findCircularCalculatedDependencies']);
         template.columnsMap = {};
-        template.isColumnDisabled.andReturn(false);
     });
 
     describe('isTemplateValid', function() {
@@ -111,15 +110,6 @@ describe('templateValidator', function() {
             var result = templateValidator.getColumnError(column, template);
 
             expect(result).toBe('adminProgramTemplate.columnLabelEmpty');
-        });
-
-        it('should return undefined if column is disabled', function() {
-            template.isColumnDisabled.andReturn(true);
-            column.label = undefined;
-
-            var result = templateValidator.getColumnError(column, template);
-
-            expect(result).toBe(undefined);
         });
 
         it('should return error if label is empty', function() {

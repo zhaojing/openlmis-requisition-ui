@@ -203,19 +203,12 @@ describe('RequisitionTemplateAdminController', function() {
         spyOn(requestedQuantityColumn, 'isStockBasedColumn').andReturn(false);
         spyOn(stockOnHandColumn, 'isStockBasedColumn').andReturn(true);
 
-        template.isColumnDisabled = jasmine.createSpy().andReturn(false);
-
         expect(vm.canChangeSource(beginningBalanceColumn)).toBe(true);
         expect(vm.canChangeSource(requestedQuantityColumn)).toBe(false);
 
         template.populateStockOnHandFromStockCards = true;
 
         expect(vm.canChangeSource(stockOnHandColumn)).toBe(false);
-        expect(vm.canChangeSource(beginningBalanceColumn)).toBe(false);
-
-        template.isColumnDisabled.andReturn(true);
-        template.populateStockOnHandFromStockCards = false;
-
         expect(vm.canChangeSource(beginningBalanceColumn)).toBe(false);
     });
 

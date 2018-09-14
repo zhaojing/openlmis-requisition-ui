@@ -26,16 +26,6 @@ describe('TEMPLATE_COLUMNS', function() {
         });
     });
 
-    describe('getStockDisabledColumns', function() {
-
-        it('should return list of stock disabled columns', function() {
-            var returnedList = TEMPLATE_COLUMNS.getStockDisabledColumns();
-
-            expect(returnedList[0]).toEqual('maximumStockQuantity');
-            expect(returnedList[1]).toEqual('calculatedOrderQuantity');
-        });
-    });
-
     describe('getStockBasedColumns', function() {
 
         it('should return list of stock based columns', function() {
