@@ -123,6 +123,13 @@ describe('RequisitionApprovalListController', function() {
 
             expect(vm.isBatchApproveScreenActive).toBe(true);
         });
+
+        it('should expose sort options', function() {
+            expect(vm.options).toEqual({
+                'requisitionApproval.newestAuthorized': ['emergency,desc', 'authorizedDate,desc'],
+                'requisitionApproval.oldestAuthorized': ['emergency,desc', 'authorizedDate,asc']
+            });
+        });
     });
 
     describe('search', function() {

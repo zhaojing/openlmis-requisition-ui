@@ -102,6 +102,11 @@
          */
         vm.isBatchApproveScreenActive = undefined;
 
+        vm.options = {
+            'requisitionApproval.newestAuthorized': ['emergency,desc', 'authorizedDate,desc'],
+            'requisitionApproval.oldestAuthorized': ['emergency,desc', 'authorizedDate,asc']
+        };
+
         /**
          * @ngdoc method
          * @methodOf requisition-approval.controller:RequisitionApprovalListController

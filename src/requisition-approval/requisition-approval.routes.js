@@ -29,7 +29,10 @@
             showInNavigation: true,
             isOffline: true,
             label: 'requisitionApproval.approve',
-            url: '/approvalList?page&size&program&offline',
+            url: '/approvalList?page&size&program&offline&sort',
+            params: {
+                sort: ['emergency,desc', 'authorizedDate,desc']
+            },
             controller: 'RequisitionApprovalListController',
             controllerAs: 'vm',
             templateUrl: 'requisition-approval/requisition-approval-list.html',
