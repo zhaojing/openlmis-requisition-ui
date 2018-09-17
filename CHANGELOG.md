@@ -7,6 +7,9 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-5366](https://openlmis.atlassian.net/browse/OLMIS-5366): Enabled Average Consumption column for Stock Based Requisitions.
 * [OLMIS-5395](https://openlmis.atlassian.net/browse/OLMIS-5395): Enabled Maximum Stock Quantity and Calculated Order Quantity columns for Stock Based Requisitions.
 
+Improvements:
+* [OLMIS-5409](https://openlmis.atlassian.net/browse/OLMIS-5409): Updated ui-components to version 7.0.0.
+
 Bug fixes:
 * [OLMIS-4938](https://openlmis.atlassian.net/browse/OLMIS-4938): Moved locked requisition template columns to the top.
 * [OLMIS-4555](https://openlmis.atlassian.net/browse/OLMIS-4555): Add reload flag to reflect changes on admin programs screen.

@@ -35,7 +35,7 @@ describe('openlmis.requisitions.search', function() {
             param: 'param',
             page: 0,
             size: 10,
-            sort: 'status',
+            sort: ['status'],
             facility: '1'
         };
 
@@ -52,7 +52,7 @@ describe('openlmis.requisitions.search', function() {
             last: true,
             totalElements: 2,
             totalPages: 1,
-            sort: 'status',
+            sort: ['status'],
             first: true,
             numberOfElements: 2,
             size: 10,

@@ -172,6 +172,11 @@ describe('RequisitionSearchController', function() {
             expect(vm.endDate).toBeUndefined();
         });
 
+        it('should expose sort options', function() {
+            expect(vm.options).toEqual({
+                'requisitionSearch.dateInitiated': ['createdDate,desc']
+            });
+        });
     });
 
     describe('search', function() {
