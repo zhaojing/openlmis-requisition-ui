@@ -21,7 +21,7 @@
     "requisitionApproval.startDate": "Start date",
     "requisitionApproval.viewRequisition": "View Requisition",
     "requisitionApproval.viewSelectedRequisitions": "View Selected Requisitions",
-    "requisitionApproval.dateAuthorized": "Date Authorized",
-    "requisitionApproval.newestAuthorized": "Newest Authorized",
-    "requisitionApproval.oldestAuthorized": "Oldest Authorized"
+    "requisitionApproval.dateAuthorized": "Date authorized",
+    "requisitionApproval.newestAuthorized": "Newest authorized",
+    "requisitionApproval.oldestAuthorized": "Oldest authorized"
 }
