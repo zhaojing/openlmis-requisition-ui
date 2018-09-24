@@ -58,6 +58,7 @@ describe('addProductModalService', function() {
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
 
             this.addProductModalService.show(this.categories, this.fullSupply);
+
             expect(this.openlmisModalService.createDialog.calls.length).toBe(2);
         });
 
@@ -69,6 +70,7 @@ describe('addProductModalService', function() {
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
 
             this.addProductModalService.show(this.categories, this.fullSupply);
+
             expect(this.openlmisModalService.createDialog.calls.length).toBe(2);
         });
 

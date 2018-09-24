@@ -58,6 +58,7 @@ describe('addFullSupplyProductModalService', function() {
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
 
             this.addFullSupplyProductModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+
             expect(this.openlmisModalService.createDialog.calls.length).toBe(2);
         });
 
@@ -69,6 +70,7 @@ describe('addFullSupplyProductModalService', function() {
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
 
             this.addFullSupplyProductModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+
             expect(this.openlmisModalService.createDialog.calls.length).toBe(2);
         });
 
