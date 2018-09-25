@@ -22,56 +22,56 @@ describe('Requisition', function() {
         RequisitionLineItemDataBuilder, LineItem, UuidGenerator, key;
 
     beforeEach(function() {
-        module('requisition', function($provide) {
-            var template = jasmine.createSpyObj('template', ['getColumns', 'getColumn']),
-                TemplateSpy = jasmine.createSpy('RequisitionTemplate').andReturn(template);
+        // module('requisition', function($provide) {
+        //     var template = jasmine.createSpyObj('template', ['getColumns', 'getColumn']),
+        //         TemplateSpy = jasmine.createSpy('RequisitionTemplate').andReturn(template);
 
-            template.getColumns.andCallFake(function(nonFullSupply) {
-                return nonFullSupply ? nonFullSupplyColumns() : fullSupplyColumns();
-            });
+        //     template.getColumns.andCallFake(function(nonFullSupply) {
+        //         return nonFullSupply ? nonFullSupplyColumns() : fullSupplyColumns();
+        //     });
 
-            calculatedOrderQuantity = {
-                isDisplayed: true
-            };
-            template.getColumn.andReturn(calculatedOrderQuantity);
+        //     calculatedOrderQuantity = {
+        //         isDisplayed: true
+        //     };
+        //     template.getColumn.andReturn(calculatedOrderQuantity);
 
-            offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy']);
-            var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
-            offlineFlag.getAll.andReturn([false]);
+        //     offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy']);
+        //     var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
+        //     offlineFlag.getAll.andReturn([false]);
 
-            $provide.service('RequisitionTemplate', function() {
-                return TemplateSpy;
-            });
-            $provide.factory('localStorageFactory', function() {
-                return function(name) {
-                    if (name === 'offlineFlag') {
-                        return offlineFlag;
-                    }
-                    return offlineRequisitions;
-                };
-            });
+        //     $provide.service('RequisitionTemplate', function() {
+        //         return TemplateSpy;
+        //     });
+        //     $provide.factory('localStorageFactory', function() {
+        //         return function(name) {
+        //             if (name === 'offlineFlag') {
+        //                 return offlineFlag;
+        //             }
+        //             return offlineRequisitions;
+        //         };
+        //     });
 
-            authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight', 'isAuthenticated']);
-            $provide.service('authorizationService', function() {
-                return authorizationServiceSpy;
-            });
+        //     authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight', 'isAuthenticated']);
+        //     $provide.service('authorizationService', function() {
+        //         return authorizationServiceSpy;
+        //     });
 
-            authorizationServiceSpy.hasRight.andCallFake(function(right) {
-                if (userHasApproveRight && right === REQUISITION_RIGHTS.REQUISITION_APPROVE) {
-                    return true;
-                }
-                if (userHasAuthorizeRight && right === REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
-                    return true;
-                }
-                if (userHasCreateRight && right === REQUISITION_RIGHTS.REQUISITION_CREATE) {
-                    return true;
-                }
-                if (userHasDeleteRight && right === REQUISITION_RIGHTS.REQUISITION_DELETE) {
-                    return true;
-                }
-                return false;
-            });
-        });
+        //     authorizationServiceSpy.hasRight.andCallFake(function(right) {
+        //         if (userHasApproveRight && right === REQUISITION_RIGHTS.REQUISITION_APPROVE) {
+        //             return true;
+        //         }
+        //         if (userHasAuthorizeRight && right === REQUISITION_RIGHTS.REQUISITION_AUTHORIZE) {
+        //             return true;
+        //         }
+        //         if (userHasCreateRight && right === REQUISITION_RIGHTS.REQUISITION_CREATE) {
+        //             return true;
+        //         }
+        //         if (userHasDeleteRight && right === REQUISITION_RIGHTS.REQUISITION_DELETE) {
+        //             return true;
+        //         }
+        //         return false;
+        //     });
+        // });
 
         inject(function($injector) {
             $httpBackend = $injector.get('$httpBackend');
