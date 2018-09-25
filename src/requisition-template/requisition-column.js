@@ -172,9 +172,14 @@
          * @return {RequisitionColumn}             column with additional info
          */
         function displayColumn(column, requisition) {
+            if (column.isDisplayed && TEMPLATE_COLUMNS.PACKS_TO_SHIP === column.name &&
+                typeof column.option !== 'undefined') {
+                return (column.option.optionName === 'showPackToShipInApprovalPage' &&
+                requisition.$isAfterAuthorize()) || column.option.optionName === 'showPackToShipInAllPages';
+            }
             return column.isDisplayed && (
                 [TEMPLATE_COLUMNS.APPROVED_QUANTITY, TEMPLATE_COLUMNS.REMARKS].indexOf(column.name) === -1 ||
-                requisition.$isAfterAuthorize());
+             requisition.$isAfterAuthorize());
         }
 
         function columnDependencies(column) {

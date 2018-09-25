@@ -48,6 +48,7 @@
         vm.sourceDisplayName = sourceDisplayName;
         vm.getColumnError = templateValidator.getColumnError;
         vm.isAverageConsumption = isAverageConsumption;
+        vm.isPackToShip = isPackToShip;
         vm.refreshAvailableTags = refreshAvailableTags;
 
         /**
@@ -220,6 +221,21 @@
          */
         function isAverageConsumption(column) {
             return column.name === TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION;
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure-columns.controller:RequisitionTemplateAdminController
+         * @name isPackToShip
+         *
+         * @description
+         * Determines whether displayed column is packs to ship.
+         *
+         * @param  {Object}  column Column
+         * @return {Boolean}        True if column name is packsToShip.
+         */
+        function isPackToShip(column) {
+            return column.name === TEMPLATE_COLUMNS.PACKS_TO_SHIP;
         }
 
         /**

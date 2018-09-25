@@ -9,5 +9,8 @@
     "requisitionConstants.disableSkippedLineItems": "Disable skipped line items",
     "requisitionConstants.newPatientCount": "New patient count",
     "requisitionConstants.dispensingUnitsForNewPatients": "Dispensing unit for new patients",
-    "requisitionConstants.default": "Default"
+    "requisitionConstants.default": "Default",
+    "requisitionConstants.showPackToShipInAllPages" : "Show on all pages",
+    "requisitionConstants.showPackToShipInApprovalPage" : "Show on Approval page only" 
+
 }

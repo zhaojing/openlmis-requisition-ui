@@ -161,4 +161,53 @@ describe('RequisitionColumn', function() {
 
     });
 
+    describe('packsToShipColumn', function() {
+
+        beforeEach(function() {
+            columnDef.name =  TEMPLATE_COLUMNS.PACKS_TO_SHIP;
+            columnDef.isDisplayed = true;
+            columnDef.option = {
+                optionLabel: 'requisitionConstants.showPackToShipInApprovalPage',
+                optionName: 'showPackToShipInApprovalPage'
+            };
+        });
+
+        it('should hide if requisition is not in approval stage and showOnApprovalPage is selected', function() {
+            var packToShipColumn =  new RequisitionColumn(columnDef, requisition);
+
+            expect(packToShipColumn.$display).toBe(false);
+        });
+
+        it('should show if requisition is in approval stage and showPackToShipInApprovalPage is selected', function() {
+            spyOn(requisition, '$isAfterAuthorize').andReturn(true);
+            var packToShipColumn =  new RequisitionColumn(columnDef, requisition);
+
+            expect(packToShipColumn.$display).toBe(true);
+        });
+
+        it('should show if requisition is not in approval stage and showPackToShipInAllPages is selected', function() {
+            spyOn(requisition, '$isAfterAuthorize').andReturn(false);
+            columnDef.option = {
+                optionLabel: 'requisitionConstants.showPackToShipInAllPages',
+                optionName: 'showPackToShipInAllPages'
+            };
+
+            var packToShipColumnBeforeAuthorized =  new RequisitionColumn(columnDef, requisition);
+
+            expect(packToShipColumnBeforeAuthorized.$display).toBe(true);
+        });
+
+        it('should show if requisition is in approval stage and showPackToShipInAllPages is selected', function() {
+            spyOn(requisition, '$isAfterAuthorize').andReturn(false);
+            columnDef.option = {
+                optionLabel: 'requisitionConstants.showPackToShipInAllPages',
+                optionName: 'showPackToShipInAllPages'
+            };
+
+            var packToShipColumnAfterAuthorized =  new RequisitionColumn(columnDef, requisition);
+
+            expect(packToShipColumnAfterAuthorized.$display).toBe(true);
+        });
+    });
+
 });

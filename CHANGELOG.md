@@ -8,6 +8,7 @@ New functionality added in a backwards-compatible manner:
 * [OLMIS-5395](https://openlmis.atlassian.net/browse/OLMIS-5395): Enabled Maximum Stock Quantity and Calculated Order Quantity columns for Stock Based Requisitions.
 * [OLMIS-5226](https://openlmis.atlassian.net/browse/OLMIS-5226): Added sort component on the Approve screen in Requisitions.
   * Added Authorized Date column on the screen
+* [OLMIS-4968](https://openlmis.atlassian.net/browse/OLMIS-4968): Make packsToShip column to be seen only on Rnr approval screen or on all Rnr screens bases on admin template configuration
 
 Improvements:
 * [OLMIS-5409](https://openlmis.atlassian.net/browse/OLMIS-5409): Updated ui-components to version 7.0.0.
