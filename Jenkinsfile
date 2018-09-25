@@ -168,7 +168,7 @@ pipeline {
 }
 
 def notifyAfterFailure() {
-    BRANCH = "${env.GIT_BRANCH}"
+    BRANCH = "${env.GIT_BRANCH}".trim()
     println("CURRENT BRANCH !!!!!! = >" + BRANCH + "<")
     println(BRANCH.equals("master"));
     println(BRANCH.startsWith("rel-"));
