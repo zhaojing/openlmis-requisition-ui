@@ -169,7 +169,10 @@ pipeline {
 
 def notifyAfterFailure() {
     BRANCH = "${env.GIT_BRANCH}"
-    println("CURRENT BRANCH !!!!!! = " + BRANCH)
+    println("CURRENT BRANCH !!!!!! = >" + BRANCH + "<")
+    println(BRANCH.equals("master"));
+    println(BRANCH.startsWith("rel-"));
+    println(BRANCH.equals("master") || BRANCH.startsWith("rel-"));
     if (BRANCH.equals("master") || BRANCH.startsWith("rel-")) {
         slackSend color: 'danger', message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} ${env.STAGE_NAME} FAILED (<${env.BUILD_URL}|Open>)"
     }
