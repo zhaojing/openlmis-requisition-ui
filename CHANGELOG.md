@@ -18,6 +18,7 @@ Bug fixes:
 * [OLMIS-4938](https://openlmis.atlassian.net/browse/OLMIS-4938): Moved locked requisition template columns to the top.
 * [OLMIS-4555](https://openlmis.atlassian.net/browse/OLMIS-4555): Add reload flag to reflect changes on admin programs screen.
 * [OLMIS-5134](https://openlmis.atlassian.net/browse/OLMIS-5134): The Approve button will not be visible if a user does not have a right to a supervisory node at which the user wants to approve the requisition.
+* [OLMIS-5502](https://openlmis.atlassian.net/browse/OLMIS-5502): Fixed the issue with Update outdated requisition button not showing when appropriate.
 
 Improvements:
 * [OLMIS-5115](https://openlmis.atlassian.net/browse/OLMIS-5115): Made the requisition print button disabled when going offline

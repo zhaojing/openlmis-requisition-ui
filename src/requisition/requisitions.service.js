@@ -114,12 +114,22 @@
 
             requisition = getOfflineRequisition(id);
 
-            if (requisition && (offlineService.isOffline() || requisition.$modified)) {
+            if (requisition && offlineService.isOffline()) {
                 statusMessages = offlineStatusMessages.search({
                     requisitionId: requisition.id
                 });
 
                 resolve(requisition, statusMessages);
+            } else if (requisition && requisition.$modified) {
+                getRequisition(id).then(function() {
+                    requisition = getOfflineRequisition(id);
+
+                    statusMessages = offlineStatusMessages.search({
+                        requisitionId: requisition.id
+                    });
+
+                    resolve(requisition, statusMessages);
+                });
             } else {
                 getRequisition(id).then(function(requisition) {
                     filterRequisitionStockAdjustmentReasons(requisition);
@@ -376,6 +386,9 @@
 
         function transformGetResponse(data, headers, status) {
             return transformResponse(data, headers, status, function(response) {
+                if (response.modifiedDate) {
+                    response.modifiedDate = dateUtils.toDate(response.modifiedDate);
+                }
                 if (response.processingPeriod.startDate) {
                     response.processingPeriod.startDate = dateUtils.toDate(response.processingPeriod.startDate);
                 }
@@ -383,6 +396,7 @@
                     response.processingPeriod.endDate = dateUtils.toDate(response.processingPeriod.endDate);
                 }
                 response.eTag = headers('eTag');
+                transformRequisitionOffline(response);
                 return response;
             });
         }
@@ -466,7 +480,9 @@
         }
 
         function markIfOutdated(requisition, offlineRequisition) {
-            var offlineDate = dateUtils.toDate(offlineRequisition.modifiedDate);
+            var offlineDate = offlineRequisition.modifiedDate.getTime ?
+                offlineRequisition.modifiedDate :
+                dateUtils.toDate(offlineRequisition.modifiedDate);
 
             if (!offlineDate || offlineDate.getTime() !== requisition.modifiedDate.getTime()) {
                 offlineRequisition.$outdated = true;
