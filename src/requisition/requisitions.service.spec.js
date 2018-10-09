@@ -166,15 +166,14 @@ describe('requisitionService', function() {
             headers = { 'eTag': 'W/1' };
 
         beforeEach(function() {
-            var getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
-
+            getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
             getRequisitionUrl = '/api/requisitions/' + requisition.id;
-
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
-            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
         });
 
         it('should return eTag for requisition', function() {
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+
             var data = {};
             requisitionService.get('1').then(function(response) {
                 data = response;
@@ -190,6 +189,9 @@ describe('requisitionService', function() {
         });
 
         it('should get requisition by id', function() {
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+
             var data = {};
             requisitionService.get('1').then(function(response) {
                 data = response;
@@ -226,6 +228,9 @@ describe('requisitionService', function() {
         });
 
         it('should filter out hidden reasons', function() {
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+
             var data = {};
             requisitionService.get('1').then(function(response) {
                 data = response;
@@ -253,6 +258,8 @@ describe('requisitionService', function() {
         });
 
         it('should retrieve requisition from the local storage if it was modified locally', function() {
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+
             requisition.$modified = true;
             requisitionsStorage.getBy.andReturn(requisition);
             statusMessagesStorage.search.andReturn([statusMessage]);
@@ -265,6 +272,40 @@ describe('requisitionService', function() {
             $rootScope.$apply();
 
             expect(result.id).toEqual(requisition.id);
+        });
+
+        //eslint-disable-next-line jasmine/missing-expect
+        it('should retrieve requisition from the server if it is not modified', function() {
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+
+            requisition.$modified = false;
+            requisitionsStorage.getBy.andReturn(requisition);
+
+            requisitionService.get(requisition.id);
+            httpBackend.flush();
+            $rootScope.$apply();
+        });
+
+        it('should retrieve requisition from the server to check if the cached one is outdated', function() {
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+
+            var offlineRequisition = angular.copy(requisition);
+            offlineRequisition.modifiedDate = [2016, 4, 30, 15, 20, 33];
+            offlineRequisition.$modified = true;
+            requisitionsStorage.getBy.andReturn(offlineRequisition);
+
+            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+
+            var result;
+            requisitionService.get(requisition.id)
+                .then(function(requisition) {
+                    result = requisition;
+                });
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(result.$outdated).toBe(true);
         });
     });
 

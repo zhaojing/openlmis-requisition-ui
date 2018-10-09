@@ -1,3 +1,9 @@
+5.5.0 / 2018-10-09
+==================
+
+Bug fixes:
+* [OLMIS-5502](https://openlmis.atlassian.net/browse/OLMIS-5502): Fixed the issue with Update outdated requisition button not showing when appropriate.
+
 5.4.0 / 2018-08-16
 ==================
 

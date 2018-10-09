@@ -116,36 +116,39 @@
 
             requisition = getOfflineRequisition(id);
 
-            if (offlineService.isOffline() && requisition) {
+            if (requisition && offlineService.isOffline()) {
+                statusMessages = offlineStatusMessages.search({
+                    requisitionId: requisition.id
+                });
+
+                resolve(requisition, statusMessages);
+            } else if (requisition && requisition.$modified) {
+                getRequisition(id).then(function() {
+                    requisition = getOfflineRequisition(id);
+
                     statusMessages = offlineStatusMessages.search({
                         requisitionId: requisition.id
                     });
+
                     resolve(requisition, statusMessages);
+                });
             } else {
-                if (!requisition || !requisition.$modified) {
-                    getRequisition(id).then(function(requisition) {
-                        filterRequisitionStockAdjustmentReasons(requisition);
+                getRequisition(id).then(function(requisition) {
+                    filterRequisitionStockAdjustmentReasons(requisition);
 
-                        requisition.$availableOffline = !onlineOnlyRequisitions.contains(id);
-                        getStatusMessages(requisition).then(function(response) {
-                            if (requisition.$availableOffline) {
-                                storeResponses(requisition, response);
-                            }
-                            resolve(requisition, response);
-                        }, function() {
-                            if (requisition.$availableOffline) {
-                                offlineRequisitions.put(requisition);
-                            }
-                            resolve(requisition);
-                        });
-                    }, error);
-                } else {
-                    statusMessages = offlineStatusMessages.search({
-                            requisitionId: requisition.id
-                        });
-
-                    resolve(requisition, statusMessages);
-                }
+                    requisition.$availableOffline = !onlineOnlyRequisitions.contains(id);
+                    getStatusMessages(requisition).then(function(response) {
+                        if (requisition.$availableOffline) {
+                            storeResponses(requisition, response);
+                        }
+                        resolve(requisition, response);
+                    }, function() {
+                        if (requisition.$availableOffline) {
+                            offlineRequisitions.put(requisition);
+                        }
+                        resolve(requisition);
+                    });
+                }, error);
             }
 
             return deferred.promise;
@@ -384,6 +387,9 @@
 
         function transformGetResponse(data, headers, status) {
             return transformResponse(data, headers, status, function(response) {
+                if (response.modifiedDate) {
+                    response.modifiedDate = dateUtils.toDate(response.modifiedDate);
+                }
                 if (response.processingPeriod.startDate) {
                     response.processingPeriod.startDate = dateUtils.toDate(response.processingPeriod.startDate);
                 }
@@ -391,6 +397,7 @@
                     response.processingPeriod.endDate = dateUtils.toDate(response.processingPeriod.endDate);
                 }
                 response.eTag = headers('eTag');
+                transformRequisitionOffline(response);
                 return response;
             });
         }
@@ -474,7 +481,9 @@
         }
 
         function markIfOutdated(requisition, offlineRequisition) {
-            var offlineDate = dateUtils.toDate(offlineRequisition.modifiedDate);
+            var offlineDate = offlineRequisition.modifiedDate.getTime ?
+                offlineRequisition.modifiedDate :
+                dateUtils.toDate(offlineRequisition.modifiedDate);
 
             if(!offlineDate || offlineDate.getTime() !== requisition.modifiedDate.getTime()) {
                 offlineRequisition.$outdated = true;
