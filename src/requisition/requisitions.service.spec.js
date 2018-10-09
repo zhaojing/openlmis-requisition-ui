@@ -269,6 +269,7 @@ describe('requisitionService', function() {
             .then(function(response) {
                 result = response;
             });
+            httpBackend.flush();
             $rootScope.$apply();
 
             expect(result.id).toEqual(requisition.id);
