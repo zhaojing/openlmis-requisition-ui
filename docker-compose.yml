@@ -1,7 +1,7 @@
 version: "2"
 services:
   requisition-ui:
-    image: openlmis/dev-ui:8.0.0
+    image: openlmis/dev-ui:8.0.1
     working_dir: /app
     volumes:
       - '.:/app'
@@ -22,7 +22,7 @@ services:
       - ui-components
       - ui-layout
   auth-ui:
-    image: openlmis/auth-ui:6.1.1
+    image: openlmis/auth-ui:6.1.2
     volumes:
       - '/openlmis-auth-ui'
   fulfillment-ui:
@@ -30,15 +30,15 @@ services:
     volumes:
       - '/openlmis-fulfillment-ui'
   referencedata-ui:
-    image: openlmis/referencedata-ui:5.4.0
+    image: openlmis/referencedata-ui:5.4.1
     volumes:
       - '/openlmis-referencedata-ui'
   stockmanagement-ui:
-    image: openlmis/stockmanagement-ui:2.0.0
+    image: openlmis/stockmanagement-ui:2.0.1
     volumes:
      - '/openlmis-stockmanagement-ui'
   ui-components:
-    image: openlmis/ui-components:6.0.0
+    image: openlmis/ui-components:6.0.1
     volumes:
       - '/openlmis-ui-components'
   ui-layout:
