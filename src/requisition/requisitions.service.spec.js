@@ -316,6 +316,26 @@ describe('requisitionService', function() {
 
             expect(result.$outdated).toBe(true);
         });
+
+        it('should mark requisition as outdated if it does not have modified date', function() {
+            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+
+            var offlineRequisition = angular.copy(requisition);
+            offlineRequisition.$modified = true;
+            requisitionsStorage.getBy.andReturn(offlineRequisition);
+
+            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+
+            var result;
+            requisitionService.get(requisition.id)
+                .then(function(requisition) {
+                    result = requisition;
+                });
+            httpBackend.flush();
+            $rootScope.$apply();
+
+            expect(result.$outdated).toBe(true);
+        });
     });
 
     it('should initiate requisition', function() {
