@@ -481,7 +481,7 @@
         }
 
         function markIfOutdated(requisition, offlineRequisition) {
-            var offlineDate = offlineRequisition.modifiedDate.getTime ?
+            var offlineDate = offlineRequisition.modifiedDate && offlineRequisition.modifiedDate.getTime ?
                 offlineRequisition.modifiedDate :
                 dateUtils.toDate(offlineRequisition.modifiedDate);
 
