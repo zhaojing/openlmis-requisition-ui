@@ -18,23 +18,15 @@
     'use strict';
 
     /**
-     * @module requisition-view-tab
+     * @module add-full-supply-product-modal
      *
      * @description
-     * Responsible for managing non full supply screen.
+     * Provides modal for adding products.
      */
-    angular.module('requisition-view-tab', [
-        'openlmis-auth',
-        'openlmis-form',
+    angular.module('add-full-supply-product-modal', [
+        'openlmis-modal',
         'openlmis-pagination',
-        'openlmis-rights',
-        'openlmis-templates',
-        'openlmis-urls',
-        'requisition',
-        'requisition-validation',
-        'requisition-product-grid',
-        'ui.router',
-        'add-full-supply-product-modal'
+        'requisition'
     ]);
 
 })();

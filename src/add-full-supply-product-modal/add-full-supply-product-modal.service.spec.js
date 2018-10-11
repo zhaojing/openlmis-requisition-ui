@@ -16,7 +16,7 @@
 describe('addFullSupplyProductModalService', function() {
 
     beforeEach(function() {
-        module('requisition-view-tab');
+        module('add-full-supply-product-modal');
 
         inject(function($injector) {
             this.$q = $injector.get('$q');

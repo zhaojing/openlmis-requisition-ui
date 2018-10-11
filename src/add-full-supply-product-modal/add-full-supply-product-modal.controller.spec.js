@@ -19,7 +19,7 @@ describe('AddFullSupplyProductModalController', function() {
         $q, $rootScope, modalDeferred, requisitionLineItems;
 
     beforeEach(function() {
-        module('requisition-view-tab');
+        module('add-full-supply-product-modal');
 
         inject(function($injector) {
             $controller = $injector.get('$controller');

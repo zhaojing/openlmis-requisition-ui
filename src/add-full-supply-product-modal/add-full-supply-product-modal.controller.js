@@ -19,14 +19,14 @@
 
     /**
      * @ngdoc controller
-     * @name requisition-view-tab.controller:AddFullSupplyProductModalController
+     * @name add-full-supply-product-modal.controller:AddFullSupplyProductModalController
      *
      * @description
      * Manages Add Product Modal and provides method for
      * and adding skipped products back to the requisition table.
      */
     angular
-        .module('requisition-view-tab')
+        .module('add-full-supply-product-modal')
         .controller('AddFullSupplyProductModalController', controller);
 
     controller.$inject = ['modalDeferred', 'requisitionLineItems'];
@@ -41,7 +41,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @propertyOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name requisitionLineItems
          * @type {Array}
          *
@@ -52,7 +52,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @propertyOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name lineItemsToAdd
          * @type {Array}
          *
@@ -64,7 +64,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @propertyOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name searchText
          * @type {String}
          *
@@ -75,7 +75,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @propertyOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name searchTextLowerCase
          * @type {String}
          *
@@ -86,7 +86,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @methodOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name $onInit
          *
          * @description
@@ -101,7 +101,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @methodOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name toggleAddLineItem
          *
          * @description
@@ -117,7 +117,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @methodOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name addProducts
          *
          * @description
@@ -131,7 +131,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @methodOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name searchByCodeAndName
          *
          * @description
@@ -145,7 +145,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-view-tab.controller:AddFullSupplyProductModalController
+         * @methodOf add-full-supply-product-modal.controller:AddFullSupplyProductModalController
          * @name refreshList
          *
          * @description

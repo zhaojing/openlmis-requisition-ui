@@ -19,14 +19,14 @@
 
     /**
      * @ngdoc service
-     * @name requisition-view-tab.addFullSupplyProductModalService
+     * @name add-full-supply-product-modal.addFullSupplyProductModalService
      *
      * @description
      * It shows modal with possibility to add full supply line item
      * with one or more products that were previously skipped.
      */
     angular
-        .module('requisition-view-tab')
+        .module('add-full-supply-product-modal')
         .service('addFullSupplyProductModalService', service);
 
     service.$inject = [
@@ -40,7 +40,7 @@
 
         /**
          * @ngdoc method
-         * @methodOf requisition-view-tab.addFullSupplyProductModalService
+         * @methodOf add-full-supply-product-modal.addFullSupplyProductModalService
          * @name show
          *
          * @description
@@ -57,7 +57,7 @@
             dialog = openlmisModalService.createDialog({
                 controller: 'AddFullSupplyProductModalController',
                 controllerAs: 'vm',
-                templateUrl: 'requisition-view-tab/add-full-supply-product-modal.html',
+                templateUrl: 'add-full-supply-product-modal/add-full-supply-product-modal.html',
                 show: true,
                 resolve: {
                     requisitionLineItems: function() {
