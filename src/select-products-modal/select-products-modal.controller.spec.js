@@ -13,13 +13,13 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('AddFullSupplyProductModalController', function() {
+describe('SelectProductsModalController', function() {
 
     var vm, $controller, RequisitionLineItemDataBuilder, ProgramDataBuilder, program,
         $q, $rootScope, modalDeferred, requisitionLineItems;
 
     beforeEach(function() {
-        module('add-full-supply-product-modal');
+        module('select-products-modal');
 
         inject(function($injector) {
             $controller = $injector.get('$controller');
@@ -37,7 +37,7 @@ describe('AddFullSupplyProductModalController', function() {
 
         modalDeferred = $q.defer();
 
-        vm = $controller('AddFullSupplyProductModalController', {
+        vm = $controller('SelectProductsModalController', {
             modalDeferred: modalDeferred,
             requisitionLineItems: requisitionLineItems
         });

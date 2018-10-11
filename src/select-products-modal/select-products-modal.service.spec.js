@@ -13,15 +13,15 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-describe('addFullSupplyProductModalService', function() {
+describe('selectProductsModalService', function() {
 
     beforeEach(function() {
-        module('add-full-supply-product-modal');
+        module('select-products-modal');
 
         inject(function($injector) {
             this.$q = $injector.get('$q');
             this.$rootScope = $injector.get('$rootScope');
-            this.addFullSupplyProductModalService = $injector.get('addFullSupplyProductModalService');
+            this.selectProductsModalService = $injector.get('selectProductsModalService');
             this.openlmisModalService = $injector.get('openlmisModalService');
             this.RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
         });
@@ -44,32 +44,32 @@ describe('addFullSupplyProductModalService', function() {
     describe('show', function() {
 
         it('it should not open second dialog if the first one is still open', function() {
-            this.addFullSupplyProductModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
-            this.addFullSupplyProductModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
         });
 
         it('should close modal if adding product succeeds', function() {
-            this.addFullSupplyProductModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
             this.dialogDeferred.resolve();
             this.$rootScope.$apply();
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
 
-            this.addFullSupplyProductModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(2);
         });
 
         it('should close modal if adding product fails', function() {
-            this.addFullSupplyProductModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
             this.dialogDeferred.reject();
             this.$rootScope.$apply();
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
 
-            this.addFullSupplyProductModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(2);
         });

@@ -18,12 +18,12 @@
     'use strict';
 
     /**
-     * @module add-full-supply-product-modal
+     * @module select-products-modal
      *
      * @description
      * Provides modal for adding products.
      */
-    angular.module('add-full-supply-product-modal', [
+    angular.module('select-products-modal', [
         'openlmis-modal',
         'openlmis-pagination',
         'requisition'

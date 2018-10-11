@@ -34,7 +34,7 @@
         'requisition-validation',
         'requisition-product-grid',
         'ui.router',
-        'add-full-supply-product-modal'
+        'select-products-modal'
     ]);
 
 })();

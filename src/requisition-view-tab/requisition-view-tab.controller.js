@@ -29,13 +29,13 @@
         .controller('ViewTabController', ViewTabController);
 
     ViewTabController.$inject = [
-        '$filter', 'addProductModalService', 'addFullSupplyProductModalService',
+        '$filter', 'addProductModalService', 'selectProductsModalService',
         'requisitionValidator', 'requisition', 'columns', 'messageService',
         'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory',
         'TEMPLATE_COLUMNS'
     ];
 
-    function ViewTabController($filter, addProductModalService, addFullSupplyProductModalService,
+    function ViewTabController($filter, addProductModalService, selectProductsModalService,
                                requisitionValidator, requisition, columns, messageService,
                                lineItems, alertService, canSubmit, canAuthorize, fullSupply,
                                categoryFactory, TEMPLATE_COLUMNS) {
@@ -228,7 +228,7 @@
          */
         function addFullSupplyProduct() {
             refreshLineItems();
-            addFullSupplyProductModalService.show(vm.requisition.requisitionLineItems)
+            selectProductsModalService.show(vm.requisition.requisitionLineItems)
                 .then(function(result) {
                     result.items.forEach(function(item) {
                         item.skipped = false;

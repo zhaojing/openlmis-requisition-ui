@@ -15,7 +15,7 @@
 
 describe('ViewTabController', function() {
 
-    var vm, addProductModalService, addFullSupplyProductModalService, requisition, $q, requisitionValidator, $rootScope,
+    var vm, addProductModalService, selectProductsModalService, requisition, $q, requisitionValidator, $rootScope,
         $controller, LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
         RequisitionColumnDataBuilder, fullSupply, categoryFactory, messageService;
 
@@ -36,7 +36,7 @@ describe('ViewTabController', function() {
 
         requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
         addProductModalService = jasmine.createSpyObj('addProductModalService', ['show']);
-        addFullSupplyProductModalService = jasmine.createSpyObj('addFullSupplyProductModalService', ['show']);
+        selectProductsModalService = jasmine.createSpyObj('selectProductsModalService', ['show']);
 
         requisition = jasmine.createSpyObj('requisition', ['$isInitiated', '$isRejected',
             '$isApproved', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased',
@@ -338,7 +338,7 @@ describe('ViewTabController', function() {
     describe('addFullSupplyProduct', function() {
 
         beforeEach(function() {
-            addFullSupplyProductModalService.show.andReturn($q.resolve({
+            selectProductsModalService.show.andReturn($q.resolve({
                 items: [lineItemSpy(1, 'one', true)]
             }));
         });
@@ -348,7 +348,7 @@ describe('ViewTabController', function() {
             vm.addFullSupplyProduct();
             $rootScope.$apply();
 
-            expect(addFullSupplyProductModalService.show).toHaveBeenCalled();
+            expect(selectProductsModalService.show).toHaveBeenCalled();
         });
 
         it('should insert selected products to the beginning of full supply table', function() {
@@ -590,7 +590,7 @@ describe('ViewTabController', function() {
             LineItem: LineItem,
             requisition: requisition,
             addProductModalService: addProductModalService,
-            addFullSupplyProductModalService: addFullSupplyProductModalService,
+            selectProductsModalService: selectProductsModalService,
             requisitionValidator: requisitionValidator,
             canSubmit: canSubmit,
             canAuthorize: canAuthorize,
