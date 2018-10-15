@@ -111,9 +111,10 @@
         Requisition.prototype.skipAllFullSupplyLineItems = skipAllFullSupplyLineItems;
         Requisition.prototype.unskipAllFullSupplyLineItems = unskipAllFullSupplyLineItems;
         Requisition.prototype.getAvailableNonFullSupplyProducts = getAvailableNonFullSupplyProducts;
-        Requisition.prototype.getAvailableFullSupplyProducts = getAvailableFullSupplyProducts;
+        Requisition.prototype.getSkippedFullSupplyProducts = getSkippedFullSupplyProducts;
         Requisition.prototype.addLineItem = addLineItem;
         Requisition.prototype.deleteLineItem = deleteLineItem;
+        Requisition.prototype.unskipFullSupplyProducts = unskipFullSupplyProducts;
 
         return Requisition;
 
@@ -501,18 +502,21 @@
         /**
          * @ngdoc method
          * @methodOf requisition.Requisition
-         * @name getAvailableFullSupplyProducts
+         * @name getSkippedFullSupplyProducts
          *
          * @description
-         * Returns a list of available full supply products that does not have a line item added.
+         * Returns a list of skipped full supply products that does not have a line item added.
          *
-         * @return  {Array} the array of available full supply line items
+         * @return  {Array} the array of skipped full supply products
          */
-        function getAvailableFullSupplyProducts() {
-            return filterOutOrderablesWithLineItems(
-                this.availableFullSupplyProducts,
-                this.requisitionLineItems
-            );
+        function getSkippedFullSupplyProducts() {
+            return this.requisitionLineItems
+                .filter(function(requisitionLineItem) {
+                    return requisitionLineItem.$program.fullSupply && requisitionLineItem.skipped;
+                })
+                .map(function(lineItem) {
+                    return lineItem.orderable;
+                });
         }
 
         /**
@@ -612,6 +616,28 @@
             getFullSupplyLineItems(this.requisitionLineItems).forEach(function(lineItem) {
                 lineItem.skipped = false;
             });
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name unskipFullSupplyProducts
+         *
+         * @description
+         * Unskip line items for the passed full supply products.
+         */
+        function unskipFullSupplyProducts(products) {
+            var productIds = products.map(function(product) {
+                return product.id;
+            });
+
+            this.requisitionLineItems
+                .filter(function(lineItem) {
+                    return productIds.indexOf(lineItem.orderable.id) > -1;
+                })
+                .forEach(function(lineItem) {
+                    lineItem.skipped = false;
+                });
         }
 
         function getFullSupplyLineItems(lineItems) {

@@ -16,60 +16,59 @@
 describe('selectProductsModalService', function() {
 
     beforeEach(function() {
+        module('referencedata-orderable');
         module('select-products-modal');
 
+        var OrderableDataBuilder;
         inject(function($injector) {
             this.$q = $injector.get('$q');
             this.$rootScope = $injector.get('$rootScope');
             this.selectProductsModalService = $injector.get('selectProductsModalService');
             this.openlmisModalService = $injector.get('openlmisModalService');
-            this.RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
+            OrderableDataBuilder = $injector.get('OrderableDataBuilder');
         });
 
+        this.products = [
+            new OrderableDataBuilder().buildJson(),
+            new OrderableDataBuilder().buildJson()
+        ];
         this.dialogDeferred = this.$q.defer();
         this.dialog = {
             promise: this.dialogDeferred.promise
         };
 
         spyOn(this.openlmisModalService, 'createDialog').andReturn(this.dialog);
-
-        this.requisitionLineItemDataBuilders = [
-            new this.RequisitionLineItemDataBuilder().buildJson(),
-            new this.RequisitionLineItemDataBuilder().buildJson()
-        ];
-
-        this.fullSupply = true;
     });
 
     describe('show', function() {
 
         it('it should not open second dialog if the first one is still open', function() {
-            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
-            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.products);
+            this.selectProductsModalService.show(this.products);
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
         });
 
         it('should close modal if adding product succeeds', function() {
-            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.products);
             this.dialogDeferred.resolve();
             this.$rootScope.$apply();
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
 
-            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.products);
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(2);
         });
 
         it('should close modal if adding product fails', function() {
-            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.products);
             this.dialogDeferred.reject();
             this.$rootScope.$apply();
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(1);
 
-            this.selectProductsModalService.show(this.requisitionLineItemDataBuilders, this.fullSupply);
+            this.selectProductsModalService.show(this.products);
 
             expect(this.openlmisModalService.createDialog.calls.length).toBe(2);
         });

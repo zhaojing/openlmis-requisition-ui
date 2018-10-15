@@ -22,45 +22,32 @@
      * @name select-products-modal.controller:SelectProductsModalController
      *
      * @description
-     * Manages Add Product Modal and provides method for
-     * and adding skipped products back to the requisition table.
+     * Manages Select Products Modal.
      */
     angular
         .module('select-products-modal')
         .controller('SelectProductsModalController', controller);
 
-    controller.$inject = ['modalDeferred', 'requisitionLineItems'];
+    controller.$inject = ['modalDeferred', 'products'];
 
-    function controller(modalDeferred, requisitionLineItems) {
+    function controller(modalDeferred, products) {
         var vm = this;
+
         vm.$onInit = onInit;
-        vm.addProducts = addProducts;
+        vm.selectProducts = selectProducts;
         vm.close = modalDeferred.reject;
-        vm.toggleAddLineItem = toggleAddLineItem;
-        vm.refreshList = refreshList;
+        vm.search = search;
 
         /**
          * @ngdoc property
          * @propertyOf select-products-modal.controller:SelectProductsModalController
-         * @name requisitionLineItems
+         * @name products
          * @type {Array}
          *
          * @description
-         * Holds a list of skipped line items that are available to be un-skipped.
+         * Holds a list of available products.
          */
-        vm.requisitionLineItems = undefined;
-
-        /**
-         * @ngdoc property
-         * @propertyOf select-products-modal.controller:SelectProductsModalController
-         * @name lineItemsToAdd
-         * @type {Array}
-         *
-         * @description
-         * Holds a list of full supply line items the user selected to un-skip.
-         * These line items will not be un-skipped until the addProducts is triggered.
-         */
-        vm.lineItemsToAdd = undefined;
+        vm.products = undefined;
 
         /**
          * @ngdoc property
@@ -76,13 +63,13 @@
         /**
          * @ngdoc property
          * @propertyOf select-products-modal.controller:SelectProductsModalController
-         * @name searchTextLowerCase
-         * @type {String}
+         * @type {Object}
+         * @name selections
          *
          * @description
-         * Holds text entered in product search box in lower case.
+         * The maps storing information about selected products.
          */
-        vm.searchTextLowerCase = undefined;
+        vm.selections = undefined;
 
         /**
          * @ngdoc method
@@ -93,71 +80,48 @@
          * Initialization method of the SelectProductsModalController.
          */
         function onInit() {
-            vm.requisitionLineItems = requisitionLineItems;
-            vm.lineItemsToAdd = [];
+            vm.products = products;
             vm.searchText = '';
-            vm.refreshList();
+            vm.selections = {};
+            vm.search();
         }
 
         /**
          * @ngdoc method
          * @methodOf select-products-modal.controller:SelectProductsModalController
-         * @name toggleAddLineItem
+         * @name selectProducts
          *
          * @description
-         * Adds or removes the line item to/from the list of items that will be un-skipped.
+         * Resolves promise with products selected in the modal.
          */
-        function toggleAddLineItem(item) {
-            if (vm.lineItemsToAdd.indexOf(item) >= 0) {
-                vm.lineItemsToAdd.splice(vm.lineItemsToAdd.indexOf(item), 1);
-            } else {
-                vm.lineItemsToAdd.push(item);
-            }
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf select-products-modal.controller:SelectProductsModalController
-         * @name addProducts
-         *
-         * @description
-         * Resolves promise with line items selected in the modal.
-         */
-        function addProducts() {
-            modalDeferred.resolve({
-                items: vm.lineItemsToAdd
+        function selectProducts() {
+            var selectedProducts = vm.products.filter(function(orderable) {
+                return vm.selections[orderable.id];
             });
+
+            modalDeferred.resolve(selectedProducts);
         }
 
         /**
          * @ngdoc method
          * @methodOf select-products-modal.controller:SelectProductsModalController
-         * @name searchByCodeAndName
-         *
-         * @description
-         * Returns true if the product code starts with the search text or true if product full name contains the search
-         * text.
-         */
-        function searchByCodeAndName(item) {
-            return (item.orderable.fullProductName.toLowerCase().contains(vm.searchTextLowerCase) ||
-                item.orderable.productCode.toLowerCase().startsWith(vm.searchTextLowerCase));
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf select-products-modal.controller:SelectProductsModalController
-         * @name refreshList
+         * @name search
          *
          * @description
          * Refreshes the product list so the add product dialog box shows only relevant products.
          */
-        function refreshList() {
-            if (vm.searchText === '') {
-                vm.filteredLineItems = vm.requisitionLineItems;
+        function search() {
+            if (vm.searchText) {
+                vm.filteredProducts = vm.products.filter(searchByCodeAndName);
             } else {
-                vm.searchTextLowerCase = vm.searchText.toLowerCase();
-                vm.filteredLineItems = vm.requisitionLineItems.filter(searchByCodeAndName);
+                vm.filteredProducts = vm.products;
             }
+        }
+
+        function searchByCodeAndName(product) {
+            var searchText = vm.searchText.toLowerCase();
+            return (product.fullProductName.toLowerCase().contains(searchText) ||
+                product.productCode.toLowerCase().startsWith(searchText));
         }
     }
 

@@ -15,81 +15,76 @@
 
 describe('SelectProductsModalController', function() {
 
-    var vm, $controller, RequisitionLineItemDataBuilder, ProgramDataBuilder, program,
-        $q, $rootScope, modalDeferred, requisitionLineItems;
+    var vm, $controller, products, $q, $rootScope, modalDeferred, OrderableDataBuilder;
 
     beforeEach(function() {
+        module('referencedata-orderable');
         module('select-products-modal');
 
+        //Polyfill snippet as our version of PhantomJS doesn't support startsWith yet
+        //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith#Polyfill
+        if (!String.prototype.startsWith) {
+            String.prototype.startsWith = function(search, pos) {
+                return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+            };
+        }
+
         inject(function($injector) {
-            $controller = $injector.get('$controller');
-            RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
-            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
             $q = $injector.get('$q');
             $rootScope = $injector.get('$rootScope');
+            $controller = $injector.get('$controller');
+            OrderableDataBuilder = $injector.get('OrderableDataBuilder');
         });
-
-        program = new ProgramDataBuilder().build();
-        requisitionLineItems = [new RequisitionLineItemDataBuilder()
-            .asSkipped()
-            .fullSupplyForProgram(program)
-            .buildJson()];
 
         modalDeferred = $q.defer();
 
+        products = [
+            new OrderableDataBuilder()
+                .withFullProductName('Product One')
+                .withProductCode('PC1')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('Product Two pc2')
+                .withProductCode('PS1')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('Product Three')
+                .withProductCode('XB1')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('Product Four')
+                .withProductCode('N64')
+                .build()
+        ];
+
         vm = $controller('SelectProductsModalController', {
             modalDeferred: modalDeferred,
-            requisitionLineItems: requisitionLineItems
+            products: products
         });
+
+        vm.$onInit();
     });
 
     describe('$onInit', function() {
 
         it('should expose requisitionLineItems', function() {
-            vm.$onInit();
-
-            expect(vm.requisitionLineItems).toEqual(requisitionLineItems);
+            expect(vm.products).toEqual(products);
         });
 
         it('should expose modalDeferred.reject method', function() {
-            vm.$onInit();
-
             expect(vm.close).toBe(modalDeferred.reject);
         });
 
-        it('should initialize the lineItemsToAdd as empty array ', function() {
-            vm.$onInit();
-
-            expect(vm.lineItemsToAdd.length).toBe(0);
+        it('should initialize selection object', function() {
+            expect(vm.selections).toEqual({});
         });
     });
 
-    describe('toggleAddLineItem', function() {
+    describe('selectProducts', function() {
 
-        it('should add a line item if it does not exist in the to add list', function() {
-            vm.$onInit();
-            var line = vm.requisitionLineItems[0];
-            vm.toggleAddLineItem(line);
-
-            expect(vm.lineItemsToAdd.length).toBe(1);
-            expect(vm.lineItemsToAdd[0]).toBe(line);
-        });
-
-        it('should remove a line item if it does not exist in the to add list', function() {
-            vm.$onInit();
-            var line = vm.requisitionLineItems[0];
-            vm.toggleAddLineItem(line);
-            vm.toggleAddLineItem(line);
-
-            expect(vm.lineItemsToAdd.length).toBe(0);
-        });
-    });
-
-    describe('addProducts', function() {
-        it('should add resolve with lineItems', function() {
-            vm.$onInit();
-            var line = vm.requisitionLineItems[0];
-            vm.toggleAddLineItem(line);
+        it('should resolve to selected products', function() {
+            vm.selections[products[0].id] = true;
+            vm.selections[products[2].id] = true;
 
             var result;
             modalDeferred.promise
@@ -97,36 +92,65 @@ describe('SelectProductsModalController', function() {
                     result = response;
                 });
 
-            vm.addProducts();
+            vm.selectProducts();
             $rootScope.$apply();
 
-            expect(result.items[0]).toEqual(line);
+            expect(result).toEqual([
+                products[0],
+                products[2]
+            ]);
         });
+
     });
 
-    describe('refreshList', function() {
+    describe('search', function() {
 
-        it('should filter by filter function when search text is different from empty string', function() {
-            vm.$onInit();
-            vm.requisitionLineItems = jasmine.createSpyObj('requisitionLineItems', ['filter']);
-            vm.searchText = 'xxx';
-
-            vm.refreshList();
-
-            expect(vm.requisitionLineItems.filter).toHaveBeenCalled();
-
-        });
-
-        it('should not filter for empty filter', function() {
-            vm.$onInit();
-            vm.requisitionLineItems = jasmine.createSpyObj('requisitionLineItems', ['filter']);
+        it('should show all for empty filter', function() {
             vm.searchText = '';
 
-            vm.refreshList();
+            vm.search();
 
-            expect(vm.requisitionLineItems.filter).not.toHaveBeenCalled();
-
+            expect(vm.filteredProducts).toEqual(products);
         });
+
+        it('should show all for undefined', function() {
+            vm.searchText = undefined;
+
+            vm.search();
+
+            expect(vm.filteredProducts).toEqual(products);
+        });
+
+        it('should show all for null', function() {
+            vm.searchText = null;
+
+            vm.search();
+
+            expect(vm.filteredProducts).toEqual(products);
+        });
+
+        it('should only return codes starting with the search text', function() {
+            vm.searchText = 'Ps';
+
+            vm.search();
+
+            expect(vm.filteredProducts).toEqual([products[1]]);
+
+            vm.searchText = '1';
+
+            vm.search();
+
+            expect(vm.filteredProducts).toEqual([]);
+        });
+
+        it('should search by both code and full product name', function() {
+            vm.searchText = 'pC';
+
+            vm.search();
+
+            expect(vm.filteredProducts).toEqual([products[0], products[1]]);
+        });
+
     });
 
 });

@@ -21,12 +21,13 @@
      * @module select-products-modal
      *
      * @description
-     * Provides modal for adding products.
+     * Provides modal for selecting products.
      */
     angular.module('select-products-modal', [
-        'openlmis-modal',
+        'openlmis-auth',
+        'openlmis-form',
         'openlmis-pagination',
-        'requisition'
+        'openlmis-templates'
     ]);
 
 })();

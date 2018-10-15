@@ -35,7 +35,7 @@
 
         RequisitionDataBuilder.prototype.build = build;
         RequisitionDataBuilder.prototype.buildJson = buildJson;
-        RequisitionDataBuilder.prototype.withRequistionLineItems = withRequistionLineItems;
+        RequisitionDataBuilder.prototype.withRequisitionLineItems = withRequisitionLineItems;
         RequisitionDataBuilder.prototype.buildSubmitted = buildSubmitted;
         RequisitionDataBuilder.prototype.buildAuthorized = buildAuthorized;
         RequisitionDataBuilder.prototype.buildInApproval = buildInApproval;
@@ -211,7 +211,7 @@
             return new Requisition(this.buildJson());
         }
 
-        function withRequistionLineItems(requisitionLineItems) {
+        function withRequisitionLineItems(requisitionLineItems) {
             this.requisitionLineItems = requisitionLineItems;
             return this;
         }

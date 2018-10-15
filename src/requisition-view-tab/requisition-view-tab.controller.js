@@ -228,13 +228,20 @@
          */
         function addFullSupplyProduct() {
             refreshLineItems();
-            selectProductsModalService.show(vm.requisition.requisitionLineItems)
-                .then(function(result) {
-                    result.items.forEach(function(item) {
-                        item.skipped = false;
-                        vm.items.unshift(item);
+            var availableProducts = getAvailableProducts();
+
+            if (availableProducts.length) {
+                selectProductsModalService.show(availableProducts)
+                    .then(function(selectedOrderables) {
+                        vm.requisition.unskipFullSupplyProducts(selectedOrderables);
+                        refreshLineItems();
                     });
-                });
+            } else {
+                alertService.error(
+                    'requisitionViewTab.noProductsToAdd.label',
+                    'requisitionViewTab.noProductsToAdd.message'
+                );
+            }
         }
 
         /**
@@ -308,7 +315,7 @@
 
         function getAvailableProducts() {
             if (fullSupply) {
-                return requisition.getAvailableFullSupplyProducts();
+                return requisition.getSkippedFullSupplyProducts();
             }
             return requisition.getAvailableNonFullSupplyProducts();
         }

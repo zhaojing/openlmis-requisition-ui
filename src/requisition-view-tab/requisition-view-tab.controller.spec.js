@@ -17,7 +17,7 @@ describe('ViewTabController', function() {
 
     var vm, addProductModalService, selectProductsModalService, requisition, $q, requisitionValidator, $rootScope,
         $controller, LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
-        RequisitionColumnDataBuilder, fullSupply, categoryFactory, messageService;
+        RequisitionColumnDataBuilder, fullSupply, categoryFactory, messageService, availableFullSupplyProducts;
 
     beforeEach(function() {
         module('requisition-view-tab');
@@ -32,16 +32,15 @@ describe('ViewTabController', function() {
             OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
             categoryFactory = $injector.get('categoryFactory');
+            requisitionValidator = $injector.get('requisitionValidator');
+            addProductModalService = $injector.get('addProductModalService');
+            selectProductsModalService = $injector.get('selectProductsModalService');
         });
 
-        requisitionValidator = jasmine.createSpyObj('requisitionValidator', ['isLineItemValid']);
-        addProductModalService = jasmine.createSpyObj('addProductModalService', ['show']);
-        selectProductsModalService = jasmine.createSpyObj('selectProductsModalService', ['show']);
-
-        requisition = jasmine.createSpyObj('requisition', ['$isInitiated', '$isRejected',
-            '$isApproved', '$isSubmitted', '$isAuthorized', '$isInApproval', '$isReleased',
-            '$isAfterAuthorize', '$getProducts', 'addLineItem', 'deleteLineItem',
-            'getAvailableFullSupplyProducts', 'getAvailableNonFullSupplyProducts']);
+        requisition = jasmine.createSpyObj('requisition', ['$isInitiated', '$isRejected', '$isApproved', '$isSubmitted',
+            '$isAuthorized', '$isInApproval', '$isReleased', '$isAfterAuthorize', '$getProducts', 'addLineItem',
+            'deleteLineItem', 'getSkippedFullSupplyProducts', 'getAvailableNonFullSupplyProducts',
+            'unskipFullSupplyProducts']);
         requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns',
             'hasSkipColumn', 'hideSkippedLineItems' ]);
         requisition.requisitionLineItems = [
@@ -52,7 +51,16 @@ describe('ViewTabController', function() {
             lineItemSpy(4, 'Three', false)
         ];
 
+        availableFullSupplyProducts = [
+            new OrderableDataBuilder().build(),
+            new OrderableDataBuilder().build(),
+            new OrderableDataBuilder().build(),
+            new OrderableDataBuilder().build()
+        ];
+
         columns = [new RequisitionColumnDataBuilder().buildSkipColumn()];
+
+        requisition.getSkippedFullSupplyProducts.andReturn(availableFullSupplyProducts);
 
         requisition.$getProducts.andReturn([]);
         fullSupply = false;
@@ -64,6 +72,9 @@ describe('ViewTabController', function() {
         canSubmit = false;
         canAuthorize = false;
 
+        spyOn(requisitionValidator, 'isLineItemValid');
+        spyOn(addProductModalService, 'show');
+        spyOn(selectProductsModalService, 'show');
         spyOn(categoryFactory, 'groupProducts');
         spyOn(messageService, 'get').andCallFake(function(param) {
             return param;
@@ -338,9 +349,12 @@ describe('ViewTabController', function() {
     describe('addFullSupplyProduct', function() {
 
         beforeEach(function() {
-            selectProductsModalService.show.andReturn($q.resolve({
-                items: [lineItemSpy(1, 'one', true)]
-            }));
+            fullSupply = true;
+
+            selectProductsModalService.show.andReturn($q.resolve([
+                availableFullSupplyProducts[0],
+                availableFullSupplyProducts[2]
+            ]));
         });
 
         it('should show the full supply add product modal', function() {
@@ -354,12 +368,13 @@ describe('ViewTabController', function() {
         it('should insert selected products to the beginning of full supply table', function() {
             initController();
 
-            vm.items = jasmine.createSpyObj('items', ['unshift']);
-
             vm.addFullSupplyProduct();
             $rootScope.$apply();
 
-            expect(vm.items.unshift).toHaveBeenCalled();
+            expect(requisition.unskipFullSupplyProducts).toHaveBeenCalledWith([
+                availableFullSupplyProducts[0],
+                availableFullSupplyProducts[2]
+            ]);
         });
 
     });
@@ -387,7 +402,7 @@ describe('ViewTabController', function() {
             requisition.getAvailableNonFullSupplyProducts
                 .andReturn(requisition.availableNonFullSupplyProducts);
 
-            requisition.getAvailableFullSupplyProducts
+            requisition.getSkippedFullSupplyProducts
                 .andReturn(requisition.availableFullSupplyProducts);
 
             spyOn(alertService, 'error');

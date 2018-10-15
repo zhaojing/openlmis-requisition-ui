@@ -22,18 +22,15 @@
      * @name select-products-modal.selectProductsModalService
      *
      * @description
-     * It shows modal with possibility to add full supply line item
-     * with one or more products that were previously skipped.
+     * Modal for selecting products.
      */
     angular
         .module('select-products-modal')
         .service('selectProductsModalService', service);
 
-    service.$inject = [
-        'openlmisModalService', 'paginationService', '$filter', '$stateParams'
-    ];
+    service.$inject = ['openlmisModalService', 'paginationService', '$stateParams'];
 
-    function service(openlmisModalService, paginationService, $filter, $stateParams) {
+    function service(openlmisModalService, paginationService, $stateParams) {
         var dialog;
 
         this.show = show;
@@ -44,12 +41,12 @@
          * @name show
          *
          * @description
-         * Opens a modal responsible for un-skipping full supply product.
+         * Opens a modal responsible for selecting products.
          *
-         * @param  {Array} requisitionLineItems from the requisition containing list of available products
-         * @return {promise}            a promise that resolves line items user wants to un-skip
+         * @param  {Array}   products the list of available products
+         * @return {promise}          the promise resolving to a list of selected products
          */
-        function show(requisitionLineItems) {
+        function show(products) {
             if (dialog) {
                 return dialog.promise;
             }
@@ -60,15 +57,10 @@
                 templateUrl: 'select-products-modal/select-products-modal.html',
                 show: true,
                 resolve: {
-                    requisitionLineItems: function() {
+                    products: function() {
                         return paginationService.registerList(null, $stateParams,
                             function() {
-                                return $filter('filter')(requisitionLineItems, {
-                                    skipped: 'true',
-                                    $program: {
-                                        fullSupply: true
-                                    }
-                                });
+                                return products;
                             }, {
                                 customPageParamName: 'pPage',
                                 customSizeParamName: 'pSize'

@@ -87,7 +87,19 @@ describe('Requisition', function() {
             UuidGenerator = $injector.get('UuidGenerator');
         });
 
-        sourceRequisition = new RequisitionDataBuilder().buildJson();
+        var requisitionDataBuilder = new RequisitionDataBuilder();
+        sourceRequisition = requisitionDataBuilder.withRequisitionLineItems([
+            new RequisitionLineItemDataBuilder()
+                .fullSupplyForProgram(requisitionDataBuilder.program)
+                .buildJson(),
+            new RequisitionLineItemDataBuilder()
+                .nonFullSupplyForProgram(requisitionDataBuilder.program)
+                .buildJson(),
+            new RequisitionLineItemDataBuilder()
+                .fullSupplyForProgram(requisitionDataBuilder.program)
+                .buildJson()
+        ]).buildJson();
+
         key = 'key';
         UuidGenerator.prototype.generate = function() {
             return key;
@@ -838,7 +850,7 @@ describe('Requisition', function() {
             var builder = new RequisitionDataBuilder(),
                 program = builder.program;
 
-            requisition = builder.withRequistionLineItems([
+            requisition = builder.withRequisitionLineItems([
                 new RequisitionLineItemDataBuilder()
                     .asSkipped()
                     .fullSupplyForProgram(program)
@@ -887,7 +899,7 @@ describe('Requisition', function() {
             var builder = new RequisitionDataBuilder(),
                 program = builder.program;
 
-            requisition = builder.withRequistionLineItems([
+            requisition = builder.withRequisitionLineItems([
                 new RequisitionLineItemDataBuilder()
                     .asSkipped()
                     .fullSupplyForProgram(program)
@@ -1129,6 +1141,64 @@ describe('Requisition', function() {
             requisition.deleteLineItem(requisition.requisitionLineItems[1]);
 
             expect(requisition.requisitionLineItems.length).toBe(1);
+        });
+
+    });
+
+    describe('getSkippedFullSupplyProducts', function() {
+
+        it('should return empty list if none of the line items is skipped', function() {
+            expect(requisition.getSkippedFullSupplyProducts()).toEqual([]);
+        });
+
+        it('should skipped full supply products', function() {
+            requisition.requisitionLineItems[0].skipped = true;
+
+            expect(requisition.getSkippedFullSupplyProducts()).toEqual([
+                requisition.requisitionLineItems[0].orderable
+            ]);
+        });
+
+        it('should ignore non-full supply products', function() {
+            requisition.requisitionLineItems[0].skipped = true;
+            requisition.requisitionLineItems[1].skipped = true;
+
+            expect(requisition.getSkippedFullSupplyProducts()).toEqual([
+                requisition.requisitionLineItems[0].orderable
+            ]);
+        });
+
+    });
+
+    describe('unskipFullSupplyProducts', function() {
+
+        it('should throw exception if undefined is passed', function() {
+            expect(function() {
+                requisition.unskipFullSupplyProducts();
+            }).toThrow();
+        });
+
+        it('should do nothing if empty list was given', function() {
+            requisition.requisitionLineItems[0].skipped = true;
+            requisition.requisitionLineItems[2].skipped = true;
+
+            requisition.unskipFullSupplyProducts([]);
+
+            expect(requisition.requisitionLineItems[0].skipped).toBe(true);
+            expect(requisition.requisitionLineItems[2].skipped).toBe(true);
+        });
+
+        it('should unskip line items for passed products', function() {
+            requisition.requisitionLineItems[0].skipped = true;
+            requisition.requisitionLineItems[2].skipped = true;
+
+            requisition.unskipFullSupplyProducts([
+                requisition.requisitionLineItems[0].orderable,
+                requisition.requisitionLineItems[2].orderable
+            ]);
+
+            expect(requisition.requisitionLineItems[0].skipped).toBe(false);
+            expect(requisition.requisitionLineItems[2].skipped).toBe(false);
         });
 
     });
