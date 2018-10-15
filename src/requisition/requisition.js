@@ -111,8 +111,10 @@
         Requisition.prototype.skipAllFullSupplyLineItems = skipAllFullSupplyLineItems;
         Requisition.prototype.unskipAllFullSupplyLineItems = unskipAllFullSupplyLineItems;
         Requisition.prototype.getAvailableNonFullSupplyProducts = getAvailableNonFullSupplyProducts;
+        Requisition.prototype.getAvailableFullSupplyProducts = getAvailableFullSupplyProducts;
         Requisition.prototype.getSkippedFullSupplyProducts = getSkippedFullSupplyProducts;
         Requisition.prototype.addLineItem = addLineItem;
+        Requisition.prototype.addLineItems = addLineItems;
         Requisition.prototype.deleteLineItem = deleteLineItem;
         Requisition.prototype.unskipFullSupplyProducts = unskipFullSupplyProducts;
 
@@ -502,6 +504,23 @@
         /**
          * @ngdoc method
          * @methodOf requisition.Requisition
+         * @name getAvailableFullSupplyProducts
+         *
+         * @description
+         * Returns a list of available full supply products that does not have a line item added.
+         *
+         * @return  {Array} the array of available full supply line items
+         */
+        function getAvailableFullSupplyProducts() {
+            return filterOutOrderablesWithLineItems(
+                this.availableFullSupplyProducts,
+                this.requisitionLineItems
+            );
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
          * @name getSkippedFullSupplyProducts
          *
          * @description
@@ -545,6 +564,23 @@
                 pricePerPack: orderableProgram.pricePerPack,
                 $deletable: true
             }, this));
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.Requisition
+         * @name addLineItems
+         *
+         * @description
+         * Creates new line items based on the given orderables.
+         *
+         * @param {Object} orderable  the orderables
+         */
+        function addLineItems(orderables) {
+            var requisition = this;
+            orderables.forEach(function(orderable) {
+                requisition.addLineItem(orderable);
+            });
         }
 
         /**

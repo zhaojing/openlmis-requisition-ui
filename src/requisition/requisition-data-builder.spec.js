@@ -208,12 +208,36 @@
         }
 
         function build() {
-            return new Requisition(this.buildJson());
+            return spyOnMethods(new Requisition(this.buildJson()));
         }
 
         function withRequisitionLineItems(requisitionLineItems) {
             this.requisitionLineItems = requisitionLineItems;
             return this;
+        }
+
+        function spyOnMethods(requisition) {
+            spyOn(requisition, '$isInitiated').andCallThrough();
+            spyOn(requisition, '$isRejected').andCallThrough();
+            spyOn(requisition, '$isApproved').andCallThrough();
+            spyOn(requisition, '$isSubmitted').andCallThrough();
+            spyOn(requisition, '$isAuthorized').andCallThrough();
+            spyOn(requisition, '$isInApproval').andCallThrough();
+            spyOn(requisition, '$isReleased').andCallThrough();
+            spyOn(requisition, '$isAfterAuthorize').andCallThrough();
+            spyOn(requisition, 'addLineItem').andCallThrough();
+            spyOn(requisition, 'addLineItems').andCallThrough();
+            spyOn(requisition, 'deleteLineItem').andCallThrough();
+            spyOn(requisition, 'getAvailableFullSupplyProducts').andCallThrough();
+            spyOn(requisition, 'getAvailableNonFullSupplyProducts').andCallThrough();
+            spyOn(requisition, 'unskipFullSupplyProducts').andCallThrough();
+            spyOn(requisition, 'getSkippedFullSupplyProducts').andCallThrough();
+
+            spyOn(requisition.template, 'getColumns').andCallThrough();
+            spyOn(requisition.template, 'hasSkipColumn').andCallThrough();
+            spyOn(requisition.template, 'hideSkippedLineItems').andCallThrough();
+
+            return requisition;
         }
     }
 

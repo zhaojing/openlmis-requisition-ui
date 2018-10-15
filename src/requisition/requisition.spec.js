@@ -23,25 +23,12 @@ describe('Requisition', function() {
 
     beforeEach(function() {
         module('requisition', function($provide) {
-            var template = jasmine.createSpyObj('template', ['getColumns', 'getColumn']),
-                TemplateSpy = jasmine.createSpy('RequisitionTemplate').andReturn(template);
-
-            template.getColumns.andCallFake(function(nonFullSupply) {
-                return nonFullSupply ? nonFullSupplyColumns() : fullSupplyColumns();
-            });
-
             calculatedOrderQuantity = {
                 isDisplayed: true
             };
-            template.getColumn.andReturn(calculatedOrderQuantity);
-
             offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy']);
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
-
-            $provide.service('RequisitionTemplate', function() {
-                return TemplateSpy;
-            });
             $provide.factory('localStorageFactory', function() {
                 return function(name) {
                     if (name === 'offlineFlag') {
@@ -105,6 +92,8 @@ describe('Requisition', function() {
             return key;
         };
         requisition = new Requisition(sourceRequisition);
+
+        spyOn(requisition.template, 'getColumn').andReturn(calculatedOrderQuantity);
     });
 
     describe('submit', function() {
@@ -867,6 +856,10 @@ describe('Requisition', function() {
                     .buildJson()
             ])
                 .build();
+
+            requisition.template.getColumns.andCallFake(function(nonFullSupply) {
+                return nonFullSupply ? nonFullSupplyColumns() : fullSupplyColumns();
+            });
         });
 
         it('should skip all full supply line items', function() {
@@ -1069,6 +1062,27 @@ describe('Requisition', function() {
 
             expect(requisition.requisitionLineItems[2].pricePerPack)
                 .toBe(orderable.programs[1].pricePerPack);
+        });
+
+    });
+
+    describe('addLineItems', function() {
+
+        beforeEach(function() {
+            this.orderables = [
+                new OrderableDataBuilder().build(),
+                new OrderableDataBuilder().build()
+            ];
+
+            this.requisition = new RequisitionDataBuilder().build();
+            this.requisition.addLineItem.andReturn();
+        });
+
+        it('should create line item for all orderables', function() {
+            this.requisition.addLineItems(this.orderables);
+
+            expect(this.requisition.addLineItem).toHaveBeenCalledWith(this.orderables[0]);
+            expect(this.requisition.addLineItem).toHaveBeenCalledWith(this.orderables[1]);
         });
 
     });

@@ -13,6 +13,7 @@ New functionality added in a backwards-compatible manner:
 Improvements:
 * [OLMIS-5409](https://openlmis.atlassian.net/browse/OLMIS-5409): Updated ui-components to version 7.0.0.
 * [OLMIS-3696](https://openlmis.atlassian.net/browse/OLMIS-3696): Added dependency and development dependency locking.
+* [OLMIS-4251](https://openlmis.atlassian.net/browse/OLMIS-4251): Reworked adding non full supply products to reuse selectProductsModal
 
 Bug fixes:
 * [OLMIS-4938](https://openlmis.atlassian.net/browse/OLMIS-4938): Moved locked requisition template columns to the top.

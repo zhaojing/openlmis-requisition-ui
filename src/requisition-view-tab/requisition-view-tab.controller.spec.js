@@ -15,316 +15,403 @@
 
 describe('ViewTabController', function() {
 
-    var vm, addProductModalService, selectProductsModalService, requisition, $q, requisitionValidator, $rootScope,
-        $controller, LineItem, $state, alertService, canSubmit, canAuthorize, OrderableDataBuilder, columns,
-        RequisitionColumnDataBuilder, fullSupply, categoryFactory, messageService, availableFullSupplyProducts;
-
     beforeEach(function() {
         module('requisition-view-tab');
 
+        var RequisitionLineItemDataBuilder, RequisitionDataBuilder, RequisitionColumnDataBuilder, OrderableDataBuilder;
         inject(function($injector) {
-            $controller = $injector.get('$controller');
-            $rootScope = $injector.get('$rootScope');
-            $q = $injector.get('$q');
-            $state = $injector.get('$state');
-            alertService = $injector.get('alertService');
-            messageService = $injector.get('messageService');
             OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
-            categoryFactory = $injector.get('categoryFactory');
-            requisitionValidator = $injector.get('requisitionValidator');
-            addProductModalService = $injector.get('addProductModalService');
-            selectProductsModalService = $injector.get('selectProductsModalService');
+            RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
+            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+
+            this.$controller = $injector.get('$controller');
+            this.$rootScope = $injector.get('$rootScope');
+            this.$q = $injector.get('$q');
+            this.$state = $injector.get('$state');
+            this.alertService = $injector.get('alertService');
+            this.messageService = $injector.get('messageService');
+            this.requisitionValidator = $injector.get('requisitionValidator');
+            this.selectProductsModalService = $injector.get('selectProductsModalService');
         });
 
-        requisition = jasmine.createSpyObj('requisition', ['$isInitiated', '$isRejected', '$isApproved', '$isSubmitted',
-            '$isAuthorized', '$isInApproval', '$isReleased', '$isAfterAuthorize', '$getProducts', 'addLineItem',
-            'deleteLineItem', 'getSkippedFullSupplyProducts', 'getAvailableNonFullSupplyProducts',
-            'unskipFullSupplyProducts']);
-        requisition.template = jasmine.createSpyObj('RequisitionTemplate', ['getColumns',
-            'hasSkipColumn', 'hideSkippedLineItems' ]);
-        requisition.requisitionLineItems = [
-            lineItemSpy(0, 'One', true),
-            lineItemSpy(1, 'Two', true),
-            lineItemSpy(2, 'One', true),
-            lineItemSpy(3, 'Two', true),
-            lineItemSpy(4, 'Three', false)
+        var requisitionDataBuilder = new RequisitionDataBuilder();
+        this.requisition = requisitionDataBuilder
+            .withRequisitionLineItems([
+                new RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(requisitionDataBuilder.program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(requisitionDataBuilder.program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(requisitionDataBuilder.program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(requisitionDataBuilder.program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .nonFullSupplyForProgram(requisitionDataBuilder.program)
+                    .buildJson()
+            ])
+            .build();
+
+        this.initController = initController;
+
+        this.availableFullSupplyProducts = [
+            new OrderableDataBuilder().build(),
+            new OrderableDataBuilder().build()
         ];
 
-        availableFullSupplyProducts = [
+        this.availableNonFullSupplyProducts = [
             new OrderableDataBuilder().build(),
+            new OrderableDataBuilder().build()
+        ];
+
+        this.skippedFullSupplyProducts = [
             new OrderableDataBuilder().build(),
             new OrderableDataBuilder().build(),
             new OrderableDataBuilder().build()
         ];
 
-        columns = [new RequisitionColumnDataBuilder().buildSkipColumn()];
+        this.totalLossesAndAdjustmentsColumn = new RequisitionColumnDataBuilder()
+            .buildTotalLossesAndAdjustmentsColumn();
 
-        requisition.getSkippedFullSupplyProducts.andReturn(availableFullSupplyProducts);
+        this.columns = [
+            new RequisitionColumnDataBuilder().buildSkipColumn()
+        ];
 
-        requisition.$getProducts.andReturn([]);
-        fullSupply = false;
+        this.fullSupply = false;
+        this.canSubmit = false;
+        this.canAuthorize = false;
 
-        requisition.program = {
-            code: 'P01'
-        };
-
-        canSubmit = false;
-        canAuthorize = false;
-
-        spyOn(requisitionValidator, 'isLineItemValid');
-        spyOn(addProductModalService, 'show');
-        spyOn(selectProductsModalService, 'show');
-        spyOn(categoryFactory, 'groupProducts');
-        spyOn(messageService, 'get').andCallFake(function(param) {
+        spyOn(this.alertService, 'error');
+        spyOn(this.selectProductsModalService, 'show');
+        spyOn(this.messageService, 'get').andCallFake(function(param) {
             return param;
         });
-
-        vm = undefined;
-    });
-
-    describe('initialization', function() {
-
-        it('should bind requisitionValidator.isLineItemValid method to vm', function() {
-            initController();
-
-            expect(vm.isLineItemValid).toBe(requisitionValidator.isLineItemValid);
-        });
-
-        it('should bind requisition property to vm', function() {
-            initController();
-
-            expect(vm.requisition).toBe(requisition);
-        });
-
-        it('should display add product button if requisition is initiated and user has create right', function() {
-            canSubmit = true;
-
-            initController();
-
-            expect(vm.showAddProductButton).toBe(true);
-        });
-
-        it('should not display add product button if requisition is initiated and user has no create right',
-            function() {
-                canSubmit = false;
-
-                initController();
-
-                expect(vm.showAddProductButton).toBe(false);
-            });
-
-        it('should display add product button if requisition is rejected and user has create right', function() {
-            canSubmit = true;
-
-            initController();
-
-            expect(vm.showAddProductButton).toBe(true);
-        });
-
-        it('should not display add product button if requisition is rejected and user has no create right', function() {
-            canSubmit = false;
-
-            initController();
-
-            expect(vm.showAddProductButton).toBe(false);
-        });
-
-        it('should display add product button if requisition is submitted and user has authorize rights', function() {
-            canAuthorize = true;
-
-            initController();
-
-            expect(vm.showAddProductButton).toBe(true);
-        });
-
-        it('should not display add product button if requisition is submitted and user has no authorize rights',
-            function() {
-                canAuthorize = false;
-
-                initController();
-
-                expect(vm.showAddProductButton).toBe(false);
-            });
-
-        it('should not display add product button if requisition is authorized', function() {
-
-            initController();
-
-            expect(vm.showAddProductButton).toBe(false);
-        });
-
-        it('should not display add product button if requisition is approved', function() {
-
-            initController();
-
-            expect(vm.showAddProductButton).toBe(false);
-        });
-
-        it('should not display add product button if requisition is in approval', function() {
-
-            initController();
-
-            expect(vm.showAddProductButton).toBe(false);
-        });
-
-        it('should not display add product button if requisition is released', function() {
-
-            initController();
-
-            expect(vm.showAddProductButton).toBe(false);
-        });
-
-        it('should not display add full supply product button if view is not full supply', function() {
-            fullSupply = false;
-
-            initController();
-
-            expect(vm.showAddFullSupplyProductControls).toBe(false);
-        });
-
-        it('should not display add full supply product button if requisition is in approval', function() {
-            canSubmit = false;
-
-            initController();
-
-            expect(vm.showAddFullSupplyProductControls).toBe(false);
-        });
-
-        it('should not display add full supply product button if requisition configured to disable skipped option',
-            function() {
-
-                requisition.template.hideSkippedLineItems.andReturn(false);
-
-                initController();
-
-                expect(vm.showAddFullSupplyProductControls).toBe(false);
-            });
-
-        it('should set correct noProductsMessage for full supply tab', function() {
-            fullSupply = true;
-
-            initController();
-
-            expect(vm.noProductsMessage).toBe('requisitionViewTab.noFullSupplyProducts');
-        });
-
-        it('should set correct noProductsMessage for non full supply tab', function() {
-            fullSupply = false;
-
-            initController();
-
-            expect(vm.noProductsMessage).toBe('requisitionViewTab.noNonFullSupplyProducts');
-        });
-
-        it('should set userCanEdit if canAuthorize is true', function() {
-            canAuthorize = true;
-
-            initController();
-
-            expect(vm.userCanEdit).toBe(true);
-        });
-
-        it('should set userCanEdit if canSubmit is true', function() {
-            canSubmit = true;
-
-            initController();
-
-            expect(vm.userCanEdit).toBe(true);
-        });
-
-        it('should set userCanEdit to false if canAuthorize and canSubmit are false', function() {
-            initController();
-
-            expect(vm.userCanEdit).toBe(false);
-        });
-
     });
 
     describe('$onInit', function() {
 
         beforeEach(function() {
-            requisition.template.hideSkippedLineItems.andReturn(true);
-            fullSupply = true;
+            this.requisition.template.hideSkippedLineItems.andReturn(true);
+            this.fullSupply = true;
         });
 
-        it('should not show skip controls', function() {
-            initController();
+        it('should bind this.this.requisitionValidator.isLineItemValid method to vm', function() {
+            this.initController();
 
-            expect(vm.showSkipControls).toBe(false);
+            expect(this.vm.isLineItemValid).toBe(this.requisitionValidator.isLineItemValid);
         });
 
-        it('should show skip controls if the requisition status is INITIATED', function() {
-            requisition.template.hasSkipColumn.andReturn(true);
-            canSubmit = true;
+        it('should bind this.requisition property to vm', function() {
+            this.initController();
 
-            initController();
-
-            expect(vm.showSkipControls).toBe(true);
+            expect(this.vm.requisition).toBe(this.requisition);
         });
 
-        it('should not show skip controls if requisition status is INITIATED but user does not have right to submit',
-            function() {
-                requisition.template.hasSkipColumn.andReturn(true);
+        describe('Add (Full Supply) Products button', function() {
 
-                initController();
-
-                expect(vm.showSkipControls).toBe(false);
+            beforeEach(function() {
+                this.canSubmit = true;
+                this.canAuthorize = true;
+                this.fullSupply = true;
+                this.requisition.emergency = true;
             });
 
-        it('should show skip controls if the requisition status is SUBMITTED and user has authorize right', function() {
-            canAuthorize = true;
-            requisition.template.hasSkipColumn.andReturn(true);
+            it('should be visible', function() {
+                this.initController();
 
-            initController();
+                expect(this.vm.showAddFullSupplyProductsButton).toBe(true);
+            });
 
-            expect(vm.showSkipControls).toBe(true);
+            it('should be visible if user can only submit', function() {
+                this.canAuthorize = false;
+
+                this.initController();
+
+                expect(this.vm.showAddFullSupplyProductsButton).toBe(true);
+            });
+
+            it('should be visible if user can only authorize', function() {
+                this.canSubmit = false;
+
+                this.initController();
+
+                expect(this.vm.showAddFullSupplyProductsButton).toBe(true);
+            });
+
+            it('should be hidden if user can\'t submit and authorize', function() {
+                this.canSubmit = false;
+                this.canAuthorize = false;
+
+                this.initController();
+
+                expect(this.vm.showAddFullSupplyProductsButton).toBe(false);
+            });
+
+            it('should be hidden if this.requisition is not emergency', function() {
+                this.requisition.emergency = false;
+
+                this.initController();
+
+                expect(this.vm.showAddFullSupplyProductsButton).toBe(false);
+            });
+
+            it('should be hidden if showing non-full supply tab', function() {
+                this.fullSupply = false;
+
+                this.initController();
+
+                expect(this.vm.showAddFullSupplyProductsButton).toBe(false);
+            });
+
         });
 
-        it('should show skip controls if the requisition status is REJECTED', function() {
-            requisition.template.hasSkipColumn.andReturn(true);
-            canSubmit = true;
+        describe('Add (Non-Full Supply) Products button', function() {
 
-            initController();
+            beforeEach(function() {
+                this.canSubmit = true;
+                this.canAuthorize = true;
+                this.fullSupply = false;
+            });
 
-            expect(vm.showSkipControls).toBe(true);
+            it('should be visible', function() {
+                this.initController();
+
+                expect(this.vm.showAddNonFullSupplyProductsButton).toBe(true);
+            });
+
+            it('should be visible if user can only submit', function() {
+                this.canAuthorize = false;
+
+                this.initController();
+
+                expect(this.vm.showAddNonFullSupplyProductsButton).toBe(true);
+            });
+
+            it('should be visible if user can only authorize', function() {
+                this.canSubmit = false;
+
+                this.initController();
+
+                expect(this.vm.showAddNonFullSupplyProductsButton).toBe(true);
+            });
+
+            it('should be hidden if user can\'t submit and authorize', function() {
+                this.canSubmit = false;
+                this.canAuthorize = false;
+
+                this.initController();
+
+                expect(this.vm.showAddNonFullSupplyProductsButton).toBe(false);
+            });
+
+            it('should be hidden if showing full supply tab', function() {
+                this.fullSupply = true;
+
+                this.initController();
+
+                expect(this.vm.showAddNonFullSupplyProductsButton).toBe(false);
+            });
+
         });
 
-        it('should not show skip controls if the requisition status is REJECTED and user can not submit', function() {
-            requisition.template.hasSkipColumn.andReturn(true);
+        describe('Unskip (Full Supply) Products button', function() {
 
-            initController();
+            beforeEach(function() {
+                this.canSubmit = true;
+                this.canAuthorize = true;
+                this.fullSupply = true;
+                this.requisition.emergency = false;
+                this.requisition.template.hideSkippedLineItems.andReturn(true);
+            });
 
-            expect(vm.showSkipControls).toBe(false);
+            it('should be visible', function() {
+                this.initController();
+
+                expect(this.vm.showUnskipFullSupplyProductsButton).toBe(true);
+            });
+
+            it('should be visible if user can only submit', function() {
+                this.canAuthorize = false;
+
+                this.initController();
+
+                expect(this.vm.showUnskipFullSupplyProductsButton).toBe(true);
+            });
+
+            it('should be visible if user can only authorize', function() {
+                this.canSubmit = false;
+
+                this.initController();
+
+                expect(this.vm.showUnskipFullSupplyProductsButton).toBe(true);
+            });
+
+            it('should be hidden if user can\'t submit and authorize', function() {
+                this.canSubmit = false;
+                this.canAuthorize = false;
+
+                this.initController();
+
+                expect(this.vm.showUnskipFullSupplyProductsButton).toBe(false);
+            });
+
+            it('should be hidden if showing non-full supply tab', function() {
+                this.fullSupply = false;
+
+                this.initController();
+
+                expect(this.vm.showUnskipFullSupplyProductsButton).toBe(false);
+            });
+
+            it('should be hidden if this.requisition is emergency', function() {
+                this.requisition.emergency = true;
+
+                this.initController();
+
+                expect(this.vm.showUnskipFullSupplyProductsButton).toBe(false);
+            });
+
+            it('should be hidden if skipped line items are disabled', function() {
+                this.requisition.template.hideSkippedLineItems.andReturn(false);
+
+                this.initController();
+
+                expect(this.vm.showUnskipFullSupplyProductsButton).toBe(false);
+            });
+
         });
 
-        it('should show skip controls if the requisition template has a skip column', function() {
-            requisition.template.hasSkipColumn.andReturn(true);
-            canSubmit = true;
-            columns[0].name = 'skipped';
+        describe('noProductMessage', function() {
 
-            initController();
+            it('should set correct for full supply tab', function() {
+                this.fullSupply = true;
 
-            expect(vm.showSkipControls).toBe(true);
+                this.initController();
+
+                expect(this.vm.noProductsMessage).toBe('requisitionViewTab.noFullSupplyProducts');
+            });
+
+            it('should set correct for non full supply tab', function() {
+                this.fullSupply = false;
+
+                this.initController();
+
+                expect(this.vm.noProductsMessage).toBe('requisitionViewTab.noNonFullSupplyProducts');
+            });
+
         });
 
-        it('should not show skip controls if the requisition template does not have a skip column', function() {
-            requisition.template.hasSkipColumn.andReturn(false);
-            columns[0].name = 'foo';
-            canSubmit = true;
+        describe('userCanEdit', function() {
 
-            initController();
+            it('should be true if this.canAuthorize is true', function() {
+                this.canAuthorize = true;
 
-            expect(vm.showSkipControls).toBe(false);
+                this.initController();
+
+                expect(this.vm.userCanEdit).toBe(true);
+            });
+
+            it('should be true if this.canSubmit is true', function() {
+                this.canSubmit = true;
+
+                this.initController();
+
+                expect(this.vm.userCanEdit).toBe(true);
+            });
+
+            it('should be false if this.canAuthorize and this.canSubmit are false', function() {
+                this.initController();
+
+                expect(this.vm.userCanEdit).toBe(false);
+            });
+
         });
 
-        it('should not show skip controls if user does not authorize right and requisition is submitted', function() {
-            canAuthorize = false;
-            requisition.template.hasSkipColumn.andReturn(true);
+        describe('showSkipControls', function() {
 
-            initController();
+            it('should be hidden', function() {
+                this.initController();
 
-            expect(vm.showSkipControls).toBe(false);
+                expect(this.vm.showSkipControls).toBe(false);
+            });
+
+            it('should be shown if the this.requisition status is INITIATED', function() {
+                this.requisition.template.hasSkipColumn.andReturn(true);
+                this.canSubmit = true;
+
+                this.initController();
+
+                expect(this.vm.showSkipControls).toBe(true);
+            });
+
+            it('should be hidden if this.requisition status is INITIATED but user does not have right to submit',
+                function() {
+                    this.requisition.template.hasSkipColumn.andReturn(true);
+
+                    this.initController();
+
+                    expect(this.vm.showSkipControls).toBe(false);
+                });
+
+            it('should be shown if the this.requisition status is SUBMITTED and user has authorize right', function() {
+                this.canAuthorize = true;
+                this.requisition.template.hasSkipColumn.andReturn(true);
+
+                this.initController();
+
+                expect(this.vm.showSkipControls).toBe(true);
+            });
+
+            it('should be shown if the this.requisition status is REJECTED', function() {
+                this.requisition.template.hasSkipColumn.andReturn(true);
+                this.canSubmit = true;
+
+                this.initController();
+
+                expect(this.vm.showSkipControls).toBe(true);
+            });
+
+            it('should be hidden if the this.requisition status is REJECTED and user can not submit', function() {
+                this.requisition.template.hasSkipColumn.andReturn(true);
+
+                this.initController();
+
+                expect(this.vm.showSkipControls).toBe(false);
+            });
+
+            it('should be shown if the this.requisition template has a skip column', function() {
+                this.requisition.template.hasSkipColumn.andReturn(true);
+                this.canSubmit = true;
+                this.columns[0].name = 'skipped';
+
+                this.initController();
+
+                expect(this.vm.showSkipControls).toBe(true);
+            });
+
+            it('should be hidden if the this.requisition template does not have a skip column', function() {
+                this.requisition.template.hasSkipColumn.andReturn(false);
+                this.columns[0].name = 'foo';
+                this.canSubmit = true;
+
+                this.initController();
+
+                expect(this.vm.showSkipControls).toBe(false);
+            });
+
+            it('should be hidden if user does not authorize right and this.requisition is submitted', function() {
+                this.canAuthorize = false;
+                this.requisition.template.hasSkipColumn.andReturn(true);
+
+                this.initController();
+
+                expect(this.vm.showSkipControls).toBe(false);
+            });
+
         });
 
     });
@@ -332,178 +419,202 @@ describe('ViewTabController', function() {
     describe('deleteLineItem', function() {
 
         beforeEach(function() {
-            initController();
-            spyOn($state, 'go').andReturn();
+            this.initController();
+            this.requisition.deleteLineItem.andReturn();
+            spyOn(this.$state, 'go').andReturn();
         });
 
         it('should delete line item if it exist', function() {
-            var lineItem = requisition.requisitionLineItems[2];
+            var lineItem = this.requisition.requisitionLineItems[2];
 
-            vm.deleteLineItem(lineItem);
+            this.vm.deleteLineItem(lineItem);
 
-            expect(requisition.deleteLineItem).toHaveBeenCalledWith(lineItem);
+            expect(this.requisition.deleteLineItem).toHaveBeenCalledWith(lineItem);
         });
 
     });
 
-    describe('addFullSupplyProduct', function() {
+    describe('addFullSupplyProducts', function() {
 
         beforeEach(function() {
-            fullSupply = true;
-
-            selectProductsModalService.show.andReturn($q.resolve([
-                availableFullSupplyProducts[0],
-                availableFullSupplyProducts[2]
+            this.requisition.getAvailableFullSupplyProducts.andReturn(this.availableFullSupplyProducts);
+            this.selectProductsModalService.show.andReturn(this.$q.resolve([
+                this.availableFullSupplyProducts[0],
+                this.availableFullSupplyProducts[2]
             ]));
         });
 
-        it('should show the full supply add product modal', function() {
-            initController();
-            vm.addFullSupplyProduct();
-            $rootScope.$apply();
+        it('should show alert if there are no skipped full supply products', function() {
+            this.requisition.getAvailableFullSupplyProducts.andReturn([]);
 
-            expect(selectProductsModalService.show).toHaveBeenCalled();
-        });
+            this.initController();
+            this.vm.addFullSupplyProducts();
 
-        it('should insert selected products to the beginning of full supply table', function() {
-            initController();
-
-            vm.addFullSupplyProduct();
-            $rootScope.$apply();
-
-            expect(requisition.unskipFullSupplyProducts).toHaveBeenCalledWith([
-                availableFullSupplyProducts[0],
-                availableFullSupplyProducts[2]
-            ]);
-        });
-
-    });
-
-    describe('addProduct', function() {
-
-        var orderable, categories;
-
-        beforeEach(function() {
-            LineItem = jasmine.createSpy();
-            requisition.program = {
-                id: 'program-id'
-            };
-
-            requisition.availableNonFullSupplyProducts = [
-                new OrderableDataBuilder().build(),
-                new OrderableDataBuilder().build()
-            ];
-
-            requisition.availableFullSupplyProducts = [
-                new OrderableDataBuilder().build(),
-                new OrderableDataBuilder().build()
-            ];
-
-            requisition.getAvailableNonFullSupplyProducts
-                .andReturn(requisition.availableNonFullSupplyProducts);
-
-            requisition.getSkippedFullSupplyProducts
-                .andReturn(requisition.availableFullSupplyProducts);
-
-            spyOn(alertService, 'error');
-
-            categories = [{
-                name: 'Group 1',
-                products: requisition.availableNonFullSupplyProducts
-            }];
-
-            categoryFactory.groupProducts.andReturn(categories);
-
-            orderable = new OrderableDataBuilder().build();
-
-            addProductModalService.show.andReturn($q.resolve({
-                orderable: orderable,
-                requestedQuantity: 16,
-                requestedQuantityExplanation: 'explanation'
-            }));
-        });
-
-        it('should add product', function() {
-
-            initController();
-            vm.addProduct();
-            $rootScope.$apply();
-
-            expect(addProductModalService.show).toHaveBeenCalledWith(
-                categories,
-                fullSupply
-            );
-
-            expect(requisition.addLineItem).toHaveBeenCalledWith(
-                orderable, 16, 'explanation'
-            );
-        });
-
-        it('should not add product if modal was dismissed', function() {
-            var deferred = $q.defer();
-            spyOn(requisition.requisitionLineItems, 'push');
-            addProductModalService.show.andReturn(deferred.promise);
-
-            initController();
-            vm.addProduct();
-            deferred.reject();
-            $rootScope.$apply();
-
-            expect(addProductModalService.show).toHaveBeenCalledWith(
-                categories,
-                fullSupply
-            );
-
-            expect(requisition.addLineItem).not.toHaveBeenCalled();
-        });
-
-        it('should not open add product modal if there are no products to add', function() {
-            requisition.getAvailableNonFullSupplyProducts.andReturn([]);
-
-            initController();
-            vm.addProduct();
-            $rootScope.$apply();
-
-            expect(addProductModalService.show).not.toHaveBeenCalled();
-            expect(requisition.addLineItem).not.toHaveBeenCalled();
-        });
-
-        it('should open alert if there are no products to add', function() {
-            requisition.getAvailableNonFullSupplyProducts.andReturn([]);
-
-            initController();
-            vm.addProduct();
-            $rootScope.$apply();
-
-            expect(requisition.addLineItem).not.toHaveBeenCalled();
-            expect(alertService.error).toHaveBeenCalledWith(
+            expect(this.alertService.error).toHaveBeenCalledWith(
                 'requisitionViewTab.noProductsToAdd.label',
                 'requisitionViewTab.noProductsToAdd.message'
             );
         });
 
-        it('should use non full supply products', function() {
-            fullSupply = false;
+        it('should not open modal if there no skipped full supply products to add', function() {
+            this.requisition.getAvailableFullSupplyProducts.andReturn([]);
 
-            initController();
-            vm.addProduct();
+            this.initController();
+            this.vm.addFullSupplyProducts();
 
-            expect(categoryFactory.groupProducts).toHaveBeenCalledWith(
-                requisition.availableNonFullSupplyProducts,
-                requisition.program.id
+            expect(this.selectProductsModalService.show).not.toHaveBeenCalled();
+        });
+
+        it('should open modal', function() {
+            this.initController();
+            this.vm.addFullSupplyProducts();
+
+            expect(this.selectProductsModalService.show).toHaveBeenCalledWith(this.availableFullSupplyProducts);
+        });
+
+        it('should do nothing if modal was dismissed', function() {
+            this.selectProductsModalService.show.andReturn(this.$q.reject());
+
+            this.initController();
+            this.vm.addFullSupplyProducts();
+
+            expect(this.requisition.addLineItems).not.toHaveBeenCalled();
+            expect(this.requisition.addLineItems).not.toHaveBeenCalled();
+        });
+
+        it('should unskip full supply products', function() {
+            this.initController();
+            this.vm.addFullSupplyProducts();
+            this.$rootScope.$apply();
+
+            expect(this.requisition.addLineItems).toHaveBeenCalledWith([
+                this.availableFullSupplyProducts[0],
+                this.availableFullSupplyProducts[2]
+            ]);
+        });
+
+    });
+
+    describe('addNonFullSupplyProducts', function() {
+
+        beforeEach(function() {
+            this.requisition.getAvailableNonFullSupplyProducts.andReturn(this.availableNonFullSupplyProducts);
+            this.selectProductsModalService.show.andReturn(this.$q.resolve([
+                this.availableNonFullSupplyProducts[0],
+                this.availableNonFullSupplyProducts[2]
+            ]));
+        });
+
+        it('should show alert if there are no available non-full supply products', function() {
+            this.requisition.getAvailableNonFullSupplyProducts.andReturn([]);
+
+            this.initController();
+            this.vm.addNonFullSupplyProducts();
+
+            expect(this.alertService.error).toHaveBeenCalledWith(
+                'requisitionViewTab.noProductsToAdd.label',
+                'requisitionViewTab.noProductsToAdd.message'
             );
         });
 
-        it('should use full supply products', function() {
-            fullSupply = true;
+        it('should not open modal if there no available non-full supply products', function() {
+            this.requisition.getAvailableNonFullSupplyProducts.andReturn([]);
 
-            initController();
-            vm.addProduct();
+            this.initController();
+            this.vm.addNonFullSupplyProducts();
 
-            expect(categoryFactory.groupProducts).toHaveBeenCalledWith(
-                requisition.availableFullSupplyProducts,
-                requisition.program.id
+            expect(this.selectProductsModalService.show).not.toHaveBeenCalled();
+        });
+
+        it('should open modal', function() {
+            this.initController();
+            this.vm.addNonFullSupplyProducts();
+
+            expect(this.selectProductsModalService.show).toHaveBeenCalledWith(this.availableNonFullSupplyProducts);
+        });
+
+        it('should do nothing if modal was dismissed', function() {
+            this.selectProductsModalService.show.andReturn(this.$q.reject());
+
+            this.initController();
+            this.vm.addNonFullSupplyProducts();
+
+            expect(this.requisition.unskipFullSupplyProducts).not.toHaveBeenCalled();
+            expect(this.requisition.addLineItems).not.toHaveBeenCalled();
+        });
+
+        it('should add non-full supply products', function() {
+            this.initController();
+            this.vm.addNonFullSupplyProducts();
+            this.$rootScope.$apply();
+
+            expect(this.requisition.addLineItems).toHaveBeenCalledWith([
+                this.availableNonFullSupplyProducts[0],
+                this.availableNonFullSupplyProducts[2]
+            ]);
+        });
+
+    });
+
+    describe('unskipFullSupplyProducts', function() {
+
+        beforeEach(function() {
+            this.requisition.getSkippedFullSupplyProducts.andReturn(this.skippedFullSupplyProducts);
+            this.selectProductsModalService.show.andReturn(this.$q.resolve([
+                this.skippedFullSupplyProducts[0],
+                this.skippedFullSupplyProducts[2]
+            ]));
+            this.fullSupply = true;
+        });
+
+        it('should show alert if there are no skipped full supply products', function() {
+            this.requisition.getSkippedFullSupplyProducts.andReturn([]);
+
+            this.initController();
+            this.vm.unskipFullSupplyProducts();
+
+            expect(this.alertService.error).toHaveBeenCalledWith(
+                'requisitionViewTab.noProductsToAdd.label',
+                'requisitionViewTab.noProductsToAdd.message'
             );
+        });
+
+        it('should not open modal if there no skipped full supply products to add', function() {
+            this.requisition.getSkippedFullSupplyProducts.andReturn([]);
+
+            this.initController();
+            this.vm.unskipFullSupplyProducts();
+
+            expect(this.selectProductsModalService.show).not.toHaveBeenCalled();
+        });
+
+        it('should open modal', function() {
+            this.initController();
+            this.vm.unskipFullSupplyProducts();
+
+            expect(this.selectProductsModalService.show).toHaveBeenCalledWith(this.skippedFullSupplyProducts);
+        });
+
+        it('should do nothing if modal was dismissed for skipped products', function() {
+            this.selectProductsModalService.show.andReturn(this.$q.reject());
+
+            this.initController();
+            this.vm.unskipFullSupplyProducts();
+
+            expect(this.requisition.unskipFullSupplyProducts).not.toHaveBeenCalled();
+            expect(this.requisition.addLineItems).not.toHaveBeenCalled();
+        });
+
+        it('should unskip full supply products', function() {
+            this.initController();
+            this.vm.unskipFullSupplyProducts();
+            this.$rootScope.$apply();
+
+            expect(this.requisition.unskipFullSupplyProducts)
+                .toHaveBeenCalledWith([
+                    this.skippedFullSupplyProducts[0],
+                    this.skippedFullSupplyProducts[2]
+                ]);
         });
 
     });
@@ -511,122 +622,103 @@ describe('ViewTabController', function() {
     describe('showDeleteColumn', function() {
 
         beforeEach(function() {
-            fullSupply = false;
-            canSubmit = false;
-            canAuthorize = false;
-            requisition.requisitionLineItems[1].$deletable = true;
-
+            this.fullSupply = false;
+            this.canSubmit = false;
+            this.canAuthorize = false;
+            this.requisition.requisitionLineItems[1].$deletable = true;
         });
 
         it('should return false if viewing full supply tab', function() {
-            fullSupply = true;
+            this.fullSupply = true;
 
-            initController();
+            this.initController();
 
-            expect(vm.showDeleteColumn()).toBe(false);
+            expect(this.vm.showDeleteColumn()).toBe(false);
         });
 
         it('should return false if there is no deletable line items', function() {
-            canSubmit = true;
-            requisition.requisitionLineItems[1].$deletable = false;
+            this.canSubmit = true;
+            this.requisition.requisitionLineItems[1].$deletable = false;
 
-            initController();
+            this.initController();
 
-            expect(vm.showDeleteColumn()).toBeFalsy();
+            expect(this.vm.showDeleteColumn()).toBeFalsy();
         });
 
         it('should return false if there is no line items', function() {
-            requisition.requisitionLineItems = [];
+            this.requisition.requisitionLineItems = [];
 
-            initController();
+            this.initController();
 
-            expect(vm.showDeleteColumn()).toBe(false);
+            expect(this.vm.showDeleteColumn()).toBe(false);
         });
 
-        it('should return true if user has right to authorize submitted requisition', function() {
-            canSubmit = true;
+        it('should return true if user has right to authorize submitted this.requisition', function() {
+            this.canSubmit = true;
 
-            initController();
+            this.initController();
 
-            expect(vm.showDeleteColumn()).toBe(true);
+            expect(this.vm.showDeleteColumn()).toBe(true);
         });
 
     });
 
     describe('skippedFullSupplyProductCountMessage', function() {
+
         it('should count the number of skipped line items and return the right message', function() {
-            initController();
-            messageService.get.isSpy = false;
-            spyOn(messageService, 'get').andCallFake(function(p1, p2) {
+            this.initController();
+            this.messageService.get.isSpy = false;
+            spyOn(this.messageService, 'get').andCallFake(function(p1, p2) {
                 return p2;
             });
-            requisition.requisitionLineItems[0].skipped = true;
+            this.requisition.requisitionLineItems[0].skipped = true;
 
-            expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(1);
+            expect(this.vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(1);
         });
 
         it('should not count the number of skipped line items that are not full supply', function() {
-            initController();
+            this.initController();
 
-            messageService.get.isSpy = false;
-            spyOn(messageService, 'get').andCallFake(function(p1, p2) {
+            this.messageService.get.isSpy = false;
+            spyOn(this.messageService, 'get').andCallFake(function(p1, p2) {
                 return p2;
             });
-            requisition.requisitionLineItems[0].skipped = true;
-            requisition.requisitionLineItems[0].$program.fullSupply = false;
+            this.requisition.requisitionLineItems[0].skipped = true;
+            this.requisition.requisitionLineItems[0].$program.fullSupply = false;
 
-            expect(vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(0);
+            expect(this.vm.skippedFullSupplyProductCountMessage().skippedProductCount).toBe(0);
         });
     });
 
     describe('getDescriptionForColumn', function() {
 
-        it('should return column definition for regular columns', function() {
-            initController();
+        it('should return column definition for regular this.columns', function() {
+            this.initController();
 
-            expect(vm.getDescriptionForColumn(columns[0])).toEqual(columns[0].definition);
+            expect(this.vm.getDescriptionForColumn(this.columns[0])).toEqual(this.columns[0].definition);
         });
 
         it('should return info about disabled total losses and adjustments modal', function() {
-            columns.push(new RequisitionColumnDataBuilder().buildTotalLossesAndAdjustmentsColumn());
-            requisition.template.populateStockOnHandFromStockCards = true;
+            this.columns.push(this.totalLossesAndAdjustmentsColumn);
+            this.requisition.template.populateStockOnHandFromStockCards = true;
 
-            initController();
+            this.initController();
 
-            expect(vm.getDescriptionForColumn(columns[1]))
-                .toEqual(columns[1].definition + ' ' + 'requisitionViewTab.totalLossesAndAdjustment.disabled');
+            expect(this.vm.getDescriptionForColumn(this.columns[1]))
+                .toEqual(this.columns[1].definition + ' ' + 'requisitionViewTab.totalLossesAndAdjustment.disabled');
         });
     });
 
     function initController() {
-        vm = $controller('ViewTabController', {
+        this.vm = this.$controller('ViewTabController', {
             lineItems: [],
             columns: [],
-            LineItem: LineItem,
-            requisition: requisition,
-            addProductModalService: addProductModalService,
-            selectProductsModalService: selectProductsModalService,
-            requisitionValidator: requisitionValidator,
-            canSubmit: canSubmit,
-            canAuthorize: canAuthorize,
-            fullSupply: fullSupply
+            requisition: this.requisition,
+            canSubmit: this.canSubmit,
+            canAuthorize: this.canAuthorize,
+            fullSupply: this.fullSupply
         });
-        vm.$onInit();
-    }
-
-    function lineItemSpy(id, category, fullSupply) {
-        var lineItem = jasmine.createSpyObj('lineItem', ['canBeSkipped']);
-        lineItem.canBeSkipped.andReturn(true);
-        lineItem.skipped = false;
-        lineItem.$id = id;
-        lineItem.orderable = {
-            $visible: false
-        };
-        lineItem.$program = {
-            orderableCategoryDisplayName: category,
-            fullSupply: fullSupply
-        };
-        return lineItem;
+        this.vm.$onInit();
     }
 
 });

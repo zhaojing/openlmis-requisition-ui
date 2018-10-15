@@ -29,26 +29,24 @@
         .controller('ViewTabController', ViewTabController);
 
     ViewTabController.$inject = [
-        '$filter', 'addProductModalService', 'selectProductsModalService',
-        'requisitionValidator', 'requisition', 'columns', 'messageService',
-        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'categoryFactory',
-        'TEMPLATE_COLUMNS'
+        '$filter', 'selectProductsModalService', 'requisitionValidator', 'requisition', 'columns', 'messageService',
+        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'TEMPLATE_COLUMNS', '$q'
     ];
 
-    function ViewTabController($filter, addProductModalService, selectProductsModalService,
-                               requisitionValidator, requisition, columns, messageService,
-                               lineItems, alertService, canSubmit, canAuthorize, fullSupply,
-                               categoryFactory, TEMPLATE_COLUMNS) {
-
+    function ViewTabController($filter, selectProductsModalService, requisitionValidator, requisition, columns,
+                               messageService, lineItems, alertService, canSubmit, canAuthorize, fullSupply,
+                               TEMPLATE_COLUMNS, $q) {
         var vm = this;
 
         vm.$onInit = onInit;
         vm.deleteLineItem = deleteLineItem;
-        vm.addProduct = addProduct;
-        vm.addFullSupplyProduct = addFullSupplyProduct;
+        vm.addFullSupplyProducts = addFullSupplyProducts;
+        vm.addNonFullSupplyProducts = addNonFullSupplyProducts;
+        vm.unskipFullSupplyProducts = unskipFullSupplyProducts;
         vm.showDeleteColumn = showDeleteColumn;
         vm.isLineItemValid = requisitionValidator.isLineItemValid;
         vm.getDescriptionForColumn = getDescriptionForColumn;
+        vm.skippedFullSupplyProductCountMessage = skippedFullSupplyProductCountMessage;
 
         /**
          * @ngdoc property
@@ -86,14 +84,36 @@
         /**
          * @ngdoc property
          * @methodOf requisition-view-tab.controller:ViewTabController
-         * @name showAddProductButton
+         * @name showAddFullSupplyProductsButton
          * @type {Boolean}
          *
          * @description
-         * Flag defining whether to show or hide the Add Product button based on the requisition
-         * status and user rights.
+         * Flag defining whether to show or hide the Add Product button for the full supply products for emergency
+         * requisition.
          */
-        vm.showAddProductButton = undefined;
+        vm.showAddFullSupplyProductsButton = undefined;
+
+        /**
+         * @ngdoc property
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name showAddNonFullSupplyProductsButton
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether to show or hide the Add Product button for non-full supply products.
+         */
+        vm.showAddNonFullSupplyProductsButton = undefined;
+
+        /**
+         * @ngdoc property
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name showUnskipFullSupplyProductsButton
+         * @type {Boolean}
+         *
+         * @description
+         * Flag defining whether to show or hide the Add Product button for un-skipping full supply products.
+         */
+        vm.showUnskipFullSupplyProductsButton = undefined;
 
         /**
          * @ngdoc property
@@ -123,11 +143,11 @@
             vm.requisition = requisition;
             vm.columns = columns;
             vm.userCanEdit = canAuthorize || canSubmit;
-            vm.showAddProductButton = showAddProductButton();
+            vm.showAddFullSupplyProductsButton = showAddFullSupplyProductsButton();
+            vm.showAddNonFullSupplyProductsButton = showAddNonFullSupplyProductsButton();
+            vm.showUnskipFullSupplyProductsButton = showUnskipFullSupplyProductsButton();
             vm.showSkipControls = showSkipControls();
             vm.noProductsMessage = getNoProductsMessage();
-            vm.showAddFullSupplyProductControls = showAddFullSupplyProductControls();
-            vm.skippedFullSupplyProductCountMessage = skippedFullSupplyProductCountMessage;
         }
 
         /**
@@ -166,41 +186,6 @@
         /**
          * @ngdoc method
          * @methodOf requisition-view-tab.controller:ViewTabController
-         * @name addProduct
-         *
-         * @description
-         * Opens modal that lets the user add new product to the grid. If there are no products to
-         * be added an alert will be shown.
-         */
-        function addProduct() {
-            var availableProducts = getAvailableProducts();
-
-            if (availableProducts.length) {
-                var categories = categoryFactory.groupProducts(
-                    availableProducts,
-                    requisition.program.id
-                );
-
-                addProductModalService.show(categories, fullSupply)
-                    .then(function(lineItem) {
-                        vm.requisition.addLineItem(
-                            lineItem.orderable,
-                            lineItem.requestedQuantity,
-                            lineItem.requestedQuantityExplanation
-                        );
-                        refreshLineItems();
-                    });
-            } else {
-                alertService.error(
-                    'requisitionViewTab.noProductsToAdd.label',
-                    'requisitionViewTab.noProductsToAdd.message'
-                );
-            }
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view-tab.controller:ViewTabController
          * @name getDescriptionForColumn
          *
          * @description
@@ -219,29 +204,44 @@
         /**
          * @ngdoc method
          * @methodOf requisition-view-tab.controller:ViewTabController
-         * @name addFullSupplyProduct
+         * @name addFullSupplyProducts
          *
          * @description
-         * Opens modal that lets the user add new full supply product to the grid.
-         * If there are no products to
-         * be added an alert will be shown.
+         * Opens modal that lets the user add new full supply products to the grid. If there are no products to be added
+         * an alert will be shown.
          */
-        function addFullSupplyProduct() {
-            refreshLineItems();
-            var availableProducts = getAvailableProducts();
+        function addFullSupplyProducts() {
+            addProducts(vm.requisition.getAvailableFullSupplyProducts());
+        }
 
-            if (availableProducts.length) {
-                selectProductsModalService.show(availableProducts)
-                    .then(function(selectedOrderables) {
-                        vm.requisition.unskipFullSupplyProducts(selectedOrderables);
-                        refreshLineItems();
-                    });
-            } else {
-                alertService.error(
-                    'requisitionViewTab.noProductsToAdd.label',
-                    'requisitionViewTab.noProductsToAdd.message'
-                );
-            }
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name addNonFullSupplyProducts
+         *
+         * @description
+         * Opens modal that lets the user add new non-full supply products to the grid. If there are no products to be
+         * added an alert will be shown.
+         */
+        function addNonFullSupplyProducts() {
+            addProducts(vm.requisition.getAvailableNonFullSupplyProducts());
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name unskipFullSupplyProducts
+         *
+         * @description
+         * Opens modal that lets the user unskip full supply products and add them back to the grid.. If there are no
+         * products to be added an alert will be shown.
+         */
+        function unskipFullSupplyProducts() {
+            selectProducts(vm.requisition.getSkippedFullSupplyProducts())
+                .then(function(selectedProducts) {
+                    vm.requisition.unskipFullSupplyProducts(selectedProducts);
+                    refreshLineItems();
+                });
         }
 
         /**
@@ -257,6 +257,28 @@
             return  messageService.get('requisitionViewTab.fullSupplyProductsSkipped', {
                 skippedProductCount: getCountOfSkippedFullSupplyProducts()
             });
+        }
+
+        function addProducts(availableProducts) {
+            selectProducts(availableProducts)
+                .then(function(selectedProducts) {
+                    vm.requisition.addLineItems(selectedProducts);
+                    refreshLineItems();
+                });
+        }
+
+        function selectProducts(availableProducts) {
+            refreshLineItems();
+
+            if (!availableProducts.length) {
+                alertService.error(
+                    'requisitionViewTab.noProductsToAdd.label',
+                    'requisitionViewTab.noProductsToAdd.message'
+                );
+                return $q.reject();
+            }
+
+            return selectProductsModalService.show(availableProducts);
         }
 
         function refreshLineItems() {
@@ -285,22 +307,25 @@
         }
 
         function showSkipControls() {
-            return fullSupply &&
+            return vm.userCanEdit &&
+                fullSupply &&
                 !requisition.emergency &&
-                vm.userCanEdit &&
                 requisition.template.hasSkipColumn();
         }
 
-        function showAddProductButton() {
-            return vm.userCanEdit &&
-                (!fullSupply || requisition.emergency);
+        function showAddFullSupplyProductsButton() {
+            return vm.userCanEdit && fullSupply && requisition.emergency;
         }
 
-        function showAddFullSupplyProductControls() {
-            return (vm.userCanEdit &&
-                        fullSupply &&
-                        !requisition.emergency &&
-                        requisition.template.hideSkippedLineItems());
+        function showAddNonFullSupplyProductsButton() {
+            return vm.userCanEdit && !fullSupply;
+        }
+
+        function showUnskipFullSupplyProductsButton() {
+            return vm.userCanEdit &&
+                fullSupply &&
+                !requisition.emergency &&
+                requisition.template.hideSkippedLineItems();
         }
 
         function hasDeletableLineItems() {
@@ -311,13 +336,6 @@
             });
 
             return hasDeletableLineItems;
-        }
-
-        function getAvailableProducts() {
-            if (fullSupply) {
-                return requisition.getSkippedFullSupplyProducts();
-            }
-            return requisition.getAvailableNonFullSupplyProducts();
         }
 
         function isSkippedFullSupply(item) {
