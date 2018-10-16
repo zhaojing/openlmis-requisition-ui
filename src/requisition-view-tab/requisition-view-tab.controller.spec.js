@@ -99,13 +99,13 @@ describe('ViewTabController', function() {
             this.fullSupply = true;
         });
 
-        it('should bind this.this.requisitionValidator.isLineItemValid method to vm', function() {
+        it('should bind requisitionValidator.isLineItemValid method to vm', function() {
             this.initController();
 
             expect(this.vm.isLineItemValid).toBe(this.requisitionValidator.isLineItemValid);
         });
 
-        it('should bind this.requisition property to vm', function() {
+        it('should bind requisition property to vm', function() {
             this.initController();
 
             expect(this.vm.requisition).toBe(this.requisition);
@@ -151,7 +151,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showAddFullSupplyProductsButton).toBe(false);
             });
 
-            it('should be hidden if this.requisition is not emergency', function() {
+            it('should be hidden if requisition is not emergency', function() {
                 this.requisition.emergency = false;
 
                 this.initController();
@@ -267,7 +267,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showUnskipFullSupplyProductsButton).toBe(false);
             });
 
-            it('should be hidden if this.requisition is emergency', function() {
+            it('should be hidden if requisition is emergency', function() {
                 this.requisition.emergency = true;
 
                 this.initController();
@@ -307,7 +307,7 @@ describe('ViewTabController', function() {
 
         describe('userCanEdit', function() {
 
-            it('should be true if this.canAuthorize is true', function() {
+            it('should be true if canAuthorize is true', function() {
                 this.canAuthorize = true;
 
                 this.initController();
@@ -315,7 +315,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.userCanEdit).toBe(true);
             });
 
-            it('should be true if this.canSubmit is true', function() {
+            it('should be true if canSubmit is true', function() {
                 this.canSubmit = true;
 
                 this.initController();
@@ -323,7 +323,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.userCanEdit).toBe(true);
             });
 
-            it('should be false if this.canAuthorize and this.canSubmit are false', function() {
+            it('should be false if canAuthorize and canSubmit are false', function() {
                 this.initController();
 
                 expect(this.vm.userCanEdit).toBe(false);
@@ -339,7 +339,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showSkipControls).toBe(false);
             });
 
-            it('should be shown if the this.requisition status is INITIATED', function() {
+            it('should be shown if the requisition status is INITIATED', function() {
                 this.requisition.template.hasSkipColumn.andReturn(true);
                 this.canSubmit = true;
 
@@ -348,7 +348,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showSkipControls).toBe(true);
             });
 
-            it('should be hidden if this.requisition status is INITIATED but user does not have right to submit',
+            it('should be hidden if requisition status is INITIATED but user does not have right to submit',
                 function() {
                     this.requisition.template.hasSkipColumn.andReturn(true);
 
@@ -357,7 +357,7 @@ describe('ViewTabController', function() {
                     expect(this.vm.showSkipControls).toBe(false);
                 });
 
-            it('should be shown if the this.requisition status is SUBMITTED and user has authorize right', function() {
+            it('should be shown if the requisition status is SUBMITTED and user has authorize right', function() {
                 this.canAuthorize = true;
                 this.requisition.template.hasSkipColumn.andReturn(true);
 
@@ -366,7 +366,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showSkipControls).toBe(true);
             });
 
-            it('should be shown if the this.requisition status is REJECTED', function() {
+            it('should be shown if the requisition status is REJECTED', function() {
                 this.requisition.template.hasSkipColumn.andReturn(true);
                 this.canSubmit = true;
 
@@ -375,7 +375,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showSkipControls).toBe(true);
             });
 
-            it('should be hidden if the this.requisition status is REJECTED and user can not submit', function() {
+            it('should be hidden if the requisition status is REJECTED and user can not submit', function() {
                 this.requisition.template.hasSkipColumn.andReturn(true);
 
                 this.initController();
@@ -383,7 +383,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showSkipControls).toBe(false);
             });
 
-            it('should be shown if the this.requisition template has a skip column', function() {
+            it('should be shown if the requisition template has a skip column', function() {
                 this.requisition.template.hasSkipColumn.andReturn(true);
                 this.canSubmit = true;
                 this.columns[0].name = 'skipped';
@@ -393,7 +393,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showSkipControls).toBe(true);
             });
 
-            it('should be hidden if the this.requisition template does not have a skip column', function() {
+            it('should be hidden if the requisition template does not have a skip column', function() {
                 this.requisition.template.hasSkipColumn.andReturn(false);
                 this.columns[0].name = 'foo';
                 this.canSubmit = true;
@@ -403,7 +403,7 @@ describe('ViewTabController', function() {
                 expect(this.vm.showSkipControls).toBe(false);
             });
 
-            it('should be hidden if user does not authorize right and this.requisition is submitted', function() {
+            it('should be hidden if user does not authorize right and requisition is submitted', function() {
                 this.canAuthorize = false;
                 this.requisition.template.hasSkipColumn.andReturn(true);
 
@@ -653,7 +653,7 @@ describe('ViewTabController', function() {
             expect(this.vm.showDeleteColumn()).toBe(false);
         });
 
-        it('should return true if user has right to authorize submitted this.requisition', function() {
+        it('should return true if user has right to authorize submitted requisition', function() {
             this.canSubmit = true;
 
             this.initController();
@@ -692,7 +692,7 @@ describe('ViewTabController', function() {
 
     describe('getDescriptionForColumn', function() {
 
-        it('should return column definition for regular this.columns', function() {
+        it('should return column definition for regular columns', function() {
             this.initController();
 
             expect(this.vm.getDescriptionForColumn(this.columns[0])).toEqual(this.columns[0].definition);

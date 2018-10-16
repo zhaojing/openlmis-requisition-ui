@@ -189,8 +189,10 @@
          * @name getDescriptionForColumn
          *
          * @description
-         * Opens modal that lets the user add new product to the grid. If there are no products to
-         * be added an alert will be shown.
+         * Returns a translated description for the given column.
+         *
+         * @param  {RequisitionColumn} column  the column of the requisition template
+         * @return {string}                    the translated description of the column
          */
         function getDescriptionForColumn(column) {
             if (requisition.template.populateStockOnHandFromStockCards &&
