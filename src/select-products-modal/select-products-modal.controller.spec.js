@@ -15,8 +15,6 @@
 
 describe('SelectProductsModalController', function() {
 
-    var vm, $controller, products, $q, $rootScope, modalDeferred, OrderableDataBuilder;
-
     beforeEach(function() {
         module('referencedata-orderable');
         module('select-products-modal');
@@ -29,16 +27,17 @@ describe('SelectProductsModalController', function() {
             };
         }
 
+        var OrderableDataBuilder;
         inject(function($injector) {
-            $q = $injector.get('$q');
-            $rootScope = $injector.get('$rootScope');
-            $controller = $injector.get('$controller');
+            this.$q = $injector.get('$q');
+            this.$rootScope = $injector.get('$rootScope');
+            this.$controller = $injector.get('$controller');
             OrderableDataBuilder = $injector.get('OrderableDataBuilder');
         });
 
-        modalDeferred = $q.defer();
+        this.modalDeferred = this.$q.defer();
 
-        products = [
+        this.products = [
             new OrderableDataBuilder()
                 .withFullProductName('Product One')
                 .withProductCode('PC1')
@@ -57,47 +56,47 @@ describe('SelectProductsModalController', function() {
                 .build()
         ];
 
-        vm = $controller('SelectProductsModalController', {
-            modalDeferred: modalDeferred,
-            products: products
+        this.vm = this.$controller('SelectProductsModalController', {
+            modalDeferred: this.modalDeferred,
+            products: this.products
         });
 
-        vm.$onInit();
+        this.vm.$onInit();
     });
 
     describe('$onInit', function() {
 
         it('should expose requisitionLineItems', function() {
-            expect(vm.products).toEqual(products);
+            expect(this.vm.products).toEqual(this.products);
         });
 
-        it('should expose modalDeferred.reject method', function() {
-            expect(vm.close).toBe(modalDeferred.reject);
+        it('should expose this.modalDeferred.reject method', function() {
+            expect(this.vm.close).toBe(this.modalDeferred.reject);
         });
 
         it('should initialize selection object', function() {
-            expect(vm.selections).toEqual({});
+            expect(this.vm.selections).toEqual({});
         });
     });
 
     describe('selectProducts', function() {
 
-        it('should resolve to selected products', function() {
-            vm.selections[products[0].id] = true;
-            vm.selections[products[2].id] = true;
+        it('should resolve to selected this.products', function() {
+            this.vm.selections[this.products[0].id] = true;
+            this.vm.selections[this.products[2].id] = true;
 
             var result;
-            modalDeferred.promise
+            this.modalDeferred.promise
                 .then(function(response) {
                     result = response;
                 });
 
-            vm.selectProducts();
-            $rootScope.$apply();
+            this.vm.selectProducts();
+            this.$rootScope.$apply();
 
             expect(result).toEqual([
-                products[0],
-                products[2]
+                this.products[0],
+                this.products[2]
             ]);
         });
 
@@ -106,49 +105,49 @@ describe('SelectProductsModalController', function() {
     describe('search', function() {
 
         it('should show all for empty filter', function() {
-            vm.searchText = '';
+            this.vm.searchText = '';
 
-            vm.search();
+            this.vm.search();
 
-            expect(vm.filteredProducts).toEqual(products);
+            expect(this.vm.filteredProducts).toEqual(this.products);
         });
 
         it('should show all for undefined', function() {
-            vm.searchText = undefined;
+            this.vm.searchText = undefined;
 
-            vm.search();
+            this.vm.search();
 
-            expect(vm.filteredProducts).toEqual(products);
+            expect(this.vm.filteredProducts).toEqual(this.products);
         });
 
         it('should show all for null', function() {
-            vm.searchText = null;
+            this.vm.searchText = null;
 
-            vm.search();
+            this.vm.search();
 
-            expect(vm.filteredProducts).toEqual(products);
+            expect(this.vm.filteredProducts).toEqual(this.products);
         });
 
         it('should only return codes starting with the search text', function() {
-            vm.searchText = 'Ps';
+            this.vm.searchText = 'Ps';
 
-            vm.search();
+            this.vm.search();
 
-            expect(vm.filteredProducts).toEqual([products[1]]);
+            expect(this.vm.filteredProducts).toEqual([this.products[1]]);
 
-            vm.searchText = '1';
+            this.vm.searchText = '1';
 
-            vm.search();
+            this.vm.search();
 
-            expect(vm.filteredProducts).toEqual([]);
+            expect(this.vm.filteredProducts).toEqual([]);
         });
 
         it('should search by both code and full product name', function() {
-            vm.searchText = 'pC';
+            this.vm.searchText = 'pC';
 
-            vm.search();
+            this.vm.search();
 
-            expect(vm.filteredProducts).toEqual([products[0], products[1]]);
+            expect(this.vm.filteredProducts).toEqual([this.products[0], this.products[1]]);
         });
 
     });
