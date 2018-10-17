@@ -519,7 +519,7 @@ describe('Requisition', function() {
             delete expected.stockAdjustmentReasons;
             delete expected.template;
 
-            $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id), expected)
+            $httpBackend.expectPUT(requisitionUrlFactory('/api/requisitions/' + requisition.id), expected)
                 .respond(200, requisition);
 
             requisition.$save();
