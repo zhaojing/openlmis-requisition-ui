@@ -72,6 +72,7 @@ describe('Requisition', function() {
             OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             LineItem = $injector.get('LineItem');
             UuidGenerator = $injector.get('UuidGenerator');
+            this.dateUtils = $injector.get('dateUtils');
         });
 
         var requisitionDataBuilder = new RequisitionDataBuilder();
@@ -439,10 +440,48 @@ describe('Requisition', function() {
         it('should save requisition', function() {
             var data;
 
-            $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id))
-                .respond(200, requisition);
+            var expected = angular.copy(requisition);
 
-            requisition.name = 'Saved requisition';
+            expected.requisitionLineItems[0].stockOnHand = null;
+            expected.requisitionLineItems[1].stockOnHand = null;
+            expected.requisitionLineItems[2].stockOnHand = null;
+
+            delete requisition.requisitionLineItems[0].$program;
+            delete requisition.requisitionLineItems[1].$program;
+            delete requisition.requisitionLineItems[2].$program;
+
+            delete requisition.requisitionLineItems[0].$errors;
+            delete requisition.requisitionLineItems[1].$errors;
+            delete requisition.requisitionLineItems[2].$errors;
+
+            expected.requisitionLineItems[0].orderable = {
+                id: expected.requisitionLineItems[0].orderable.id
+            };
+            expected.requisitionLineItems[1].orderable = {
+                id: expected.requisitionLineItems[1].orderable.id
+            };
+            expected.requisitionLineItems[2].orderable = {
+                id: expected.requisitionLineItems[2].orderable.id
+            };
+
+            expected.processingPeriod.startDate = '2017-01-01';
+            expected.processingPeriod.endDate = '2017-01-31';
+
+            expected.program = {
+                id: expected.program.id
+            };
+
+            expected.facility = {
+                id: expected.facility.id
+            };
+
+            delete expected.availableNonFullSupplyProducts;
+            delete expected.availableFullSupplyProducts;
+            delete expected.stockAdjustmentReasons;
+            delete expected.template;
+
+            $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id), expected)
+                .respond(200, requisition);
 
             requisition.$save().then(function(response) {
                 data = response;
@@ -476,6 +515,55 @@ describe('Requisition', function() {
             $rootScope.$apply();
 
             expect(offlineRequisitions.removeBy).toHaveBeenCalledWith('id', requisition.id);
+        });
+
+        it('should remove extra fields before sending a request', function() {
+            var expected = angular.copy(requisition);
+
+            expected.requisitionLineItems[0].stockOnHand = null;
+            expected.requisitionLineItems[1].stockOnHand = null;
+            expected.requisitionLineItems[2].stockOnHand = null;
+
+            delete requisition.requisitionLineItems[0].$program;
+            delete requisition.requisitionLineItems[1].$program;
+            delete requisition.requisitionLineItems[2].$program;
+
+            delete requisition.requisitionLineItems[0].$errors;
+            delete requisition.requisitionLineItems[1].$errors;
+            delete requisition.requisitionLineItems[2].$errors;
+
+            expected.requisitionLineItems[0].orderable = {
+                id: expected.requisitionLineItems[0].orderable.id
+            };
+            expected.requisitionLineItems[1].orderable = {
+                id: expected.requisitionLineItems[1].orderable.id
+            };
+            expected.requisitionLineItems[2].orderable = {
+                id: expected.requisitionLineItems[2].orderable.id
+            };
+
+            expected.processingPeriod.startDate = '2017-01-01';
+            expected.processingPeriod.endDate = '2017-01-31';
+
+            expected.program = {
+                id: expected.program.id
+            };
+
+            expected.facility = {
+                id: expected.facility.id
+            };
+
+            delete expected.availableNonFullSupplyProducts;
+            delete expected.availableFullSupplyProducts;
+            delete expected.stockAdjustmentReasons;
+            delete expected.template;
+
+            $httpBackend.when('PUT', requisitionUrlFactory('/api/requisitions/' + requisition.id), expected)
+                .respond(200, requisition);
+
+            requisition.$save();
+            $httpBackend.flush();
+            $rootScope.$apply();
         });
     });
 
