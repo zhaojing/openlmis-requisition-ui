@@ -35,6 +35,7 @@
 
         RequisitionDataBuilder.prototype.build = build;
         RequisitionDataBuilder.prototype.buildJson = buildJson;
+        RequisitionDataBuilder.prototype.withCreatedDate = withCreatedDate;
         RequisitionDataBuilder.prototype.withRequisitionLineItems = withRequisitionLineItems;
         RequisitionDataBuilder.prototype.buildSubmitted = buildSubmitted;
         RequisitionDataBuilder.prototype.buildAuthorized = buildAuthorized;
@@ -209,6 +210,11 @@
 
         function build() {
             return spyOnMethods(new Requisition(this.buildJson()));
+        }
+
+        function withCreatedDate(createdDate) {
+            this.createdDate = createdDate;
+            return this;
         }
 
         function withRequisitionLineItems(requisitionLineItems) {

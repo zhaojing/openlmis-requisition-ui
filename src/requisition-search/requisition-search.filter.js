@@ -85,13 +85,13 @@
         function byInitiatedDateTo(initiatedDateTo) {
             return function(requisition) {
                 var createdDate = dateUtils.toDate(requisition.createdDate);
-                return initiatedDateTo && new Date(initiatedDateTo) >= new Date(createdDate);
+                return !initiatedDateTo || new Date(initiatedDateTo) >= new Date(createdDate);
             };
         }
 
         function byEmergency(emergency) {
             return function(requisition) {
-                return !emergency || emergency === requisition.emergency;
+                return emergency === undefined || emergency === null || emergency === requisition.emergency;
             };
         }
 
