@@ -1,6 +1,11 @@
 <h2>{{'requisitionApproval.approveRequisitions' | message}}</h2>
 <h4 ng-if="vm.isBatchApproveScreenActive">{{ 'requisitionApproval.instruction' | message }}</h4>
 <div class="openlmis-table-container">
+    <h4 ng-if="vm.isBatchApproveScreenActive">{{ 'requisitionApproval.select' | message }}</h4>
+    <ul ng-if="vm.isBatchApproveScreenActive">
+        <li><a ng-click="vm.toggleSelectAll(true)">{{'requisitionApproval.all' | message}}</a></li>
+        <li><a ng-click="vm.toggleSelectAll(false)">{{'requisitionApproval.none' | message}}</a></li>
+    </ul>
     <openlmis-sort options="vm.options"/>
     <form class="openlmis-table-filters" ng-submit="vm.search()">
         <label for=program>{{'requisitionApproval.program' | message}}</label>
@@ -10,11 +15,6 @@
         </select>
         <input class="btn btn-primary" type="submit" value="{{'requisitionApproval.search' | message}}"/>
     </form>
-    <h4 ng-if="vm.isBatchApproveScreenActive">{{ 'requisitionApproval.select' | message }}</h4>
-    <ul ng-if="vm.isBatchApproveScreenActive">
-        <li><a ng-click="vm.toggleSelectAll(true)">{{'requisitionApproval.all' | message}}</a></li>
-        <li><a ng-click="vm.toggleSelectAll(false)">{{'requisitionApproval.none' | message}}</a></li>
-    </ul>
     <table>
         <caption ng-if="!vm.requisitions.length">
             {{'requisitionApproval.noRnrPendingForApproval' | message}}
