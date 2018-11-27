@@ -22,10 +22,12 @@
                 </div>
                 <div class="modal-footer">
                     <button ng-click="$hide()">{{'requisitionView.cancel' | message}}</button>
-                    <input ng-if="!vm.requisition.$isSubmitted()" form="addDateForm" type="submit"
-                        value="{{'requisitionView.submit.label'| message}}"/>
-                    <input ng-if="vm.requisition.$isSubmitted()" form="addDateForm" type="submit"
-                        value="{{'requisitionView.authorize.label'| message}}"/>
+                    <button class="primary" ng-if="!vm.requisition.$isSubmitted()" form="addDateForm" type="submit">
+                        {{'requisitionView.submit.label'| message}}
+                    </button>
+                    <button class="primary" ng-if="vm.requisition.$isSubmitted()" form="addDateForm" type="submit">
+                        {{'requisitionView.authorize.label'| message}}
+                    </button>
                 </div>
         </div>
     </div>
