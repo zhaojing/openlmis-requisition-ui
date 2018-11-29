@@ -1,13 +1,8 @@
 {
     "requisitionViewTab.addProduct": "Add Product",
-    "requisitionViewTab.addProducts": "Add Products",
     "requisitionViewTab.category": "Category",
     "requisitionViewTab.product": "Product",
-    "requisitionViewTab.searchProduct": "Search Product",
     "requisitionViewTab.fullSupplyProductsSkipped": "${skippedProductCount} full supply product(s) are skipped.",
-    "requisitionViewTab.uoi": "UoI",
-    "requisitionViewTab.code": "Code",
-    "requisitionViewTab.select": "Select",
     "requisitionViewTab.quantity": "Quantity",
     "requisitionViewTab.explanation": "Explanation",
     "requisitionViewTab.cancel": "Cancel",
