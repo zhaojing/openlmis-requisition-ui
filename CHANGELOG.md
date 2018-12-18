@@ -1,3 +1,9 @@
+5.5.1 / Work in Progress
+========================
+
+Bug fixes:
+* [OLMIS-5822](https://openlmis.atlassian.net/browse/OLMIS-5822): Fixed a bug with products not being sorted alphabetically on the product selection modal.
+
 5.5.0 / 2018-12-12
 ==================
 

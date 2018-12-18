@@ -30,12 +30,13 @@
 
     ViewTabController.$inject = [
         '$filter', 'selectProductsModalService', 'requisitionValidator', 'requisition', 'columns', 'messageService',
-        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'TEMPLATE_COLUMNS', '$q'
+        'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'TEMPLATE_COLUMNS', '$q',
+        'OpenlmisArrayDecorator'
     ];
 
     function ViewTabController($filter, selectProductsModalService, requisitionValidator, requisition, columns,
                                messageService, lineItems, alertService, canSubmit, canAuthorize, fullSupply,
-                               TEMPLATE_COLUMNS, $q) {
+                               TEMPLATE_COLUMNS, $q, OpenlmisArrayDecorator) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -272,6 +273,9 @@
         function selectProducts(availableProducts) {
             refreshLineItems();
 
+            var decoratedAvailableProducts = new OpenlmisArrayDecorator(availableProducts);
+            decoratedAvailableProducts.sortBy('fullProductName');
+
             if (!availableProducts.length) {
                 alertService.error(
                     'requisitionViewTab.noProductsToAdd.label',
@@ -280,7 +284,7 @@
                 return $q.reject();
             }
 
-            return selectProductsModalService.show(availableProducts);
+            return selectProductsModalService.show(decoratedAvailableProducts);
         }
 
         function refreshLineItems() {

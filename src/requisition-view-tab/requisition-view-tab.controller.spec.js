@@ -59,19 +59,39 @@ describe('ViewTabController', function() {
         this.initController = initController;
 
         this.availableFullSupplyProducts = [
-            new OrderableDataBuilder().build(),
-            new OrderableDataBuilder().build()
+            new OrderableDataBuilder()
+                .withFullProductName('C Product')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('A Product')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('B product')
+                .build()
         ];
 
         this.availableNonFullSupplyProducts = [
-            new OrderableDataBuilder().build(),
-            new OrderableDataBuilder().build()
+            new OrderableDataBuilder()
+                .withFullProductName('f Product')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('E Product')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('d product')
+                .build()
         ];
 
         this.skippedFullSupplyProducts = [
-            new OrderableDataBuilder().build(),
-            new OrderableDataBuilder().build(),
-            new OrderableDataBuilder().build()
+            new OrderableDataBuilder()
+                .withFullProductName('h Product')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('G Product')
+                .build(),
+            new OrderableDataBuilder()
+                .withFullProductName('I product')
+                .build()
         ];
 
         this.totalLossesAndAdjustmentsColumn = new RequisitionColumnDataBuilder()
@@ -437,7 +457,7 @@ describe('ViewTabController', function() {
     describe('addFullSupplyProducts', function() {
 
         beforeEach(function() {
-            this.requisition.getAvailableFullSupplyProducts.andReturn(this.availableFullSupplyProducts);
+            this.requisition.getAvailableFullSupplyProducts.andReturn(angular.copy(this.availableFullSupplyProducts));
             this.selectProductsModalService.show.andReturn(this.$q.resolve([
                 this.availableFullSupplyProducts[0],
                 this.availableFullSupplyProducts[2]
@@ -465,13 +485,6 @@ describe('ViewTabController', function() {
             expect(this.selectProductsModalService.show).not.toHaveBeenCalled();
         });
 
-        it('should open modal', function() {
-            this.initController();
-            this.vm.addFullSupplyProducts();
-
-            expect(this.selectProductsModalService.show).toHaveBeenCalledWith(this.availableFullSupplyProducts);
-        });
-
         it('should do nothing if modal was dismissed', function() {
             this.selectProductsModalService.show.andReturn(this.$q.reject());
 
@@ -493,12 +506,25 @@ describe('ViewTabController', function() {
             ]);
         });
 
+        it('should show products in alphabetical order', function() {
+            this.initController();
+            this.vm.addFullSupplyProducts();
+
+            var actualProducts = this.selectProductsModalService.show.calls[0].args[0];
+
+            expect(actualProducts.length).toEqual(3);
+            expect(actualProducts[0]).toEqual(this.availableFullSupplyProducts[1]);
+            expect(actualProducts[1]).toEqual(this.availableFullSupplyProducts[2]);
+            expect(actualProducts[2]).toEqual(this.availableFullSupplyProducts[0]);
+        });
+
     });
 
     describe('addNonFullSupplyProducts', function() {
 
         beforeEach(function() {
-            this.requisition.getAvailableNonFullSupplyProducts.andReturn(this.availableNonFullSupplyProducts);
+            this.requisition.getAvailableNonFullSupplyProducts
+                .andReturn(angular.copy(this.availableNonFullSupplyProducts));
             this.selectProductsModalService.show.andReturn(this.$q.resolve([
                 this.availableNonFullSupplyProducts[0],
                 this.availableNonFullSupplyProducts[2]
@@ -526,13 +552,6 @@ describe('ViewTabController', function() {
             expect(this.selectProductsModalService.show).not.toHaveBeenCalled();
         });
 
-        it('should open modal', function() {
-            this.initController();
-            this.vm.addNonFullSupplyProducts();
-
-            expect(this.selectProductsModalService.show).toHaveBeenCalledWith(this.availableNonFullSupplyProducts);
-        });
-
         it('should do nothing if modal was dismissed', function() {
             this.selectProductsModalService.show.andReturn(this.$q.reject());
 
@@ -554,12 +573,24 @@ describe('ViewTabController', function() {
             ]);
         });
 
+        it('should show products in alphabetical order', function() {
+            this.initController();
+            this.vm.addNonFullSupplyProducts();
+
+            var actualProducts = this.selectProductsModalService.show.calls[0].args[0];
+
+            expect(actualProducts.length).toEqual(3);
+            expect(actualProducts[0]).toEqual(this.availableNonFullSupplyProducts[2]);
+            expect(actualProducts[1]).toEqual(this.availableNonFullSupplyProducts[1]);
+            expect(actualProducts[2]).toEqual(this.availableNonFullSupplyProducts[0]);
+        });
+
     });
 
     describe('unskipFullSupplyProducts', function() {
 
         beforeEach(function() {
-            this.requisition.getSkippedFullSupplyProducts.andReturn(this.skippedFullSupplyProducts);
+            this.requisition.getSkippedFullSupplyProducts.andReturn(angular.copy(this.skippedFullSupplyProducts));
             this.selectProductsModalService.show.andReturn(this.$q.resolve([
                 this.skippedFullSupplyProducts[0],
                 this.skippedFullSupplyProducts[2]
@@ -588,13 +619,6 @@ describe('ViewTabController', function() {
             expect(this.selectProductsModalService.show).not.toHaveBeenCalled();
         });
 
-        it('should open modal', function() {
-            this.initController();
-            this.vm.unskipFullSupplyProducts();
-
-            expect(this.selectProductsModalService.show).toHaveBeenCalledWith(this.skippedFullSupplyProducts);
-        });
-
         it('should do nothing if modal was dismissed for skipped products', function() {
             this.selectProductsModalService.show.andReturn(this.$q.reject());
 
@@ -615,6 +639,18 @@ describe('ViewTabController', function() {
                     this.skippedFullSupplyProducts[0],
                     this.skippedFullSupplyProducts[2]
                 ]);
+        });
+
+        it('should show products in alphabetical order', function() {
+            this.initController();
+            this.vm.unskipFullSupplyProducts();
+
+            var actualProducts = this.selectProductsModalService.show.calls[0].args[0];
+
+            expect(actualProducts.length).toEqual(3);
+            expect(actualProducts[0]).toEqual(this.skippedFullSupplyProducts[1]);
+            expect(actualProducts[1]).toEqual(this.skippedFullSupplyProducts[0]);
+            expect(actualProducts[2]).toEqual(this.skippedFullSupplyProducts[2]);
         });
 
     });
