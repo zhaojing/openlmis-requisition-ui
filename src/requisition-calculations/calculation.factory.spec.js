@@ -15,7 +15,7 @@
 
 describe('calculationFactory', function() {
 
-    var calculationFactory, TEMPLATE_COLUMNS, COLUMN_SOURCES, lineItem, requisitionMock, TemplateColumnDataBuilder,
+    var calculationFactory, TEMPLATE_COLUMNS, COLUMN_SOURCES, lineItem, requisitionMock, RequisitionColumnDataBuilder,
         ReasonDataBuilder, StockAdjustmentDataBuilder, templateMock, stockOnHandColumn, requestedQuantityColumn,
         isaColumn, maximumStockQuantityColumn, RequisitionLineItemDataBuilder, averageConsumptionColumn,
         calculatedOrderQuantityColumn, additionalQuantityRequiredColumn, totalConsumedQuantityColumn,
@@ -30,21 +30,24 @@ describe('calculationFactory', function() {
             calculationFactory = $injector.get('calculationFactory');
             TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
             COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
-            TemplateColumnDataBuilder = $injector.get('TemplateColumnDataBuilder');
+            RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
             ReasonDataBuilder = $injector.get('ReasonDataBuilder');
             StockAdjustmentDataBuilder = $injector.get('StockAdjustmentDataBuilder');
             RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
         });
 
-        calculatedOrderQuantityIsaColumn = new TemplateColumnDataBuilder().buildCalculatedOrderQuantityIsaColumn();
-        calculatedOrderQuantityColumn = new TemplateColumnDataBuilder().buildCalculatedOrderQuantityColumn();
-        totalConsumedQuantityColumn = new TemplateColumnDataBuilder().buildTotalConsumedQuantityColumn();
-        additionalQuantityRequiredColumn = new TemplateColumnDataBuilder().buildAdditionalQuantityRequiredColumn();
-        maximumStockQuantityColumn = new TemplateColumnDataBuilder().buildMaximumStockQuantityColumn();
-        averageConsumptionColumn = new TemplateColumnDataBuilder().buildAverageConsumptionColumn();
-        requestedQuantityColumn = new TemplateColumnDataBuilder().buildRequestedQuantityColumn();
-        stockOnHandColumn = new TemplateColumnDataBuilder().buildStockOnHandColumn();
-        isaColumn = new TemplateColumnDataBuilder().buildIdealStockAmountColumn();
+        calculatedOrderQuantityIsaColumn = new RequisitionColumnDataBuilder().buildCalculatedOrderQuantityIsaColumn();
+        calculatedOrderQuantityColumn = new RequisitionColumnDataBuilder().buildCalculatedOrderQuantityColumn();
+        totalConsumedQuantityColumn = new RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn();
+        additionalQuantityRequiredColumn = new RequisitionColumnDataBuilder().buildAdditionalQuantityRequiredColumn();
+        maximumStockQuantityColumn = new RequisitionColumnDataBuilder().buildMaximumStockQuantityColumn();
+        averageConsumptionColumn = new RequisitionColumnDataBuilder().buildAverageConsumptionColumn();
+        requestedQuantityColumn = new RequisitionColumnDataBuilder().buildRequestedQuantityColumn();
+        stockOnHandColumn = new RequisitionColumnDataBuilder()
+            .asStockOnHand()
+            .asUserInput()
+            .build();
+        isaColumn = new RequisitionColumnDataBuilder().buildIdealStockAmountColumn();
         lineItem = new RequisitionLineItemDataBuilder()
             .withTotalLossesAndAdjustments(25)
             .withBeginningBalance(20)

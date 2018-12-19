@@ -38,6 +38,17 @@
             buildBeginningBalanceColumn;
         RequisitionColumnDataBuilder
             .prototype.buildTotalLossesAndAdjustmentsColumn = buildTotalLossesAndAdjustmentsColumn;
+        RequisitionColumnDataBuilder.prototype.buildCalculatedOrderQuantityIsaColumn =
+            buildCalculatedOrderQuantityIsaColumn;
+        RequisitionColumnDataBuilder.prototype.buildCalculatedOrderQuantityColumn = buildCalculatedOrderQuantityColumn;
+        RequisitionColumnDataBuilder.prototype.buildTotalConsumedQuantityColumn = buildTotalConsumedQuantityColumn;
+        RequisitionColumnDataBuilder.prototype.buildAdditionalQuantityRequiredColumn =
+            buildAdditionalQuantityRequiredColumn;
+        RequisitionColumnDataBuilder.prototype.buildMaximumStockQuantityColumn = buildMaximumStockQuantityColumn;
+        RequisitionColumnDataBuilder.prototype.buildAverageConsumptionColumn = buildAverageConsumptionColumn;
+        RequisitionColumnDataBuilder.prototype.buildIdealStockAmountColumn = buildIdealStockAmountColumn;
+        RequisitionColumnDataBuilder.prototype.asStockOnHand = asStockOnHand;
+        RequisitionColumnDataBuilder.prototype.asUserInput = asUserInput;
 
         return RequisitionColumnDataBuilder;
 
@@ -73,6 +84,28 @@
                 definition: this.definition,
                 columnDefinition: this.columnDefinition
             });
+        }
+
+        function asStockOnHand() {
+            this.name = 'stockOnHand';
+            this.label = 'Stock on hand';
+            this.indicator = 'E';
+            this.displayOrder = 9;
+            this.isDisplayed = true;
+            this.source = 'CALCULATED';
+            this.option = null;
+            this.definition = 'Current physical count of stock on hand. This is quantified in dispensing units.';
+            this.columnDefinition = {
+                canChangeOrder: true,
+                columnType: COLUMN_TYPES.NUMERIC
+            };
+
+            return this;
+        }
+
+        function asUserInput() {
+            this.source = 'USER_INPUT';
+            return this;
         }
 
         function buildProductCodeColumn() {
@@ -144,21 +177,9 @@
         }
 
         function buildStockOnHandColumn() {
-            var builder = this;
-
-            builder.name = 'stockOnHand';
-            builder.label = 'Stock on hand';
-            builder.indicator = 'E';
-            builder.displayOrder = 9;
-            builder.isDisplayed = true;
-            builder.source = 'CALCULATED';
-            builder.option = null;
-            builder.definition = 'Current physical count of stock on hand. This is quantified in dispensing units.';
-            builder.columnDefinition = {
-                canChangeOrder: true,
-                columnType: COLUMN_TYPES.NUMERIC
-            };
-            return builder.build();
+            return this
+                .asStockOnHand()
+                .build();
         }
 
         function buildBeginningBalanceColumn() {
@@ -222,6 +243,170 @@
                 canChangeOrder: true,
                 columnType: COLUMN_TYPES.NUMERIC
             };
+            return builder.build();
+        }
+
+        function buildCalculatedOrderQuantityColumn() {
+            var builder = this;
+
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: 'NUMERIC'
+            };
+            builder.canChangeOrder = true;
+            builder.columnType = 'NUMERIC';
+            builder.definition = 'Actual quantity needed after deducting stock in hand. This is quantified in ' +
+                'dispensing units.';
+            builder.displayOrder = 11;
+            builder.indicator = 'I';
+            builder.isDisplayed = true;
+            builder.label = 'Calculated order quantity';
+            builder.name = 'calculatedOrderQuantity';
+            builder.option = null;
+            builder.source = 'CALCULATED';
+            builder.tag = null;
+
+            return builder.build();
+        }
+
+        function buildTotalConsumedQuantityColumn() {
+            var builder = this;
+
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: 'NUMERIC'
+            };
+            builder.canChangeOrder = true;
+            builder.columnType = 'NUMERIC';
+            builder.definition = 'Quantity dispensed/consumed in the reporting period. This is quantified in ' +
+                'dispensing units.';
+            builder.displayOrder = 6;
+            builder.indicator = 'C';
+            builder.isDisplayed = true;
+            builder.label = 'Total consumed quantity';
+            builder.name = 'totalConsumedQuantity';
+            builder.option = null;
+            builder.source = 'USER_INPUT';
+            builder.tag = null;
+
+            return builder.build();
+        }
+
+        function buildAdditionalQuantityRequiredColumn() {
+            var builder = this;
+
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: 'NUMERIC'
+            };
+            builder.canChangeOrder = true;
+            builder.columnType = 'NUMERIC';
+            builder.definition = 'Additional quantity required for new patients';
+            builder.displayOrder = 24;
+            builder.indicator = 'Z';
+            builder.isDisplayed = true;
+            builder.label = 'Additional quantity required';
+            builder.name = 'additionalQuantityRequired';
+            builder.option = null;
+            builder.source = 'USER_INPUT';
+            builder.tag = null;
+
+            return builder.build();
+        }
+
+        function buildMaximumStockQuantityColumn() {
+            var builder = this;
+
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: 'NUMERIC'
+            };
+            builder.canChangeOrder = true;
+            builder.columnType = 'NUMERIC';
+            builder.definition = 'Maximum stock calculated based on consumption and max stock amounts. Quantified in ' +
+                'dispensing units.';
+            builder.displayOrder = 23;
+            builder.indicator = 'H';
+            builder.isDisplayed = false;
+            builder.label = 'Maximum stock quantity';
+            builder.name = 'maximumStockQuantity';
+            builder.option = {
+                id: 'ff2b350c-37f2-4801-b21e-27ca12c12b3c',
+                optionLabel: 'requisitionConstants.default',
+                optionName: 'default'
+            };
+            builder.source = 'USER_INPUT';
+            builder.tag = null;
+
+            return builder.build();
+        }
+
+        function buildAverageConsumptionColumn() {
+            var builder = this;
+
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: 'NUMERIC'
+            };
+            builder.canChangeOrder = true;
+            builder.columnType = 'NUMERIC';
+            builder.definition = 'Average consumption over a specified number of periods/months. Quantified in ' +
+                'dispensing units.';
+            builder.displayOrder = 10;
+            builder.indicator = 'P';
+            builder.isDisplayed = true;
+            builder.label = 'Average consumption';
+            builder.name = 'averageConsumption';
+            builder.option = null;
+            builder.source = 'USER_INPUT';
+            builder.tag = null;
+
+            return builder.build();
+        }
+
+        function buildIdealStockAmountColumn() {
+            var builder = this;
+
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: 'NUMERIC'
+            };
+            builder.canChangeOrder = true;
+            builder.columnType = 'NUMERIC';
+            builder.definition = 'The Ideal Stock Amount is the target quantity for a specific commodity type, ' +
+                'facility, and period.';
+            builder.displayOrder = 10;
+            builder.indicator = 'G';
+            builder.isDisplayed = true;
+            builder.label = 'Ideal Stock Amount';
+            builder.name = 'idealStockAmount';
+            builder.option = null;
+            builder.source = 'REFERENCE_DATA';
+            builder.tag = null;
+
+            return builder.build();
+        }
+
+        function buildCalculatedOrderQuantityIsaColumn() {
+            var builder = this;
+
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: 'NUMERIC'
+            };
+            builder.canChangeOrder = true;
+            builder.columnType = 'NUMERIC';
+            builder.definition = 'Calculated Order Quantity ISA is based on an ISA configured by commodity type, and ' +
+                'several trade items may fill for one commodity type.';
+            builder.displayOrder = 11;
+            builder.indicator = 'S';
+            builder.isDisplayed = true;
+            builder.label = 'Calc Order Qty ISA';
+            builder.name = 'calculatedOrderQuantityIsa';
+            builder.option = null;
+            builder.source = 'CALCULATED';
+            builder.tag = null;
+
             return builder.build();
         }
     }
