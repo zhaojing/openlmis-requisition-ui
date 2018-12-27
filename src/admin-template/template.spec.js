@@ -15,8 +15,7 @@
 
 describe('Template', function() {
 
-    var $rootScope, template, Template, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS,
-        TemplateDataBuilder;
+    var $rootScope, template, Template, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS, TemplateDataBuilder;
 
     beforeEach(function() {
         module('admin-template');
@@ -45,23 +44,6 @@ describe('Template', function() {
                     .build()
             )
             .buildJson();
-
-        spyOn(this.RequisitionColumn, 'columnDependencies').andCallFake(function(column) {
-            if (column.name === 'remarks') {
-                return ['total'];
-            } else if (column.name === 'totalCost') {
-                return ['pricePerPack', 'packsToShip'];
-            } else if (column.name === 'packsToShip') {
-                return ['requestedQuantity', 'approvedQuantity'];
-            } else if (column.name === 'pricePerPack') {
-                return [];
-            } else if (column.name === 'stockOnHand') {
-                return ['beginningBalance', 'totalConsumedQuantity'];
-            } else if (column.name === 'totalConsumedQuantity') {
-                return ['beginningBalance', 'stockOnHand'];
-            }
-            return null;
-        });
     });
 
     describe('constructor', function() {
@@ -180,7 +162,6 @@ describe('Template', function() {
     describe('changePopulateStockOnHandFromStockCards', function() {
 
         it('should change stock based columns sources to stock cards', function() {
-            this.RequisitionColumn.columnDependencies.andReturn([]);
             template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
                 .withColumn({
                     name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
@@ -199,7 +180,6 @@ describe('Template', function() {
         });
 
         it('should change stock based columns sources to user input', function() {
-            this.RequisitionColumn.columnDependencies.andReturn([]);
             template = new TemplateDataBuilder().withColumn({
                 name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
                 source: COLUMN_SOURCES.USER_INPUT
