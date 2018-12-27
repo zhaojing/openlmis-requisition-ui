@@ -45,6 +45,8 @@
         TemplateColumnDataBuilder.prototype.buildRemarksColumn = buildRemarksColumn;
         TemplateColumnDataBuilder.prototype.buildTotalColumn = buildTotalColumn;
         TemplateColumnDataBuilder.prototype.buildSkipped = buildSkipped;
+        TemplateColumnDataBuilder.prototype.buildRequestedQuantityExplanationColumn =
+            buildRequestedQuantityExplanationColumn;
 
         return TemplateColumnDataBuilder;
 
@@ -124,10 +126,61 @@
         }
 
         function buildRequestedQuantityColumn() {
-            return this.withSource(COLUMN_SOURCES.USER_INPUT)
-                .withName(TEMPLATE_COLUMNS.REQUESTED_QUANTITY)
-                .visible()
-                .build();
+            this.columnDefinition = {
+                canBeChangedByUser: false,
+                canChangeOrder: false,
+                columnType: 'NUMERIC',
+                definition: 'Requested override of calculated quantity. This is quantified in dispensing units.',
+                id: '4a2e9fd3-1127-4b68-9912-84a5c00f6999',
+                indicator: 'J',
+                isDisplayRequired: false,
+                label: 'Requested quantity',
+                mandatory: false,
+                name: 'requestedQuantity',
+                options: [],
+                sources: ['USER_INPUT'],
+                supportsTag: false
+            };
+            this.definition = 'Requested override of calculated quantity. This is quantified in dispensing units.';
+            this.displayOrder = 15;
+            this.indicator = 'J';
+            this.isDisplayed = true;
+            this.label = 'Requested quantity';
+            this.name = 'requestedQuantity';
+            this.option = null;
+            this.source = 'USER_INPUT';
+            this.tag = null;
+
+            return this.build();
+        }
+
+        function buildRequestedQuantityExplanationColumn() {
+            this.columnDefinition = {
+                canBeChangedByUser: false,
+                canChangeOrder: true,
+                columnType: 'TEXT',
+                definition: 'Explanation of request for a quantity other than calculated order quantity.',
+                id: '6b8d331b-a0dd-4a1f-aafb-40e6a72ab9f5',
+                indicator: 'W',
+                isDisplayRequired: false,
+                label: 'Requested quantity explanation',
+                mandatory: false,
+                name: 'requestedQuantityExplanation',
+                options: [],
+                sources: ['USER_INPUT'],
+                supportsTag: false
+            };
+            this.definition = 'Explanation of request for a quantity other than calculated order quantity.';
+            this.displayOrder = 16;
+            this.indicator = 'W';
+            this.isDisplayed = true;
+            this.label = 'Requested quantity explanation';
+            this.name = 'requestedQuantityExplanation';
+            this.option = null;
+            this.source = 'USER_INPUT';
+            this.tag = null;
+
+            return this.build();
         }
 
         function buildMaximumStockQuantityColumn() {
@@ -157,9 +210,34 @@
         }
 
         function buildAverageConsumptionColumn() {
-            return this.withSource(COLUMN_SOURCES.USER_INPUT)
-                .withName(TEMPLATE_COLUMNS.AVERAGE_CONSUMPTION)
-                .build();
+            this.columnDefinition = {
+                canBeChangedByUser: false,
+                canChangeOrder: true,
+                columnType: 'NUMERIC',
+                definition: 'Average consumption over a specified number of periods/months. Quantified in dispensing ' +
+                    'units.',
+                id: '89113ec3-40e9-4d81-9516-b56adba7f8cd',
+                indicator: 'P',
+                isDisplayRequired: false,
+                label: 'Average consumption',
+                mandatory: false,
+                name: 'averageConsumption',
+                options: [],
+                sources: [COLUMN_SOURCES.CALCULATED, 'STOCK_CARDS'],
+                supportsTag: false
+            };
+            this.definition = 'Average consumption over a specified number of periods/months. Quantified in ' +
+                'dispensing units.';
+            this.displayOrder = 10;
+            this.indicator = 'P';
+            this.isDisplayed = true;
+            this.label = 'Average consumption';
+            this.name = 'averageConsumption';
+            this.option = null;
+            this.source = 'CALCULATED';
+            this.tag = null;
+
+            return this.build();
         }
 
         function buildTotalConsumedQuantityColumn() {
@@ -169,21 +247,92 @@
         }
 
         function buildBeginningBalanceColumn() {
-            return this.withSource(COLUMN_SOURCES.USER_INPUT)
-                .withName(TEMPLATE_COLUMNS.BEGINNING_BALANCE)
-                .build();
-        }
+            this.columnDefinition = {
+                canBeChangedByUser: false,
+                canChangeOrder: false,
+                columnType: 'NUMERIC',
+                definition: 'Based on the Stock On Hand from the previous period. This is quantified in dispensing ' +
+                    'units.',
+                id: '33b2d2e9-3167-46b0-95d4-1295be9afc22',
+                indicator: 'A',
+                isDisplayRequired: false,
+                label: 'Beginning balance',
+                mandatory: false,
+                name: 'beginningBalance',
+                options: [],
+                sources: ['USER_INPUT', 'STOCK_CARDS'],
+                supportsTag: false
+            };
+            this.definition = 'Based on the Stock On Hand from the previous period. This is quantified in dispensing ' +
+                'units.';
+            this.displayOrder = 2;
+            this.indicator = 'A';
+            this.isDisplayed = true;
+            this.label = 'Beginning balance';
+            this.name = 'beginningBalance';
+            this.option = null;
+            this.source = 'USER_INPUT';
+            this.tag = null;
 
-        function buildRemarksColumn() {
-            return this.withSource(COLUMN_SOURCES.USER_INPUT)
-                .withName(TEMPLATE_COLUMNS.REMARKS)
-                .build();
+            return this.build();
         }
 
         function buildTotalColumn() {
-            return this.withSource(COLUMN_SOURCES.REFERENCE_DATA)
-                .withName(TEMPLATE_COLUMNS.TOTAL)
-                .build();
+            this.columnDefinition = {
+                canBeChangedByUser: false,
+                canChangeOrder: true,
+                columnType: 'NUMERIC',
+                definition: 'Total of beginning balance and quantity received.',
+                id: 'ef524868-9d0a-11e6-80f5-76304dec7eb7',
+                indicator: 'Y',
+                isDisplayRequired: false,
+                label: 'Total',
+                mandatory: false,
+                name: 'total',
+                options: [],
+                sources: [COLUMN_SOURCES.CALCULATED],
+                supportsTag: false
+            };
+            this.definition = 'Total of beginning balance and quantity received.';
+            this.displayOrder = 1;
+            this.indicator = 'Y';
+            this.isDisplayed = false;
+            this.label = 'Total';
+            this.name = 'total';
+            this.option = null;
+            this.source = 'CALCULATED';
+            this.tag = null;
+
+            return this.build();
+        }
+
+        function buildRemarksColumn() {
+            this.columnDefinition = {
+                canBeChangedByUser: false,
+                canChangeOrder: true,
+                columnType: 'TEXT',
+                definition: 'Any additional remarks.',
+                id: '2ed8c74a-f424-4742-bd14-cfbe67b6e7be',
+                indicator: 'L',
+                isDisplayRequired: false,
+                label: 'Remarks',
+                mandatory: false,
+                name: 'remarks',
+                options: [],
+                sources: ['USER_INPUT'],
+                supportsTag: false
+            };
+            this.definition = 'Any additional remarks.';
+            this.displayOrder = 2;
+            this.indicator = 'L';
+            this.isDisplayed = true;
+            this.label = 'Remarks';
+            this.name = 'remarks';
+            this.option = null;
+            this.source = 'USER_INPUT';
+            this.tag = null;
+
+            return this.build();
         }
 
         function buildSkipped() {

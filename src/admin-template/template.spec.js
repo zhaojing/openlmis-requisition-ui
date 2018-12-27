@@ -15,11 +15,16 @@
 
 describe('Template', function() {
 
-    var $rootScope, template, templateJson, Template, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS,
+    var $rootScope, template, Template, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS,
         TemplateDataBuilder;
 
     beforeEach(function() {
         module('admin-template');
+
+        this.originalIncludes = Array.prototype.includes;
+        Array.prototype.includes = function(entry) {
+            return this.indexOf(entry) > -1;
+        };
 
         inject(function($injector) {
             $rootScope = $injector.get('$rootScope');
@@ -28,36 +33,18 @@ describe('Template', function() {
             COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
             TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
+            this.TemplateDataBuilder = TemplateDataBuilder;
             this.RequisitionColumn = $injector.get('RequisitionColumn');
+            this.TemplateColumnDataBuilder = $injector.get('TemplateColumnDataBuilder');
         });
 
-        templateJson = {
-            createdDate: new Date(),
-            id: 'template-1',
-            numberOfPeriodsToAverage: 3,
-            program: {
-                id: 'program-1'
-            },
-            name: 'template-name',
-            populateStockOnHandFromStockCards: false,
-            columnsMap: {
-                someColumn: {
-                    name: 'someColumn',
-                    option: {
-                        id: 'A'
-                    },
-                    columnDefinition: {
-                        options: [{
-                            id: 'B'
-                        }, {
-                            id: 'A'
-                        }],
-                        sources: jasmine.createSpyObj('sources', ['includes'])
-                    },
-                    displayOrder: 0
-                }
-            }
-        };
+        this.templateJson = new this.TemplateDataBuilder()
+            .withColumn(
+                new this.TemplateColumnDataBuilder()
+                    .withName('someColumn')
+                    .build()
+            )
+            .buildJson();
 
         spyOn(this.RequisitionColumn, 'columnDependencies').andCallFake(function(column) {
             if (column.name === 'remarks') {
@@ -80,18 +67,20 @@ describe('Template', function() {
     describe('constructor', function() {
 
         it('should copy all possible fields', function() {
-            template = new Template(templateJson);
+            template = new Template(this.templateJson);
 
-            expect(template.createdDate).toEqual(templateJson.createdDate);
-            expect(template.id).toEqual(templateJson.id);
-            expect(template.numberOfPeriodsToAverage).toEqual(templateJson.numberOfPeriodsToAverage);
-            expect(template.program.id).toEqual(templateJson.program.id);
-            expect(template.populateStockOnHandFromStockCards).toEqual(templateJson.populateStockOnHandFromStockCards);
-            expect(template.name).toEqual(templateJson.name);
+            expect(template.createdDate).toEqual(this.templateJson.createdDate);
+            expect(template.id).toEqual(this.templateJson.id);
+            expect(template.numberOfPeriodsToAverage).toEqual(this.templateJson.numberOfPeriodsToAverage);
+            expect(template.program.id).toEqual(this.templateJson.program.id);
+            expect(template.populateStockOnHandFromStockCards)
+                .toEqual(this.templateJson.populateStockOnHandFromStockCards);
+
+            expect(template.name).toEqual(this.templateJson.name);
         });
 
         it('should wrap columns with class', function() {
-            template = new Template(templateJson);
+            template = new Template(this.templateJson);
 
             for (var columnName in template.columnsMap) {
                 expect(template.columnsMap[columnName] instanceof TemplateColumn).toBe(true);
@@ -102,91 +91,14 @@ describe('Template', function() {
     describe('move', function() {
 
         beforeEach(function() {
-            template = {
-                id: '1',
-                programId: '2',
-                numberOfPeriodsToAverage: 2,
-                columnsMap: {
-                    total: {
-                        isDisplayed: true,
-                        displayOrder: 1,
-                        name: 'total',
-                        label: 'Total',
-                        columnDefinition: {
-                            canChangeOrder: true,
-                            sources: ['USER_INPUT'],
-                            isDisplayRequired: false,
-                            options: [
-                                {
-                                    id: '1',
-                                    optionLabel: 'option1'
-                                },
-                                {
-                                    id: '2',
-                                    optionLabel: 'option2'
-                                }
-                            ]
-                        },
-                        source: 'USER_INPUT',
-                        option: {
-                            id: '1',
-                            optionLabel: 'option1'
-                        }
-                    },
-                    remarks: {
-                        isDisplayed: true,
-                        displayOrder: 2,
-                        name: 'remarks',
-                        label: 'Remarks',
-                        columnDefinition: {
-                            canChangeOrder: true,
-                            sources: ['USER_INPUT', 'CALCULATED'],
-                            isDisplayRequired: false,
-                            options: []
-                        },
-                        source: 'USER_INPUT'
-                    },
-                    averageConsumption: {
-                        isDisplayed: true,
-                        displayOrder: 3,
-                        name: 'averageConsumption',
-                        source: 'CALCULATED',
-                        label: 'Average Consumption',
-                        columnDefinition: {
-                            canChangeOrder: true,
-                            sources: ['CALCULATED'],
-                            isDisplayRequired: false,
-                            options: [ ]
-                        }
-                    },
-                    requestedQuantity: {
-                        name: 'requestedQuantity',
-                        displayOrder: 4,
-                        isDisplayed: true,
-                        label: 'Requested Quantity',
-                        source: 'USER_INPUT',
-                        columnDefinition: {
-                            canChangeOrder: true,
-                            sources: ['USER_INPUT'],
-                            isDisplayRequired: false,
-                            options: [ ]
-                        }
-                    },
-                    requestedQuantityExplanation: {
-                        name: 'requestedQuantityExplanation',
-                        displayOrder: 5,
-                        isDisplayed: true,
-                        label: 'Requested Quantity Explanation',
-                        source: 'USER_INPUT',
-                        columnDefinition: {
-                            canChangeOrder: true,
-                            sources: ['USER_INPUT'],
-                            isDisplayRequired: false,
-                            options: [ ]
-                        }
-                    }
-                }
-            };
+            template = new this.TemplateDataBuilder()
+                .withoutColumns()
+                .withTotalColumn()
+                .withRemarksColumn()
+                .withAverageConsumptionColumn()
+                .withRequestedQuantityColumn()
+                .withRequestedQuantityExplanationColumn()
+                .build();
         });
 
         it('should move total column below remarks column', function() {
@@ -245,18 +157,8 @@ describe('Template', function() {
         it('should not move column if it is not between the same pinned columns', function() {
             var requisitionTemplate, columnCopy;
 
-            template.columnsMap.beginningBalance = {
-                isDisplayed: true,
-                displayOrder: 2,
-                name: 'beginningBalance',
-                label: 'Beginning Balance',
-                columnDefinition: {
-                    canChangeOrder: false,
-                    sources: ['USER_INPUT', 'CALCULATED'],
-                    isDisplayRequired: false
-                },
-                source: 'USER_INPUT'
-            };
+            template.columnsMap.beginningBalance = new this.TemplateColumnDataBuilder().buildBeginningBalanceColumn();
+
             template.columnsMap.remarks.displayOrder = 3;
 
             requisitionTemplate = new Template(template);
@@ -290,10 +192,6 @@ describe('Template', function() {
                 })
                 .build();
 
-            spyOn(template.columnsMap.stockOnHand, 'isStockBasedColumn').andReturn(true);
-            spyOn(template.columnsMap.beginningBalance, 'isStockBasedColumn').andReturn(true);
-            spyOn(template.columnsMap.column1, 'isStockBasedColumn').andReturn(false);
-
             template.changePopulateStockOnHandFromStockCards();
 
             expect(template.columnsMap.stockOnHand.source).toEqual(COLUMN_SOURCES.STOCK_CARDS);
@@ -312,10 +210,6 @@ describe('Template', function() {
                 })
                 .build();
 
-            spyOn(template.columnsMap.stockOnHand, 'isStockBasedColumn').andReturn(true);
-            spyOn(template.columnsMap.beginningBalance, 'isStockBasedColumn').andReturn(true);
-            spyOn(template.columnsMap.column1, 'isStockBasedColumn').andReturn(false);
-
             template.changePopulateStockOnHandFromStockCards();
 
             expect(template.columnsMap.stockOnHand.source).toEqual(COLUMN_SOURCES.USER_INPUT);
@@ -326,7 +220,7 @@ describe('Template', function() {
     describe('hasColumns', function() {
 
         beforeEach(function() {
-            template = new Template(templateJson);
+            template = new Template(this.templateJson);
         });
 
         it('should return true if template has columns', function() {
@@ -343,7 +237,7 @@ describe('Template', function() {
     describe('removeColumn', function() {
 
         beforeEach(function() {
-            template = new Template(templateJson);
+            template = new Template(this.templateJson);
         });
 
         it('should resolve if column removal was successful', function() {
@@ -370,11 +264,11 @@ describe('Template', function() {
     describe('addColumn', function() {
 
         beforeEach(function() {
-            template = new Template(templateJson);
-        });
+            template = new this.TemplateDataBuilder()
+                .withoutColumns()
+                .build();
 
-        it('should add displayed column', function() {
-            var availableColumn = {
+            this.newColumn = {
                 name: 'newColumn',
                 label: 'new column',
                 indicator: 'newColumn',
@@ -382,102 +276,77 @@ describe('Template', function() {
                 options: ['OPTION_1'],
                 definition: 'definition'
             };
+        });
 
-            template.addColumn(availableColumn, true);
+        it('should add displayed column', function() {
+            template.addColumn(this.newColumn, true);
 
             expect(template.columnsMap.newColumn).toEqual({
-                name: availableColumn.name,
-                label: availableColumn.label,
-                indicator: availableColumn.indicator,
-                displayOrder: 1,
+                name: this.newColumn.name,
+                label: this.newColumn.label,
+                indicator: this.newColumn.indicator,
+                displayOrder: 0,
                 isDisplayed: true,
-                source: availableColumn.sources[0],
-                columnDefinition: availableColumn,
-                option: availableColumn.options[0],
-                definition: availableColumn.definition
+                source: this.newColumn.sources[0],
+                columnDefinition: this.newColumn,
+                option: this.newColumn.options[0],
+                definition: this.newColumn.definition
             });
         });
 
         it('should add hidden column', function() {
-            var availableColumn = {
-                name: 'newColumn',
-                label: 'new column',
-                indicator: 'newColumn',
-                sources: ['USER_INPUT'],
-                options: ['OPTION_1'],
-                definition: 'definition'
-            };
-
-            template.addColumn(availableColumn, false);
+            template.addColumn(this.newColumn, false);
 
             expect(template.columnsMap.newColumn).toEqual({
-                name: availableColumn.name,
-                label: availableColumn.label,
-                indicator: availableColumn.indicator,
-                displayOrder: 1,
+                name: this.newColumn.name,
+                label: this.newColumn.label,
+                indicator: this.newColumn.indicator,
+                displayOrder: 0,
                 isDisplayed: false,
-                source: availableColumn.sources[0],
-                columnDefinition: availableColumn,
-                option: availableColumn.options[0],
-                definition: availableColumn.definition
+                source: this.newColumn.sources[0],
+                columnDefinition: this.newColumn,
+                option: this.newColumn.options[0],
+                definition: this.newColumn.definition
             });
         });
 
         it('should not add column if parameter is undefined', function() {
-            template.columnsMap = {};
-
             template.addColumn(undefined);
 
             expect(template.columnsMap).toEqual({});
         });
 
         it('should set USER_INPUT as source if possible', function() {
-            var availableColumn = {
-                name: 'newColumn',
-                label: 'new column',
-                indicator: 'newColumn',
-                sources: [COLUMN_SOURCES.CALCULATED, COLUMN_SOURCES.USER_INPUT],
-                options: ['OPTION_1'],
-                definition: 'definition'
-            };
-
-            template.addColumn(availableColumn, false);
+            template.addColumn(this.newColumn, false);
 
             expect(template.columnsMap.newColumn).toEqual({
-                name: availableColumn.name,
-                label: availableColumn.label,
-                indicator: availableColumn.indicator,
-                displayOrder: 1,
+                name: this.newColumn.name,
+                label: this.newColumn.label,
+                indicator: this.newColumn.indicator,
+                displayOrder: 0,
                 isDisplayed: false,
                 source: COLUMN_SOURCES.USER_INPUT,
-                columnDefinition: availableColumn,
-                option: availableColumn.options[0],
-                definition: availableColumn.definition
+                columnDefinition: this.newColumn,
+                option: this.newColumn.options[0],
+                definition: this.newColumn.definition
             });
         });
 
         it('should fallback to the first source option', function() {
-            var availableColumn = {
-                name: 'newColumn',
-                label: 'new column',
-                indicator: 'newColumn',
-                sources: [COLUMN_SOURCES.CALCULATED, COLUMN_SOURCES.STOCK_CARDS],
-                options: ['OPTION_1'],
-                definition: 'definition'
-            };
+            this.newColumn.sources = [COLUMN_SOURCES.CALCULATED, COLUMN_SOURCES.STOCK_CARDS];
 
-            template.addColumn(availableColumn, false);
+            template.addColumn(this.newColumn, false);
 
             expect(template.columnsMap.newColumn).toEqual({
-                name: availableColumn.name,
-                label: availableColumn.label,
-                indicator: availableColumn.indicator,
-                displayOrder: 1,
+                name: this.newColumn.name,
+                label: this.newColumn.label,
+                indicator: this.newColumn.indicator,
+                displayOrder: 0,
                 isDisplayed: false,
                 source: COLUMN_SOURCES.CALCULATED,
-                columnDefinition: availableColumn,
-                option: availableColumn.options[0],
-                definition: availableColumn.definition
+                columnDefinition: this.newColumn,
+                option: this.newColumn.options[0],
+                definition: this.newColumn.definition
             });
         });
     });
@@ -489,7 +358,7 @@ describe('Template', function() {
             repository = jasmine.createSpyObj('TemplateRepository', ['create']);
             repository.create.andReturn(true);
 
-            template = new Template(templateJson, repository);
+            template = new Template(this.templateJson, repository);
         });
 
         it('should call repository', function() {
@@ -502,9 +371,9 @@ describe('Template', function() {
     describe('canAssignTag', function() {
 
         beforeEach(function() {
-            templateJson.columnsMap.someColumn.columnDefinition.supportsTag = true;
-            templateJson.populateStockOnHandFromStockCards = true;
-            template = new Template(templateJson);
+            this.templateJson.columnsMap.someColumn.columnDefinition.supportsTag = true;
+            this.templateJson.populateStockOnHandFromStockCards = true;
+            template = new Template(this.templateJson);
         });
 
         it('should return false if template has populateStockOnHandFromStockCards set to false', function() {
@@ -528,4 +397,9 @@ describe('Template', function() {
             expect(template.canAssignTag('someNotExistingColumn')).toBeUndefined();
         });
     });
+
+    afterEach(function() {
+        Array.prototype.includes = this.originalIncludes;
+    });
+
 });

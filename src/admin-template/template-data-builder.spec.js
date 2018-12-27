@@ -26,11 +26,19 @@
     function TemplateDataBuilder(Template, TemplateColumnDataBuilder, ObjectReferenceDataBuilder) {
 
         TemplateDataBuilder.prototype.build = build;
+        TemplateDataBuilder.prototype.buildJson = buildJson;
         TemplateDataBuilder.prototype.withColumn = withColumn;
         TemplateDataBuilder.prototype.withFacilityTypes = withFacilityTypes;
         TemplateDataBuilder.prototype.withPopulateStockOnHandFromStockCards = withPopulateStockOnHandFromStockCards;
         TemplateDataBuilder.prototype.withProgram = withProgram;
         TemplateDataBuilder.prototype.withoutId = withoutId;
+        TemplateDataBuilder.prototype.withoutColumns = withoutColumns;
+        TemplateDataBuilder.prototype.withTotalColumn = withTotalColumn;
+        TemplateDataBuilder.prototype.withRemarksColumn = withRemarksColumn;
+        TemplateDataBuilder.prototype.withAverageConsumptionColumn = withAverageConsumptionColumn;
+        TemplateDataBuilder.prototype.withRequestedQuantityColumn = withRequestedQuantityColumn;
+        TemplateDataBuilder.prototype.withRequestedQuantityExplanationColumn = withRequestedQuantityExplanationColumn;
+        TemplateDataBuilder.prototype.withBeginningBalanceColumn = withBeginningBalanceColumn;
 
         return TemplateDataBuilder;
 
@@ -52,7 +60,19 @@
         }
 
         function build() {
-            return new Template(this);
+            return new Template(this.buildJson());
+        }
+
+        function buildJson() {
+            return {
+                createdDate: this.createdDate,
+                id: this.id,
+                numberOfPeriodsToAverage: this.numberOfPeriodsToAverage,
+                program: this.program,
+                populateStockOnHandFromStockCards: this.populateStockOnHandFromStockCards,
+                columnsMap: this.columnsMap,
+                facilityTypes: this.facilityTypes
+            };
         }
 
         function withColumn(column) {
@@ -77,6 +97,41 @@
 
         function withoutId() {
             this.id = undefined;
+            return this;
+        }
+
+        function withoutColumns() {
+            this.columnsMap = {};
+            return this;
+        }
+
+        function withTotalColumn() {
+            this.withColumn(new TemplateColumnDataBuilder().buildTotalColumn());
+            return this;
+        }
+
+        function withRemarksColumn() {
+            this.withColumn(new TemplateColumnDataBuilder().buildRemarksColumn());
+            return this;
+        }
+
+        function withAverageConsumptionColumn() {
+            this.withColumn(new TemplateColumnDataBuilder().buildAverageConsumptionColumn());
+            return this;
+        }
+
+        function withRequestedQuantityColumn() {
+            this.withColumn(new TemplateColumnDataBuilder().buildRequestedQuantityColumn());
+            return this;
+        }
+
+        function withRequestedQuantityExplanationColumn() {
+            this.withColumn(new TemplateColumnDataBuilder().buildRequestedQuantityExplanationColumn());
+            return this;
+        }
+
+        function withBeginningBalanceColumn() {
+            this.withColumn(new TemplateColumnDataBuilder().buildBeginningBalanceColumn());
             return this;
         }
     }
