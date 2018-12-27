@@ -27,9 +27,12 @@
 
         TemplateColumnDataBuilder.prototype.build = build;
         TemplateColumnDataBuilder.prototype.withSource = withSource;
+        TemplateColumnDataBuilder.prototype.withSources = withSources;
         TemplateColumnDataBuilder.prototype.withName = withName;
         TemplateColumnDataBuilder.prototype.visible = visible;
         TemplateColumnDataBuilder.prototype.withTag = withTag;
+        TemplateColumnDataBuilder.prototype.asAverageConsumptionColumn = asAverageConsumptionColumn;
+        TemplateColumnDataBuilder.prototype.asBeginningBalanceColumn = asBeginningBalanceColumn;
         TemplateColumnDataBuilder.prototype.buildStockOnHandColumn = buildStockOnHandColumn;
         TemplateColumnDataBuilder.prototype.buildIdealStockAmountColumn = buildIdealStockAmountColumn;
         TemplateColumnDataBuilder.prototype.buildRequestedQuantityColumn = buildRequestedQuantityColumn;
@@ -95,6 +98,11 @@
             return this;
         }
 
+        function withSources(sources) {
+            this.columnDefinition.sources = sources;
+            return this;
+        }
+
         function withName(name) {
             this.name = name;
             this.columnDefinition.name = name;
@@ -125,6 +133,68 @@
                 .build();
         }
 
+        function asAverageConsumptionColumn() {
+            this.columnDefinition = {
+                canBeChangedByUser: false,
+                canChangeOrder: true,
+                columnType: 'NUMERIC',
+                definition: 'Average consumption over a specified number of periods/months. Quantified in dispensing ' +
+                    'units.',
+                id: '89113ec3-40e9-4d81-9516-b56adba7f8cd',
+                indicator: 'P',
+                isDisplayRequired: false,
+                label: 'Average consumption',
+                mandatory: false,
+                name: 'averageConsumption',
+                options: [],
+                sources: [COLUMN_SOURCES.CALCULATED, COLUMN_SOURCES.STOCK_CARDS],
+                supportsTag: false
+            };
+            this.definition = 'Average consumption over a specified number of periods/months. Quantified in ' +
+                'dispensing units.';
+            this.displayOrder = 10;
+            this.indicator = 'P';
+            this.isDisplayed = true;
+            this.label = 'Average consumption';
+            this.name = 'averageConsumption';
+            this.option = null;
+            this.source = COLUMN_SOURCES.CALCULATED;
+            this.tag = null;
+
+            return this;
+        }
+
+        function asBeginningBalanceColumn() {
+            this.columnDefinition = {
+                canBeChangedByUser: false,
+                canChangeOrder: false,
+                columnType: 'NUMERIC',
+                definition: 'Based on the Stock On Hand from the previous period. This is quantified in dispensing ' +
+                    'units.',
+                id: '33b2d2e9-3167-46b0-95d4-1295be9afc22',
+                indicator: 'A',
+                isDisplayRequired: false,
+                label: 'Beginning balance',
+                mandatory: false,
+                name: 'beginningBalance',
+                options: [],
+                sources: [COLUMN_SOURCES.USER_INPUT, COLUMN_SOURCES.STOCK_CARDS],
+                supportsTag: false
+            };
+            this.definition = 'Based on the Stock On Hand from the previous period. This is quantified in dispensing ' +
+                'units.';
+            this.displayOrder = 2;
+            this.indicator = 'A';
+            this.isDisplayed = true;
+            this.label = 'Beginning balance';
+            this.name = 'beginningBalance';
+            this.option = null;
+            this.source = COLUMN_SOURCES.USER_INPUT;
+            this.tag = null;
+
+            return this;
+        }
+
         function buildRequestedQuantityColumn() {
             this.columnDefinition = {
                 canBeChangedByUser: false,
@@ -138,7 +208,7 @@
                 mandatory: false,
                 name: 'requestedQuantity',
                 options: [],
-                sources: ['USER_INPUT'],
+                sources: [COLUMN_SOURCES.USER_INPUT],
                 supportsTag: false
             };
             this.definition = 'Requested override of calculated quantity. This is quantified in dispensing units.';
@@ -148,7 +218,7 @@
             this.label = 'Requested quantity';
             this.name = 'requestedQuantity';
             this.option = null;
-            this.source = 'USER_INPUT';
+            this.source = COLUMN_SOURCES.USER_INPUT;
             this.tag = null;
 
             return this.build();
@@ -167,7 +237,7 @@
                 mandatory: false,
                 name: 'requestedQuantityExplanation',
                 options: [],
-                sources: ['USER_INPUT'],
+                sources: [COLUMN_SOURCES.USER_INPUT],
                 supportsTag: false
             };
             this.definition = 'Explanation of request for a quantity other than calculated order quantity.';
@@ -177,7 +247,7 @@
             this.label = 'Requested quantity explanation';
             this.name = 'requestedQuantityExplanation';
             this.option = null;
-            this.source = 'USER_INPUT';
+            this.source = COLUMN_SOURCES.USER_INPUT;
             this.tag = null;
 
             return this.build();
@@ -210,34 +280,9 @@
         }
 
         function buildAverageConsumptionColumn() {
-            this.columnDefinition = {
-                canBeChangedByUser: false,
-                canChangeOrder: true,
-                columnType: 'NUMERIC',
-                definition: 'Average consumption over a specified number of periods/months. Quantified in dispensing ' +
-                    'units.',
-                id: '89113ec3-40e9-4d81-9516-b56adba7f8cd',
-                indicator: 'P',
-                isDisplayRequired: false,
-                label: 'Average consumption',
-                mandatory: false,
-                name: 'averageConsumption',
-                options: [],
-                sources: [COLUMN_SOURCES.CALCULATED, 'STOCK_CARDS'],
-                supportsTag: false
-            };
-            this.definition = 'Average consumption over a specified number of periods/months. Quantified in ' +
-                'dispensing units.';
-            this.displayOrder = 10;
-            this.indicator = 'P';
-            this.isDisplayed = true;
-            this.label = 'Average consumption';
-            this.name = 'averageConsumption';
-            this.option = null;
-            this.source = 'CALCULATED';
-            this.tag = null;
-
-            return this.build();
+            return this
+                .asAverageConsumptionColumn()
+                .build();
         }
 
         function buildTotalConsumedQuantityColumn() {
@@ -247,34 +292,9 @@
         }
 
         function buildBeginningBalanceColumn() {
-            this.columnDefinition = {
-                canBeChangedByUser: false,
-                canChangeOrder: false,
-                columnType: 'NUMERIC',
-                definition: 'Based on the Stock On Hand from the previous period. This is quantified in dispensing ' +
-                    'units.',
-                id: '33b2d2e9-3167-46b0-95d4-1295be9afc22',
-                indicator: 'A',
-                isDisplayRequired: false,
-                label: 'Beginning balance',
-                mandatory: false,
-                name: 'beginningBalance',
-                options: [],
-                sources: ['USER_INPUT', 'STOCK_CARDS'],
-                supportsTag: false
-            };
-            this.definition = 'Based on the Stock On Hand from the previous period. This is quantified in dispensing ' +
-                'units.';
-            this.displayOrder = 2;
-            this.indicator = 'A';
-            this.isDisplayed = true;
-            this.label = 'Beginning balance';
-            this.name = 'beginningBalance';
-            this.option = null;
-            this.source = 'USER_INPUT';
-            this.tag = null;
-
-            return this.build();
+            return this
+                .asBeginningBalanceColumn()
+                .build();
         }
 
         function buildTotalColumn() {
@@ -300,7 +320,7 @@
             this.label = 'Total';
             this.name = 'total';
             this.option = null;
-            this.source = 'CALCULATED';
+            this.source = COLUMN_SOURCES.CALCULATED;
             this.tag = null;
 
             return this.build();
@@ -319,7 +339,7 @@
                 mandatory: false,
                 name: 'remarks',
                 options: [],
-                sources: ['USER_INPUT'],
+                sources: [COLUMN_SOURCES.USER_INPUT],
                 supportsTag: false
             };
             this.definition = 'Any additional remarks.';
@@ -329,7 +349,7 @@
             this.label = 'Remarks';
             this.name = 'remarks';
             this.option = null;
-            this.source = 'USER_INPUT';
+            this.source = COLUMN_SOURCES.USER_INPUT;
             this.tag = null;
 
             return this.build();

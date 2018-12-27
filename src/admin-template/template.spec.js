@@ -176,22 +176,60 @@ describe('Template', function() {
             expect(this.template.columnsMap.beginningBalance.source).toEqual(this.COLUMN_SOURCES.STOCK_CARDS);
         });
 
-        it('should change stock based columns sources to user input', function() {
-            this.template = new this.TemplateDataBuilder().withColumn({
-                name: this.TEMPLATE_COLUMNS.STOCK_ON_HAND,
-                source: this.COLUMN_SOURCES.USER_INPUT
-            })
-                .withColumn({
-                    name: this.TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-                    source: this.COLUMN_SOURCES.USER_INPUT
-                })
+        it('should change the source to user input when possible', function() {
+            this.template = new this.TemplateDataBuilder()
+                .withColumn(
+                    new this.TemplateColumnDataBuilder()
+                        .asBeginningBalanceColumn()
+                        .withSource(this.COLUMN_SOURCES.STOCK_CARDS)
+                        .build()
+                )
                 .build();
 
             this.template.changePopulateStockOnHandFromStockCards();
 
-            expect(this.template.columnsMap.stockOnHand.source).toEqual(this.COLUMN_SOURCES.USER_INPUT);
             expect(this.template.columnsMap.beginningBalance.source).toEqual(this.COLUMN_SOURCES.USER_INPUT);
         });
+
+        it('should not change the source to stock card if it is the first available source',
+            function() {
+                this.template = new this.TemplateDataBuilder()
+                    .withColumn(
+                        new this.TemplateColumnDataBuilder()
+                            .asAverageConsumptionColumn()
+                            .withSources([
+                                this.COLUMN_SOURCES.STOCK_CARDS,
+                                this.COLUMN_SOURCES.CALCULATED
+                            ])
+                            .withSource(this.COLUMN_SOURCES.STOCK_CARDS)
+                            .build()
+                    )
+                    .build();
+
+                this.template.changePopulateStockOnHandFromStockCards();
+
+                expect(this.template.columnsMap.averageConsumption.source).toEqual(this.COLUMN_SOURCES.CALCULATED);
+            });
+
+        it('should change the source to the first available that is not stock card when user input is not available',
+            function() {
+                this.template = new this.TemplateDataBuilder()
+                    .withColumn(
+                        new this.TemplateColumnDataBuilder()
+                            .asAverageConsumptionColumn()
+                            .withSources([
+                                this.COLUMN_SOURCES.CALCULATED,
+                                this.COLUMN_SOURCES.STOCK_CARDS
+                            ])
+                            .withSource(this.COLUMN_SOURCES.STOCK_CARDS)
+                            .build()
+                    )
+                    .build();
+
+                this.template.changePopulateStockOnHandFromStockCards();
+
+                expect(this.template.columnsMap.averageConsumption.source).toEqual(this.COLUMN_SOURCES.CALCULATED);
+            });
     });
 
     describe('hasColumns', function() {

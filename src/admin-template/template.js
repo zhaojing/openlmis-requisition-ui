@@ -358,7 +358,15 @@
                     var column = columns[columnName];
 
                     if (column.isStockBasedColumn()) {
-                        column.source = COLUMN_SOURCES.USER_INPUT;
+                        console.log(column);
+                        var userInputId = column.columnDefinition.sources.indexOf(COLUMN_SOURCES.USER_INPUT);
+                        if (userInputId > -1) {
+                            column.source = column.columnDefinition.sources[userInputId];
+                        } else if (column.columnDefinition.sources[0] === COLUMN_SOURCES.STOCK_CARDS) {
+                            column.source = column.columnDefinition.sources[1];
+                        } else {
+                            column.source = column.columnDefinition.sources[0];
+                        }
                     }
                 }
             }
