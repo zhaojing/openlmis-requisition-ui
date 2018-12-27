@@ -15,8 +15,6 @@
 
 describe('Template', function() {
 
-    var $rootScope, template, Template, TemplateColumn, COLUMN_SOURCES, TEMPLATE_COLUMNS, TemplateDataBuilder;
-
     beforeEach(function() {
         module('admin-template');
 
@@ -26,13 +24,12 @@ describe('Template', function() {
         };
 
         inject(function($injector) {
-            $rootScope = $injector.get('$rootScope');
-            Template = $injector.get('Template');
-            TemplateColumn = $injector.get('TemplateColumn');
-            COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
-            TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
-            TemplateDataBuilder = $injector.get('TemplateDataBuilder');
-            this.TemplateDataBuilder = TemplateDataBuilder;
+            this.$rootScope = $injector.get('$rootScope');
+            this.Template = $injector.get('Template');
+            this.TemplateColumn = $injector.get('TemplateColumn');
+            this.COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
+            this.TEMPLATE_COLUMNS = $injector.get('TEMPLATE_COLUMNS');
+            this.TemplateDataBuilder = $injector.get('TemplateDataBuilder');
             this.RequisitionColumn = $injector.get('RequisitionColumn');
             this.TemplateColumnDataBuilder = $injector.get('TemplateColumnDataBuilder');
         });
@@ -49,23 +46,23 @@ describe('Template', function() {
     describe('constructor', function() {
 
         it('should copy all possible fields', function() {
-            template = new Template(this.templateJson);
+            this.template = new this.Template(this.templateJson);
 
-            expect(template.createdDate).toEqual(this.templateJson.createdDate);
-            expect(template.id).toEqual(this.templateJson.id);
-            expect(template.numberOfPeriodsToAverage).toEqual(this.templateJson.numberOfPeriodsToAverage);
-            expect(template.program.id).toEqual(this.templateJson.program.id);
-            expect(template.populateStockOnHandFromStockCards)
+            expect(this.template.createdDate).toEqual(this.templateJson.createdDate);
+            expect(this.template.id).toEqual(this.templateJson.id);
+            expect(this.template.numberOfPeriodsToAverage).toEqual(this.templateJson.numberOfPeriodsToAverage);
+            expect(this.template.program.id).toEqual(this.templateJson.program.id);
+            expect(this.template.populateStockOnHandFromStockCards)
                 .toEqual(this.templateJson.populateStockOnHandFromStockCards);
 
-            expect(template.name).toEqual(this.templateJson.name);
+            expect(this.template.name).toEqual(this.templateJson.name);
         });
 
         it('should wrap columns with class', function() {
-            template = new Template(this.templateJson);
+            this.template = new this.Template(this.templateJson);
 
-            for (var columnName in template.columnsMap) {
-                expect(template.columnsMap[columnName] instanceof TemplateColumn).toBe(true);
+            for (var columnName in this.template.columnsMap) {
+                expect(this.template.columnsMap[columnName] instanceof this.TemplateColumn).toBe(true);
             }
         });
     });
@@ -73,7 +70,7 @@ describe('Template', function() {
     describe('move', function() {
 
         beforeEach(function() {
-            template = new this.TemplateDataBuilder()
+            this.template = new this.TemplateDataBuilder()
                 .withoutColumns()
                 .withTotalColumn()
                 .withRemarksColumn()
@@ -86,8 +83,8 @@ describe('Template', function() {
         it('should move total column below remarks column', function() {
             var requisitionTemplate, columnCopy;
 
-            requisitionTemplate = new Template(template);
-            $rootScope.$apply();
+            requisitionTemplate = new this.Template(this.template);
+            this.$rootScope.$apply();
 
             expect(requisitionTemplate.columnsMap.remarks.displayOrder).toBe(2);
             expect(requisitionTemplate.columnsMap.total.displayOrder).toBe(1);
@@ -103,8 +100,8 @@ describe('Template', function() {
         it('should move remarks column above total column', function() {
             var requisitionTemplate, columnCopy;
 
-            requisitionTemplate = new Template(template);
-            $rootScope.$apply();
+            requisitionTemplate = new this.Template(this.template);
+            this.$rootScope.$apply();
 
             expect(requisitionTemplate.columnsMap.remarks.displayOrder).toBe(2);
             expect(requisitionTemplate.columnsMap.total.displayOrder).toBe(1);
@@ -120,8 +117,8 @@ describe('Template', function() {
         it('should not move column if canChangeOrder is set to false', function() {
             var requisitionTemplate, columnCopy;
 
-            requisitionTemplate = new Template(template);
-            $rootScope.$apply();
+            requisitionTemplate = new this.Template(this.template);
+            this.$rootScope.$apply();
 
             expect(requisitionTemplate.columnsMap.remarks.displayOrder).toBe(2);
             expect(requisitionTemplate.columnsMap.total.displayOrder).toBe(1);
@@ -139,12 +136,12 @@ describe('Template', function() {
         it('should not move column if it is not between the same pinned columns', function() {
             var requisitionTemplate, columnCopy;
 
-            template.columnsMap.beginningBalance = new this.TemplateColumnDataBuilder().buildBeginningBalanceColumn();
+            this.template.columnsMap.beginningBalance = new this.TemplateColumnDataBuilder()
+                .buildBeginningBalanceColumn();
+            this.template.columnsMap.remarks.displayOrder = 3;
 
-            template.columnsMap.remarks.displayOrder = 3;
-
-            requisitionTemplate = new Template(template);
-            $rootScope.$apply();
+            requisitionTemplate = new this.Template(this.template);
+            this.$rootScope.$apply();
 
             expect(requisitionTemplate.columnsMap.remarks.displayOrder).toBe(3);
             expect(requisitionTemplate.columnsMap.total.displayOrder).toBe(1);
@@ -162,89 +159,89 @@ describe('Template', function() {
     describe('changePopulateStockOnHandFromStockCards', function() {
 
         it('should change stock based columns sources to stock cards', function() {
-            template = new TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
+            this.template = new this.TemplateDataBuilder().withPopulateStockOnHandFromStockCards()
                 .withColumn({
-                    name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
-                    source: COLUMN_SOURCES.USER_INPUT
+                    name: this.TEMPLATE_COLUMNS.STOCK_ON_HAND,
+                    source: this.COLUMN_SOURCES.USER_INPUT
                 })
                 .withColumn({
-                    name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-                    source: COLUMN_SOURCES.USER_INPUT
+                    name: this.TEMPLATE_COLUMNS.BEGINNING_BALANCE,
+                    source: this.COLUMN_SOURCES.USER_INPUT
                 })
                 .build();
 
-            template.changePopulateStockOnHandFromStockCards();
+            this.template.changePopulateStockOnHandFromStockCards();
 
-            expect(template.columnsMap.stockOnHand.source).toEqual(COLUMN_SOURCES.STOCK_CARDS);
-            expect(template.columnsMap.beginningBalance.source).toEqual(COLUMN_SOURCES.STOCK_CARDS);
+            expect(this.template.columnsMap.stockOnHand.source).toEqual(this.COLUMN_SOURCES.STOCK_CARDS);
+            expect(this.template.columnsMap.beginningBalance.source).toEqual(this.COLUMN_SOURCES.STOCK_CARDS);
         });
 
         it('should change stock based columns sources to user input', function() {
-            template = new TemplateDataBuilder().withColumn({
-                name: TEMPLATE_COLUMNS.STOCK_ON_HAND,
-                source: COLUMN_SOURCES.USER_INPUT
+            this.template = new this.TemplateDataBuilder().withColumn({
+                name: this.TEMPLATE_COLUMNS.STOCK_ON_HAND,
+                source: this.COLUMN_SOURCES.USER_INPUT
             })
                 .withColumn({
-                    name: TEMPLATE_COLUMNS.BEGINNING_BALANCE,
-                    source: COLUMN_SOURCES.USER_INPUT
+                    name: this.TEMPLATE_COLUMNS.BEGINNING_BALANCE,
+                    source: this.COLUMN_SOURCES.USER_INPUT
                 })
                 .build();
 
-            template.changePopulateStockOnHandFromStockCards();
+            this.template.changePopulateStockOnHandFromStockCards();
 
-            expect(template.columnsMap.stockOnHand.source).toEqual(COLUMN_SOURCES.USER_INPUT);
-            expect(template.columnsMap.beginningBalance.source).toEqual(COLUMN_SOURCES.USER_INPUT);
+            expect(this.template.columnsMap.stockOnHand.source).toEqual(this.COLUMN_SOURCES.USER_INPUT);
+            expect(this.template.columnsMap.beginningBalance.source).toEqual(this.COLUMN_SOURCES.USER_INPUT);
         });
     });
 
     describe('hasColumns', function() {
 
         beforeEach(function() {
-            template = new Template(this.templateJson);
+            this.template = new this.Template(this.templateJson);
         });
 
         it('should return true if template has columns', function() {
-            expect(template.hasColumns()).toBe(true);
+            expect(this.template.hasColumns()).toBe(true);
         });
 
         it('should return false if template has no columns', function() {
-            template.columnsMap = {};
+            this.template.columnsMap = {};
 
-            expect(template.hasColumns()).toBe(false);
+            expect(this.template.hasColumns()).toBe(false);
         });
     });
 
     describe('removeColumn', function() {
 
         beforeEach(function() {
-            template = new Template(this.templateJson);
+            this.template = new this.Template(this.templateJson);
         });
 
         it('should resolve if column removal was successful', function() {
             var spy = jasmine.createSpy();
 
-            template.removeColumn('someColumn').then(spy);
-            $rootScope.$apply();
+            this.template.removeColumn('someColumn').then(spy);
+            this.$rootScope.$apply();
 
             expect(spy).toHaveBeenCalled();
-            expect(template.columnsMap.someColumn).toBe(undefined);
+            expect(this.template.columnsMap.someColumn).toBe(undefined);
         });
 
         it('should reject if column removal was not successful', function() {
             var spy = jasmine.createSpy();
 
-            template.removeColumn('notExistingColumn').catch(spy);
-            $rootScope.$apply();
+            this.template.removeColumn('notExistingColumn').catch(spy);
+            this.$rootScope.$apply();
 
             expect(spy).toHaveBeenCalled();
-            expect(template.columnsMap.someColumn).not.toBe(undefined);
+            expect(this.template.columnsMap.someColumn).not.toBe(undefined);
         });
     });
 
     describe('addColumn', function() {
 
         beforeEach(function() {
-            template = new this.TemplateDataBuilder()
+            this.template = new this.TemplateDataBuilder()
                 .withoutColumns()
                 .build();
 
@@ -259,9 +256,9 @@ describe('Template', function() {
         });
 
         it('should add displayed column', function() {
-            template.addColumn(this.newColumn, true);
+            this.template.addColumn(this.newColumn, true);
 
-            expect(template.columnsMap.newColumn).toEqual({
+            expect(this.template.columnsMap.newColumn).toEqual({
                 name: this.newColumn.name,
                 label: this.newColumn.label,
                 indicator: this.newColumn.indicator,
@@ -275,9 +272,9 @@ describe('Template', function() {
         });
 
         it('should add hidden column', function() {
-            template.addColumn(this.newColumn, false);
+            this.template.addColumn(this.newColumn, false);
 
-            expect(template.columnsMap.newColumn).toEqual({
+            expect(this.template.columnsMap.newColumn).toEqual({
                 name: this.newColumn.name,
                 label: this.newColumn.label,
                 indicator: this.newColumn.indicator,
@@ -291,21 +288,21 @@ describe('Template', function() {
         });
 
         it('should not add column if parameter is undefined', function() {
-            template.addColumn(undefined);
+            this.template.addColumn(undefined);
 
-            expect(template.columnsMap).toEqual({});
+            expect(this.template.columnsMap).toEqual({});
         });
 
         it('should set USER_INPUT as source if possible', function() {
-            template.addColumn(this.newColumn, false);
+            this.template.addColumn(this.newColumn, false);
 
-            expect(template.columnsMap.newColumn).toEqual({
+            expect(this.template.columnsMap.newColumn).toEqual({
                 name: this.newColumn.name,
                 label: this.newColumn.label,
                 indicator: this.newColumn.indicator,
                 displayOrder: 0,
                 isDisplayed: false,
-                source: COLUMN_SOURCES.USER_INPUT,
+                source: this.COLUMN_SOURCES.USER_INPUT,
                 columnDefinition: this.newColumn,
                 option: this.newColumn.options[0],
                 definition: this.newColumn.definition
@@ -313,17 +310,17 @@ describe('Template', function() {
         });
 
         it('should fallback to the first source option', function() {
-            this.newColumn.sources = [COLUMN_SOURCES.CALCULATED, COLUMN_SOURCES.STOCK_CARDS];
+            this.newColumn.sources = [this.COLUMN_SOURCES.CALCULATED, this.COLUMN_SOURCES.STOCK_CARDS];
 
-            template.addColumn(this.newColumn, false);
+            this.template.addColumn(this.newColumn, false);
 
-            expect(template.columnsMap.newColumn).toEqual({
+            expect(this.template.columnsMap.newColumn).toEqual({
                 name: this.newColumn.name,
                 label: this.newColumn.label,
                 indicator: this.newColumn.indicator,
                 displayOrder: 0,
                 isDisplayed: false,
-                source: COLUMN_SOURCES.CALCULATED,
+                source: this.COLUMN_SOURCES.CALCULATED,
                 columnDefinition: this.newColumn,
                 option: this.newColumn.options[0],
                 definition: this.newColumn.definition
@@ -338,13 +335,13 @@ describe('Template', function() {
             repository = jasmine.createSpyObj('TemplateRepository', ['create']);
             repository.create.andReturn(true);
 
-            template = new Template(this.templateJson, repository);
+            this.template = new this.Template(this.templateJson, repository);
         });
 
         it('should call repository', function() {
-            template.create();
+            this.template.create();
 
-            expect(repository.create).toHaveBeenCalledWith(template);
+            expect(repository.create).toHaveBeenCalledWith(this.template);
         });
     });
 
@@ -353,28 +350,28 @@ describe('Template', function() {
         beforeEach(function() {
             this.templateJson.columnsMap.someColumn.columnDefinition.supportsTag = true;
             this.templateJson.populateStockOnHandFromStockCards = true;
-            template = new Template(this.templateJson);
+            this.template = new this.Template(this.templateJson);
         });
 
         it('should return false if template has populateStockOnHandFromStockCards set to false', function() {
-            template.populateStockOnHandFromStockCards = false;
+            this.template.populateStockOnHandFromStockCards = false;
 
-            expect(template.canAssignTag('someColumn')).toBe(false);
+            expect(this.template.canAssignTag('someColumn')).toBe(false);
         });
 
         it('should return false if column does not support tag', function() {
-            template.columnsMap.someColumn.columnDefinition.supportsTag = false;
+            this.template.columnsMap.someColumn.columnDefinition.supportsTag = false;
 
-            expect(template.canAssignTag('someColumn')).toBe(false);
+            expect(this.template.canAssignTag('someColumn')).toBe(false);
         });
 
         it('should return true if template has populateStockOnHandFromStockCards set to true and column supports tag',
             function() {
-                expect(template.canAssignTag('someColumn')).toBe(true);
+                expect(this.template.canAssignTag('someColumn')).toBe(true);
             });
 
         it('should return undefined if column with given name does not exist', function() {
-            expect(template.canAssignTag('someNotExistingColumn')).toBeUndefined();
+            expect(this.template.canAssignTag('someNotExistingColumn')).toBeUndefined();
         });
     });
 
