@@ -128,8 +128,16 @@ describe('templateValidator', function() {
             expect(result).toBe('adminProgramTemplate.columnLabelToShort');
         });
 
-        it('should return error if label is not alphanumeric', function() {
-            column.label = '!abe!';
+        it('should return error if label starts with a space', function() {
+            column.label = ' abe';
+
+            var result = templateValidator.getColumnError(column, template);
+
+            expect(result).toBe('adminProgramTemplate.columnLabelNotAllowedCharacters');
+        });
+
+        it('should return error if label has not allowed characters', function() {
+            column.label = 'happy face 😊';
 
             var result = templateValidator.getColumnError(column, template);
 

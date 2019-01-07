@@ -19,12 +19,14 @@
 
     /**
      * @ngdoc object
-     * @name admin-template.ALPHA_NUMERIC_REGEX
+     * @name admin-template.UTF8_REGEX
      *
      * @description
-     * This is constant for alpha numeric regex.
+     * This is constant for UTF-8 regex.
      */
     angular
         .module('admin-template')
-        .constant('ALPHA_NUMERIC_REGEX', /^[a-zA-z0-9/]+[a-zA-Z0-9/ ]+$/);
+        // Translating ES6 /^[\u{21}-\u{FFFF}][\u{20}-\u{FFFF}]+$/u to ES5, at https://mothereff.in/regexpu
+        //eslint-disable-next-line max-len
+        .constant('UTF8_REGEX', /^(?:[!-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])(?:[ -\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+$/);
 })();

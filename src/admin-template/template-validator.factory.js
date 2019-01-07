@@ -29,11 +29,11 @@
         .factory('templateValidator', factory);
 
     factory.$inject = [
-        'ALPHA_NUMERIC_REGEX', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES',
+        'UTF8_REGEX', 'MAX_COLUMN_DESCRIPTION_LENGTH', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES',
         'messageService'
     ];
 
-    function factory(ALPHA_NUMERIC_REGEX, MAX_COLUMN_DESCRIPTION_LENGTH, TEMPLATE_COLUMNS,
+    function factory(UTF8_REGEX, MAX_COLUMN_DESCRIPTION_LENGTH, TEMPLATE_COLUMNS,
                      COLUMN_SOURCES, messageService) {
 
         var columnValidations = {
@@ -114,7 +114,7 @@
             if (label.length < 2) {
                 return messageService.get('adminProgramTemplate.columnLabelToShort');
             }
-            if (!ALPHA_NUMERIC_REGEX.test(label)) {
+            if (!UTF8_REGEX.test(label)) {
                 return messageService.get('adminProgramTemplate.columnLabelNotAllowedCharacters');
             }
         }
