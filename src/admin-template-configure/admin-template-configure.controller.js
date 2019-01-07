@@ -19,7 +19,7 @@
 
     /**
      * @ngdoc controller
-     * @name admin-template-configure:AdminTemplateConfigureController
+     * @name admin-template-configure.controller:AdminTemplateConfigureController
      *
      * @description
      * Controller for managing template configuration screen.
@@ -34,9 +34,11 @@
 
         var vm = this;
 
+        vm.$onInit = onInit;
+
         /**
          * @ngdoc property
-         * @propertyOf admin-template-configure:AdminTemplateConfigureController
+         * @propertyOf admin-template-configure.controller:AdminTemplateConfigureController
          * @name template
          * @type {Object}
          *
@@ -47,7 +49,7 @@
 
         /**
          * @ngdoc property
-         * @propertyOf admin-template-configure:AdminTemplateConfigureController
+         * @propertyOf admin-template-configure.controller:AdminTemplateConfigureController
          * @name program
          * @type {Object}
          *
@@ -55,5 +57,30 @@
          * Holds program.
          */
         vm.program = program;
+
+        /**
+         * @ngdoc property
+         * @propertyOf admin-template-configure.controller:AdminTemplateConfigureController
+         * @type {string}
+         * @name originalTemplateName
+         *
+         * @description
+         * The original name of the template.
+         */
+        vm.originalTemplateName = undefined;
+
+        /**
+         * @ngdoc method
+         * @methodOf admin-template-configure.controller:AdminTemplateConfigureController
+         * @name onInit
+         *
+         * @description
+         * Initialization method of the AdminTemplateConfigureController.
+         */
+        function onInit() {
+            vm.template = template;
+            vm.program = program;
+            vm.originalTemplateName = template.name;
+        }
     }
 })();

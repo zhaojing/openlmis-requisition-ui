@@ -54,6 +54,7 @@
             this.populateStockOnHandFromStockCards = false;
             this.columnsMap = {};
             this.facilityTypes = [];
+            this.name = 'Template ' + TemplateDataBuilder.instanceNumber;
 
             var column = new TemplateColumnDataBuilder().build();
             this.columnsMap[column.name] = column;
@@ -65,6 +66,7 @@
 
         function buildJson() {
             return {
+                name: this.name,
                 createdDate: this.createdDate,
                 id: this.id,
                 numberOfPeriodsToAverage: this.numberOfPeriodsToAverage,

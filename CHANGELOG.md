@@ -4,6 +4,8 @@
 Bug fixes:
 * [OLMIS-5822](https://openlmis.atlassian.net/browse/OLMIS-5822): Fixed a bug with products not being sorted alphabetically on the product selection modal.
 * [OLMIS-5525](https://openlmis.atlassian.net/browse/OLMIS-5525): Fixed a bug with source not being set appropriately when un-checking stock-based flag on the requisition template page.
+* [OLMIS-5813](https://openlmis.atlassian.net/browse/OLMIS-5813): Fixed a bug with header changing when editing requisition template.
+
 
 5.5.0 / 2018-12-12
 ==================

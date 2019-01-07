@@ -15,35 +15,50 @@
 
 describe('AdminTemplateConfigureController', function() {
 
-    var vm, template, program, $controller, ProgramDataBuilder, TemplateDataBuilder;
-
     beforeEach(function() {
         module('admin-template-configure');
         module('admin-template-configure-columns');
 
+        var ProgramDataBuilder, TemplateDataBuilder;
         inject(function($injector) {
-            $controller = $injector.get('$controller');
+            this.$controller = $injector.get('$controller');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
             TemplateDataBuilder = $injector.get('TemplateDataBuilder');
         });
 
-        template = new TemplateDataBuilder().build();
-        program = new ProgramDataBuilder().build();
+        this.template = new TemplateDataBuilder().build();
+        this.program = new ProgramDataBuilder().build();
 
-        vm = $controller('AdminTemplateConfigureController', {
-            template: template,
-            program: program
+        this.vm = this.$controller('AdminTemplateConfigureController', {
+            template: this.template,
+            program: this.program
         });
+
+        this.vm.$onInit();
     });
 
     describe('init', function() {
 
         it('should expose program', function() {
-            expect(vm.program).toEqual(program);
+            expect(this.vm.program).toEqual(this.program);
         });
 
         it('should expose template', function() {
-            expect(vm.template).toEqual(template);
+            expect(this.vm.template).toEqual(this.template);
+        });
+
+        it('should expose original template name', function() {
+            expect(this.vm.originalTemplateName).toEqual(this.template.name);
+        });
+
+    });
+
+    describe('original template name', function() {
+
+        it('should not change when user edits the template name', function() {
+            this.vm.template.name = 'Different Name';
+
+            expect(this.vm.originalTemplateName).not.toBe('Different Name');
         });
 
     });
