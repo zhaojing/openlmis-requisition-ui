@@ -19,9 +19,9 @@
                         <label for="facilityType">{{'adminTemplateAdd.facilityType' | message}}</label>
                         <p class="note">{{'adminTemplateAdd.programNeedsToBeSelected' | message}}</p>
                         <select id="facilityType" ng-model="vm.selectedFacilityType"
-                                ng-options="facilityType.name for facilityType in vm.facilityTypes | orderBy: 'name'" 
+                                ng-options="facilityType.name for facilityType in vm.facilityTypes | orderBy: 'name'"
                                 ng-disabled="!vm.template.program"
-                                openlmis-invalid="{{vm.validateFacilityType() | message}}" required>
+                                openlmis-invalid="{{vm.validateFacilityType() | message}}">
                         </select>
                     </div>
                     <button type="submit" class="add">{{'adminTemplateAdd.addFacilityType' | message}}</button>
