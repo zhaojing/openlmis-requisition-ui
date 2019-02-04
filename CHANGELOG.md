@@ -1,6 +1,9 @@
 5.5.1 / Work in Progress
 ========================
 
+Improvements:
+* [OLMIS-5976](https://openlmis.atlassian.net/browse/OLMIS-5976): Updated auth-ui to version 6.2.0.
+
 Bug fixes:
 * [OLMIS-5822](https://openlmis.atlassian.net/browse/OLMIS-5822): Fixed a bug with products not being sorted alphabetically on the product selection modal.
 * [OLMIS-5525](https://openlmis.atlassian.net/browse/OLMIS-5525): Fixed a bug with source not being set appropriately when un-checking stock-based flag on the requisition template page.
