@@ -1,5 +1,8 @@
-5.5.1 / Work in Progress
+6.0.0 / Work in Progress
 ========================
+
+Breaking changes:
+* [OLMIS-4373](https://openlmis.atlassian.net/browse/OLMIS-4373): Changed filtering on Convert to Order page to use facility and program dropdowns.
 
 Bug fixes:
 * [OLMIS-5822](https://openlmis.atlassian.net/browse/OLMIS-5822): Fixed a bug with products not being sorted alphabetically on the product selection modal.
