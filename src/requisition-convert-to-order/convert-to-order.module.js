@@ -26,6 +26,8 @@
     angular.module('requisition-convert-to-order', [
         'requisition',
         'openlmis-date',
+        'referencedata-facility',
+        'referencedata-program',
         'openlmis-modal',
         'openlmis-pagination',
         'ui.router'

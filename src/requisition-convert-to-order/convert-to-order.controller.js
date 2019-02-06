@@ -30,11 +30,11 @@
         .controller('ConvertToOrderController', ConvertToOrderController);
 
     ConvertToOrderController.$inject = [
-        '$stateParams', 'requisitionsForConvertFactory', 'notificationService',
+        '$stateParams', 'requisitionService', 'notificationService', 'facilities', 'programs',
         'confirmService', 'loadingModalService', 'requisitions', '$state', 'UuidGenerator'
     ];
 
-    function ConvertToOrderController($stateParams, requisitionsForConvertFactory, notificationService,
+    function ConvertToOrderController($stateParams, requisitionService, notificationService, facilities, programs,
                                       confirmService, loadingModalService, requisitions, $state, UuidGenerator) {
 
         var vm = this,
@@ -62,82 +62,57 @@
         /**
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name filterBy
-         * @type {String}
+         * @name facilities
+         * @type {Array}
          *
          * @description
-         * Holds field that will be filtered.
+         * Holds facilities for program select.
          */
-        vm.filterBy = $stateParams.filterBy;
+        vm.facilities = facilities;
 
         /**
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name filterValue
+         * @name programs
+         * @type {Array}
+         *
+         * @description
+         * Holds programs for program select.
+         */
+        vm.programs = programs;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
+         * @name programId
+         * @type {String}
+         *
+         * @description
+         * Holds program id filter.
+         */
+        vm.programId = $stateParams.programId;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
+         * @name facilityId
          * @type {String}
          *
          * @description
          * Holds filter value.
          */
-        vm.filterValue = $stateParams.filterValue;
+        vm.facilityId = $stateParams.facilityId;
 
         /**
          * @ngdoc property
          * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name sortBy
+         * @name sort
          * @type {String}
          *
          * @description
          * Holds field to sort by.
          */
-        vm.sortBy = $stateParams.sortBy;
-
-        /**
-         * @ngdoc property
-         * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name descending
-         * @type {Boolean}
-         *
-         * @description
-         * Indicates if list will be sorted descending or ascending.
-         */
-        vm.descending = $stateParams.descending;
-
-        /**
-         * @ngdoc property
-         * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name filters
-         * @type {Array}
-         *
-         * @description
-         * Holds filters that can be chosen to search for requisitions.
-         */
-        vm.filters = [
-            {
-                value: 'all',
-                name: 'requisitionConvertToOrder.all'
-            }, {
-                value: 'programName',
-                name: 'requisitionConvertToOrder.program'
-            }, {
-                value: 'facilityCode',
-                name: 'requisitionConvertToOrder.facilityCode'
-            }, {
-                value: 'facilityName',
-                name: 'requisitionConvertToOrder.facilityName'
-            }
-        ];
-
-        /**
-         * @ngdoc property
-         * @propertyOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name nothingToConvert
-         * @type {Boolean}
-         *
-         * @description
-         * Indicates if there is any requisition available to convert to order or not.
-         */
-        vm.nothingToConvert = !requisitions.length && defaultSearchParams();
+        vm.sort = $stateParams.sort;
 
         /**
          * @ngdoc property
@@ -250,9 +225,7 @@
          * @return {Object} message that should be displayed to user
          */
         function getInfoMessage() {
-            if (vm.nothingToConvert) {
-                return 'requisitionConvertToOrder.noRequisitionToConvert';
-            } else if (!vm.requisitions.length) {
+            if (!vm.requisitions.length) {
                 return 'requisitionConvertToOrder.noSearchResults';
             }
             return undefined;
@@ -261,57 +234,17 @@
         /**
          * @ngdoc method
          * @methodOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name defaultSearchParams
+         * @name search
          *
          * @description
-         * Determines whether default search parameters are set or not.
-         *
-         * @return {Boolean} are default parameters set
+         * Reloads the page with new search parameters.
          */
-        function defaultSearchParams() {
-            return vm.filterBy === 'all' &&
-                isEmpty(vm.filterValue) &&
-                isUndefined(vm.sortBy) &&
-                isUndefined(vm.descending);
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name isEmpty
-         *
-         * @description
-         * Determines if the given parameter is an empty string.
-         *
-         * @param  {String}  value value to be checked
-         * @return {Boolean}       is given parameter empty
-         */
-        function isEmpty(value) {
-            return value === '';
-        }
-
-        /**
-         * @ngdoc methodOf
-         * @methodOf requisition-convert-to-order.controller:ConvertToOrderController
-         * @name isUndefined
-         *
-         * @description
-         * Determines if the given value is undefined.
-         *
-         * @param  {Object}  value value to be checked
-         * @return {Boolean}       is given value undefined
-         */
-        function isUndefined(value) {
-            return value === undefined;
-        }
-
         function search() {
             var stateParams = angular.copy($stateParams);
 
-            stateParams.filterBy = vm.filterBy;
-            stateParams.filterValue = vm.filterValue;
-            stateParams.sortBy = vm.sortBy;
-            stateParams.descending = vm.descending;
+            stateParams.programId = vm.programId;
+            stateParams.facilityId = vm.facilityId;
+            stateParams.sort = vm.sort;
 
             $state.go('openlmis.requisitions.convertToOrder', stateParams, {
                 reload: true
@@ -335,8 +268,8 @@
                             loadingModalService.open();
 
                             var promise = withOrder ?
-                                requisitionsForConvertFactory.convertToOrder(requisitions, key) :
-                                requisitionsForConvertFactory.releaseWithoutOrder(requisitions, key);
+                                requisitionService.convertToOrder(requisitions, key) :
+                                requisitionService.releaseWithoutOrder(requisitions, key);
 
                             promise
                                 .then(function() {

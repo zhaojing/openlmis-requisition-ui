@@ -16,7 +16,7 @@
     "requisitionConvertToOrder.facilityCode": "Facility code",
     "requisitionConvertToOrder.facilityName": "Facility name",
     "requisitionConvertToOrder.noRequisitionToConvert": "No requisitions to be converted to orders",
-    "requisitionConvertToOrder.noSearchResults": "No search results",
+    "requisitionConvertToOrder.noSearchResults": "No requisitions for convert found",
     "requisitionConvertToOrder.noSupplyingDepotSelected": "Supplying depot not selected",
     "requisitionConvertToOrder.period": "Period",
     "requisitionConvertToOrder.program": "Program",

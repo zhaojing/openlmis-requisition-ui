@@ -15,460 +15,452 @@
 
 describe('ConvertToOrderController', function() {
 
-    var vm, $rootScope, $q, $state, requisitionService, notificationService,
-        requisitions, supplyingDepots, stateParams, key, UuidGenerator;
+    var UuidGenerator, ProgramDataBuilder, FacilityDataBuilder;
 
     beforeEach(function() {
         module('requisition-convert-to-order');
 
         inject(function($injector) {
-            $q = $injector.get('$q');
-            $rootScope = $injector.get('$rootScope');
-            requisitionService = $injector.get('requisitionService');
-            notificationService = $injector.get('notificationService');
-            $state = $injector.get('$state');
-            UuidGenerator = $injector.get('UuidGenerator');
+            this.$q = $injector.get('$q');
+            this.$rootScope = $injector.get('$rootScope');
+            this.requisitionService = $injector.get('requisitionService');
+            this.notificationService = $injector.get('notificationService');
+            this.$state = $injector.get('$state');
+            this.confirmService = $injector.get('confirmService');
+            this.loadingModalService = $injector.get('loadingModalService');
 
-            key = 'key';
+            UuidGenerator = $injector.get('UuidGenerator');
+            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+
+            this.key = 'key';
             spyOn(UuidGenerator.prototype, 'generate').andCallFake(function() {
-                return key;
+                return 'key';
             });
 
-            stateParams = {
-                filterBy: 'all',
-                filterValue: '',
+            this.stateParams = {
+                programId: 'program-id',
+                facilityId: 'facility-id',
                 page: 0,
                 size: 10
             };
-            requisitions = [
+            this.supplyingDepots = [
+                new FacilityDataBuilder().build(),
+                new FacilityDataBuilder().build()
+            ];
+            this.facilities = [
+                new FacilityDataBuilder().build(),
+                new FacilityDataBuilder().build()
+            ];
+            this.programs = [
+                new ProgramDataBuilder().build(),
+                new ProgramDataBuilder().build()
+            ];
+            this.requisitions = [
                 {
                     requisition: {
                         id: 'requisitionId1',
-                        facility: {
-                            name: 'facility1',
-                            code: 'code1'
-                        },
-                        program: {
-                            name: 'program1'
-                        }
+                        facility: new FacilityDataBuilder().build(),
+                        program: new ProgramDataBuilder().build()
                     },
-                    supplyingDepots: supplyingDepots
+                    supplyingDepots: this.supplyingDepots
                 },
                 {
                     requisition: {
                         id: 'requisitonId2',
-                        facility: {
-                            name: 'facility2',
-                            code: 'code2'
-                        },
-                        program: {
-                            name: 'program2'
-                        }
+                        facility: new FacilityDataBuilder().build(),
+                        program: new ProgramDataBuilder().build()
                     },
-                    supplyingDepots: supplyingDepots
-                }
-            ];
-            supplyingDepots = [
-                {
-                    id: 'depotId1',
-                    name: 'facility1',
-                    code: 'code1'
-                },
-                {
-                    id: 'depotId2',
-                    name: 'facility2',
-                    code: 'code2'
+                    supplyingDepots: this.supplyingDepots
                 }
             ];
 
-            vm = $injector.get('$controller')('ConvertToOrderController', {
-                requisitions: requisitions,
-                $stateParams: stateParams
+            this.vm = $injector.get('$controller')('ConvertToOrderController', {
+                requisitions: this.requisitions,
+                $stateParams: this.stateParams,
+                facilities: this.facilities,
+                programs: this.programs
             });
         });
     });
 
-    it('should show all requisitions if default filter is applied', function() {
-        expect(vm.filterBy).toEqual('all');
-        expect(vm.filterValue).toEqual('');
-        expect(vm.requisitions).toEqual(requisitions);
+    it('should assign facilities', function() {
+        expect(this.vm.facilities).toEqual(this.facilities);
+    });
+
+    it('should assign programs', function() {
+        expect(this.vm.programs).toEqual(this.programs);
     });
 
     it('should get all selected requisitions', function() {
-        vm.requisitions[0].$selected = true;
+        this.vm.requisitions[0].$selected = true;
 
-        var selectedRequisitions = vm.getSelected();
+        var selectedRequisitions = this.vm.getSelected();
 
-        expect(selectedRequisitions).toEqual([requisitions[0]]);
+        expect(selectedRequisitions).toEqual([this.requisitions[0]]);
     });
 
     it('should get an empty array if no requisition is selected', function() {
-        var selectedRequisitions = vm.getSelected();
+        var selectedRequisitions = this.vm.getSelected();
 
         expect(selectedRequisitions).toEqual([]);
     });
 
     describe('convertToOrder', function() {
-        var confirmService, loadingModalService, confirmDeferred, convertDeferred, loadingDeferred;
+        var confirmDeferred, convertDeferred, loadingDeferred;
 
         beforeEach(function() {
-            inject(function($injector) {
-                confirmService = $injector.get('confirmService');
-                loadingModalService = $injector.get('loadingModalService');
-            });
+            confirmDeferred = this.$q.defer();
+            convertDeferred = this.$q.defer();
+            loadingDeferred = this.$q.defer();
 
-            confirmDeferred = $q.defer();
-            convertDeferred = $q.defer();
-            loadingDeferred = $q.defer();
-
-            spyOn(loadingModalService, 'open').andReturn(loadingDeferred.promise);
-            spyOn(loadingModalService, 'close').andReturn();
-            spyOn(confirmService, 'confirm').andReturn(confirmDeferred.promise);
-            spyOn(requisitionService, 'convertToOrder').andReturn(convertDeferred.promise);
-            spyOn(notificationService, 'error').andReturn();
-            spyOn(notificationService, 'success').andReturn();
+            spyOn(this.loadingModalService, 'open').andReturn(loadingDeferred.promise);
+            spyOn(this.loadingModalService, 'close').andReturn();
+            spyOn(this.confirmService, 'confirm').andReturn(confirmDeferred.promise);
+            spyOn(this.requisitionService, 'convertToOrder').andReturn(convertDeferred.promise);
+            spyOn(this.notificationService, 'error').andReturn();
+            spyOn(this.notificationService, 'success').andReturn();
         });
 
         it('should show error if no requisition is selected', function() {
-            vm.convertToOrder();
+            this.vm.convertToOrder();
 
-            expect(notificationService.error)
+            expect(this.notificationService.error)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.selectAtLeastOneRnr');
         });
 
         it('should not call requisitionService if no requisition is selected', function() {
-            vm.convertToOrder();
+            this.vm.convertToOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(requisitionService.convertToOrder).not.toHaveBeenCalled();
+            expect(this.requisitionService.convertToOrder).not.toHaveBeenCalled();
         });
 
         it('should show error if requisition does not have facility selected', function() {
-            vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].$selected = true;
 
-            vm.convertToOrder();
+            this.vm.convertToOrder();
 
-            expect(notificationService.error)
+            expect(this.notificationService.error)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.noSupplyingDepotSelected');
         });
 
         it('should not call requisitionService if requisition does not have facility selected', function() {
-            vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].$selected = true;
 
-            vm.convertToOrder();
+            this.vm.convertToOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(requisitionService.convertToOrder).not.toHaveBeenCalled();
+            expect(this.requisitionService.convertToOrder).not.toHaveBeenCalled();
         });
 
         it('should call confirmation modal', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.convertToOrder();
+            this.vm.convertToOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(confirmService.confirm)
+            expect(this.confirmService.confirm)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.convertToOrder.confirm');
         });
 
         it('should bring up loading modal if confirmation passed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.convertToOrder();
+            this.vm.convertToOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(loadingModalService.open).toHaveBeenCalled();
+            expect(this.loadingModalService.open).toHaveBeenCalled();
         });
 
         it('should call requisitionService if confirmation passed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.convertToOrder();
+            this.vm.convertToOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(requisitionService.convertToOrder).toHaveBeenCalledWith([
-                vm.requisitions[0]
+            var requisition = this.vm.requisitions[0],
+                key = this.key;
+
+            expect(this.requisitionService.convertToOrder).toHaveBeenCalledWith([
+                requisition
             ], key);
         });
 
         it('should show alert if convert passed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.convertToOrder();
+            this.vm.convertToOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
             loadingDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(notificationService.success)
+            expect(this.notificationService.success)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.convertToOrder.success');
         });
 
         it('should show error if convert failed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.convertToOrder();
+            this.vm.convertToOrder();
             confirmDeferred.resolve();
             convertDeferred.reject();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(notificationService.error)
+            expect(this.notificationService.error)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.errorOccurred');
         });
 
         it('should close loading modal if convert failed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.convertToOrder();
+            this.vm.convertToOrder();
             confirmDeferred.resolve();
             convertDeferred.reject();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(loadingModalService.close).toHaveBeenCalled();
+            expect(this.loadingModalService.close).toHaveBeenCalled();
         });
 
     });
 
     describe('releaseWithoutOrder', function() {
-        var confirmService, loadingModalService, confirmDeferred, convertDeferred, loadingDeferred;
+        var confirmDeferred, convertDeferred, loadingDeferred;
 
         beforeEach(function() {
-            inject(function($injector) {
-                confirmService = $injector.get('confirmService');
-                loadingModalService = $injector.get('loadingModalService');
-            });
+            confirmDeferred = this.$q.defer();
+            convertDeferred = this.$q.defer();
+            loadingDeferred = this.$q.defer();
 
-            confirmDeferred = $q.defer();
-            convertDeferred = $q.defer();
-            loadingDeferred = $q.defer();
-
-            spyOn(loadingModalService, 'open').andReturn(loadingDeferred.promise);
-            spyOn(loadingModalService, 'close').andReturn();
-            spyOn(confirmService, 'confirm').andReturn(confirmDeferred.promise);
-            spyOn(requisitionService, 'releaseWithoutOrder').andReturn(convertDeferred.promise);
-            spyOn(notificationService, 'error').andReturn();
-            spyOn(notificationService, 'success').andReturn();
+            spyOn(this.loadingModalService, 'open').andReturn(loadingDeferred.promise);
+            spyOn(this.loadingModalService, 'close').andReturn();
+            spyOn(this.confirmService, 'confirm').andReturn(confirmDeferred.promise);
+            spyOn(this.requisitionService, 'releaseWithoutOrder').andReturn(convertDeferred.promise);
+            spyOn(this.notificationService, 'error').andReturn();
+            spyOn(this.notificationService, 'success').andReturn();
         });
 
         it('should show error if no requisition is selected', function() {
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
 
-            expect(notificationService.error)
+            expect(this.notificationService.error)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.selectAtLeastOneRnr');
         });
 
         it('should not call requisitionService if no requisition is selected', function() {
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(requisitionService.releaseWithoutOrder).not.toHaveBeenCalled();
+            expect(this.requisitionService.releaseWithoutOrder).not.toHaveBeenCalled();
         });
 
         it('should show error if requisition does not have facility selected', function() {
-            vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].$selected = true;
 
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
 
-            expect(notificationService.error)
+            expect(this.notificationService.error)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.noSupplyingDepotSelected');
         });
 
         it('should not call requisitionService if requisition does not have facility selected', function() {
-            vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].$selected = true;
 
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(requisitionService.releaseWithoutOrder).not.toHaveBeenCalled();
+            expect(this.requisitionService.releaseWithoutOrder).not.toHaveBeenCalled();
         });
 
         it('should call confirmation modal', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(confirmService.confirm)
+            expect(this.confirmService.confirm)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.releaseWithoutOrder.confirm');
         });
 
         it('should bring up loading modal if confirmation passed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(loadingModalService.open).toHaveBeenCalled();
+            expect(this.loadingModalService.open).toHaveBeenCalled();
         });
 
         it('should call requisitionService if confirmation passed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(requisitionService.releaseWithoutOrder).toHaveBeenCalledWith([
-                vm.requisitions[0]
+            var requisition = this.vm.requisitions[0],
+                key = this.key;
+
+            expect(this.requisitionService.releaseWithoutOrder).toHaveBeenCalledWith([
+                requisition
             ], key);
         });
 
         it('should show alert if release without order passed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
             confirmDeferred.resolve();
             convertDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
             loadingDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(notificationService.success)
+            expect(this.notificationService.success)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.releaseWithoutOrder.success');
         });
 
         it('should show error if release without order failed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
             confirmDeferred.resolve();
             convertDeferred.reject();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(notificationService.error)
+            expect(this.notificationService.error)
                 .toHaveBeenCalledWith('requisitionConvertToOrder.errorOccurred');
         });
 
         it('should close loading modal if release without order failed', function() {
-            vm.requisitions[0].$selected = true;
-            vm.requisitions[0].requisition.supplyingFacility = supplyingDepots[0];
+            this.vm.requisitions[0].$selected = true;
+            this.vm.requisitions[0].requisition.supplyingFacility = this.supplyingDepots[0];
 
-            vm.releaseWithoutOrder();
+            this.vm.releaseWithoutOrder();
             confirmDeferred.resolve();
             convertDeferred.reject();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(loadingModalService.close).toHaveBeenCalled();
+            expect(this.loadingModalService.close).toHaveBeenCalled();
         });
 
     });
 
     it('should show error when trying to convert to order with no supplying depot selected', function() {
-        vm.requisitions[0].$selected = true;
+        this.vm.requisitions[0].$selected = true;
 
-        spyOn(requisitionService, 'convertToOrder').andReturn($q.when());
-        spyOn(notificationService, 'error').andCallThrough();
+        spyOn(this.requisitionService, 'convertToOrder').andReturn(this.$q.when());
+        spyOn(this.notificationService, 'error').andCallThrough();
 
-        vm.convertToOrder();
+        this.vm.convertToOrder();
 
-        expect(requisitionService.convertToOrder).not.toHaveBeenCalled();
-        expect(notificationService.error)
+        expect(this.requisitionService.convertToOrder).not.toHaveBeenCalled();
+        expect(this.notificationService.error)
             .toHaveBeenCalledWith('requisitionConvertToOrder.noSupplyingDepotSelected');
     });
 
     it('should show error when trying to convert to order with no requisition selected', function() {
-        spyOn(requisitionService, 'convertToOrder').andReturn($q.when());
-        spyOn(notificationService, 'error').andCallThrough();
+        spyOn(this.requisitionService, 'convertToOrder').andReturn(this.$q.when());
+        spyOn(this.notificationService, 'error').andCallThrough();
 
-        vm.convertToOrder();
+        this.vm.convertToOrder();
 
-        expect(requisitionService.convertToOrder).not.toHaveBeenCalled();
-        expect(notificationService.error)
+        expect(this.requisitionService.convertToOrder).not.toHaveBeenCalled();
+        expect(this.notificationService.error)
             .toHaveBeenCalledWith('requisitionConvertToOrder.selectAtLeastOneRnr');
     });
 
     it('should select all requisitions', function() {
-        vm.toggleSelectAll(true);
+        this.vm.toggleSelectAll(true);
 
-        expect(vm.requisitions[0].$selected).toBe(true);
-        expect(vm.requisitions[1].$selected).toBe(true);
+        expect(this.vm.requisitions[0].$selected).toBe(true);
+        expect(this.vm.requisitions[1].$selected).toBe(true);
     });
 
     it('should deselect all requisitions', function() {
-        vm.toggleSelectAll(false);
+        this.vm.toggleSelectAll(false);
 
-        expect(vm.requisitions[0].$selected).toBe(false);
-        expect(vm.requisitions[1].$selected).toBe(false);
+        expect(this.vm.requisitions[0].$selected).toBe(false);
+        expect(this.vm.requisitions[1].$selected).toBe(false);
     });
 
     it('should set "select all" option when all requisitions are selected by user', function() {
-        vm.requisitions[0].$selected = true;
-        vm.requisitions[1].$selected = true;
+        this.vm.requisitions[0].$selected = true;
+        this.vm.requisitions[1].$selected = true;
 
-        vm.setSelectAll();
+        this.vm.setSelectAll();
 
-        expect(vm.selectAll).toBe(true);
+        expect(this.vm.selectAll).toBe(true);
     });
 
     it('should not set "select all" option when not all requisitions are selected by user', function() {
-        vm.requisitions[0].$selected = true;
-        vm.requisitions[1].$selected = false;
+        this.vm.requisitions[0].$selected = true;
+        this.vm.requisitions[1].$selected = false;
 
-        vm.setSelectAll();
+        this.vm.setSelectAll();
 
-        expect(vm.selectAll).toBe(false);
+        expect(this.vm.selectAll).toBe(false);
     });
 
     describe('search', function() {
 
         beforeEach(function() {
-            spyOn($state, 'go').andReturn();
+            spyOn(this.$state, 'go').andReturn();
         });
 
         it('should expose search method', function() {
-            expect(angular.isFunction(vm.search)).toBe(true);
+            expect(angular.isFunction(this.vm.search)).toBe(true);
         });
 
         it('should call state go method', function() {
-            vm.search();
+            this.vm.search();
 
-            expect($state.go).toHaveBeenCalled();
+            expect(this.$state.go).toHaveBeenCalled();
         });
 
         it('should call state go method with changed params', function() {
-            vm.filterBy = 'filterBy';
-            vm.filterValue = 'filterValue';
-            vm.sortBy = 'sortBy';
-            vm.descending = true;
+            this.vm.programId = 'programId';
+            this.vm.facilityId = 'facilityId';
+            this.vm.sort = 'sort';
 
-            vm.search();
+            this.vm.search();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.convertToOrder', {
-                filterBy: 'filterBy',
-                filterValue: 'filterValue',
-                sortBy: 'sortBy',
-                descending: true,
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.convertToOrder', {
+                programId: 'programId',
+                facilityId: 'facilityId',
+                sort: 'sort',
                 page: 0,
                 size: 10
             }, {

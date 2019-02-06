@@ -19,39 +19,30 @@
 
     angular
         .module('requisition-convert-to-order')
-        .config(routes)
-        .run(run);
+        .config(routes);
 
     routes.$inject = ['$stateProvider', 'FULFILLMENT_RIGHTS'];
-    run.$inject = ['$rootScope', 'requisitionsForConvertFactory'];
-
-    function run($rootScope, requisitionsForConvertFactory) {
-        $rootScope.$on('$stateChangeStart',
-            function(event, toState) {
-                if (toState.name !== 'openlmis.requisitions.convertToOrder') {
-                    requisitionsForConvertFactory.clearCache();
-                }
-            });
-    }
 
     function routes($stateProvider, FULFILLMENT_RIGHTS) {
 
         $stateProvider.state('openlmis.requisitions.convertToOrder', {
             showInNavigation: true,
             label: 'requisitionConvertToOrder.convertToOrder.label',
-            url: '/convertToOrder?filterBy&filterValue&sortBy&descending&page&size',
+            url: '/convertToOrder?programId&facilityId&sort&page&size',
             controller: 'ConvertToOrderController',
             controllerAs: 'vm',
             templateUrl: 'requisition-convert-to-order/convert-to-order.html',
             accessRights: [FULFILLMENT_RIGHTS.ORDERS_EDIT],
-            params: {
-                filterBy: 'all',
-                filterValue: ''
-            },
             resolve: {
-                requisitions: function(paginationService, requisitionsForConvertFactory, $stateParams) {
+                programs: function(programService) {
+                    return programService.getAll();
+                },
+                facilities: function(facilityService) {
+                    return facilityService.getAllMinimal();
+                },
+                requisitions: function(paginationService, requisitionService, $stateParams) {
                     return paginationService.registerUrl($stateParams, function(stateParams) {
-                        return requisitionsForConvertFactory.forConvert(stateParams);
+                        return requisitionService.forConvert(stateParams);
                     });
                 }
             }
