@@ -15,77 +15,129 @@
 
 describe('openlmis.requisitions.search', function() {
 
-    var $state, $q, $rootScope, requisitionService, paginationService, REQUISITION_RIGHTS,
-        state, requisitions, params, requisitionsPage;
-
     beforeEach(function() {
+        module('openlmis-navigation');
         module('requisition-search');
-        module('openlmis-main-state');
 
+        var AuthUserDataBuilder, FacilityDataBuilder, RequisitionDataBuilder, PageDataBuilder;
         inject(function($injector) {
-            $state = $injector.get('$state');
-            $q = $injector.get('$q');
-            $rootScope = $injector.get('$rootScope');
-            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
-            requisitionService = $injector.get('requisitionService');
-            paginationService = $injector.get('paginationService');
+            this.$state = $injector.get('$state');
+            this.$q = $injector.get('$q');
+            this.$rootScope = $injector.get('$rootScope');
+            this.requisitionService = $injector.get('requisitionService');
+            this.authorizationService = $injector.get('authorizationService');
+            this.$location = $injector.get('$location');
+            this.facilityFactory = $injector.get('facilityFactory');
+            AuthUserDataBuilder = $injector.get('AuthUserDataBuilder');
+            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            PageDataBuilder = $injector.get('PageDataBuilder');
+            FacilityDataBuilder = $injector.get('FacilityDataBuilder');
         });
 
-        params = {
-            param: 'param',
-            page: 0,
-            size: 10,
-            sort: ['status'],
-            facility: '1'
-        };
+        this.goToUrl = goToUrl;
+        this.getResolvedValue = getResolvedValue;
+        this.goToThePage = goToThePage;
 
-        requisitions = [
-            {
-                id: '1'
-            }, {
-                id: '2'
-            }
+        this.user = new AuthUserDataBuilder().build();
+
+        this.facilities = [
+            new FacilityDataBuilder().build(),
+            new FacilityDataBuilder().build()
         ];
 
-        requisitionsPage = {
-            content: requisitions,
-            last: true,
-            totalElements: 2,
-            totalPages: 1,
-            sort: ['status'],
-            first: true,
-            numberOfElements: 2,
-            size: 10,
-            number: 0
-        };
+        this.requisitions = [
+            new RequisitionDataBuilder().build(),
+            new RequisitionDataBuilder().build()
+        ];
 
-        spyOn(requisitionService, 'search').andReturn($q.when(requisitionsPage));
+        this.requisitionsPage = new PageDataBuilder()
+            .withContent(this.requisitions)
+            .build();
 
-        state = $state.get('openlmis.requisitions.search');
+        this.program = 'program-id';
+        this.facility = 'facility-id';
+        this.initiatedDateFrom = '2019-02-21';
+        this.initiatedDateTo = '2019-05-21';
+        this.page = '10';
+        this.size = '0';
+        this.offline = 'false';
+        this.sort = 'createdDate';
+
+        spyOn(this.authorizationService, 'getUser').andReturn(this.$q.resolve(this.user));
+        spyOn(this.facilityFactory, 'getAllUserFacilities').andReturn(this.$q.resolve(this.facilities));
+        spyOn(this.requisitionService, 'search').andReturn(this.$q.resolve(this.requisitionsPage));
     });
 
-    it('should fetch a list of requisitions', function() {
-        var result;
+    it('should show the list of facilities', function() {
+        this.goToThePage();
 
-        spyOn(paginationService, 'registerUrl').andCallFake(function(givenParams, method) {
-            if (givenParams === params && angular.isFunction(method)) {
-                return method(givenParams);
-            }
+        expect(this.getResolvedValue('facilities')).toEqual(this.facilities);
+        expect(this.facilityFactory.getAllUserFacilities).toHaveBeenCalledWith(this.user.user_id);
+    });
+
+    it('should show the list of requisitions', function() {
+        this.goToThePage();
+
+        expect(this.getResolvedValue('requisitions')).toEqual(this.requisitions);
+        expect(this.requisitionService.search).toHaveBeenCalledWith(false, {
+            program: this.program,
+            facility: this.facility,
+            initiatedDateFrom: this.initiatedDateFrom,
+            initiatedDateTo: this.initiatedDateTo,
+            page: this.page,
+            size: this.size,
+            sort: this.sort
         });
+    });
 
-        state.resolve.requisitions(paginationService, requisitionService, params).then(function(requisitionList) {
-            result = requisitionList;
+    it('should show the list of offline requisitions if offline flag is set', function() {
+        this.offline = 'true';
+
+        this.goToThePage();
+
+        expect(this.getResolvedValue('requisitions')).toEqual(this.requisitions);
+        expect(this.requisitionService.search).toHaveBeenCalledWith(true, {
+            program: this.program,
+            facility: this.facility,
+            initiatedDateFrom: this.initiatedDateFrom,
+            initiatedDateTo: this.initiatedDateTo,
+            page: this.page,
+            size: this.size,
+            sort: this.sort
         });
-        $rootScope.$apply();
-
-        expect(result).toEqual(requisitionsPage);
-        expect(result.content).toEqual(requisitions);
-        expect(requisitionService.search).toHaveBeenCalledWith(false, params);
-        expect(paginationService.registerUrl).toHaveBeenCalled();
     });
 
-    it('should require REQUISITION_VIEW right to enter', function() {
-        expect(state.accessRights).toEqual([REQUISITION_RIGHTS.REQUISITION_VIEW]);
+    it('should not be accessible if fetching requisitions fails', function() {
+        this.requisitionService.search.andReturn(this.$q.reject());
+
+        this.goToThePage();
+
+        expect(this.$state.$current.name).not.toEqual('openlmis.requisitions.search');
     });
+
+    it('should show empty list of facilities if fetching facilities fails', function() {
+        this.facilityFactory.getAllUserFacilities.andReturn(this.$q.reject());
+
+        this.goToThePage();
+
+        expect(this.getResolvedValue('facilities')).toEqual([]);
+    });
+
+    function goToThePage() {
+        this.goToUrl(
+            '/requisitions/view?program=' + this.program + '&facility=' + this.facility + '&initiatedDateFrom=' +
+            this.initiatedDateFrom + '&initiatedDateTo=' + this.initiatedDateTo + '&page=' + this.page +
+            '&size=' + this.size + '&offline=' + this.offline + '&sort=' + this.sort
+        );
+    }
+
+    function goToUrl(url) {
+        this.$location.url(url);
+        this.$rootScope.$apply();
+    }
+
+    function getResolvedValue(name) {
+        return this.$state.$current.locals.globals[name];
+    }
 
 });
