@@ -4,6 +4,9 @@
 Breaking changes:
 * [OLMIS-4373](https://openlmis.atlassian.net/browse/OLMIS-4373): Changed filtering on Convert to Order page to use facility and program dropdowns.
 
+New functionality added in a backwards-compatible manner:
+* [OLMIS-5837](https://openlmis.atlassian.net/browse/OLMIS-5837): Made View Requisitions screen accessible to partner users.
+
 Bug fixes:
 * [OLMIS-5822](https://openlmis.atlassian.net/browse/OLMIS-5822): Fixed a bug with products not being sorted alphabetically on the product selection modal.
 * [OLMIS-5525](https://openlmis.atlassian.net/browse/OLMIS-5525): Fixed a bug with source not being set appropriately when un-checking stock-based flag on the requisition template page.

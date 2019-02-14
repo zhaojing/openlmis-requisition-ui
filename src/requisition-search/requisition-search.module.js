@@ -31,7 +31,11 @@
         'referencedata-facility',
         'requisition',
         'requisition-constants',
-        'ui.router'
+        'ui.router',
+        'referencedata-supervisory-node',
+        'referencedata-requisition-group',
+        'referencedata-role',
+        'referencedata-user'
     ]);
 
 })();

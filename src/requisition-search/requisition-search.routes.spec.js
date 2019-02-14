@@ -19,26 +19,25 @@ describe('openlmis.requisitions.search', function() {
         module('openlmis-navigation');
         module('requisition-search');
 
-        var AuthUserDataBuilder, FacilityDataBuilder, RequisitionDataBuilder, PageDataBuilder;
+        var FacilityDataBuilder, RequisitionDataBuilder, PageDataBuilder;
         inject(function($injector) {
             this.$state = $injector.get('$state');
             this.$q = $injector.get('$q');
             this.$rootScope = $injector.get('$rootScope');
             this.requisitionService = $injector.get('requisitionService');
-            this.authorizationService = $injector.get('authorizationService');
             this.$location = $injector.get('$location');
-            this.facilityFactory = $injector.get('facilityFactory');
-            AuthUserDataBuilder = $injector.get('AuthUserDataBuilder');
+            this.RequisitionSearchService = $injector.get('RequisitionSearchService');
             RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
             PageDataBuilder = $injector.get('PageDataBuilder');
             FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            this.permissionService = $injector.get('permissionService');
         });
 
         this.goToUrl = goToUrl;
         this.getResolvedValue = getResolvedValue;
         this.goToThePage = goToThePage;
 
-        this.user = new AuthUserDataBuilder().build();
+        spyOn(this.permissionService, 'hasRoleWithRight').andReturn(this.$q.resolve(true));
 
         this.facilities = [
             new FacilityDataBuilder().build(),
@@ -63,8 +62,7 @@ describe('openlmis.requisitions.search', function() {
         this.offline = 'false';
         this.sort = 'createdDate';
 
-        spyOn(this.authorizationService, 'getUser').andReturn(this.$q.resolve(this.user));
-        spyOn(this.facilityFactory, 'getAllUserFacilities').andReturn(this.$q.resolve(this.facilities));
+        spyOn(this.RequisitionSearchService.prototype, 'getFacilities').andReturn(this.$q.resolve(this.facilities));
         spyOn(this.requisitionService, 'search').andReturn(this.$q.resolve(this.requisitionsPage));
     });
 
@@ -72,7 +70,6 @@ describe('openlmis.requisitions.search', function() {
         this.goToThePage();
 
         expect(this.getResolvedValue('facilities')).toEqual(this.facilities);
-        expect(this.facilityFactory.getAllUserFacilities).toHaveBeenCalledWith(this.user.user_id);
     });
 
     it('should show the list of requisitions', function() {
@@ -113,14 +110,6 @@ describe('openlmis.requisitions.search', function() {
         this.goToThePage();
 
         expect(this.$state.$current.name).not.toEqual('openlmis.requisitions.search');
-    });
-
-    it('should show empty list of facilities if fetching facilities fails', function() {
-        this.facilityFactory.getAllUserFacilities.andReturn(this.$q.reject());
-
-        this.goToThePage();
-
-        expect(this.getResolvedValue('facilities')).toEqual([]);
     });
 
     function goToThePage() {

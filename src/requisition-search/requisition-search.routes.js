@@ -19,9 +19,9 @@
 
     angular.module('requisition-search').config(routes);
 
-    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS'];
+    routes.$inject = ['$stateProvider'];
 
-    function routes($stateProvider, REQUISITION_RIGHTS) {
+    function routes($stateProvider) {
 
         $stateProvider.state('openlmis.requisitions.search', {
             showInNavigation: true,
@@ -33,25 +33,13 @@
             },
             controller: 'RequisitionSearchController',
             templateUrl: 'requisition-search/requisition-search.html',
-            accessRights: [
-                REQUISITION_RIGHTS.REQUISITION_VIEW
-            ],
+            canAccess: function(permissionService, REQUISITION_RIGHTS) {
+                return permissionService.hasRoleWithRight(REQUISITION_RIGHTS.REQUISITION_VIEW);
+            },
             controllerAs: 'vm',
             resolve: {
-                user: function(authorizationService) {
-                    return authorizationService.getUser();
-                },
-                facilities: function(facilityFactory, user, $q) {
-                    var deferred = $q.defer();
-
-                    facilityFactory.getAllUserFacilities(user.user_id).then(function(response) {
-                        deferred.resolve(response);
-                    })
-                        .catch(function() {
-                            deferred.resolve([]);
-                        });
-
-                    return deferred.promise;
+                facilities: function(RequisitionSearchService) {
+                    return new RequisitionSearchService().getFacilities();
                 },
                 requisitions: function(paginationService, requisitionService, $stateParams) {
                     return paginationService.registerUrl($stateParams, function(stateParams) {
