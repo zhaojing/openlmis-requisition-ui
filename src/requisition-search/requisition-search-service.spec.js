@@ -43,7 +43,7 @@ describe('RequisitionSearchService', function() {
             this.REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
             this.$q = $injector.get('$q');
             this.$rootScope = $injector.get('$rootScope');
-            this.RequisitionSearchService = $injector.get('RequisitionSearchService');
+            this.requisitionSearchService = $injector.get('requisitionSearchService');
             this.RoleResource = $injector.get('RoleResource');
         });
 
@@ -78,10 +78,6 @@ describe('RequisitionSearchService', function() {
     });
 
     describe('getFacilities', function() {
-
-        beforeEach(function() {
-            this.requisitionSearchService = new this.RequisitionSearchService();
-        });
 
         it('should handle null requisition group', function() {
             this.supervisoryNodeA.requisitionGroup = undefined;

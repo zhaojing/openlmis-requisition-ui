@@ -19,33 +19,29 @@
 
     /**
      * @ngdoc service
-     * @name requisition-search.RequisitionSearchService
+     * @name requisition-search.requisitionSearchService
      *
      * @description
      * Prepares data for the Requisition Search view.
      */
     angular
         .module('requisition-search')
-        .factory('RequisitionSearchService', RequisitionSearchService);
+        .service('requisitionSearchService', requisitionSearchService);
 
-    RequisitionSearchService.$inject = [
+    requisitionSearchService.$inject = [
         'facilityFactory', 'authorizationService', 'currentUserService', 'SupervisoryNodeResource', 'RoleResource',
         'RequisitionGroupResource', '$q', 'OpenlmisArrayDecorator', 'REQUISITION_RIGHTS'
     ];
 
-    function RequisitionSearchService(facilityFactory, authorizationService, currentUserService,
+    function requisitionSearchService(facilityFactory, authorizationService, currentUserService,
                                       SupervisoryNodeResource, RoleResource, RequisitionGroupResource, $q,
                                       OpenlmisArrayDecorator, REQUISITION_RIGHTS) {
 
-        RequisitionSearchService.prototype.getFacilities = getFacilities;
-
-        return RequisitionSearchService;
-
-        function RequisitionSearchService() {}
+        this.getFacilities = getFacilities;
 
         /**
          * @ngdoc method
-         * @methodOf requisition-search.RequisitionSearchService
+         * @methodOf requisition-search.requisitionSearchService
          * @name getFacilities
          *
          * @description

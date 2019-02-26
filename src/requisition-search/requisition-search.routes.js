@@ -38,8 +38,8 @@
             },
             controllerAs: 'vm',
             resolve: {
-                facilities: function(RequisitionSearchService) {
-                    return new RequisitionSearchService().getFacilities();
+                facilities: function(requisitionSearchService) {
+                    return requisitionSearchService.getFacilities();
                 },
                 requisitions: function(paginationService, requisitionService, $stateParams) {
                     return paginationService.registerUrl($stateParams, function(stateParams) {
