@@ -13,7 +13,8 @@ Bug fixes:
 * [OLMIS-5813](https://openlmis.atlassian.net/browse/OLMIS-5813): Fixed a bug with header changing when editing requisition template.
 * [OLMIS-5514](https://openlmis.atlassian.net/browse/OLMIS-5514): Validate requisition template column labels support UTF-8, not just alphanumeric.
 * [OLMIS-5848](https://openlmis.atlassian.net/browse/OLMIS-5848): Fixed a bug with facility type marked as required when creating a requisition template.
-* [OLMIS-5959](https://openlmis.atlassian.net/browse/OLMIS-5959): Disable facility type add button untill facility type is selected
+* [OLMIS-5959](https://openlmis.atlassian.net/browse/OLMIS-5959): Enable facility type button and set facility type input required
+
 
 
 5.5.0 / 2018-12-12
