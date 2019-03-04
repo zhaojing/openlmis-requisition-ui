@@ -47,6 +47,7 @@
         RequisitionColumnDataBuilder.prototype.buildMaximumStockQuantityColumn = buildMaximumStockQuantityColumn;
         RequisitionColumnDataBuilder.prototype.buildAverageConsumptionColumn = buildAverageConsumptionColumn;
         RequisitionColumnDataBuilder.prototype.buildIdealStockAmountColumn = buildIdealStockAmountColumn;
+        RequisitionColumnDataBuilder.prototype.buildTotalCostColumn = buildTotalCostColumn;
         RequisitionColumnDataBuilder.prototype.asStockOnHand = asStockOnHand;
         RequisitionColumnDataBuilder.prototype.asUserInput = asUserInput;
 
@@ -403,6 +404,29 @@
             builder.isDisplayed = true;
             builder.label = 'Calc Order Qty ISA';
             builder.name = 'calculatedOrderQuantityIsa';
+            builder.option = null;
+            builder.source = 'CALCULATED';
+            builder.tag = null;
+
+            return builder.build();
+        }
+
+        function buildTotalCostColumn() {
+            var builder = this;
+
+            builder.columnDefinition = {
+                canChangeOrder: true,
+                columnType: 'CURRENCY'
+            };
+            builder.canChangeOrder = true;
+            builder.columnType = 'CURRENCY';
+            builder.definition = 'Total cost of the product based on quantity requested. Will be blank if price is ' +
+                'not defined.';
+            builder.displayOrder = 21;
+            builder.indicator = 'Q';
+            builder.isDisplayed = false;
+            builder.label = 'Total cost';
+            builder.name = 'totalCost';
             builder.option = null;
             builder.source = 'CALCULATED';
             builder.tag = null;

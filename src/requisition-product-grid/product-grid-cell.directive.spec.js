@@ -12,13 +12,13 @@
  * the GNU Affero General Public License along with this program. If not, see
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
-ddescribe('ProductGridCell', function() {
+describe('ProductGridCell', function() {
 
     beforeEach(function() {
         this.getCompiledElement = getCompiledElement;
 
         module('requisition');
-        module('requisition-product-grid', function($compileProvider) {
+        module('requisition-product-grid', function($compileProvider, $provide) {
             $compileProvider.directive('lossesAndAdjustments', function() {
                 var def = {
                     priority: 100,
@@ -28,11 +28,15 @@ ddescribe('ProductGridCell', function() {
                 };
                 return def;
             });
+
+            $provide.value('openlmisCurrencyFilter', function(value) {
+                return '$' + value;
+            });
         });
 
         inject(function($injector) {
             this.$compile = $injector.get('$compile');
-            this.scope = $injector.get('$rootScope').$new();
+            this.$rootScope = $injector.get('$rootScope');
             this.requisitionValidator = $injector.get('requisitionValidator');
             this.authorizationService = $injector.get('authorizationService');
             this.RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
@@ -40,6 +44,8 @@ ddescribe('ProductGridCell', function() {
             this.COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
             this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
         });
+
+        this.scope = this.$rootScope.$new();
 
         this.fullSupplyColumns = [
             new this.RequisitionColumnDataBuilder().buildBeginningBalanceColumn()
@@ -107,6 +113,25 @@ ddescribe('ProductGridCell', function() {
         expect(this.directiveElem.find('input').length).toEqual(0);
     });
 
+    it('should produce currency cell if column is of currency type', function() {
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalCostColumn();
+        this.scope.lineItem.getFieldValue.andReturn(123);
+        this.scope.lineItem.isReadOnly.andReturn(true);
+
+        this.directiveElem = this.getCompiledElement();
+
+        expect(this.directiveElem.html()).toContain('$123');
+    });
+
+    it('should produce cell with integer input for numeric column that is not read only', function() {
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn();
+
+        this.directiveElem = this.getCompiledElement();
+
+        expect(this.directiveElem.html()).toContain('input');
+        expect(this.directiveElem.html()).toContain('positive-integer');
+    });
+
     it('should validate full supply line item columns after updating fields', function() {
         this.scope.requisition.template.getColumns.andReturn(this.fullSupplyColumns);
         this.scope.requisition.$isInitiated.andReturn(true);
@@ -123,6 +148,30 @@ ddescribe('ProductGridCell', function() {
         expect(this.scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
             this.scope.column, this.scope.requisition
         );
+    });
+
+    it('should not show error message if line item is skipped', function() {
+        this.scope.lineItem.skipped = true;
+
+        var elScope = angular.element(this.getCompiledElement().children()[0]).scope();
+
+        expect(elScope.invalidMessage).toBeUndefined();
+
+        this.scope.lineItem.$errors[this.scope.column.name] = 'Invalid entry';
+        this.$rootScope.$apply();
+
+        expect(elScope.invalidMessage).toBeUndefined();
+    });
+
+    it('should show error message if line item is not skipped', function() {
+        var elScope = angular.element(this.getCompiledElement().children()[0]).scope();
+
+        expect(elScope.invalidMessage).toBeUndefined();
+
+        this.scope.lineItem.$errors[this.scope.column.name] = 'Invalid entry';
+        this.$rootScope.$apply();
+
+        expect(elScope.invalidMessage).toEqual('Invalid entry');
     });
 
     it('should validate non full supply line item columns after updating fields', function() {
