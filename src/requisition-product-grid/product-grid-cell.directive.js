@@ -68,23 +68,10 @@
             scope.canSkip = canSkip;
 
             if (!scope.isReadOnly) {
-                scope.$watch(function() {
-                    return lineItem[column.name];
-                }, function(newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        lineItem.updateDependentFields(column, requisition);
-                    }
-                });
+                setupValueWatcher(scope);
             }
 
-            scope.$watch(function() {
-                if (lineItem.skipped) {
-                    return false;
-                }
-                return lineItem.$errors[column.name];
-            }, function(error) {
-                scope.invalidMessage = error ? error : undefined;
-            });
+            setupErrorWatcher(scope);
 
             scope.$on('openlmisInvalid.update', validate);
 
@@ -153,15 +140,36 @@
                 return column.source === COLUMN_SOURCES.USER_INPUT && scope.userCanEdit;
             }
 
-            function isApprovalColumn(column) {
-                return [TEMPLATE_COLUMNS.APPROVED_QUANTITY, TEMPLATE_COLUMNS.REMARKS]
-                    .indexOf(column.name) !== -1;
-            }
-
             function canSkip() {
                 return scope.userCanEdit && lineItem.canBeSkipped(scope.requisition);
             }
 
+        }
+
+        function setupValueWatcher(scope) {
+            scope.$watch(function() {
+                return scope.lineItem[scope.column.name];
+            }, function(newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    scope.lineItem.updateDependentFields(scope.column, scope.requisition);
+                }
+            });
+        }
+
+        function setupErrorWatcher(scope) {
+            scope.$watch(function() {
+                if (scope.lineItem.skipped) {
+                    return false;
+                }
+                return scope.lineItem.$errors[scope.column.name];
+            }, function(error) {
+                scope.invalidMessage = error ? error : undefined;
+            });
+        }
+
+        function isApprovalColumn(column) {
+            return [TEMPLATE_COLUMNS.APPROVED_QUANTITY, TEMPLATE_COLUMNS.REMARKS]
+                .indexOf(column.name) !== -1;
         }
     }
 
