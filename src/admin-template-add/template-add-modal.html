@@ -13,18 +13,20 @@
                             ng-options="program.name for program in vm.programs" required>
                     </select>
                 </form>
-
+                <div><label for="facilityType">{{'adminTemplateAdd.facilityType' | message}}</label>
+                    <p class="note">{{'adminTemplateAdd.programNeedsToBeSelected' | message}}</p></div>
                 <form class="form-inline" ng-submit="vm.addFacilityType()" reload-form>
-                    <div class="form-group">
+                    <div>
                         <label for="facilityType">{{'adminTemplateAdd.facilityType' | message}}</label>
-                        <p class="note">{{'adminTemplateAdd.programNeedsToBeSelected' | message}}</p>
                         <select id="facilityType" ng-model="vm.selectedFacilityType"
                                 ng-options="facilityType.name for facilityType in vm.facilityTypes | orderBy: 'name'"
                                 ng-disabled="!vm.template.program"
-                                openlmis-invalid="{{vm.validateFacilityType() | message}}">
+                                openlmis-invalid="{{vm.validateFacilityType() | message}}" required>
                         </select>
                     </div>
-                    <button type="submit" ng-disabled="!vm.selectedFacilityType" class="add">{{'adminTemplateAdd.addFacilityType' | message}}</button>
+                    <button type="submit" class="add">
+                        {{'adminTemplateAdd.addFacilityType' | message}}
+                    </button>
                 </form>
                 <section class="openlmis-table-container">
                     <table>
@@ -32,25 +34,29 @@
                             {{'adminTemplateAdd.noFacilityTypesAdded' | message}}
                         </caption>
                         <thead>
-                            <tr>
-                                <th>{{'adminTemplateAdd.facilityTypeName' | message}}</th>
-                                <th>{{'adminTemplateAdd.actions' | message}}</th>
-                            </tr>
+                        <tr>
+                            <th>{{'adminTemplateAdd.facilityTypeName' | message}}</th>
+                            <th>{{'adminTemplateAdd.actions' | message}}</th>
+                        </tr>
                         </thead>
                         <tbody ng-if="vm.template.facilityTypes.length">
-                            <tr ng-repeat="facilityType in vm.template.facilityTypes">
-                                <td>{{facilityType.name}}</td>
-                                <td>
-                                    <button class="danger" ng-click="vm.removeFacilityType(facilityType)">{{'adminTemplateAdd.remove' | message}}</button>
-                                </td>
-                            </tr>
+                        <tr ng-repeat="facilityType in vm.template.facilityTypes">
+                            <td>{{facilityType.name}}</td>
+                            <td>
+                                <button class="danger" ng-click="vm.removeFacilityType(facilityType)">
+                                    {{'adminTemplateAdd.remove' | message}}
+                                </button>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </section>
             </div>
             <div class="modal-footer">
                 <button id="cancel" ui-sref="^">{{'adminTemplateAdd.cancel' | message}}</button>
-                <button class="primary" type="submit" form="template-form">{{'adminTemplateAdd.createTemplate' | message}}</button>
+                <button class="primary" type="submit" form="template-form">{{'adminTemplateAdd.createTemplate' |
+                    message}}
+                </button>
             </div>
         </div>
     </div>
