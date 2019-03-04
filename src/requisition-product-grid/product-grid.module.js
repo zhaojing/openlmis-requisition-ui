@@ -29,7 +29,8 @@
         'requisition-validation',
         'openlmis-auth',
         'openlmis-currency',
-        'openlmis-rights'
+        'openlmis-rights',
+        'openlmis-templates'
     ]);
 
 })();
