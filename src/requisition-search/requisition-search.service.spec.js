@@ -43,8 +43,9 @@ describe('RequisitionSearchService', function() {
             this.REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
             this.$q = $injector.get('$q');
             this.$rootScope = $injector.get('$rootScope');
-            this.RequisitionSearchService = $injector.get('RequisitionSearchService');
+            this.requisitionSearchService = $injector.get('requisitionSearchService');
             this.RoleResource = $injector.get('RoleResource');
+            this.localStorageService = $injector.get('localStorageService');
         });
 
         this.prepareFacilities();
@@ -63,6 +64,9 @@ describe('RequisitionSearchService', function() {
             this.requisitionGroupC
         ]));
         spyOn(this.facilityFactory, 'getAllUserFacilities').andReturn(this.$q.resolve([]));
+        spyOn(this.localStorageService, 'get');
+        spyOn(this.localStorageService, 'add');
+        spyOn(this.localStorageService, 'remove');
 
         var context = this;
         spyOn(this.SupervisoryNodeResource.prototype, 'query').andCallFake(function(params) {
@@ -78,10 +82,6 @@ describe('RequisitionSearchService', function() {
     });
 
     describe('getFacilities', function() {
-
-        beforeEach(function() {
-            this.requisitionSearchService = new this.RequisitionSearchService();
-        });
 
         it('should handle null requisition group', function() {
             this.supervisoryNodeA.requisitionGroup = undefined;
@@ -188,6 +188,95 @@ describe('RequisitionSearchService', function() {
             this.$rootScope.$apply();
 
             expect(rejected).toBe(true);
+        });
+
+        it('should not duplicate calls for subsequent calls', function() {
+            this.requisitionSearchService.getFacilities();
+            this.requisitionSearchService.getFacilities();
+
+            this.$rootScope.$apply();
+
+            expect(this.currentUserService.getUserInfo.callCount).toEqual(1);
+            expect(this.facilityFactory.getAllUserFacilities.callCount).toEqual(1);
+            expect(this.RequisitionGroupResource.prototype.query.callCount).toEqual(1);
+            expect(this.RoleResource.prototype.query.callCount).toEqual(1);
+            expect(this.SupervisoryNodeResource.prototype.query.callCount).toEqual(2);
+        });
+
+        it('should fetch data from the local storage after refreshing the page', function() {
+            this.localStorageService.get.andReturn(angular.toJson([
+                this.facilityA,
+                this.facilityF
+            ]));
+
+            var result;
+            this.requisitionSearchService.getFacilities()
+                .then(function(facilities) {
+                    result = facilities;
+                });
+            this.$rootScope.$apply();
+
+            expect(this.localStorageService.get).toHaveBeenCalledWith('requisitionSearchFacilities');
+            expect(angular.toJson(result)).toEqual(angular.toJson([
+                this.facilityA,
+                this.facilityF
+            ]));
+        });
+
+        it('should not call backend if there is data in the local storage', function() {
+            this.localStorageService.get.andReturn(angular.toJson([
+                this.facilityA,
+                this.facilityF
+            ]));
+
+            this.requisitionSearchService.getFacilities();
+            this.$rootScope.$apply();
+
+            expect(this.currentUserService.getUserInfo).not.toHaveBeenCalled();
+            expect(this.facilityFactory.getAllUserFacilities).not.toHaveBeenCalled();
+            expect(this.RequisitionGroupResource.prototype.query).not.toHaveBeenCalled();
+            expect(this.RoleResource.prototype.query).not.toHaveBeenCalled();
+            expect(this.SupervisoryNodeResource.prototype.query).not.toHaveBeenCalled();
+        });
+
+        it('should cache facilities in the local storage', function() {
+            this.requisitionSearchService.getFacilities();
+            this.$rootScope.$apply();
+
+            expect(this.localStorageService.add).toHaveBeenCalledWith('requisitionSearchFacilities', angular.toJson([
+                this.facilityA,
+                this.facilityB,
+                this.facilityC,
+                this.facilityF
+            ]));
+        });
+
+    });
+
+    describe('clearCachedFacilities', function() {
+
+        it('should clear cached facilities', function() {
+            this.requisitionSearchService.getFacilities();
+            this.$rootScope.$apply();
+
+            expect(this.currentUserService.getUserInfo.callCount).toEqual(1);
+            expect(this.facilityFactory.getAllUserFacilities.callCount).toEqual(1);
+            expect(this.RequisitionGroupResource.prototype.query.callCount).toEqual(1);
+            expect(this.RoleResource.prototype.query.callCount).toEqual(1);
+            expect(this.SupervisoryNodeResource.prototype.query.callCount).toEqual(2);
+
+            this.requisitionSearchService.clearCachedFacilities();
+
+            expect(this.localStorageService.remove).toHaveBeenCalledWith('requisitionSearchFacilities');
+
+            this.requisitionSearchService.getFacilities();
+            this.$rootScope.$apply();
+
+            expect(this.currentUserService.getUserInfo.callCount).toEqual(2);
+            expect(this.facilityFactory.getAllUserFacilities.callCount).toEqual(2);
+            expect(this.RequisitionGroupResource.prototype.query.callCount).toEqual(2);
+            expect(this.RoleResource.prototype.query.callCount).toEqual(2);
+            expect(this.SupervisoryNodeResource.prototype.query.callCount).toEqual(4);
         });
 
     });

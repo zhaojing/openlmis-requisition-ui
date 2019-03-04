@@ -26,7 +26,7 @@ describe('openlmis.requisitions.search', function() {
             this.$rootScope = $injector.get('$rootScope');
             this.requisitionService = $injector.get('requisitionService');
             this.$location = $injector.get('$location');
-            this.RequisitionSearchService = $injector.get('RequisitionSearchService');
+            this.requisitionSearchService = $injector.get('requisitionSearchService');
             RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
             PageDataBuilder = $injector.get('PageDataBuilder');
             FacilityDataBuilder = $injector.get('FacilityDataBuilder');
@@ -62,7 +62,7 @@ describe('openlmis.requisitions.search', function() {
         this.offline = 'false';
         this.sort = 'createdDate';
 
-        spyOn(this.RequisitionSearchService.prototype, 'getFacilities').andReturn(this.$q.resolve(this.facilities));
+        spyOn(this.requisitionSearchService, 'getFacilities').andReturn(this.$q.resolve(this.facilities));
         spyOn(this.requisitionService, 'search').andReturn(this.$q.resolve(this.requisitionsPage));
     });
 

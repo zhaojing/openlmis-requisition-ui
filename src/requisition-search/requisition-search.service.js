@@ -19,33 +19,33 @@
 
     /**
      * @ngdoc service
-     * @name requisition-search.RequisitionSearchService
+     * @name requisition-search.requisitionSearchService
      *
      * @description
      * Prepares data for the Requisition Search view.
      */
     angular
         .module('requisition-search')
-        .factory('RequisitionSearchService', RequisitionSearchService);
+        .service('requisitionSearchService', requisitionSearchService);
 
-    RequisitionSearchService.$inject = [
+    requisitionSearchService.$inject = [
         'facilityFactory', 'authorizationService', 'currentUserService', 'SupervisoryNodeResource', 'RoleResource',
-        'RequisitionGroupResource', '$q', 'OpenlmisArrayDecorator', 'REQUISITION_RIGHTS'
+        'RequisitionGroupResource', '$q', 'OpenlmisArrayDecorator', 'REQUISITION_RIGHTS', 'localStorageService'
     ];
 
-    function RequisitionSearchService(facilityFactory, authorizationService, currentUserService,
+    function requisitionSearchService(facilityFactory, authorizationService, currentUserService,
                                       SupervisoryNodeResource, RoleResource, RequisitionGroupResource, $q,
-                                      OpenlmisArrayDecorator, REQUISITION_RIGHTS) {
+                                      OpenlmisArrayDecorator, REQUISITION_RIGHTS, localStorageService) {
 
-        RequisitionSearchService.prototype.getFacilities = getFacilities;
+        var promise,
+            REQUISITION_SEARCH_FACILITIES = 'requisitionSearchFacilities';
 
-        return RequisitionSearchService;
-
-        function RequisitionSearchService() {}
+        this.getFacilities = getFacilities;
+        this.clearCachedFacilities = clearCachedFacilities;
 
         /**
          * @ngdoc method
-         * @methodOf requisition-search.RequisitionSearchService
+         * @methodOf requisition-search.requisitionSearchService
          * @name getFacilities
          *
          * @description
@@ -55,15 +55,32 @@
          *                  nodes
          */
         function getFacilities() {
+            if (promise) {
+                return promise;
+            }
+
             var user = authorizationService.getUser();
 
-            return $q
-                .all([
-                    facilityFactory.getAllUserFacilities(user.user_id),
-                    getFacilitiesBasedOnPartnerNodes()
-                ])
-                .then(mergeFacilityLists)
-                .then(getUniqueSortedByName);
+            var cachedFacilities = localStorageService.get(REQUISITION_SEARCH_FACILITIES);
+            if (cachedFacilities) {
+                promise = $q.resolve(angular.fromJson(cachedFacilities));
+            } else {
+                promise = $q
+                    .all([
+                        facilityFactory.getAllUserFacilities(user.user_id),
+                        getFacilitiesBasedOnPartnerNodes()
+                    ])
+                    .then(mergeFacilityLists)
+                    .then(getUniqueSortedByName)
+                    .then(cacheFacilities);
+            }
+
+            return promise;
+        }
+
+        function clearCachedFacilities() {
+            promise = undefined;
+            localStorageService.remove(REQUISITION_SEARCH_FACILITIES);
         }
 
         function getFacilitiesBasedOnPartnerNodes() {
@@ -175,6 +192,11 @@
             decoratedFacilityList.sortBy('name');
 
             return decoratedFacilityList.getAllWithUniqueIds();
+        }
+
+        function cacheFacilities(facilities) {
+            localStorageService.add(REQUISITION_SEARCH_FACILITIES, angular.toJson(facilities));
+            return facilities;
         }
 
         function outByUndefinedProperty(propertyName) {
