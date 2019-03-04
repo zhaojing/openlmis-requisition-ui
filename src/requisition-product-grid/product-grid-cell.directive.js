@@ -37,10 +37,11 @@
         .directive('productGridCell', productGridCell);
 
     productGridCell.$inject = [
-        '$templateRequest', '$compile', 'requisitionValidator', 'TEMPLATE_COLUMNS', 'COLUMN_TYPES'
+        '$templateRequest', '$compile', 'requisitionValidator', 'TEMPLATE_COLUMNS', 'COLUMN_TYPES', 'COLUMN_SOURCES'
     ];
 
-    function productGridCell($templateRequest, $compile, requisitionValidator, TEMPLATE_COLUMNS, COLUMN_TYPES) {
+    function productGridCell($templateRequest, $compile, requisitionValidator, TEMPLATE_COLUMNS, COLUMN_TYPES,
+                             COLUMN_SOURCES) {
 
         return {
             restrict: 'A',
@@ -49,7 +50,8 @@
                 requisition: '=',
                 column: '=',
                 lineItem: '=',
-                userCanEdit: '='
+                userCanEdit: '=',
+                canApprove: '='
             }
         };
 
@@ -62,7 +64,7 @@
             scope.column = column;
             scope.validate = validate;
             scope.update = update;
-            scope.isReadOnly = isReadOnly();
+            scope.isReadOnly = isReadOnly(requisition, column);
             scope.canSkip = canSkip;
 
             if (!scope.isReadOnly) {
@@ -132,9 +134,28 @@
                     requisition
                 );
             }
+            function isReadOnly(requisition, column) {
+                if (requisition.$isApproved() || requisition.$isReleased()) {
+                    return true;
+                }
+                if (scope.canApprove && isApprovalColumn(column)) {
+                    return false;
+                }
+                if (canEditColumn(column)) {
+                    return false;
+                }
 
-            function isReadOnly() {
-                return lineItem.isReadOnly(requisition, column);
+                // If we don't know that the field is editable, its read only
+                return true;
+            }
+
+            function canEditColumn(column) {
+                return column.source === COLUMN_SOURCES.USER_INPUT && scope.userCanEdit;
+            }
+
+            function isApprovalColumn(column) {
+                return [TEMPLATE_COLUMNS.APPROVED_QUANTITY, TEMPLATE_COLUMNS.REMARKS]
+                    .indexOf(column.name) !== -1;
             }
 
             function canSkip() {

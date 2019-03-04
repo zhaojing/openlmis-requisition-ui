@@ -64,27 +64,8 @@ describe('ProductGridCell', function() {
         spyOn(this.requisitionValidator, 'validateLineItem');
         spyOn(this.authorizationService, 'isAuthenticated').andReturn(true);
         spyOn(this.authorizationService, 'hasRight').andReturn(true);
-        spyOn(this.scope.lineItem, 'isReadOnly');
         spyOn(this.scope.lineItem, 'canBeSkipped');
         spyOn(this.scope.lineItem, 'updateDependentFields');
-    });
-
-    it('should produce read-only cell if line item is readonly', function() {
-        this.scope.lineItem.isReadOnly.andReturn(true);
-
-        this.directiveElem = this.getCompiledElement();
-
-        expect(this.directiveElem.html()).toContain('readOnlyFieldValue');
-        expect(this.directiveElem.find('input').length).toEqual(0);
-    });
-
-    it('should produce editable cell if line item is not readonly', function() {
-        this.scope.lineItem.isReadOnly.andReturn(false);
-
-        this.directiveElem = this.getCompiledElement();
-
-        expect(this.directiveElem.html()).not.toContain('readOnlyFieldValue');
-        expect(this.directiveElem.find('input').length).toEqual(1);
     });
 
     it('should produce losesAndAdjustment cell', function() {
@@ -99,12 +80,11 @@ describe('ProductGridCell', function() {
         expect(this.directiveElem.find('a').length).toEqual(1);
     });
 
-    it('should produce read only for losesAndAdjustment and stock based this.requisition', function() {
+    it('should produce read only for losesAndAdjustment and stock based requisition', function() {
         this.scope.requisition.$isApproved.andReturn(false);
         this.scope.requisition.$isReleased.andReturn(false);
         this.scope.requisition.$isAuthorized.andReturn(false);
         this.scope.column.name = 'totalLossesAndAdjustments';
-        this.scope.lineItem.isReadOnly.andReturn(true);
         this.scope.requisition.template.populateStockOnHandFromStockCards = true;
 
         this.directiveElem = this.getCompiledElement();
@@ -116,7 +96,6 @@ describe('ProductGridCell', function() {
     it('should produce currency cell if column is of currency type', function() {
         this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalCostColumn();
         this.scope.lineItem.getFieldValue.andReturn(123);
-        this.scope.lineItem.isReadOnly.andReturn(true);
 
         this.directiveElem = this.getCompiledElement();
 
@@ -125,6 +104,7 @@ describe('ProductGridCell', function() {
 
     it('should produce cell with integer input for numeric column that is not read only', function() {
         this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn();
+        this.scope.userCanEdit = true;
 
         this.directiveElem = this.getCompiledElement();
 
@@ -134,6 +114,7 @@ describe('ProductGridCell', function() {
 
     it('should validate full supply line item columns after updating fields', function() {
         this.scope.requisition.template.getColumns.andReturn(this.fullSupplyColumns);
+        this.scope.userCanEdit = true;
         this.scope.requisition.$isInitiated.andReturn(true);
         var element = this.getCompiledElement(),
             input = element.find('input');
@@ -175,6 +156,7 @@ describe('ProductGridCell', function() {
     });
 
     it('should validate non full supply line item columns after updating fields', function() {
+        this.scope.userCanEdit = true;
         this.scope.requisition.template.getColumns.andReturn(this.nonFullSupplyColumns);
         this.scope.requisition.$isInitiated.andReturn(true);
         var element = this.getCompiledElement(),
@@ -192,6 +174,64 @@ describe('ProductGridCell', function() {
         expect(this.scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
             this.scope.column, this.scope.requisition
         );
+    });
+
+    it('should produce read only cell for approved requisition', function() {
+        this.scope.requisition.$isApproved.andReturn(true);
+
+        var cell = angular.element(this.getCompiledElement().children()[0]);
+
+        expect(cell.text()).toEqual('readOnlyFieldValue');
+    });
+
+    it('should produce read only cell for released requisition', function() {
+        this.scope.requisition.$isReleased.andReturn(true);
+
+        var cell = angular.element(this.getCompiledElement().children()[0]);
+
+        expect(cell.text()).toEqual('readOnlyFieldValue');
+    });
+
+    it('should produce editable cell for approval columns if user can approve', function() {
+        this.scope.canApprove = true;
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildApprovedQuantityColumn(this.scope.requisition);
+
+        var cell = angular.element(this.getCompiledElement().children()[0]);
+
+        expect(cell.text()).not.toEqual('readOnlyFieldValue');
+
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildRemarksColumn(this.scope.requisition);
+
+        cell = angular.element(this.getCompiledElement().children()[0]);
+
+        expect(cell.text()).not.toEqual('readOnlyFieldValue');
+    });
+
+    it('should produce editable cell if user can edit and column is editable', function() {
+        this.scope.userCanEdit = true;
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn();
+
+        var cell = angular.element(this.getCompiledElement().children()[0]);
+
+        expect(cell.text()).not.toEqual('readOnlyFieldValue');
+    });
+
+    it('should produce read only cell if user can not edit', function() {
+        this.scope.userCanEdit = false;
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildTotalConsumedQuantityColumn();
+
+        var cell = angular.element(this.getCompiledElement().children()[0]);
+
+        expect(cell.text()).toEqual('readOnlyFieldValue');
+    });
+
+    it('should produce real only cell if column is not editable', function() {
+        this.scope.userCanEdit = true;
+        this.scope.column = new this.RequisitionColumnDataBuilder().buildProductCodeColumn();
+
+        var cell = angular.element(this.getCompiledElement().children()[0]);
+
+        expect(cell.text()).toEqual('readOnlyFieldValue');
     });
 
     describe('Skip Column', function() {
@@ -249,7 +289,7 @@ describe('ProductGridCell', function() {
 
     function getCompiledElement() {
         var rootElement = angular.element('<div><div product-grid-cell requisition="requisition" column="column"' +
-            ' line-item="lineItem" user-can-edit="userCanEdit"></div></div>');
+            ' line-item="lineItem" user-can-edit="userCanEdit" can-approve="canApprove"></div></div>');
         var compiledElement = this.$compile(rootElement)(this.scope);
         angular.element('body').append(compiledElement);
         this.scope.$digest();

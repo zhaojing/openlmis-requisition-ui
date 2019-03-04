@@ -104,6 +104,7 @@ describe('ViewTabController', function() {
         this.fullSupply = false;
         this.canSubmit = false;
         this.canAuthorize = false;
+        this.canApproveAndReject = true;
 
         spyOn(this.alertService, 'error');
         spyOn(this.selectProductsModalService, 'show');
@@ -129,6 +130,12 @@ describe('ViewTabController', function() {
             this.initController();
 
             expect(this.vm.requisition).toBe(this.requisition);
+        });
+
+        it('should expose canApproveAndReject property', function() {
+            this.initController();
+
+            expect(this.vm.canApproveAndReject).toEqual(this.canApproveAndReject);
         });
 
         describe('Add (Full Supply) Products button', function() {
@@ -752,7 +759,8 @@ describe('ViewTabController', function() {
             requisition: this.requisition,
             canSubmit: this.canSubmit,
             canAuthorize: this.canAuthorize,
-            fullSupply: this.fullSupply
+            fullSupply: this.fullSupply,
+            canApproveAndReject: this.canApproveAndReject
         });
         this.vm.$onInit();
     }

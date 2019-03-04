@@ -31,12 +31,12 @@
     ViewTabController.$inject = [
         '$filter', 'selectProductsModalService', 'requisitionValidator', 'requisition', 'columns', 'messageService',
         'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'TEMPLATE_COLUMNS', '$q',
-        'OpenlmisArrayDecorator'
+        'OpenlmisArrayDecorator', 'canApproveAndReject'
     ];
 
     function ViewTabController($filter, selectProductsModalService, requisitionValidator, requisition, columns,
                                messageService, lineItems, alertService, canSubmit, canAuthorize, fullSupply,
-                               TEMPLATE_COLUMNS, $q, OpenlmisArrayDecorator) {
+                               TEMPLATE_COLUMNS, $q, OpenlmisArrayDecorator, canApproveAndReject) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -149,6 +149,7 @@
             vm.showUnskipFullSupplyProductsButton = showUnskipFullSupplyProductsButton();
             vm.showSkipControls = showSkipControls();
             vm.noProductsMessage = getNoProductsMessage();
+            vm.canApproveAndReject = canApproveAndReject;
         }
 
         /**

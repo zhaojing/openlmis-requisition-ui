@@ -28,20 +28,15 @@
         .module('requisition')
         .factory('LineItem', lineItem);
 
-    lineItem.$inject = [
-        'calculationFactory', 'authorizationService', 'TEMPLATE_COLUMNS', 'COLUMN_SOURCES', 'COLUMN_TYPES',
-        'REQUISITION_RIGHTS'
-    ];
+    lineItem.$inject = ['calculationFactory', 'COLUMN_SOURCES', 'COLUMN_TYPES'];
 
-    function lineItem(calculationFactory, authorizationService, TEMPLATE_COLUMNS, COLUMN_SOURCES, COLUMN_TYPES,
-                      REQUISITION_RIGHTS) {
+    function lineItem(calculationFactory, COLUMN_SOURCES, COLUMN_TYPES) {
 
         LineItem.prototype.getFieldValue = getFieldValue;
         LineItem.prototype.updateFieldValue = updateFieldValue;
         LineItem.prototype.updateDependentFields = updateDependentFields;
         LineItem.prototype.canBeSkipped = canBeSkipped;
         LineItem.prototype.isNonFullSupply = isNonFullSupply;
-        LineItem.prototype.isReadOnly = isReadOnly;
 
         return LineItem;
 
@@ -207,76 +202,6 @@
          */
         function isNonFullSupply() {
             return !this.$program.fullSupply;
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition.LineItem
-         * @name isReadOnly
-         *
-         * @description
-         * Determines whether a column within this line item is read only.
-         *
-         * @param {Object} requisition Requisition to which line item belongs
-         * @param {Object} column Requisition template column
-         * @return {Boolean} true if line item is read only
-         */
-        function isReadOnly(requisition, column) {
-            if (requisition.$isApproved() || requisition.$isReleased()) {
-                return true;
-            }
-            if (canApprove(requisition) && isApprovalColumn(column)) {
-                return false;
-            }
-            if (canEditColumn(requisition, column)) {
-                return false;
-            }
-
-            // If we don't know that the field is editable, its read only
-            return true;
-        }
-
-        function canEditColumn(requisition, column) {
-            return column.source === COLUMN_SOURCES.USER_INPUT && (canAuthorize(requisition) || canSubmit(requisition));
-        }
-
-        function canApprove(requisition) {
-            return hasApproveRight(requisition) && (requisition.$isAuthorized() || requisition.$isInApproval());
-        }
-
-        function canSubmit(requisition) {
-            return hasCreateRight(requisition) && (requisition.$isInitiated() || requisition.$isRejected());
-        }
-
-        function canAuthorize(requisition) {
-            return hasAuthorizeRight(requisition) && requisition.$isSubmitted();
-        }
-
-        function hasApproveRight(requisition) {
-            return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_APPROVE, {
-                programId: requisition.program.id,
-                facilityId: requisition.facility.id
-            });
-        }
-
-        function hasAuthorizeRight(requisition) {
-            return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, {
-                programId: requisition.program.id,
-                facilityId: requisition.facility.id
-            });
-        }
-
-        function hasCreateRight(requisition) {
-            return authorizationService.hasRight(REQUISITION_RIGHTS.REQUISITION_CREATE, {
-                programId: requisition.program.id,
-                facilityId: requisition.facility.id
-            });
-        }
-
-        function isApprovalColumn(column) {
-            var approvalColumns = [TEMPLATE_COLUMNS.APPROVED_QUANTITY, TEMPLATE_COLUMNS.REMARKS];
-
-            return approvalColumns.indexOf(column.name) !== -1;
         }
 
         function isInputDisplayedAndNotEmpty(column, lineItem) {

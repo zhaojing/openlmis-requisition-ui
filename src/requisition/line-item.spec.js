@@ -15,9 +15,9 @@
 
 describe('LineItem', function() {
 
-    var LineItem, requisitionLineItem, authorizationServiceSpy, requisition, program, facility,
-        calculationFactory, column, lineItem, TEMPLATE_COLUMNS, REQUISITION_RIGHTS,
-        userAlwaysHasRight, userHasCreateRight, userHasAuthorizedRight, userHasApprovedRight;
+    var LineItem, requisitionLineItem, authorizationServiceSpy, requisition, program, facility, calculationFactory,
+        lineItem, REQUISITION_RIGHTS, userAlwaysHasRight, userHasCreateRight, userHasAuthorizedRight,
+        userHasApprovedRight;
 
     beforeEach(function() {
         module('requisition');
@@ -58,15 +58,9 @@ describe('LineItem', function() {
             authorizationServiceSpy.isAuthenticated.andReturn(true);
         });
 
-        inject(function(_LineItem_, _TEMPLATE_COLUMNS_, _REQUISITION_RIGHTS_, _COLUMN_TYPES_, _COLUMN_SOURCES_) {
-            TEMPLATE_COLUMNS = _TEMPLATE_COLUMNS_;
+        inject(function(_LineItem_, _TEMPLATE_COLUMNS_, _REQUISITION_RIGHTS_) {
             REQUISITION_RIGHTS = _REQUISITION_RIGHTS_;
             LineItem = _LineItem_;
-            column = {
-                type: _COLUMN_TYPES_.NUMERIC,
-                name: 'beginningBalance',
-                source: _COLUMN_SOURCES_.USER_INPUT
-            };
         });
 
         var template = jasmine.createSpyObj('template', ['getColumns']);
@@ -274,154 +268,5 @@ describe('LineItem', function() {
 
             expect(result).toBe(false);
         });
-    });
-
-    describe('isReadOnly', function() {
-
-        it('should return true if approved', function() {
-            requisition.$isApproved.andReturn(true);
-            requisition.$isReleased.andReturn(false);
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(true);
-        });
-
-        it('should return true if released', function() {
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(true);
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(true);
-        });
-
-        it('should return true if authorized', function() {
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isInApproval.andReturn(true);
-            requisition.$isAuthorized.andReturn(false);
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(true);
-        });
-
-        it('should return true if in approval', function() {
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isInApproval.andReturn(false);
-            requisition.$isAuthorized.andReturn(true);
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(true);
-        });
-
-        it('should return true if authorized and column is approved quantity', function() {
-            column.name = TEMPLATE_COLUMNS.APPROVED_QUANTITY;
-
-            authorizationServiceSpy.hasRight.andReturn(false);
-
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isInApproval.andReturn(true);
-            requisition.$isAuthorized.andReturn(false);
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(true);
-        });
-
-        it('should return false if user has no right to approve', function() {
-            column.name = TEMPLATE_COLUMNS.APPROVED_QUANTITY;
-
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isInApproval.andReturn(true);
-            requisition.$isAuthorized.andReturn(false);
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(false);
-        });
-
-        it('should return false', function() {
-            requisition.$isInitiated.andReturn(true);
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
-            requisition.$isInApproval.andReturn(false);
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(false);
-        });
-
-        it('should return false if initiated and user can submit', function() {
-            requisition.$isInitiated.andReturn(true);
-            requisition.$isRejected.andReturn(false);
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
-            requisition.$isInApproval.andReturn(false);
-
-            userAlwaysHasRight = false;
-            userHasCreateRight = false;
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(true);
-
-            userHasCreateRight = true;
-
-            result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(false);
-        });
-
-        it('should return false if rejected and user can submit', function() {
-            requisition.$isInitiated.andReturn(false);
-            requisition.$isRejected.andReturn(true);
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
-            requisition.$isInApproval.andReturn(false);
-
-            userAlwaysHasRight = false;
-            userHasCreateRight = false;
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(true);
-
-            userHasCreateRight = true;
-
-            result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(false);
-        });
-
-        it('should return false if submitted and user can approve', function() {
-            requisition.$isInitiated.andReturn(false);
-            requisition.$isSubmitted.andReturn(true);
-            requisition.$isApproved.andReturn(false);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isAuthorized.andReturn(false);
-            requisition.$isInApproval.andReturn(false);
-
-            userAlwaysHasRight = false;
-
-            var result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(true);
-
-            userHasAuthorizedRight = true;
-
-            result = lineItem.isReadOnly(requisition, column);
-
-            expect(result).toBe(false);
-        });
-
     });
 });
