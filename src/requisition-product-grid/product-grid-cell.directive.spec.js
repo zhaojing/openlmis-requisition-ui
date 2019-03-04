@@ -12,11 +12,12 @@
  * the GNU Affero General Public License along with this program. If not, see
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
-describe('ProductGridCell', function() {
+ddescribe('ProductGridCell', function() {
 
     beforeEach(function() {
         this.getCompiledElement = getCompiledElement;
 
+        module('requisition');
         module('requisition-product-grid', function($compileProvider) {
             $compileProvider.directive('lossesAndAdjustments', function() {
                 var def = {
@@ -37,65 +38,29 @@ describe('ProductGridCell', function() {
             this.RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
             this.COLUMN_TYPES = $injector.get('COLUMN_TYPES');
             this.COLUMN_SOURCES = $injector.get('COLUMN_SOURCES');
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
         });
 
-        this.fullSupplyColumns = [{
-            type: this.COLUMN_TYPES.NUMERIC,
-            name: 'beginningBalance',
-            source: this.COLUMN_SOURCES.USER_INPUT
-        }];
+        this.fullSupplyColumns = [
+            new this.RequisitionColumnDataBuilder().buildBeginningBalanceColumn()
+        ];
 
-        this.nonFullSupplyColumns = [{
-            name: 'col3'
-        }, {
-            name: 'col4'
-        }];
+        this.nonFullSupplyColumns = [
+            new this.RequisitionColumnDataBuilder().build(),
+            new this.RequisitionColumnDataBuilder().build()
+        ];
 
-        this.requisition = jasmine.createSpyObj('this.requisition', [
-            '$getStockAdjustmentReasons',
-            '$isInitiated',
-            '$isRejected',
-            '$isSubmitted',
-            '$isApproved',
-            '$isReleased',
-            '$isAuthorized',
-            '$isInApproval'
-        ]);
-        this.requisition.template = jasmine.createSpyObj('template', ['getColumns']);
-
-        var fullSupplyColumns = this.fullSupplyColumns,
-            nonFullSupplyColumns = this.nonFullSupplyColumns;
-        this.requisition.template.getColumns.andCallFake(function(nonFullSupply) {
-            return nonFullSupply ? nonFullSupplyColumns : fullSupplyColumns;
-        });
-        this.requisition.program = {
-            id: '1'
-        };
-        this.requisition.facility = {
-            id: '2'
-        };
-
-        this.scope.requisition = this.requisition;
-
+        this.scope.requisition = new this.RequisitionDataBuilder().build();
         this.scope.column = this.fullSupplyColumns[0];
+        this.scope.lineItem = this.scope.requisition.requisitionLineItems[0];
 
-        this.scope.lineItem = jasmine.createSpyObj('lineItem', [
-            'getFieldValue', 'updateDependentFields', 'canBeSkipped', 'isReadOnly'
-        ]);
-
-        this.scope.lineItem.$program = {
-            fullSupply: true
-        };
-
-        this.scope.lineItem.getFieldValue.andCallFake(function() {
-            return 'readOnlyFieldValue';
-        });
-
-        this.scope.lineItem.$errors = {};
-
+        spyOn(this.scope.lineItem, 'getFieldValue').andReturn('readOnlyFieldValue');
         spyOn(this.requisitionValidator, 'validateLineItem');
         spyOn(this.authorizationService, 'isAuthenticated').andReturn(true);
         spyOn(this.authorizationService, 'hasRight').andReturn(true);
+        spyOn(this.scope.lineItem, 'isReadOnly');
+        spyOn(this.scope.lineItem, 'canBeSkipped');
+        spyOn(this.scope.lineItem, 'updateDependentFields');
     });
 
     it('should produce read-only cell if line item is readonly', function() {
@@ -143,6 +108,7 @@ describe('ProductGridCell', function() {
     });
 
     it('should validate full supply line item columns after updating fields', function() {
+        this.scope.requisition.template.getColumns.andReturn(this.fullSupplyColumns);
         this.scope.requisition.$isInitiated.andReturn(true);
         var element = this.getCompiledElement(),
             input = element.find('input');
@@ -151,15 +117,16 @@ describe('ProductGridCell', function() {
         this.scope.$apply();
 
         expect(this.requisitionValidator.validateLineItem).toHaveBeenCalledWith(
-            this.scope.lineItem, this.fullSupplyColumns, this.requisition
+            this.scope.lineItem, this.fullSupplyColumns, this.scope.requisition
         );
 
         expect(this.scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
-            this.scope.column, this.requisition
+            this.scope.column, this.scope.requisition
         );
     });
 
     it('should validate non full supply line item columns after updating fields', function() {
+        this.scope.requisition.template.getColumns.andReturn(this.nonFullSupplyColumns);
         this.scope.requisition.$isInitiated.andReturn(true);
         var element = this.getCompiledElement(),
             input = element.find('input');
@@ -170,11 +137,11 @@ describe('ProductGridCell', function() {
         this.scope.$apply();
 
         expect(this.requisitionValidator.validateLineItem).toHaveBeenCalledWith(
-            this.scope.lineItem, this.nonFullSupplyColumns, this.requisition
+            this.scope.lineItem, this.nonFullSupplyColumns, this.scope.requisition
         );
 
         expect(this.scope.lineItem.updateDependentFields).toHaveBeenCalledWith(
-            this.scope.column, this.requisition
+            this.scope.column, this.scope.requisition
         );
     });
 
