@@ -16,20 +16,25 @@
 describe('openlmis.requisitions.requisition state', function() {
 
     beforeEach(function() {
+        module('openlmis-main-state');
         module('requisition-view');
 
-        var $state, UserDataBuilder, RequisitionDataBuilder;
+        var UserDataBuilder, RequisitionDataBuilder;
         inject(function($injector) {
             UserDataBuilder = $injector.get('UserDataBuilder');
             RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
-            $state = $injector.get('$state');
 
+            this.$state = $injector.get('$state');
             this.$rootScope = $injector.get('$rootScope');
             this.$q = $injector.get('$q');
             this.currentUserService = $injector.get('currentUserService');
             this.requisitionViewFactory = $injector.get('requisitionViewFactory');
             this.requisitionService = $injector.get('requisitionService');
+            this.$location = $injector.get('$location');
         });
+
+        this.goToUrl = goToUrl;
+        this.getResolvedValue = getResolvedValue;
 
         this.user = new UserDataBuilder().build();
         this.$stateParams = {};
@@ -44,106 +49,64 @@ describe('openlmis.requisitions.requisition state', function() {
         spyOn(this.requisitionViewFactory, 'canSkip').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canSync').andReturn(this.$q.resolve(true));
 
-        this.state = $state.get('openlmis.requisitions.requisition');
+        this.state = this.$state.get('openlmis.requisitions.requisition');
     });
 
-    it('should fetch this.user', function() {
-        var result;
+    it('should fetch user', function() {
+        this.goToUrl('/requisition/requisition-id');
 
-        this.state.resolve.user(this.currentUserService).then(function(response) {
-            result = response;
-        });
+        expect(this.getResolvedValue('user')).toEqual(this.user);
+    });
 
+    it('should fetch requisition', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('requisition')).toEqual(this.requisition);
+    });
+
+    it('should resolve if user has right to submit', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('canSubmit')).toEqual(true);
+    });
+
+    it('should resolve if user has right to authorize', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('canAuthorize')).toEqual(true);
+    });
+
+    it('should resolve if user has right to approve or reject', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('canApproveAndReject')).toEqual(true);
+    });
+
+    it('should resolve if user has right to delete', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('canDelete')).toEqual(true);
+    });
+
+    it('should resolve if user has right to skip', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('canSkip')).toEqual(true);
+    });
+
+    it('should resolve if user has right to sync', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('canSync')).toEqual(true);
+    });
+
+    function goToUrl(url) {
+        this.$location.url(url);
         this.$rootScope.$apply();
+    }
 
-        expect(result).toBe(this.user);
-    });
-
-    it('should fetch this.requisition', function() {
-        var result;
-
-        this.state.resolve.requisition(this.$stateParams, this.requisitionService).then(function(response) {
-            result = response;
-        });
-
-        this.$rootScope.$apply();
-
-        expect(result).toBe(this.requisition);
-    });
-
-    it('should resolve if this.user has right to submit', function() {
-        var result;
-
-        this.state.resolve.canSubmit(this.requisitionViewFactory, this.user, this.requisition).then(function(response) {
-            result = response;
-        });
-
-        this.$rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if this.user has right to authorize', function() {
-        var result;
-
-        this.state.resolve.canAuthorize(this.requisitionViewFactory, this.user, this.requisition)
-            .then(function(response) {
-                result = response;
-            });
-
-        this.$rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if this.user has right to approve or reject', function() {
-        var result;
-
-        this.state.resolve.canApproveAndReject(this.requisitionViewFactory, this.user, this.requisition)
-            .then(function(response) {
-                result = response;
-            });
-
-        this.$rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if this.user has right to delete', function() {
-        var result;
-
-        this.state.resolve.canDelete(this.requisitionViewFactory, this.user, this.requisition)
-            .then(function(response) {
-                result = response;
-            });
-
-        this.$rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if this.user has right to skip', function() {
-        var result;
-
-        this.state.resolve.canSkip(this.requisitionViewFactory, this.user, this.requisition).then(function(response) {
-            result = response;
-        });
-
-        this.$rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if this.user has right to sync', function() {
-        var result;
-
-        this.state.resolve.canSync(this.requisitionViewFactory, this.user, this.requisition).then(function(response) {
-            result = response;
-        });
-
-        this.$rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
+    function getResolvedValue(name) {
+        return this.$state.$current.locals.globals[name];
+    }
 
 });
