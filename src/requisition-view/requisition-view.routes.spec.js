@@ -15,154 +15,135 @@
 
 describe('openlmis.requisitions.requisition state', function() {
 
-    var $state, $stateParams, $rootScope, $q,
-        currentUserService, requisitionService, requisitionViewFactory,
-        UserDataBuilder, RequisitionDataBuilder,
-        user, state, requisition;
-
     beforeEach(function() {
-        loadModules();
-        injectServices();
-        prepareTestData();
-        prepareSpies();
-
-        state = $state.get('openlmis.requisitions.requisition');
-    });
-
-    it('should fetch user', function() {
-        var result;
-
-        state.resolve.user(currentUserService).then(function(response) {
-            result = response;
-        });
-
-        $rootScope.$apply();
-
-        expect(result).toBe(user);
-    });
-
-    it('should fetch requisition', function() {
-        var result;
-
-        state.resolve.requisition($stateParams, requisitionService).then(function(response) {
-            result = response;
-        });
-
-        $rootScope.$apply();
-
-        expect(result).toBe(requisition);
-    });
-
-    it('should resolve if user has right to submit', function() {
-        var result;
-
-        state.resolve.canSubmit(requisitionViewFactory, user, requisition).then(function(response) {
-            result = response;
-        });
-
-        $rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if user has right to authorize', function() {
-        var result;
-
-        state.resolve.canAuthorize(requisitionViewFactory, user, requisition).then(function(response) {
-            result = response;
-        });
-
-        $rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if user has right to approve or reject', function() {
-        var result;
-
-        state.resolve.canApproveAndReject(requisitionViewFactory, user, requisition).then(function(response) {
-            result = response;
-        });
-
-        $rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if user has right to delete', function() {
-        var result;
-
-        state.resolve.canDelete(requisitionViewFactory, user, requisition).then(function(response) {
-            result = response;
-        });
-
-        $rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if user has right to skip', function() {
-        var result;
-
-        state.resolve.canSkip(requisitionViewFactory, user, requisition).then(function(response) {
-            result = response;
-        });
-
-        $rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    it('should resolve if user has right to sync', function() {
-        var result;
-
-        state.resolve.canSync(requisitionViewFactory, user, requisition).then(function(response) {
-            result = response;
-        });
-
-        $rootScope.$apply();
-
-        expect(result).toBe(true);
-    });
-
-    function loadModules() {
-        module('openlmis-main-state');
-        module('requisition');
         module('requisition-view');
-    }
 
-    function injectServices() {
+        var $state, UserDataBuilder, RequisitionDataBuilder;
         inject(function($injector) {
-            $state = $injector.get('$state');
-            $rootScope = $injector.get('$rootScope');
-            $q = $injector.get('$q');
-
-            currentUserService = $injector.get('currentUserService');
-            requisitionViewFactory = $injector.get('requisitionViewFactory');
-            requisitionService = $injector.get('requisitionService');
-
             UserDataBuilder = $injector.get('UserDataBuilder');
             RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            $state = $injector.get('$state');
+
+            this.$rootScope = $injector.get('$rootScope');
+            this.$q = $injector.get('$q');
+            this.currentUserService = $injector.get('currentUserService');
+            this.requisitionViewFactory = $injector.get('requisitionViewFactory');
+            this.requisitionService = $injector.get('requisitionService');
         });
-    }
 
-    function prepareTestData() {
-        user = new UserDataBuilder().build();
-        $stateParams = {};
-        requisition = new RequisitionDataBuilder().build();
-    }
+        this.user = new UserDataBuilder().build();
+        this.$stateParams = {};
+        this.requisition = new RequisitionDataBuilder().build();
 
-    function prepareSpies() {
-        spyOn(currentUserService, 'getUserInfo').andReturn($q.resolve(user));
+        spyOn(this.currentUserService, 'getUserInfo').andReturn(this.$q.resolve(this.user));
+        spyOn(this.requisitionService, 'get').andReturn(this.$q.resolve(this.requisition));
+        spyOn(this.requisitionViewFactory, 'canSubmit').andReturn(this.$q.resolve(true));
+        spyOn(this.requisitionViewFactory, 'canAuthorize').andReturn(this.$q.resolve(true));
+        spyOn(this.requisitionViewFactory, 'canApproveAndReject').andReturn(this.$q.resolve(true));
+        spyOn(this.requisitionViewFactory, 'canDelete').andReturn(this.$q.resolve(true));
+        spyOn(this.requisitionViewFactory, 'canSkip').andReturn(this.$q.resolve(true));
+        spyOn(this.requisitionViewFactory, 'canSync').andReturn(this.$q.resolve(true));
 
-        spyOn(requisitionService, 'get').andReturn($q.resolve(requisition));
+        this.state = $state.get('openlmis.requisitions.requisition');
+    });
 
-        spyOn(requisitionViewFactory, 'canSubmit').andReturn($q.resolve(true));
-        spyOn(requisitionViewFactory, 'canAuthorize').andReturn($q.resolve(true));
-        spyOn(requisitionViewFactory, 'canApproveAndReject').andReturn($q.resolve(true));
-        spyOn(requisitionViewFactory, 'canDelete').andReturn($q.resolve(true));
-        spyOn(requisitionViewFactory, 'canSkip').andReturn($q.resolve(true));
-        spyOn(requisitionViewFactory, 'canSync').andReturn($q.resolve(true));
-    }
+    it('should fetch this.user', function() {
+        var result;
+
+        this.state.resolve.user(this.currentUserService).then(function(response) {
+            result = response;
+        });
+
+        this.$rootScope.$apply();
+
+        expect(result).toBe(this.user);
+    });
+
+    it('should fetch this.requisition', function() {
+        var result;
+
+        this.state.resolve.requisition(this.$stateParams, this.requisitionService).then(function(response) {
+            result = response;
+        });
+
+        this.$rootScope.$apply();
+
+        expect(result).toBe(this.requisition);
+    });
+
+    it('should resolve if this.user has right to submit', function() {
+        var result;
+
+        this.state.resolve.canSubmit(this.requisitionViewFactory, this.user, this.requisition).then(function(response) {
+            result = response;
+        });
+
+        this.$rootScope.$apply();
+
+        expect(result).toBe(true);
+    });
+
+    it('should resolve if this.user has right to authorize', function() {
+        var result;
+
+        this.state.resolve.canAuthorize(this.requisitionViewFactory, this.user, this.requisition)
+            .then(function(response) {
+                result = response;
+            });
+
+        this.$rootScope.$apply();
+
+        expect(result).toBe(true);
+    });
+
+    it('should resolve if this.user has right to approve or reject', function() {
+        var result;
+
+        this.state.resolve.canApproveAndReject(this.requisitionViewFactory, this.user, this.requisition)
+            .then(function(response) {
+                result = response;
+            });
+
+        this.$rootScope.$apply();
+
+        expect(result).toBe(true);
+    });
+
+    it('should resolve if this.user has right to delete', function() {
+        var result;
+
+        this.state.resolve.canDelete(this.requisitionViewFactory, this.user, this.requisition)
+            .then(function(response) {
+                result = response;
+            });
+
+        this.$rootScope.$apply();
+
+        expect(result).toBe(true);
+    });
+
+    it('should resolve if this.user has right to skip', function() {
+        var result;
+
+        this.state.resolve.canSkip(this.requisitionViewFactory, this.user, this.requisition).then(function(response) {
+            result = response;
+        });
+
+        this.$rootScope.$apply();
+
+        expect(result).toBe(true);
+    });
+
+    it('should resolve if this.user has right to sync', function() {
+        var result;
+
+        this.state.resolve.canSync(this.requisitionViewFactory, this.user, this.requisition).then(function(response) {
+            result = response;
+        });
+
+        this.$rootScope.$apply();
+
+        expect(result).toBe(true);
+    });
 
 });
