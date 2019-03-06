@@ -15,735 +15,658 @@
 
 describe('RequisitionViewController', function() {
 
-    var $scope, $q, $state, notificationService, alertService, confirmService, vm, requisition, loadingModalService,
-        deferred, requisitionUrlFactoryMock, requisitionValidatorMock, fullSupplyItems, nonFullSupplyItems,
-        authorizationServiceSpy, confirmSpy, accessTokenFactorySpy, $window, stateTrackerService, messageService,
-        RequisitionStockCountDateModal, RequisitionWatcher, watcher;
-
     beforeEach(function() {
-        module('requisition-view');
+        var context = this;
+        module('requisition-view', function($provide) {
+            context.RequisitionStockCountDateModalMock = jasmine.createSpy();
 
-        module(function($provide) {
-
-            confirmSpy = jasmine.createSpyObj('confirmService', ['confirm', 'confirmDestroy']);
-
-            authorizationServiceSpy = jasmine.createSpyObj('authorizationService', ['hasRight', 'isAuthenticated']);
-            accessTokenFactorySpy = jasmine.createSpyObj('accessTokenFactory', ['addAccessToken']);
-
-            requisitionValidatorMock = jasmine.createSpyObj('requisitionValidator', [
-                'areLineItemsValid',
-                'validateRequisition',
-                'areAllLineItemsSkipped'
-            ]);
-            requisitionUrlFactoryMock = jasmine.createSpy();
-
-            $provide.service('confirmService', function() {
-                return confirmSpy;
-            });
-
-            $provide.service('authorizationService', function() {
-                return authorizationServiceSpy;
-            });
-
-            $provide.service('accessTokenFactory', function() {
-                return accessTokenFactorySpy;
-            });
-
-            $provide.factory('requisitionUrlFactory', function() {
-                return requisitionUrlFactoryMock;
-            });
-
-            $provide.factory('requisitionValidator', function() {
-                return requisitionValidatorMock;
-            });
-
-            RequisitionStockCountDateModal = jasmine.createSpy('RequisitionStockCountDateModal');
             $provide.factory('RequisitionStockCountDateModal', function() {
-                return RequisitionStockCountDateModal;
-            });
-
-            RequisitionWatcher = jasmine.createSpy('RequisitionWatcher').andCallFake(function() {
-                watcher = {
-                    enabled: true,
-                    disableWatcher: jasmine.createSpy()
-                };
-                return watcher;
-            });
-            $provide.factory('RequisitionWatcher', function() {
-                return RequisitionWatcher;
-            });
+                return context.RequisitionStockCountDateModalMock;
+            })
         });
 
         inject(function($injector) {
-            $scope = $injector.get('$rootScope').$new();
-            $state = $injector.get('$state');
-            $q = $injector.get('$q');
-            $window = $injector.get('$window');
-            notificationService = $injector.get('notificationService');
-            alertService = $injector.get('alertService');
-            confirmService = $injector.get('confirmService');
-            loadingModalService = $injector.get('loadingModalService');
-            stateTrackerService = $injector.get('stateTrackerService');
-            messageService = $injector.get('messageService');
-
-            confirmService.confirm.andCallFake(function() {
-                return $q.when(true);
-            });
-
-            deferred = $q.defer();
-            requisition = jasmine.createSpyObj('requisition', ['$skip', '$isInitiated', '$isSubmitted', '$isAuthorized',
-                '$isInApproval', '$isReleased', '$isRejected', '$isSkipped', '$save', '$authorize', '$submit',
-                '$remove', '$approve', '$reject']);
-            requisition.id = '1';
-            requisition.program = {
-                id: '2',
-                periodsSkippable: true,
-                skipAuthorization: false,
-                code: 'CODE',
-                enableDatePhysicalStockCountCompleted: true
-            };
-            requisition.facility = {
-                id: '3'
-            };
-            requisition.$isInitiated.andReturn(true);
-            requisition.$isReleased.andReturn(false);
-            requisition.$isRejected.andReturn(false);
-            requisition.$skip.andReturn(deferred.promise);
-            requisition.$save.andReturn(deferred.promise);
-            requisition.$authorize.andReturn(deferred.promise);
-            spyOn(stateTrackerService, 'goToPreviousState');
-
-            var canSubmit = true,
-                canAuthorize = false,
-                canApproveAndReject = false,
-                canDelete = true,
-                canSkip = true,
-                canSync = true;
-
-            vm = $injector.get('$controller')('RequisitionViewController', {
-                $scope: $scope,
-                requisition: requisition,
-                canSubmit: canSubmit,
-                canAuthorize: canAuthorize,
-                canApproveAndReject: canApproveAndReject,
-                canDelete: canDelete,
-                canSkip: canSkip,
-                canSync: canSync
-            });
+            this.$rootScope = $injector.get('$rootScope');
+            this.$scope = this.$rootScope.$new();
+            this.$state = $injector.get('$state');
+            this.$q = $injector.get('$q');
+            this.$window = $injector.get('$window');
+            this.notificationService = $injector.get('notificationService');
+            this.alertService = $injector.get('alertService');
+            this.confirmService = $injector.get('confirmService');
+            this.loadingModalService = $injector.get('loadingModalService');
+            this.stateTrackerService = $injector.get('stateTrackerService');
+            this.messageService = $injector.get('messageService');
+            this.requisitionUrlFactory = $injector.get('requisitionUrlFactory');
+            this.$controller = $injector.get('$controller');
+            this.requisitionValidator = $injector.get('requisitionValidator');
+            this.RequisitionStockCountDateModal = $injector.get('RequisitionStockCountDateModal');
+            this.authorizationService = $injector.get('authorizationService');
+            this.RequisitionWatcher = $injector.get('RequisitionWatcher');
+            this.accessTokenFactory = $injector.get('accessTokenFactory');
+            this.requisitionService = $injector.get('requisitionService');
+            this.offlineService = $injector.get('offlineService');
         });
 
-        requisitionUrlFactoryMock.andCallFake(function(url) {
-            return 'http://some.url' + url;
+        this.deferred = this.$q.defer();
+        this.requisition = jasmine.createSpyObj('requisition', ['$skip', '$isInitiated', '$isSubmitted', '$isAuthorized',
+            '$isInApproval', '$isReleased', '$isRejected', '$isSkipped', '$save', '$authorize', '$submit',
+            '$remove', '$approve', '$reject'
+        ]);
+        this.requisition.id = '1';
+        this.requisition.program = {
+            id: '2',
+            periodsSkippable: true,
+            skipAuthorization: false,
+            code: 'CODE',
+            enableDatePhysicalStockCountCompleted: true
+        };
+        this.requisition.facility = {
+            id: '3'
+        };
+        this.requisition.$isInitiated.andReturn(true);
+        this.requisition.$isReleased.andReturn(false);
+        this.requisition.$isRejected.andReturn(false);
+        this.requisition.$skip.andReturn(this.deferred.promise);
+        this.requisition.$save.andReturn(this.deferred.promise);
+        this.requisition.$authorize.andReturn(this.deferred.promise);
+        spyOn(this.stateTrackerService, 'goToPreviousState');
+
+        var canSubmit = true,
+            canAuthorize = false,
+            canApproveAndReject = false,
+            canDelete = true,
+            canSkip = true,
+            canSync = true;
+
+        spyOn(this.notificationService, 'success');
+        spyOn(this.notificationService, 'error');
+        spyOn(this.alertService, 'error');
+        spyOn(this.$state, 'go');
+        spyOn(this.$state, 'reload');
+        spyOn(this.loadingModalService, 'open');
+        spyOn(this.requisitionValidator, 'areLineItemsValid');
+        spyOn(this.requisitionValidator, 'validateRequisition');
+        spyOn(this.requisitionValidator, 'areAllLineItemsSkipped');
+        spyOn(this.confirmService, 'confirm');
+        spyOn(this.confirmService, 'confirmDestroy');
+        spyOn(this.authorizationService, 'hasRight');
+        spyOn(this.RequisitionWatcher.prototype, 'disableWatcher');
+        spyOn(this.accessTokenFactory, 'addAccessToken');
+        spyOn(this.offlineService, 'isOffline');
+        spyOn(this.requisitionService, 'removeOfflineRequisition');
+
+        this.vm = this.$controller('RequisitionViewController', {
+            $scope: this.$scope,
+            requisition: this.requisition,
+            canSubmit: canSubmit,
+            canAuthorize: canAuthorize,
+            canApproveAndReject: canApproveAndReject,
+            canDelete: canDelete,
+            canSkip: canSkip,
+            canSync: canSync
         });
 
-        fullSupplyItems = [{
+        this.fullSupplyItems = [{
             skipped: '',
             $program: {
                 fullSupply: true
             }
         }];
 
-        nonFullSupplyItems = [{
+        this.nonFullSupplyItems = [{
             skipped: '',
             $program: {
                 fullSupply: false
             }
         }];
 
-        requisition.requisitionLineItems = fullSupplyItems.concat(nonFullSupplyItems);
+        this.requisition.requisitionLineItems = this.fullSupplyItems.concat(this.nonFullSupplyItems);
     });
 
     describe('$onInit', function() {
 
-        it('should display submit button when user can submit requisition and skip authorization is not configured',
+        it('should display submit button when user can submit this.requisition and skip authorization is not configured',
             function() {
-                vm.canSubmit = true;
-                vm.requisition.program.skipAuthorization = false;
+                this.vm.canSubmit = true;
+                this.vm.requisition.program.skipAuthorization = false;
 
-                vm.$onInit();
+                this.vm.$onInit();
 
-                expect(vm.displaySubmitButton).toBe(true);
-                expect(vm.displaySubmitAndAuthorizeButton).toBe(false);
+                expect(this.vm.displaySubmitButton).toBe(true);
+                expect(this.vm.displaySubmitAndAuthorizeButton).toBe(false);
             });
 
-        it('should display submit and authorize button when user can submit requisition and skip authorization is' +
-            ' configured', function() {
-            vm.canSubmit = true;
-            vm.requisition.program.skipAuthorization = true;
+        it('should display submit and authorize button when user can submit this.requisition and skip authorization is' +
+            ' configured',
+            function() {
+                this.vm.canSubmit = true;
+                this.vm.requisition.program.skipAuthorization = true;
 
-            vm.$onInit();
+                this.vm.$onInit();
 
-            expect(vm.displaySubmitAndAuthorizeButton).toBe(true);
-            expect(vm.displaySubmitButton).toBe(false);
+                expect(this.vm.displaySubmitAndAuthorizeButton).toBe(true);
+                expect(this.vm.displaySubmitButton).toBe(false);
+            });
+
+        it('should set this.requisition type label and class for regular this.requisition', function() {
+            this.vm.requisition.emergency = false;
+            this.vm.requisition.reportOnly = false;
+
+            this.vm.$onInit();
+
+            expect(this.vm.requisitionType).toBe('requisitionView.regular');
+            expect(this.vm.requisitionTypeClass).toBe('regular');
         });
 
-        it('should set requisition type label and class for regular requisition', function() {
-            vm.requisition.emergency = false;
-            vm.requisition.reportOnly = false;
+        it('should set this.requisition type label and class for emergency this.requisition', function() {
+            this.vm.requisition.emergency = true;
+            this.vm.requisition.reportOnly = true;
 
-            vm.$onInit();
+            this.vm.$onInit();
 
-            expect(vm.requisitionType).toBe('requisitionView.regular');
-            expect(vm.requisitionTypeClass).toBe('regular');
+            expect(this.vm.requisitionType).toBe('requisitionView.emergency');
+            expect(this.vm.requisitionTypeClass).toBe('emergency');
         });
 
-        it('should set requisition type label and class for emergency requisition', function() {
-            vm.requisition.emergency = true;
-            vm.requisition.reportOnly = true;
+        it('should set this.requisition type label and class for report-only this.requisition', function() {
+            this.vm.requisition.emergency = false;
+            this.vm.requisition.reportOnly = true;
 
-            vm.$onInit();
+            this.vm.$onInit();
 
-            expect(vm.requisitionType).toBe('requisitionView.emergency');
-            expect(vm.requisitionTypeClass).toBe('emergency');
-        });
-
-        it('should set requisition type label and class for report-only requisition', function() {
-            vm.requisition.emergency = false;
-            vm.requisition.reportOnly = true;
-
-            vm.$onInit();
-
-            expect(vm.requisitionType).toBe('requisitionView.reportOnly');
-            expect(vm.requisitionTypeClass).toBe('report-only');
+            expect(this.vm.requisitionType).toBe('requisitionView.reportOnly');
+            expect(this.vm.requisitionTypeClass).toBe('report-only');
         });
     });
 
-    it('should display message when successfully skipped requisition', function() {
-        var notificationServiceSpy = jasmine.createSpy(),
-            stateGoSpy = jasmine.createSpy(),
-            loadingDeferred = $q.defer();
+    describe('skipRnr', function() {
 
-        spyOn(notificationService, 'success').andCallFake(notificationServiceSpy);
-        spyOn(loadingModalService, 'open').andReturn(loadingDeferred.promise);
-        spyOn($state, 'go').andCallFake(stateGoSpy);
+        beforeEach(function() {
+            this.confirmService.confirm.andReturn(this.$q.resolve());
+        });
 
-        vm.skipRnr();
+        it('should display message when successfully skipped this.requisition', function() {
+            this.loadingModalService.open.andReturn(this.$q.resolve());
+            this.requisition.$skip.andReturn(this.$q.resolve());
 
-        deferred.resolve();
-        $scope.$apply();
-        loadingDeferred.resolve();
-        $scope.$apply();
+            this.vm.skipRnr();
+            this.$rootScope.$apply();
 
-        expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.skip.success');
-        expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+            expect(this.notificationService.success).toHaveBeenCalledWith('requisitionView.skip.success');
+            expect(this.stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+        });
+
+        it('should display error message when skip requisition failed', function() {
+            this.loadingModalService.open.andReturn(this.$q.resolve());
+            this.requisition.$skip.andReturn(this.$q.reject());
+
+            this.vm.skipRnr();
+            this.$rootScope.$apply();
+
+            expect(this.alertService.error).toHaveBeenCalledWith('requisitionView.skip.failure');
+        });
+
     });
 
-    it('should display error message when skip requisition failed', function() {
-        var notificationServiceSpy = jasmine.createSpy();
+    describe('getPrintUrl', function() {
 
-        spyOn(alertService, 'error').andCallFake(notificationServiceSpy);
+        it('getPrintUrl should prepare URL correctly', function() {
+            expect(this.vm.getPrintUrl()).toEqual(this.requisitionUrlFactory('/api/requisitions/1/print'));
+        });
 
-        vm.skipRnr();
-
-        deferred.reject();
-        $scope.$apply();
-
-        expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.skip.failure');
-    });
-
-    it('getPrintUrl should prepare URL correctly', function() {
-        expect(vm.getPrintUrl()).toEqual('http://some.url/api/requisitions/1/print');
     });
 
     describe('Sync error handling', function() {
 
+        beforeEach(function() {
+            this.verifyReloadOnErrorAndNotificationSent = verifyReloadOnErrorAndNotificationSent;
+            this.verifyNoReloadOnError = verifyNoReloadOnError;
+        });
+
         //eslint-disable-next-line jasmine/missing-expect
         it('should reload requisition when conflict response received', function() {
-            verifyReloadOnErrorAndNotificationSent(409, 'requisitionView.versionMismatch');
+            this.verifyReloadOnErrorAndNotificationSent(409, 'requisitionView.versionMismatch');
         });
 
         //eslint-disable-next-line jasmine/missing-expect
         it('should reload requisition when forbidden response received', function() {
-            verifyReloadOnErrorAndNotificationSent(403, 'requisitionView.updateForbidden');
+            this.verifyReloadOnErrorAndNotificationSent(403, 'requisitionView.updateForbidden');
         });
 
         //eslint-disable-next-line jasmine/missing-expect
         it('should not reload requisition when bad request response received', function() {
-            verifyNoReloadOnError(400);
+            this.verifyNoReloadOnError(400);
         });
 
         //eslint-disable-next-line jasmine/missing-expect
         it('should not reload requisition when internal server error request response received', function() {
-            verifyNoReloadOnError(500);
+            this.verifyNoReloadOnError(500);
         });
 
         function verifyReloadOnErrorAndNotificationSent(responseStatus, messageKey) {
-            var notificationServiceSpy = jasmine.createSpy(),
-                stateSpy = jasmine.createSpy(),
-                conflictResponse = {
+            var conflictResponse = {
                     status: responseStatus
                 };
 
-            spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
-            spyOn($state, 'reload').andCallFake(stateSpy);
+            this.vm.syncRnr();
 
-            vm.syncRnr();
+            this.deferred.reject(conflictResponse);
+            this.$rootScope.$apply();
 
-            deferred.reject(conflictResponse);
-            $scope.$apply();
-
-            expect(notificationServiceSpy).toHaveBeenCalledWith(messageKey);
-            expect(stateSpy).toHaveBeenCalled();
+            expect(this.notificationService.error).toHaveBeenCalledWith(messageKey);
+            expect(this.$state.reload).toHaveBeenCalled();
         }
 
         function verifyNoReloadOnError(responseStatus) {
-            var notificationServiceSpy = jasmine.createSpy(),
-                stateSpy = jasmine.createSpy(),
-                conflictResponse = {
+            var conflictResponse = {
                     status: responseStatus
                 };
 
-            spyOn(alertService, 'error').andCallFake(notificationServiceSpy);
-            spyOn($state, 'reload').andCallFake(stateSpy);
+            this.vm.syncRnr();
 
-            vm.syncRnr();
+            this.deferred.reject(conflictResponse);
+            this.$rootScope.$apply();
 
-            deferred.reject(conflictResponse);
-            $scope.$apply();
-
-            expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.sync.failure');
-            expect(stateSpy).not.toHaveBeenCalled();
+            expect(this.alertService.error).toHaveBeenCalledWith('requisitionView.sync.failure');
+            expect(this.$state.reload).not.toHaveBeenCalled();
         }
     });
 
     describe('syncRnr', function() {
 
         it('should open loading modal once', function() {
-            spyOn(loadingModalService, 'open');
-            requisition.$save.andReturn($q.when(true));
+            this.requisition.$save.andReturn(this.$q.resolve());
 
-            vm.syncRnr();
-            $scope.$apply();
+            this.vm.syncRnr();
+            this.$rootScope.$apply();
 
-            expect(loadingModalService.open.calls.length).toEqual(1);
+            expect(this.loadingModalService.open).toHaveBeenCalled();
         });
 
     });
 
     describe('isFullSupplyTabValid', function() {
 
-        var message;
-
         beforeEach(function() {
-            message = 'some-message';
-            spyOn(messageService, 'get').andReturn(message);
+            this.message = 'some-message';
+            spyOn(this.messageService, 'get').andReturn(this.message);
         });
 
         it('should return true if all line items are valid', function() {
-            requisitionValidatorMock.areLineItemsValid.andCallFake(function(lineItems) {
-                return lineItems[0] === fullSupplyItems[0];
-            });
+            this.requisitionValidator.areLineItemsValid.andReturn(true);
 
-            expect(vm.isFullSupplyTabValid()).toBe(true);
-            expect(requisitionValidatorMock.areLineItemsValid)
-                .toHaveBeenCalledWith([fullSupplyItems[0]]);
+            expect(this.vm.isFullSupplyTabValid()).toBe(true);
+            expect(this.requisitionValidator.areLineItemsValid)
+                .toHaveBeenCalledWith([this.fullSupplyItems[0]]);
 
-            expect(vm.invalidFullSupply).toBe(undefined);
+            expect(this.vm.invalidFullSupply).toBe(undefined);
         });
 
         it('should return false if all line items are invalid', function() {
-            requisitionValidatorMock.areLineItemsValid.andCallFake(function(lineItems) {
-                return lineItems[0] !== fullSupplyItems[0];
-            });
+            this.requisitionValidator.areLineItemsValid.andReturn(false);
 
-            expect(vm.isFullSupplyTabValid()).toBe(false);
-            expect(requisitionValidatorMock.areLineItemsValid)
-                .toHaveBeenCalledWith([fullSupplyItems[0]]);
+            expect(this.vm.isFullSupplyTabValid()).toBe(false);
+            expect(this.requisitionValidator.areLineItemsValid)
+                .toHaveBeenCalledWith([this.fullSupplyItems[0]]);
 
-            expect(vm.invalidFullSupply).toBe(message);
-            expect(messageService.get).toHaveBeenCalledWith('requisitionView.requisition.error');
+            expect(this.vm.invalidFullSupply).toBe(this.message);
+            expect(this.messageService.get).toHaveBeenCalledWith('requisitionView.requisition.error');
         });
 
     });
 
     describe('isNonFullSupplyTabValid', function() {
 
-        var message;
-
         beforeEach(function() {
-            message = 'some-message';
-            spyOn(messageService, 'get').andReturn(message);
+            this.message = 'some-message';
+            spyOn(this.messageService, 'get').andReturn(this.message);
         });
 
         it('should return true if all line items are valid', function() {
-            requisitionValidatorMock.areLineItemsValid.andCallFake(function(lineItems) {
-                return lineItems[0] === nonFullSupplyItems[0];
-            });
+            this.requisitionValidator.areLineItemsValid.andReturn(true);
 
-            expect(vm.isNonFullSupplyTabValid()).toBe(true);
-            expect(requisitionValidatorMock.areLineItemsValid)
-                .toHaveBeenCalledWith([nonFullSupplyItems[0]]);
+            expect(this.vm.isNonFullSupplyTabValid()).toBe(true);
+            expect(this.requisitionValidator.areLineItemsValid)
+                .toHaveBeenCalledWith([this.nonFullSupplyItems[0]]);
 
-            expect(vm.invalidNonFullSupply).toBe(undefined);
+            expect(this.vm.invalidNonFullSupply).toBe(undefined);
         });
 
         it('should return false if any line item is invalid', function() {
-            requisitionValidatorMock.areLineItemsValid.andCallFake(function(lineItems) {
-                return lineItems[0] !== nonFullSupplyItems[0];
-            });
+            this.requisitionValidator.areLineItemsValid.andReturn(false);
 
-            expect(vm.isNonFullSupplyTabValid()).toBe(false);
-            expect(requisitionValidatorMock.areLineItemsValid)
-                .toHaveBeenCalledWith([nonFullSupplyItems[0]]);
+            expect(this.vm.isNonFullSupplyTabValid()).toBe(false);
+            expect(this.requisitionValidator.areLineItemsValid)
+                .toHaveBeenCalledWith([this.nonFullSupplyItems[0]]);
 
-            expect(vm.invalidNonFullSupply).toBe(message);
-            expect(messageService.get).toHaveBeenCalledWith('requisitionView.requisition.error');
+            expect(this.vm.invalidNonFullSupply).toBe(this.message);
+            expect(this.messageService.get).toHaveBeenCalledWith('requisitionView.requisition.error');
         });
     });
 
     describe('authorize', function() {
 
         beforeEach(function() {
-            confirmSpy.confirm.andReturn($q.when(true));
-            requisition.$save.andReturn($q.when(true));
-            requisition.$authorize.andReturn($q.when(true));
+            this.confirmService.confirm.andReturn(this.$q.resolve(true));
+            this.requisition.$save.andReturn(this.$q.resolve(true));
+            this.requisition.$authorize.andReturn(this.$q.resolve(true));
 
-            requisitionValidatorMock.validateRequisition.andReturn(true);
-            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
-            RequisitionStockCountDateModal.andReturn($q.when());
+            this.requisitionValidator.validateRequisition.andReturn(true);
+            this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
+            this.RequisitionStockCountDateModalMock.andReturn(this.$q.resolve());
+            this.loadingModalService.open.andReturn(this.$q.resolve());
         });
 
         it('should redirect to previous state', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
+            this.authorizationService.hasRight.andReturn(false);
 
-            vm.authorizeRnr();
-            $scope.$apply();
+            this.vm.authorizeRnr();
+            this.$rootScope.$apply();
 
-            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+            expect(this.stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
         });
 
-        it('should show notification if requisition has error', function() {
-            requisitionValidatorMock.validateRequisition.andReturn(false);
-            spyOn(alertService, 'error');
+        it('should show notification if this.requisition has error', function() {
+            this.requisitionValidator.validateRequisition.andReturn(false);
 
-            vm.authorizeRnr();
-            $scope.$apply();
+            this.vm.authorizeRnr();
+            this.$rootScope.$apply();
 
-            expect(alertService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
+            expect(this.alertService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
         });
 
         it('should show notification if all line items are skipped', function() {
-            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(true);
-            spyOn(alertService, 'error');
+            this.requisitionValidator.areAllLineItemsSkipped.andReturn(true);
 
-            vm.authorizeRnr();
-            $scope.$apply();
+            this.vm.authorizeRnr();
+            this.$rootScope.$apply();
 
-            expect(alertService.error).toHaveBeenCalledWith('requisitionView.allLineItemsSkipped');
+            expect(this.alertService.error).toHaveBeenCalledWith('requisitionView.allLineItemsSkipped');
         });
 
         it('should call RequisitionStockCountDateModal if enabled', function() {
-            vm.authorizeRnr();
-            $scope.$apply();
+            this.vm.authorizeRnr();
+            this.$rootScope.$apply();
 
-            expect(RequisitionStockCountDateModal).toHaveBeenCalledWith(requisition);
+            expect(this.RequisitionStockCountDateModal).toHaveBeenCalledWith(this.requisition);
         });
 
         it('should not call RequisitionStockCountDateModal if disabled', function() {
-            vm.requisition.program.enableDatePhysicalStockCountCompleted = false;
+            this.vm.requisition.program.enableDatePhysicalStockCountCompleted = false;
 
-            vm.authorizeRnr();
-            $scope.$apply();
+            this.vm.authorizeRnr();
+            this.$rootScope.$apply();
 
-            expect(RequisitionStockCountDateModal).not.toHaveBeenCalled();
+            expect(this.RequisitionStockCountDateModal).not.toHaveBeenCalled();
         });
 
         it('should disable RequisitionWatcher', function() {
-            vm.authorizeRnr();
-            $scope.$apply();
+            this.vm.authorizeRnr();
+            this.$rootScope.$apply();
 
-            expect(watcher.disableWatcher).toHaveBeenCalled();
+            expect(this.RequisitionWatcher.prototype.disableWatcher).toHaveBeenCalled();
         });
     });
 
     describe('submitRnr', function() {
 
         beforeEach(function() {
-            confirmSpy.confirm.andReturn($q.when(true));
-            requisition.$save.andReturn($q.when(true));
-            requisition.$submit.andReturn($q.when(true));
+            this.confirmService.confirm.andReturn(this.$q.resolve(true));
+            this.requisition.$save.andReturn(this.$q.resolve(true));
+            this.requisition.$submit.andReturn(this.$q.resolve(true));
 
-            requisitionValidatorMock.validateRequisition.andReturn(true);
-            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
-            RequisitionStockCountDateModal.andReturn($q.when());
+            this.requisitionValidator.validateRequisition.andReturn(true);
+            this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
+            this.RequisitionStockCountDateModalMock.andReturn(this.$q.resolve());
+            this.loadingModalService.open.andReturn(this.$q.resolve());
         });
 
         it('should redirect to previous state', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
+            this.authorizationService.hasRight.andReturn(false);
 
-            vm.submitRnr();
-            $scope.$apply();
+            this.vm.submitRnr();
+            this.$rootScope.$apply();
 
-            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+            expect(this.stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
         });
 
         it('should call RequisitionStockCountDateModal if enabled', function() {
-            vm.submitRnr();
-            $scope.$apply();
+            this.vm.submitRnr();
+            this.$rootScope.$apply();
 
-            expect(RequisitionStockCountDateModal).toHaveBeenCalledWith(requisition);
+            expect(this.RequisitionStockCountDateModal).toHaveBeenCalledWith(this.requisition);
         });
 
         it('should not call RequisitionStockCountDateModal if disabled', function() {
-            vm.requisition.program.enableDatePhysicalStockCountCompleted = false;
+            this.vm.requisition.program.enableDatePhysicalStockCountCompleted = false;
 
-            vm.submitRnr();
-            $scope.$apply();
+            this.vm.submitRnr();
+            this.$rootScope.$apply();
 
-            expect(RequisitionStockCountDateModal).not.toHaveBeenCalled();
+            expect(this.RequisitionStockCountDateModal).not.toHaveBeenCalled();
         });
 
         it('should disable RequisitionWatcher', function() {
-            vm.submitRnr();
-            $scope.$apply();
+            this.vm.submitRnr();
+            this.$rootScope.$apply();
 
-            expect(watcher.disableWatcher).toHaveBeenCalled();
+            expect(this.RequisitionWatcher.prototype.disableWatcher).toHaveBeenCalled();
         });
     });
 
     describe('removeRnr', function() {
 
         beforeEach(function() {
-            confirmSpy.confirmDestroy.andReturn($q.when(true));
-            requisition.$save.andReturn($q.when(true));
-            requisition.$remove.andReturn($q.when(true));
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve(true));
+            this.requisition.$save.andReturn(this.$q.resolve(true));
+            this.requisition.$remove.andReturn(this.$q.resolve(true));
 
-            requisitionValidatorMock.validateRequisition.andReturn(true);
-            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
+            this.requisitionValidator.validateRequisition.andReturn(true);
+            this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
+            this.loadingModalService.open.andReturn(this.$q.resolve());
         });
 
         it('should redirect to previous state', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
+            this.vm.removeRnr();
+            this.$rootScope.$apply();
 
-            vm.removeRnr();
-            $scope.$apply();
-
-            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
+            expect(this.stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
         });
 
         it('should disable RequisitionWatcher', function() {
-            vm.removeRnr();
-            $scope.$apply();
+            this.vm.removeRnr();
+            this.$rootScope.$apply();
 
-            expect(watcher.disableWatcher).toHaveBeenCalled();
+            expect(this.RequisitionWatcher.prototype.disableWatcher).toHaveBeenCalled();
         });
     });
 
     describe('approveRnr', function() {
 
         beforeEach(function() {
-            confirmSpy.confirmDestroy.andReturn($q.when(true));
-            requisition.$save.andReturn($q.when(true));
-            requisition.$approve.andReturn($q.when(true));
-
-            requisitionValidatorMock.validateRequisition.andReturn(true);
-            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
+            this.confirmService.confirm.andReturn(this.$q.resolve(true));
+            this.requisition.$save.andReturn(this.$q.resolve(true));
+            this.requisition.$approve.andReturn(this.$q.resolve(true));
+            this.requisitionValidator.validateRequisition.andReturn(true);
+            this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
+            this.loadingModalService.open.andReturn(this.$q.resolve());
         });
 
         it('should redirect to previous state', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
+            this.authorizationService.hasRight.andReturn(false);
 
-            vm.approveRnr();
-            $scope.$apply();
+            this.vm.approveRnr();
+            this.$rootScope.$apply();
 
-            expect(stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.approvalList');
+            expect(this.stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.approvalList');
         });
 
-        it('should show notification if requisition has error', function() {
-            requisitionValidatorMock.validateRequisition.andReturn(false);
-            spyOn(alertService, 'error');
+        it('should show notification if this.requisition has error', function() {
+            this.requisitionValidator.validateRequisition.andReturn(false);
 
-            vm.approveRnr();
-            $scope.$apply();
+            this.vm.approveRnr();
+            this.$rootScope.$apply();
 
-            expect(alertService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
+            expect(this.alertService.error).toHaveBeenCalledWith('requisitionView.rnrHasErrors');
         });
 
         it('should disable RequisitionWatcher', function() {
-            vm.approveRnr();
-            $scope.$apply();
+            this.vm.approveRnr();
+            this.$rootScope.$apply();
 
-            expect(watcher.disableWatcher).toHaveBeenCalled();
+            expect(this.RequisitionWatcher.prototype.disableWatcher).toHaveBeenCalled();
         });
     });
 
     describe('rejectRnr', function() {
 
-        var confirmDeferred, saveDeferred;
-
         beforeEach(function() {
-            confirmDeferred = $q.defer();
-            saveDeferred = $q.defer();
+            this.confirmService.confirmDestroy.andReturn(this.$q.resolve(true));
+            this.requisition.$save.andReturn(this.$q.resolve());
+            this.requisition.$reject.andReturn(this.$q.resolve());
 
-            confirmSpy.confirmDestroy.andReturn(confirmDeferred.promise);
-            requisition.$save.andReturn(saveDeferred.promise);
-            requisition.$reject.andReturn($q.when(true));
-
-            requisitionValidatorMock.validateRequisition.andReturn(true);
-            requisitionValidatorMock.areAllLineItemsSkipped.andReturn(false);
+            this.requisitionValidator.validateRequisition.andReturn(true);
+            this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
+            this.loadingModalService.open.andReturn(this.$q.resolve());
         });
 
-        it('should save requisition before rejecting', function() {
-            vm.rejectRnr();
-            confirmDeferred.resolve();
-            $scope.$apply();
+        it('should save this.requisition before rejecting', function() {
+            var confirmDeferred = this.$q.defer(),
+                saveDeferred = this.$q.defer();
 
-            expect(requisition.$save).toHaveBeenCalled();
-            expect(requisition.$reject).not.toHaveBeenCalled();
+            this.requisition.$save.andReturn(saveDeferred.promise);
+            this.requisition.$reject.andReturn(confirmDeferred.promise);
+
+            this.vm.rejectRnr();
+            confirmDeferred.resolve();
+            this.$rootScope.$apply();
+
+            expect(this.requisition.$save).toHaveBeenCalled();
+            expect(this.requisition.$reject).not.toHaveBeenCalled();
 
             saveDeferred.resolve();
-            $scope.$apply();
+            this.$rootScope.$apply();
 
-            expect(requisition.$reject).toHaveBeenCalled();
+            expect(this.requisition.$reject).toHaveBeenCalled();
         });
 
         it('should redirect to previous state', function() {
-            authorizationServiceSpy.hasRight.andReturn(false);
-            spyOn($state, 'go');
+            this.vm.rejectRnr();
+            this.$rootScope.$apply();
 
-            vm.rejectRnr();
-            confirmDeferred.resolve();
-            saveDeferred.resolve();
-            $scope.$apply();
-
-            expect(stateTrackerService.goToPreviousState)
+            expect(this.stateTrackerService.goToPreviousState)
                 .toHaveBeenCalledWith('openlmis.requisitions.approvalList');
         });
 
         it('should disable RequisitionWatcher', function() {
-            vm.rejectRnr();
-            confirmDeferred.resolve();
-            saveDeferred.resolve();
-            $scope.$apply();
+            this.vm.rejectRnr();
+            this.$rootScope.$apply();
 
-            expect(watcher.disableWatcher).toHaveBeenCalled();
+            expect(this.RequisitionWatcher.prototype.disableWatcher).toHaveBeenCalled();
         });
     });
 
     describe('syncAndPrint', function() {
 
         beforeEach(function() {
-            spyOn($window, 'open').andCallThrough();
-            vm.$onInit();
+            spyOn(this.$window, 'open').andCallThrough();
+            this.vm.$onInit();
+            this.loadingModalService.open.andReturn(this.$q.resolve());
         });
 
         it('should open window with report when sync succeeded', function() {
-            requisition.$save.andReturn($q.when(true));
+            this.requisition.$save.andReturn(this.$q.resolve(true));
 
-            vm.syncRnrAndPrint();
-            $scope.$apply();
+            this.vm.syncRnrAndPrint();
+            this.$rootScope.$apply();
 
-            expect(accessTokenFactorySpy.addAccessToken)
-                .toHaveBeenCalledWith('http://some.url/api/requisitions/1/print');
+            expect(this.accessTokenFactory.addAccessToken)
+                .toHaveBeenCalledWith(this.requisitionUrlFactory('api/requisitions/1/print'));
         });
 
         it('should not open report when sync failed', function() {
-            requisition.$save.andReturn($q.reject());
+            this.requisition.$save.andReturn(this.$q.reject());
 
-            vm.syncRnrAndPrint();
-            $scope.$apply();
+            this.vm.syncRnrAndPrint();
+            this.$rootScope.$apply();
 
-            expect($window.open).toHaveBeenCalledWith('', '_blank');
-            expect(accessTokenFactorySpy.addAccessToken).not.toHaveBeenCalled();
+            expect(this.$window.open).toHaveBeenCalledWith('', '_blank');
+            expect(this.accessTokenFactory.addAccessToken).not.toHaveBeenCalled();
         });
 
         it('should display error message when sync failed', function() {
-            requisition.$save.andReturn($q.reject({
+            this.requisition.$save.andReturn(this.$q.reject({
                 status: 400
             }));
-            var notificationServiceSpy = jasmine.createSpy();
-            spyOn(alertService, 'error').andCallFake(notificationServiceSpy);
 
-            vm.syncRnrAndPrint();
-            $scope.$apply();
+            this.vm.syncRnrAndPrint();
+            this.$rootScope.$apply();
 
-            expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionView.sync.failure');
+            expect(this.alertService.error).toHaveBeenCalledWith('requisitionView.sync.failure');
         });
 
         it('should open window with report when has no right for sync', function() {
-            accessTokenFactorySpy.addAccessToken.andReturn('token');
-            vm.displaySyncButton = false;
+            this.accessTokenFactory.addAccessToken.andReturn('token');
+            this.vm.displaySyncButton = false;
 
-            vm.syncRnrAndPrint();
+            this.vm.syncRnrAndPrint();
 
-            expect($window.open).toHaveBeenCalledWith('token', '_blank');
+            expect(this.$window.open).toHaveBeenCalledWith('token', '_blank');
         });
 
         it('should open loading modal once', function() {
-            spyOn(loadingModalService, 'open');
-            requisition.$save.andReturn($q.when(true));
+            this.requisition.$save.andReturn(this.$q.resolve(true));
 
-            vm.syncRnrAndPrint();
-            $scope.$apply();
+            this.vm.syncRnrAndPrint();
+            this.$rootScope.$apply();
 
-            expect(loadingModalService.open.calls.length).toEqual(1);
+            expect(this.loadingModalService.open.callCount).toEqual(1);
         });
     });
 
-    describe('update requisition', function() {
-        var offlineService, isOffline,
-            requisitionService;
-
-        beforeEach(inject(function(_offlineService_, _requisitionService_) {
-            isOffline = false;
-            offlineService = _offlineService_;
-            spyOn(offlineService, 'isOffline').andCallFake(function() {
-                return isOffline;
-            });
-
-            spyOn($state, 'reload');
-
-            spyOn(alertService, 'error');
-
-            confirmSpy.confirm.andReturn($q.resolve());
-
-            requisitionService = _requisitionService_;
-            spyOn(requisitionService, 'removeOfflineRequisition');
-        }));
+    describe('updateRequisition', function() {
 
         it('will confirm with the user before removing the requisition', function() {
-            confirmSpy.confirm.andReturn($q.reject());
+            this.confirmService.confirm.andReturn(this.$q.reject());
 
-            vm.updateRequisition();
-            $scope.$apply();
+            this.vm.updateRequisition();
+            this.$rootScope.$apply();
 
-            expect(confirmSpy.confirm).toHaveBeenCalled();
-            expect(requisitionService.removeOfflineRequisition).not.toHaveBeenCalled();
-            expect($state.reload).not.toHaveBeenCalled();
+            expect(this.confirmService.confirm).toHaveBeenCalled();
+            expect(this.requisitionService.removeOfflineRequisition).not.toHaveBeenCalled();
+            expect(this.$state.reload).not.toHaveBeenCalled();
 
-            confirmSpy.confirm.andReturn($q.resolve());
+            this.confirmService.confirm.andReturn(this.$q.resolve());
 
-            vm.updateRequisition();
-            $scope.$apply();
+            this.vm.updateRequisition();
+            this.$rootScope.$apply();
 
             // Was called in both function calls
-            expect(confirmSpy.confirm.calls.length).toBe(2);
+            expect(this.confirmService.confirm.callCount).toBe(2);
 
-            expect(requisitionService.removeOfflineRequisition).toHaveBeenCalled();
-            expect($state.reload).toHaveBeenCalled();
+            expect(this.requisitionService.removeOfflineRequisition).toHaveBeenCalled();
+            expect(this.$state.reload).toHaveBeenCalled();
 
         });
 
         it('will not remove the requisition while offline', function() {
-            isOffline = true;
+            this.offlineService.isOffline.andReturn(true);
+            this.confirmService.confirm.andReturn(this.$q.resolve());
 
-            vm.updateRequisition();
-            $scope.$apply();
+            this.vm.updateRequisition();
+            this.$rootScope.$apply();
 
-            expect(alertService.error).toHaveBeenCalled();
-            expect(requisitionService.removeOfflineRequisition).not.toHaveBeenCalled();
+            expect(this.alertService.error).toHaveBeenCalled();
+            expect(this.requisitionService.removeOfflineRequisition).not.toHaveBeenCalled();
 
-            isOffline = false;
+            this.offlineService.isOffline.andReturn(false);
 
-            vm.updateRequisition();
-            $scope.$apply();
+            this.vm.updateRequisition();
+            this.$rootScope.$apply();
 
-            expect(alertService.error.calls.length).toBe(1);
-            expect(requisitionService.removeOfflineRequisition).toHaveBeenCalled();
+            expect(this.alertService.error.callCount).toBe(1);
+            expect(this.requisitionService.removeOfflineRequisition).toHaveBeenCalled();
         });
 
     });
