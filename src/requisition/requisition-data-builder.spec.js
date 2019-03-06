@@ -237,6 +237,7 @@
             spyOn(requisition, '$isInApproval').andCallThrough();
             spyOn(requisition, '$isReleased').andCallThrough();
             spyOn(requisition, '$isAfterAuthorize').andCallThrough();
+            spyOn(requisition, '$isSkipped').andCallThrough();
             spyOn(requisition, 'addLineItem').andCallThrough();
             spyOn(requisition, 'addLineItems').andCallThrough();
             spyOn(requisition, 'deleteLineItem').andCallThrough();
