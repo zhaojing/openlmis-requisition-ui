@@ -27,7 +27,6 @@ describe('requisitionViewFactory', function() {
             this.$q = $injector.get('$q');
             this.permissionService = $injector.get('permissionService');
             this.$rootScope = $injector.get('$rootScope');
-            spyOn(this.permissionService, 'hasPermission').andReturn(this.$q.when(true));
         });
 
         this.requisition = new RequisitionDataBuilder().build();
@@ -35,6 +34,9 @@ describe('requisitionViewFactory', function() {
         this.user = new UserDataBuilder()
             .withSupervisionRoleAssignment('1', this.requisition.supervisoryNode, this.requisition.program.id)
             .build();
+
+        spyOn(this.permissionService, 'hasPermission').andReturn(this.$q.when(true));
+        spyOn(this.permissionService, 'hasRoleWithRightForProgramAndSupervisoryNode').andReturn(this.$q.resolve(true));
 
         this.requisition.$isInitiated.andReturn(false);
         this.requisition.$isRejected.andReturn(false);
@@ -192,21 +194,7 @@ describe('requisitionViewFactory', function() {
 
         it('should be false if user does not have right to approve this requisition', function() {
             this.requisition.$isInApproval.andReturn(true);
-            this.permissionService.hasPermission.andReturn(this.$q.when(false));
-
-            var result;
-            this.requisitionViewFactory.canApproveAndReject(this.user, this.requisition)
-                .then(function(response) {
-                    result = response;
-                });
-            this.$rootScope.$apply();
-
-            expect(result).toBe(true);
-        });
-
-        it('should be false if user does not have right to supervisory node in the requisition', function() {
-            this.requisition.$isInApproval.andReturn(true);
-            this.requisition.supervisoryNode = '2';
+            this.permissionService.hasRoleWithRightForProgramAndSupervisoryNode.andReturn(this.$q.resolve(false));
 
             var result;
             this.requisitionViewFactory.canApproveAndReject(this.user, this.requisition)
@@ -216,10 +204,6 @@ describe('requisitionViewFactory', function() {
             this.$rootScope.$apply();
 
             expect(result).toBe(false);
-        });
-
-        afterEach(function() {
-            this.$rootScope.$apply();
         });
 
     });
@@ -444,173 +428,6 @@ describe('requisitionViewFactory', function() {
 
             expect(result).toBe(false);
         });
-
-    });
-
-    describe('canSync', function() {
-
-        it('should be true if requisition is initiated and user has right to create (initiate/submit) this requisition',
-            function() {
-                this.requisition.$isInitiated.andReturn(true);
-
-                var $q = this.$q;
-                this.permissionService.hasPermission.andCallFake(function(userId, params) {
-                    return params.right === 'REQUISITION_CREATE' ? $q.resolve() : $q.reject();
-                });
-
-                var result;
-                this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                    .then(function(response) {
-                        result = response;
-                    });
-                this.$rootScope.$apply();
-
-                expect(result).toBe(true);
-            });
-
-        it('should be true if requisition is rejected and user has right to create (initiate/submit) this requisition',
-            function() {
-                this.requisition.$isRejected.andReturn(true);
-
-                var $q = this.$q;
-                this.permissionService.hasPermission.andCallFake(function(userId, params) {
-                    return params.right === 'REQUISITION_CREATE' ? $q.resolve() : $q.reject();
-                });
-
-                var result;
-                this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                    .then(function(response) {
-                        result = response;
-                    });
-                this.$rootScope.$apply();
-
-                expect(result).toBe(true);
-            });
-
-        it('should be true if requisition is submitted and user has right to authorize this requisition', function() {
-            this.requisition.$isSubmitted.andReturn(true);
-
-            var $q = this.$q;
-            this.permissionService.hasPermission.andCallFake(function(userId, params) {
-                return params.right === 'REQUISITION_AUTHORIZE' ? $q.resolve() : $q.reject();
-            });
-
-            var result;
-            this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                .then(function(response) {
-                    result = response;
-                });
-            this.$rootScope.$apply();
-
-            expect(result).toBe(true);
-        });
-
-        it('should be true if requisition is authorized and user has right to approve this requisition', function() {
-            this.requisition.$isAuthorized.andReturn(true);
-
-            var $q = this.$q;
-            this.permissionService.hasPermission.andCallFake(function(userId, params) {
-                return params.right === 'REQUISITION_APPROVE' ? $q.resolve() : $q.reject();
-            });
-
-            var result;
-            this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                .then(function(response) {
-                    result = response;
-                });
-            this.$rootScope.$apply();
-
-            expect(result).toBe(true);
-        });
-
-        it('should be true if requisition is in approval and user has right to approve this requisition', function() {
-            this.requisition.$isInApproval.andReturn(true);
-
-            var $q = this.$q;
-            this.permissionService.hasPermission.andCallFake(function(userId, params) {
-                return params.right === 'REQUISITION_APPROVE' ? $q.resolve() : $q.reject();
-            });
-
-            var result;
-            this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                .then(function(response) {
-                    result = response;
-                });
-            this.$rootScope.$apply();
-
-            expect(result).toBe(true);
-        });
-
-        it('should be false if requisition is initiated and user does not have right to create (initiate/submit) this' +
-            ' requisition', function() {
-            this.requisition.$isInitiated.andReturn(true);
-
-            var $q = this.$q;
-            this.permissionService.hasPermission.andCallFake(function(userId, params) {
-                return params.right === 'REQUISITION_CREATE' ? $q.reject() : $q.resolve();
-            });
-
-            var result;
-            this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                .then(function(response) {
-                    result = response;
-                });
-            this.$rootScope.$apply();
-
-            expect(result).toBe(false);
-        });
-
-        it('should be false if requisition is submitted and user does not have right to authorize this requisition',
-            function() {
-                this.requisition.$isSubmitted.andReturn(true);
-
-                var $q = this.$q;
-                this.permissionService.hasPermission.andCallFake(function(userId, params) {
-                    return params.right === 'REQUISITION_AUTHORIZE' ? $q.reject() : $q.resolve();
-                });
-
-                var result;
-                this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                    .then(function(response) {
-                        result = response;
-                    });
-                this.$rootScope.$apply();
-
-                expect(result).toBe(false);
-            });
-
-        it('should be false if requisition is authorized and user does not have right to approve this requisition',
-            function() {
-                this.requisition.$isAuthorized.andReturn(true);
-
-                var $q = this.$q;
-                this.permissionService.hasPermission.andCallFake(function(userId, params) {
-                    return params.right === 'REQUISITION_APPROVE' ? $q.reject() : $q.resolve();
-                });
-
-                var result;
-                this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                    .then(function(response) {
-                        result = response;
-                    });
-                this.$rootScope.$apply();
-
-                expect(result).toBe(false);
-            });
-
-        it('should be false if requisition is not initiated, rejected, submitted, authorized or in approval',
-            function() {
-                this.requisition.$isApproved.andReturn(true);
-
-                var result;
-                this.requisitionViewFactory.canSync(this.user.id, this.requisition)
-                    .then(function(response) {
-                        result = response;
-                    });
-                this.$rootScope.$apply();
-
-                expect(result).toBe(false);
-            });
 
     });
 

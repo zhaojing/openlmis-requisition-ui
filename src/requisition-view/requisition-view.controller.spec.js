@@ -157,6 +157,39 @@ describe('RequisitionViewController', function() {
             expect(this.vm.requisitionType).toBe('requisitionView.reportOnly');
             expect(this.vm.requisitionTypeClass).toBe('report-only');
         });
+
+        it('should make reject button visible if user can approve and reject and requisition is not split', function() {
+            this.requisition.extraData = {
+                originalRequisition: undefined
+            };
+            this.canApproveAndReject = true;
+
+            this.initController();
+
+            expect(this.vm.displayRejectButton).toEqual(true);
+        });
+
+        it('should make reject button hidden if user can not approve and reject', function() {
+            this.requisition.extraData = {
+                originalRequisition: undefined
+            };
+            this.canApproveAndReject = false;
+
+            this.initController();
+
+            expect(this.vm.displayRejectButton).toEqual(false);
+        });
+
+        it('should make reject button hidden if requisition is split', function() {
+            this.requisition.extraData = {
+                originalRequisition: 'original-requisition-id'
+            };
+            this.canApproveAndReject = true;
+
+            this.initController();
+
+            expect(this.vm.displayRejectButton).toEqual(false);
+        });
     });
 
     describe('skipRnr', function() {

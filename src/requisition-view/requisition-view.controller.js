@@ -29,24 +29,19 @@
         .controller('RequisitionViewController', RequisitionViewController);
 
     RequisitionViewController.$inject = [
-        '$state', 'requisition', 'requisitionValidator', 'authorizationService',
-        'requisitionService', 'loadingModalService', 'alertService', 'notificationService',
-        'confirmService', 'REQUISITION_RIGHTS', 'FULFILLMENT_RIGHTS', 'offlineService', '$window',
-        'requisitionUrlFactory', '$filter', '$scope', 'RequisitionWatcher',
-        'accessTokenFactory', 'messageService', 'stateTrackerService', 'RequisitionStockCountDateModal',
-        'localStorageFactory', 'canSubmit', 'canAuthorize',
-        'canApproveAndReject', 'canDelete', 'canSkip', 'canSync'
+        '$state', 'requisition', 'requisitionValidator', 'requisitionService', 'loadingModalService', 'alertService',
+        'notificationService', 'confirmService', 'offlineService', '$window', 'requisitionUrlFactory', '$filter',
+        '$scope', 'RequisitionWatcher', 'accessTokenFactory', 'messageService', 'stateTrackerService',
+        'RequisitionStockCountDateModal', 'localStorageFactory', 'canSubmit', 'canAuthorize', 'canApproveAndReject',
+        'canDelete', 'canSkip', 'canSync'
     ];
 
-    function RequisitionViewController($state, requisition, requisitionValidator,
-                                       authorizationService, requisitionService,
-                                       loadingModalService, alertService, notificationService,
-                                       confirmService, REQUISITION_RIGHTS, FULFILLMENT_RIGHTS,
-                                       offlineService, $window, requisitionUrlFactory, $filter,
-                                       $scope, RequisitionWatcher, accessTokenFactory,
-                                       messageService, stateTrackerService, RequisitionStockCountDateModal,
-                                       localStorageFactory, canSubmit, canAuthorize, canApproveAndReject,
-                                       canDelete, canSkip, canSync) {
+    function RequisitionViewController($state, requisition, requisitionValidator, requisitionService,
+                                       loadingModalService, alertService, notificationService, confirmService,
+                                       offlineService, $window, requisitionUrlFactory, $filter, $scope,
+                                       RequisitionWatcher, accessTokenFactory, messageService, stateTrackerService,
+                                       RequisitionStockCountDateModal, localStorageFactory, canSubmit, canAuthorize,
+                                       canApproveAndReject, canDelete, canSkip, canSync) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions'));
@@ -213,6 +208,7 @@
             vm.displayAuthorizeButton = canAuthorize;
             vm.displayDeleteButton = canDelete;
             vm.displayApproveAndRejectButtons = canApproveAndReject;
+            vm.displayRejectButton = canApproveAndReject && !vm.requisition.extraData.originalRequisition;
             vm.displaySkipButton = canSkip;
             vm.displaySyncButton = canSync;
         }

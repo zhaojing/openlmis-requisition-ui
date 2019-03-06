@@ -37,8 +37,7 @@
             canAuthorize: canAuthorize,
             canApproveAndReject: canApproveAndReject,
             canDelete: canDelete,
-            canSkip: canSkip,
-            canSync: canSync
+            canSkip: canSkip
         };
         return factory;
 
@@ -99,12 +98,9 @@
          */
         function canApproveAndReject(user, requisition) {
             if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                return hasRightForProgramAndFacility(user.id, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition)
-                    .then(function(result) {
-                        return result && user.getRoleAssignments(
-                            undefined, requisition.supervisoryNode, requisition.program.id
-                        ).length > 0;
-                    });
+                return permissionService.hasRoleWithRightForProgramAndSupervisoryNode(
+                    REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition.program.id, requisition.supervisoryNode
+                );
             }
             return $q.resolve(false);
 
@@ -175,30 +171,6 @@
                 requisition.program.periodsSkippable &&
                 !requisition.emergency) {
                 return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition);
-            }
-            return $q.resolve(false);
-
-        }
-
-        /**
-         * @ngdoc method
-         * @methodOf requisition-view.requisitionViewFactory
-         * @name canSync
-         *
-         * @description
-         * Determines whether the user can sync with server or not.
-         *
-         * @param  {String} userId id of user to check
-         * @param  {Object} requisition requisition to check
-         * @return {Boolean} can user sync this requisition
-         */
-        function canSync(userId, requisition) {
-            if (requisition.$isInitiated() || requisition.$isRejected()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition);
-            } else if (requisition.$isSubmitted()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_AUTHORIZE, requisition);
-            } else if (requisition.$isAuthorized() || requisition.$isInApproval()) {
-                return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_APPROVE, requisition);
             }
             return $q.resolve(false);
 

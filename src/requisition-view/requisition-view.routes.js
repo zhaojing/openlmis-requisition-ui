@@ -61,8 +61,8 @@
                 canSkip: function(requisitionViewFactory, user, requisition) {
                     return requisitionViewFactory.canSkip(user.id, requisition);
                 },
-                canSync: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canSync(user.id, requisition);
+                canSync: function(canSubmit, canAuthorize, canApproveAndReject) {
+                    return canSubmit || canAuthorize || canApproveAndReject;
                 }
             }
         });

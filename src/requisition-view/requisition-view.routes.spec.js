@@ -47,7 +47,6 @@ describe('openlmis.requisitions.requisition state', function() {
         spyOn(this.requisitionViewFactory, 'canApproveAndReject').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canDelete').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canSkip').andReturn(this.$q.resolve(true));
-        spyOn(this.requisitionViewFactory, 'canSync').andReturn(this.$q.resolve(true));
 
         this.state = this.$state.get('openlmis.requisitions.requisition');
     });
@@ -94,10 +93,48 @@ describe('openlmis.requisitions.requisition state', function() {
         expect(this.getResolvedValue('canSkip')).toEqual(true);
     });
 
-    it('should resolve if user has right to sync', function() {
-        this.goToUrl('/requisition/requisition-id');
+    describe('canSync', function() {
 
-        expect(this.getResolvedValue('canSync')).toEqual(true);
+        it('should resolve to false if user can not submit, authorize,reject and approve requisitions', function() {
+            this.requisitionViewFactory.canSubmit.andReturn(this.$q.resolve(false));
+            this.requisitionViewFactory.canAuthorize.andReturn(this.$q.resolve(false));
+            this.requisitionViewFactory.canApproveAndReject.andReturn(this.$q.resolve(false));
+
+            this.goToUrl('/requisition/requisition-id');
+
+            expect(this.getResolvedValue('canSync')).toEqual(false);
+        });
+
+        it('should resolve to true if user can submit', function() {
+            this.requisitionViewFactory.canSubmit.andReturn(this.$q.resolve(true));
+            this.requisitionViewFactory.canAuthorize.andReturn(this.$q.resolve(false));
+            this.requisitionViewFactory.canApproveAndReject.andReturn(this.$q.resolve(false));
+
+            this.goToUrl('/requisition/requisition-id');
+
+            expect(this.getResolvedValue('canSync')).toEqual(true);
+        });
+
+        it('should resolve to true if user can authorize requisitions', function() {
+            this.requisitionViewFactory.canSubmit.andReturn(this.$q.resolve(false));
+            this.requisitionViewFactory.canAuthorize.andReturn(this.$q.resolve(true));
+            this.requisitionViewFactory.canApproveAndReject.andReturn(this.$q.resolve(false));
+
+            this.goToUrl('/requisition/requisition-id');
+
+            expect(this.getResolvedValue('canSync')).toEqual(true);
+        });
+
+        it('should resolve to false if user can reject and approve requisitions', function() {
+            this.requisitionViewFactory.canSubmit.andReturn(this.$q.resolve(false));
+            this.requisitionViewFactory.canAuthorize.andReturn(this.$q.resolve(false));
+            this.requisitionViewFactory.canApproveAndReject.andReturn(this.$q.resolve(true));
+
+            this.goToUrl('/requisition/requisition-id');
+
+            expect(this.getResolvedValue('canSync')).toEqual(true);
+        });
+
     });
 
     function goToUrl(url) {
