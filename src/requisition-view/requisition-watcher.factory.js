@@ -33,6 +33,9 @@
 
     function factory($timeout) {
 
+        RequisitionWatcher.prototype.disableWatcher = disableWatcher;
+        RequisitionWatcher.prototype.enableWatcher = enableWatcher;
+
         return RequisitionWatcher;
 
         /**
@@ -48,23 +51,18 @@
          * @return {RequisitionWatcher}             watcher object
          */
         function RequisitionWatcher(scope, requisition, storage) {
-            var watcher = this;
+            this.enabled = true;
 
-            watcher.enabled = true;
+            addWatcher(scope, requisition, 'requisitionLineItems', this, storage);
+            addWatcher(scope, requisition, 'draftStatusMessage', this, storage);
+        }
 
-            watcher.disableWatcher = disableWatcher;
-            watcher.enableWatcher = enableWatcher;
+        function enableWatcher() {
+            this.enabled = true;
+        }
 
-            addWatcher(scope, requisition, 'requisitionLineItems', watcher, storage);
-            addWatcher(scope, requisition, 'draftStatusMessage', watcher, storage);
-
-            function enableWatcher() {
-                watcher.enabled = true;
-            }
-
-            function disableWatcher() {
-                watcher.enabled = false;
-            }
+        function disableWatcher() {
+            this.enabled = false;
         }
 
         function addWatcher(scope, requisition, valueToWatch, watcher, storage) {
