@@ -37,6 +37,7 @@
         RequisitionDataBuilder.prototype.buildJson = buildJson;
         RequisitionDataBuilder.prototype.withCreatedDate = withCreatedDate;
         RequisitionDataBuilder.prototype.withRequisitionLineItems = withRequisitionLineItems;
+        RequisitionDataBuilder.prototype.withProgram = withProgram;
         RequisitionDataBuilder.prototype.buildSubmitted = buildSubmitted;
         RequisitionDataBuilder.prototype.buildAuthorized = buildAuthorized;
         RequisitionDataBuilder.prototype.buildInApproval = buildInApproval;
@@ -222,6 +223,11 @@
             return this;
         }
 
+        function withProgram(program) {
+            this.program = program;
+            return this;
+        }
+
         function spyOnMethods(requisition) {
             spyOn(requisition, '$isInitiated').andCallThrough();
             spyOn(requisition, '$isRejected').andCallThrough();
@@ -238,6 +244,13 @@
             spyOn(requisition, 'getAvailableNonFullSupplyProducts').andCallThrough();
             spyOn(requisition, 'unskipFullSupplyProducts').andCallThrough();
             spyOn(requisition, 'getSkippedFullSupplyProducts').andCallThrough();
+            spyOn(requisition, '$skip').andCallThrough();
+            spyOn(requisition, '$save').andCallThrough();
+            spyOn(requisition, '$approve').andCallThrough();
+            spyOn(requisition, '$reject').andCallThrough();
+            spyOn(requisition, '$remove').andCallThrough();
+            spyOn(requisition, '$submit').andCallThrough();
+            spyOn(requisition, '$authorize').andCallThrough();
 
             spyOn(requisition.template, 'getColumns').andCallThrough();
             spyOn(requisition.template, 'hasSkipColumn').andCallThrough();

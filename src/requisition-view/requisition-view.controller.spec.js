@@ -18,14 +18,19 @@ describe('RequisitionViewController', function() {
     beforeEach(function() {
         var context = this;
         module('requisition-view', function($provide) {
-            context.RequisitionStockCountDateModalMock = jasmine.createSpy();
+            context.RequisitionStockCountDateModalMock = jasmine.createSpy('RequisitionStockCountDateModal');
 
             $provide.factory('RequisitionStockCountDateModal', function() {
                 return context.RequisitionStockCountDateModalMock;
-            })
+            });
         });
 
+        var RequisitionDataBuilder, RequisitionLineItemDataBuilder, ProgramDataBuilder;
         inject(function($injector) {
+            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
+
             this.$rootScope = $injector.get('$rootScope');
             this.$scope = this.$rootScope.$new();
             this.$state = $injector.get('$state');
@@ -48,37 +53,37 @@ describe('RequisitionViewController', function() {
             this.offlineService = $injector.get('offlineService');
         });
 
-        this.deferred = this.$q.defer();
-        this.requisition = jasmine.createSpyObj('requisition', ['$skip', '$isInitiated', '$isSubmitted', '$isAuthorized',
-            '$isInApproval', '$isReleased', '$isRejected', '$isSkipped', '$save', '$authorize', '$submit',
-            '$remove', '$approve', '$reject'
-        ]);
-        this.requisition.id = '1';
-        this.requisition.program = {
-            id: '2',
-            periodsSkippable: true,
-            skipAuthorization: false,
-            code: 'CODE',
-            enableDatePhysicalStockCountCompleted: true
-        };
-        this.requisition.facility = {
-            id: '3'
-        };
+        var program = new ProgramDataBuilder()
+            .withEnabledDatePhysicalStockCountCompleted()
+            .build();
+
+        this.requisition = new RequisitionDataBuilder()
+            .withProgram(program)
+            .withRequisitionLineItems([
+                new RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(program)
+                    .buildJson(),
+                new RequisitionLineItemDataBuilder()
+                    .nonFullSupplyForProgram(program)
+                    .buildJson()
+            ])
+            .build();
+
+        this.fullSupplyItems = [this.requisition.requisitionLineItems[0]];
+        this.nonFullSupplyItems = [this.requisition.requisitionLineItems[1]];
+
         this.requisition.$isInitiated.andReturn(true);
         this.requisition.$isReleased.andReturn(false);
         this.requisition.$isRejected.andReturn(false);
-        this.requisition.$skip.andReturn(this.deferred.promise);
-        this.requisition.$save.andReturn(this.deferred.promise);
-        this.requisition.$authorize.andReturn(this.deferred.promise);
+
+        this.canSubmit = true;
+        this.canAuthorize = false;
+        this.canApproveAndReject = false;
+        this.canDelete = true;
+        this.canSkip = true;
+        this.canSync = true;
+
         spyOn(this.stateTrackerService, 'goToPreviousState');
-
-        var canSubmit = true,
-            canAuthorize = false,
-            canApproveAndReject = false,
-            canDelete = true,
-            canSkip = true,
-            canSync = true;
-
         spyOn(this.notificationService, 'success');
         spyOn(this.notificationService, 'error');
         spyOn(this.alertService, 'error');
@@ -96,84 +101,58 @@ describe('RequisitionViewController', function() {
         spyOn(this.offlineService, 'isOffline');
         spyOn(this.requisitionService, 'removeOfflineRequisition');
 
-        this.vm = this.$controller('RequisitionViewController', {
-            $scope: this.$scope,
-            requisition: this.requisition,
-            canSubmit: canSubmit,
-            canAuthorize: canAuthorize,
-            canApproveAndReject: canApproveAndReject,
-            canDelete: canDelete,
-            canSkip: canSkip,
-            canSync: canSync
-        });
-
-        this.fullSupplyItems = [{
-            skipped: '',
-            $program: {
-                fullSupply: true
-            }
-        }];
-
-        this.nonFullSupplyItems = [{
-            skipped: '',
-            $program: {
-                fullSupply: false
-            }
-        }];
-
-        this.requisition.requisitionLineItems = this.fullSupplyItems.concat(this.nonFullSupplyItems);
+        this.initController = initController;
     });
 
     describe('$onInit', function() {
 
-        it('should display submit button when user can submit this.requisition and skip authorization is not configured',
+        it('should display submit button when user can submit requisition and skip authorization is not configured',
             function() {
-                this.vm.canSubmit = true;
-                this.vm.requisition.program.skipAuthorization = false;
+                this.canSubmit = true;
+                this.requisition.program.skipAuthorization = false;
 
-                this.vm.$onInit();
+                this.initController();
 
                 expect(this.vm.displaySubmitButton).toBe(true);
                 expect(this.vm.displaySubmitAndAuthorizeButton).toBe(false);
             });
 
-        it('should display submit and authorize button when user can submit this.requisition and skip authorization is' +
-            ' configured',
-            function() {
-                this.vm.canSubmit = true;
-                this.vm.requisition.program.skipAuthorization = true;
+        it('should display submit and authorize button when user can submit requisition and skip authorization is' +
+            ' configured', function() {
+            this.canSubmit = true;
+            this.requisition.program.skipAuthorization = true;
 
-                this.vm.$onInit();
+            this.initController();
 
-                expect(this.vm.displaySubmitAndAuthorizeButton).toBe(true);
-                expect(this.vm.displaySubmitButton).toBe(false);
-            });
+            expect(this.vm.displaySubmitAndAuthorizeButton).toBe(true);
+            expect(this.vm.displaySubmitButton).toBe(false);
+        });
 
-        it('should set this.requisition type label and class for regular this.requisition', function() {
-            this.vm.requisition.emergency = false;
-            this.vm.requisition.reportOnly = false;
+        it('should set requisition type label and class for regular requisition', function() {
+            this.requisition.emergency = false;
+            this.requisition.reportOnly = false;
 
-            this.vm.$onInit();
+            this.initController();
 
             expect(this.vm.requisitionType).toBe('requisitionView.regular');
             expect(this.vm.requisitionTypeClass).toBe('regular');
         });
 
-        it('should set this.requisition type label and class for emergency this.requisition', function() {
-            this.vm.requisition.emergency = true;
-            this.vm.requisition.reportOnly = true;
+        it('should set requisition type label and class for emergency requisition', function() {
+            this.requisition.emergency = true;
+            this.requisition.reportOnly = true;
 
-            this.vm.$onInit();
+            this.initController();
 
             expect(this.vm.requisitionType).toBe('requisitionView.emergency');
             expect(this.vm.requisitionTypeClass).toBe('emergency');
         });
 
-        it('should set this.requisition type label and class for report-only this.requisition', function() {
-            this.vm.requisition.emergency = false;
-            this.vm.requisition.reportOnly = true;
+        it('should set requisition type label and class for report-only requisition', function() {
+            this.requisition.emergency = false;
+            this.requisition.reportOnly = true;
 
-            this.vm.$onInit();
+            this.initController();
 
             expect(this.vm.requisitionType).toBe('requisitionView.reportOnly');
             expect(this.vm.requisitionTypeClass).toBe('report-only');
@@ -184,9 +163,10 @@ describe('RequisitionViewController', function() {
 
         beforeEach(function() {
             this.confirmService.confirm.andReturn(this.$q.resolve());
+            this.initController();
         });
 
-        it('should display message when successfully skipped this.requisition', function() {
+        it('should display message when successfully skipped requisition', function() {
             this.loadingModalService.open.andReturn(this.$q.resolve());
             this.requisition.$skip.andReturn(this.$q.resolve());
 
@@ -212,7 +192,10 @@ describe('RequisitionViewController', function() {
     describe('getPrintUrl', function() {
 
         it('getPrintUrl should prepare URL correctly', function() {
-            expect(this.vm.getPrintUrl()).toEqual(this.requisitionUrlFactory('/api/requisitions/1/print'));
+            this.initController();
+
+            expect(this.vm.getPrintUrl())
+                .toEqual(this.requisitionUrlFactory('/api/requisitions/requisition-id-1/print'));
         });
 
     });
@@ -222,6 +205,7 @@ describe('RequisitionViewController', function() {
         beforeEach(function() {
             this.verifyReloadOnErrorAndNotificationSent = verifyReloadOnErrorAndNotificationSent;
             this.verifyNoReloadOnError = verifyNoReloadOnError;
+            this.initController();
         });
 
         //eslint-disable-next-line jasmine/missing-expect
@@ -246,12 +230,12 @@ describe('RequisitionViewController', function() {
 
         function verifyReloadOnErrorAndNotificationSent(responseStatus, messageKey) {
             var conflictResponse = {
-                    status: responseStatus
-                };
+                status: responseStatus
+            };
+
+            this.requisition.$save.andReturn(this.$q.reject(conflictResponse));
 
             this.vm.syncRnr();
-
-            this.deferred.reject(conflictResponse);
             this.$rootScope.$apply();
 
             expect(this.notificationService.error).toHaveBeenCalledWith(messageKey);
@@ -260,12 +244,12 @@ describe('RequisitionViewController', function() {
 
         function verifyNoReloadOnError(responseStatus) {
             var conflictResponse = {
-                    status: responseStatus
-                };
+                status: responseStatus
+            };
+
+            this.requisition.$save.andReturn(this.$q.reject(conflictResponse));
 
             this.vm.syncRnr();
-
-            this.deferred.reject(conflictResponse);
             this.$rootScope.$apply();
 
             expect(this.alertService.error).toHaveBeenCalledWith('requisitionView.sync.failure');
@@ -278,6 +262,7 @@ describe('RequisitionViewController', function() {
         it('should open loading modal once', function() {
             this.requisition.$save.andReturn(this.$q.resolve());
 
+            this.initController();
             this.vm.syncRnr();
             this.$rootScope.$apply();
 
@@ -291,6 +276,7 @@ describe('RequisitionViewController', function() {
         beforeEach(function() {
             this.message = 'some-message';
             spyOn(this.messageService, 'get').andReturn(this.message);
+            this.initController();
         });
 
         it('should return true if all line items are valid', function() {
@@ -321,6 +307,7 @@ describe('RequisitionViewController', function() {
         beforeEach(function() {
             this.message = 'some-message';
             spyOn(this.messageService, 'get').andReturn(this.message);
+            this.initController();
         });
 
         it('should return true if all line items are valid', function() {
@@ -356,6 +343,7 @@ describe('RequisitionViewController', function() {
             this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
             this.RequisitionStockCountDateModalMock.andReturn(this.$q.resolve());
             this.loadingModalService.open.andReturn(this.$q.resolve());
+            this.initController();
         });
 
         it('should redirect to previous state', function() {
@@ -367,7 +355,7 @@ describe('RequisitionViewController', function() {
             expect(this.stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.initRnr');
         });
 
-        it('should show notification if this.requisition has error', function() {
+        it('should show notification if requisition has error', function() {
             this.requisitionValidator.validateRequisition.andReturn(false);
 
             this.vm.authorizeRnr();
@@ -420,6 +408,7 @@ describe('RequisitionViewController', function() {
             this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
             this.RequisitionStockCountDateModalMock.andReturn(this.$q.resolve());
             this.loadingModalService.open.andReturn(this.$q.resolve());
+            this.initController();
         });
 
         it('should redirect to previous state', function() {
@@ -465,6 +454,7 @@ describe('RequisitionViewController', function() {
             this.requisitionValidator.validateRequisition.andReturn(true);
             this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
             this.loadingModalService.open.andReturn(this.$q.resolve());
+            this.initController();
         });
 
         it('should redirect to previous state', function() {
@@ -491,6 +481,7 @@ describe('RequisitionViewController', function() {
             this.requisitionValidator.validateRequisition.andReturn(true);
             this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
             this.loadingModalService.open.andReturn(this.$q.resolve());
+            this.initController();
         });
 
         it('should redirect to previous state', function() {
@@ -499,10 +490,11 @@ describe('RequisitionViewController', function() {
             this.vm.approveRnr();
             this.$rootScope.$apply();
 
-            expect(this.stateTrackerService.goToPreviousState).toHaveBeenCalledWith('openlmis.requisitions.approvalList');
+            expect(this.stateTrackerService.goToPreviousState)
+                .toHaveBeenCalledWith('openlmis.requisitions.approvalList');
         });
 
-        it('should show notification if this.requisition has error', function() {
+        it('should show notification if requisition has error', function() {
             this.requisitionValidator.validateRequisition.andReturn(false);
 
             this.vm.approveRnr();
@@ -529,9 +521,10 @@ describe('RequisitionViewController', function() {
             this.requisitionValidator.validateRequisition.andReturn(true);
             this.requisitionValidator.areAllLineItemsSkipped.andReturn(false);
             this.loadingModalService.open.andReturn(this.$q.resolve());
+            this.initController();
         });
 
-        it('should save this.requisition before rejecting', function() {
+        it('should save requisition before rejecting', function() {
             var confirmDeferred = this.$q.defer(),
                 saveDeferred = this.$q.defer();
 
@@ -571,8 +564,9 @@ describe('RequisitionViewController', function() {
 
         beforeEach(function() {
             spyOn(this.$window, 'open').andCallThrough();
-            this.vm.$onInit();
+            this.initController();
             this.loadingModalService.open.andReturn(this.$q.resolve());
+            this.initController();
         });
 
         it('should open window with report when sync succeeded', function() {
@@ -582,7 +576,7 @@ describe('RequisitionViewController', function() {
             this.$rootScope.$apply();
 
             expect(this.accessTokenFactory.addAccessToken)
-                .toHaveBeenCalledWith(this.requisitionUrlFactory('api/requisitions/1/print'));
+                .toHaveBeenCalledWith(this.requisitionUrlFactory('api/requisitions/requisition-id-1/print'));
         });
 
         it('should not open report when sync failed', function() {
@@ -627,6 +621,10 @@ describe('RequisitionViewController', function() {
 
     describe('updateRequisition', function() {
 
+        beforeEach(function() {
+            this.initController();
+        });
+
         it('will confirm with the user before removing the requisition', function() {
             this.confirmService.confirm.andReturn(this.$q.reject());
 
@@ -670,4 +668,19 @@ describe('RequisitionViewController', function() {
         });
 
     });
+
+    function initController() {
+        this.vm = this.$controller('RequisitionViewController', {
+            $scope: this.$scope,
+            requisition: this.requisition,
+            canSubmit: this.canSubmit,
+            canAuthorize: this.canAuthorize,
+            canApproveAndReject: this.canApproveAndReject,
+            canDelete: this.canDelete,
+            canSkip: this.canSkip,
+            canSync: this.canSync
+        });
+        this.vm.$onInit();
+    }
+
 });
