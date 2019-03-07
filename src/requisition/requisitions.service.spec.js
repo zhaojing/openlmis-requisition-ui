@@ -18,99 +18,13 @@ ddescribe('requisitionService', function() {
     beforeEach(function() {
         module('requisition');
 
-        this.startDate = [2016, 4, 30, 16, 21, 33];
-        this.endDate = [2016, 4, 30, 16, 21, 33];
-        this.startDate1 = new Date();
-        this.endDate1 = new Date();
-        this.modifiedDate = [2016, 4, 30, 16, 21, 33];
-        this.createdDate = [2016, 4, 30, 16, 21, 33];
-        this.createdDate2 = [2016, 10, 30, 16, 21, 33];
-        this.processingSchedule = {
-            modifiedDate: this.modifiedDate
-        };
-        this.facility = {
-            id: '1',
-            name: 'facility1'
-        };
-        this.program = {
-            id: '1',
-            name: 'program1'
-        };
-        this.period = {
-            id: '1',
-            startDate: this.startDate,
-            endDate: this.endDate,
-            processingSchedule: this.processingSchedule
-        };
-        this.emergency = false;
-        this.reasonNotHidden = {
-            id: 'reason-id',
-            hidden: false
-        };
-        this.reasonHidden = {
-            id: 'hidden-id',
-            hidden: true
-        };
-        this.reasonWithoutHidden = {
-            id: 'without-hidden-id'
-        };
-        this.requisition = {
-            id: '1',
-            name: 'requisition',
-            status: 'INITIATED',
-            facilityId: this.facility.id,
-            programId: this.program.id,
-            processingPeriod: this.period,
-            createdDate: this.createdDate,
-            supplyingFacility: '2',
-            template: '1',
-            program: {
-                id: 'program-id'
-            },
-            facility: {
-                id: 'facility-id'
-            },
-            stockAdjustmentReasons: [this.reasonNotHidden, this.reasonHidden, this.reasonWithoutHidden]
-        };
-        this.requisitionDto = {
-            id: '2',
-            name: 'requisitionDto',
-            status: 'INITIATED',
-            facility: this.facility,
-            program: this.program,
-            processingPeriod: this.period,
-            createdDate: this.createdDate
-        };
-        this.requisitionDto2 = {
-            id: '3',
-            name: 'requisitionDto',
-            status: 'RELEASED',
-            facility: this.facility,
-            program: this.program,
-            processingPeriod: this.period,
-            createdDate: this.createdDate2
-        };
-        this.statusMessage = {
-            id: '123'
-        };
-
         var context = this;
         module(function($provide) {
-            var RequisitionSpy = jasmine.createSpy('Requisition').andCallFake(function(requisition) {
-                    return requisition;
-                }),
-                confirmServiceMock = jasmine.createSpyObj('confirmService', ['confirm']);
-
-            confirmServiceMock.confirm.andCallFake(function() {
-                return context.$q.when(true);
-            });
 
             $provide.service('Requisition', function() {
-                return RequisitionSpy;
-            });
-
-            $provide.service('confirmService', function() {
-                return confirmServiceMock;
+                return function(requisition) {
+                    return requisition;
+                };
             });
 
             context.requisitionsStorage = jasmine
@@ -118,34 +32,42 @@ ddescribe('requisitionService', function() {
 
             context.batchRequisitionsStorage = jasmine
                 .createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+
             context.statusMessagesStorage = jasmine
                 .createSpyObj('statusMessagesStorage', ['search', 'put', 'getBy', 'removeBy']);
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
             context.onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
-            var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
-                if (resourceName === 'offlineFlag') {
-                    return offlineFlag;
-                }
-                if (resourceName === 'onlineOnly') {
-                    return context.onlineOnlyRequisitions;
-                }
-                if (resourceName === 'batchApproveRequisitions') {
-                    return context.batchRequisitionsStorage;
-                }
-                if (resourceName === 'statusMessages') {
-                    return context.statusMessagesStorage;
-                }
-                return context.requisitionsStorage;
-            });
 
             $provide.service('localStorageFactory', function() {
-                return localStorageFactorySpy;
+                return jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
+                    if (resourceName === 'offlineFlag') {
+                        return offlineFlag;
+                    }
+                    if (resourceName === 'onlineOnly') {
+                        return context.onlineOnlyRequisitions;
+                    }
+                    if (resourceName === 'batchApproveRequisitions') {
+                        return context.batchRequisitionsStorage;
+                    }
+                    if (resourceName === 'statusMessages') {
+                        return context.statusMessagesStorage;
+                    }
+                    return context.requisitionsStorage;
+                });
             });
         });
 
+        var FacilityDataBuilder, ProgramDataBuilder, PeriodDataBuilder, RequisitionDataBuilder,
+            StockAdjustmentReasonDataBuilder;
         inject(function($injector) {
+            FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            PeriodDataBuilder = $injector.get('PeriodDataBuilder');
+            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            StockAdjustmentReasonDataBuilder = $injector.get('StockAdjustmentReasonDataBuilder');
+
             this.$httpBackend = $injector.get('$httpBackend');
             this.$rootScope = $injector.get('$rootScope');
             this.requisitionService = $injector.get('requisitionService');
@@ -154,13 +76,65 @@ ddescribe('requisitionService', function() {
             this.requisitionUrlFactory = $injector.get('requisitionUrlFactory');
             this.offlineService = $injector.get('offlineService');
             this.$templateCache = $injector.get('$templateCache');
-
-            this.$templateCache.put('common/notification-modal.html', 'something');
         });
 
-        spyOn(this.offlineService, 'isOffline').andReturn(false);
-
         this.formatDatesInRequisition = formatDatesInRequisition;
+
+        this.startDate = [2016, 4, 30, 16, 21, 33];
+        this.startDate1 = new Date();
+
+        this.endDate = [2016, 4, 30, 16, 21, 33];
+        this.endDate1 = new Date();
+
+        this.modifiedDate = [2016, 4, 30, 16, 21, 33];
+
+        this.createdDate = [2016, 4, 30, 16, 21, 33];
+        this.createdDate2 = [2016, 10, 30, 16, 21, 33];
+
+        this.facility = new FacilityDataBuilder().build();
+
+        this.program = new ProgramDataBuilder().build();
+
+        this.period = new PeriodDataBuilder()
+            .withStartDate(this.startDate)
+            .withEndDate(this.endDate)
+            .build();
+
+        this.emergency = false;
+
+        this.reasonNotHidden = new StockAdjustmentReasonDataBuilder().build();
+        this.reasonHidden = new StockAdjustmentReasonDataBuilder().buildHidden();
+        this.reasonWithoutHidden = new StockAdjustmentReasonDataBuilder()
+            .withHidden(undefined)
+            .build();
+
+        this.requisition = new RequisitionDataBuilder()
+            .withCreatedDate(this.createdDate)
+            .withProcessingPeriod(this.period)
+            .withFacility(this.facility)
+            .withProgram(this.program)
+            .withStockAdjustmentReasons([
+                this.reasonNotHidden,
+                this.reasonHidden,
+                this.reasonWithoutHidden
+            ])
+            .buildJson();
+
+        this.requisitionDto = new RequisitionDataBuilder()
+            .withCreatedDate(this.createdDate)
+            .withProcessingPeriod(this.period)
+            .withFacility(this.facility)
+            .withProgram(this.program)
+            .buildJson();
+
+        this.requisitionDto2 = new RequisitionDataBuilder()
+            .withCreatedDate(this.createdDate)
+            .withProcessingPeriod(this.period)
+            .withFacility(this.facility)
+            .withProgram(this.program)
+            .buildJson();
+
+        spyOn(this.offlineService, 'isOffline').andReturn(false);
     });
 
     describe('get', function() {
@@ -185,7 +159,7 @@ ddescribe('requisitionService', function() {
                 .respond(200, [this.statusMessage]);
 
             var data = {};
-            this.requisitionService.get('1').then(function(response) {
+            this.requisitionService.get(this.requisition.id).then(function(response) {
                 data = response;
             });
 
@@ -207,7 +181,7 @@ ddescribe('requisitionService', function() {
                 .respond(200, [this.statusMessage]);
 
             var data = {};
-            this.requisitionService.get('1').then(function(response) {
+            this.requisitionService.get(this.requisition.id).then(function(response) {
                 data = response;
             });
 
@@ -231,7 +205,7 @@ ddescribe('requisitionService', function() {
             });
 
             var data = {};
-            this.requisitionService.get('1').then(function(response) {
+            this.requisitionService.get(this.requisition.id).then(function(response) {
                 data = response;
             });
 
@@ -251,7 +225,7 @@ ddescribe('requisitionService', function() {
                 .respond(200, [this.statusMessage]);
 
             var data = {};
-            this.requisitionService.get('1').then(function(response) {
+            this.requisitionService.get(this.requisition.id).then(function(response) {
                 data = response;
             });
 
@@ -275,7 +249,7 @@ ddescribe('requisitionService', function() {
             this.$rootScope.$apply();
 
             expect(this.offlineService.isOffline).toHaveBeenCalled();
-            expect(this.requisitionsStorage.getBy).toHaveBeenCalledWith('id', '1');
+            expect(this.requisitionsStorage.getBy).toHaveBeenCalledWith('id', this.requisition.id);
         });
 
         it('should retrieve requisition from the local storage if it was modified locally', function() {
@@ -443,7 +417,7 @@ ddescribe('requisitionService', function() {
         this.$rootScope.$apply();
 
         expect(callback).toHaveBeenCalled();
-        expect(this.requisitionsStorage.removeBy).toHaveBeenCalledWith('id', '1');
+        expect(this.requisitionsStorage.removeBy).toHaveBeenCalledWith('id', this.requisition.id);
     });
 
     it('should release a batch of requisitions without order', function() {
@@ -464,7 +438,7 @@ ddescribe('requisitionService', function() {
         this.$rootScope.$apply();
 
         expect(callback).toHaveBeenCalled();
-        expect(this.requisitionsStorage.removeBy).toHaveBeenCalledWith('id', '1');
+        expect(this.requisitionsStorage.removeBy).toHaveBeenCalledWith('id', this.requisition.id);
     });
 
     it('should search requisitions with all params', function() {
@@ -513,7 +487,7 @@ ddescribe('requisitionService', function() {
         }));
     });
 
-    it('should search requisitions only with this.facility paramter', function() {
+    it('should search requisitions only with facility paramter', function() {
         var data,
             requisitionCopy = this.formatDatesInRequisition(angular.copy(this.requisitionDto2)),
             params = {
@@ -628,7 +602,7 @@ ddescribe('requisitionService', function() {
 
     describe('transformRequisition', function() {
 
-        it('should not require this.createdDate to be set', function() {
+        it('should not require createdDate to be set', function() {
             var data;
 
             this.requisition.createdDate = null;
@@ -654,7 +628,7 @@ ddescribe('requisitionService', function() {
             expect(data.content[0].createdDate).toEqual(null);
         });
 
-        it('should not require this.processingSchedule to be set', function() {
+        it('should not require processingSchedule to be set', function() {
             var data;
 
             this.requisition.processingPeriod.processingSchedule = null;
