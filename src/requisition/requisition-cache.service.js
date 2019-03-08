@@ -88,68 +88,11 @@
          * @return {Promise}               the promise resolving to a list of matching requisitions
          */
         function search(searchParams) {
-            var requisitions = offlineRequisitions.search(searchParams, 'requisitionSearch'),
-                batchRequisitions = searchParams.showBatchRequisitions ?
-                    offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [];
+            var requisitions = getRequisitionsFromCache(searchParams);
 
-            angular.forEach(batchRequisitions, function(batchRequisition) {
-                if ($filter('filter')(requisitions, {
-                    id: batchRequisition.id
-                }).length === 0) {
-                    requisitions.push(batchRequisition);
-                }
-            });
-
-            var user = authorizationService.getUser();
-            return $q
-                .all(requisitions.map(function(requisition) {
-                    return $q
-                        .all([
-                            permissionService
-                                .hasPermission(user.user_id, {
-                                    right: REQUISITION_RIGHTS.REQUISITION_VIEW,
-                                    programId: requisition.program.id,
-                                    facilityId: requisition.facility.id
-                                })
-                                .then(function() {
-                                    return true;
-                                })
-                                .catch(function() {
-                                    return false;
-                                }),
-                            permissionService.hasRoleWithRightForProgramAndSupervisoryNode(
-                                REQUISITION_RIGHTS.REQUISITION_VIEW,
-                                requisition.program.id,
-                                requisition.supervisoryNode
-                            )
-                        ])
-                        .then(function(responses) {
-                            return responses[0] || responses[1];
-                        });
-                }))
-                .then(function(hasAccessTo) {
-                    return requisitions.filter(function(requisition, index) {
-                        return hasAccessTo[index];
-                    });
-                })
-                .then(function(requisitions) {
-                    var page = searchParams.page,
-                        size = searchParams.size,
-                        items = paginationFactory.getPage(requisitions, page, size),
-                        totalPages = Math.ceil(requisitions.length / size);
-
-                    return {
-                        first: page === 0,
-                        last: page + 1 === totalPages,
-                        number: page,
-                        numberOfElements: items.length,
-                        size: size,
-                        sort: searchParams.sort,
-                        totalElements: requisitions.length,
-                        totalPages: totalPages,
-                        content: items
-                    };
-                });
+            return $q.all(requisitions.map(toAccessPromise))
+                .then(filterOutRequisitionThatUserCanNotAccess(requisitions))
+                .then(getRequisitionPage(searchParams));
         }
 
         /**
@@ -194,6 +137,86 @@
          */
         function getBatchRequisition(id) {
             return offlineBatchRequisitions.getBy('id', id);
+        }
+
+        function getRequisitionsFromCache(searchParams) {
+            var requisitions = offlineRequisitions.search(searchParams, 'requisitionSearch'),
+                batchRequisitions = searchParams.showBatchRequisitions ?
+                    offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [];
+
+            angular.forEach(batchRequisitions, function(batchRequisition) {
+                if ($filter('filter')(requisitions, {
+                    id: batchRequisition.id
+                }).length === 0) {
+                    requisitions.push(batchRequisition);
+                }
+            });
+
+            return requisitions;
+        }
+
+        function toAccessPromise(requisition) {
+            return $q
+                .all([
+                    hasPermissionStringForRequisition(requisition),
+                    hasRightForRequisition(requisition)
+                ])
+                .then(function(responses) {
+                    return responses[0] || responses[1];
+                });
+        }
+
+        function hasPermissionStringForRequisition(requisition) {
+            var user = authorizationService.getUser();
+            return permissionService
+                .hasPermission(user.user_id, {
+                    right: REQUISITION_RIGHTS.REQUISITION_VIEW,
+                    programId: requisition.program.id,
+                    facilityId: requisition.facility.id
+                })
+                .then(function() {
+                    return true;
+                })
+                .catch(function() {
+                    return false;
+                });
+        }
+
+        function hasRightForRequisition(requisition) {
+            return permissionService.hasRoleWithRightForProgramAndSupervisoryNode(
+                REQUISITION_RIGHTS.REQUISITION_VIEW,
+                requisition.program.id,
+                requisition.supervisoryNode
+            );
+        }
+
+        function filterOutRequisitionThatUserCanNotAccess(requisitions) {
+            return function(hasAccessTo) {
+                return requisitions.filter(function(requisition, index) {
+                    return hasAccessTo[index];
+                });
+            };
+        }
+
+        function getRequisitionPage(searchParams) {
+            return function(requisitions) {
+                var page = searchParams.page,
+                    size = searchParams.size,
+                    items = paginationFactory.getPage(requisitions, page, size),
+                    totalPages = Math.ceil(requisitions.length / size);
+
+                return {
+                    first: page === 0,
+                    last: page + 1 === totalPages,
+                    number: page,
+                    numberOfElements: items.length,
+                    size: size,
+                    sort: searchParams.sort,
+                    totalElements: requisitions.length,
+                    totalPages: totalPages,
+                    content: items
+                };
+            };
         }
     }
 })();
