@@ -493,9 +493,7 @@
                             });
                             stateTrackerService.goToPreviousState('openlmis.requisitions.approvalList');
                         })
-                        .catch(function() {
-                            failWithMessage('requisitionView.reject.failure');
-                        });
+                        .catch(loadingModalService.close);
                 })
                     .catch(loadingModalService.close);
             });
