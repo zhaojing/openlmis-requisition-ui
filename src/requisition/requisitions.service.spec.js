@@ -13,7 +13,7 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-ddescribe('requisitionService', function() {
+describe('requisitionService', function() {
 
     beforeEach(function() {
         module('requisition');
@@ -76,6 +76,7 @@ ddescribe('requisitionService', function() {
             this.requisitionUrlFactory = $injector.get('requisitionUrlFactory');
             this.offlineService = $injector.get('offlineService');
             this.$templateCache = $injector.get('$templateCache');
+            this.PageDataBuilder = $injector.get('PageDataBuilder');
         });
 
         this.formatDatesInRequisition = formatDatesInRequisition;
@@ -533,15 +534,16 @@ ddescribe('requisitionService', function() {
 
         this.$rootScope.$apply();
 
-        expect(angular.toJson(data)).toEqual(angular.toJson({
-            content: [this.requisitionDto2, this.requisitionDto],
-            number: 0,
-            totalElements: 2,
-            size: 10,
-            sort: 'createdDate,desc'
-        }));
-
         expect(this.requisitionsStorage.search).toHaveBeenCalledWith(params, 'requisitionSearch');
+        expect(data).toEqual(
+            new this.PageDataBuilder()
+                .withNumberOfElements(2)
+                .withTotalElements(2)
+                .withContent([this.requisitionDto2, this.requisitionDto])
+                .withTotalPages(1)
+                .withSort('createdDate,desc')
+                .build()
+        );
     });
 
     it('should count batch requisitions in search total elements if showBatchRequisitions is true', function() {
@@ -562,14 +564,15 @@ ddescribe('requisitionService', function() {
 
         this.$rootScope.$apply();
 
-        expect(angular.toJson(data)).toEqual(angular.toJson({
-            content: [this.requisitionDto, this.requisitionDto2],
-            number: 0,
-            totalElements: 2,
-            size: 10
-        }));
-
         expect(this.batchRequisitionsStorage.search).toHaveBeenCalledWith(params.program, 'requisitionSearch');
+        expect(data).toEqual(
+            new this.PageDataBuilder()
+                .withNumberOfElements(2)
+                .withTotalElements(2)
+                .withContent([this.requisitionDto, this.requisitionDto2])
+                .withTotalPages(1)
+                .build()
+        );
     });
 
     it('should not count batch requisitions in search total elements if showBatchRequisitions is false', function() {
@@ -590,14 +593,15 @@ ddescribe('requisitionService', function() {
 
         this.$rootScope.$apply();
 
-        expect(angular.toJson(data)).toEqual(angular.toJson({
-            content: [this.requisitionDto],
-            number: 0,
-            totalElements: 1,
-            size: 10
-        }));
-
         expect(this.batchRequisitionsStorage.search).not.toHaveBeenCalled();
+        expect(data).toEqual(
+            new this.PageDataBuilder()
+                .withNumberOfElements(1)
+                .withTotalElements(1)
+                .withContent([this.requisitionDto])
+                .withTotalPages(1)
+                .build()
+        );
     });
 
     describe('transformRequisition', function() {

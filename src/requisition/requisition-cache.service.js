@@ -28,9 +28,9 @@
         .module('requisition')
         .service('requisitionCacheService', requisitionCacheService);
 
-    requisitionCacheService.$inject = ['localStorageFactory', '$q', '$filter', 'paginationFactory'];
+    requisitionCacheService.$inject = ['localStorageFactory', '$filter', 'paginationFactory'];
 
-    function requisitionCacheService(localStorageFactory, $q, $filter, paginationFactory) {
+    function requisitionCacheService(localStorageFactory, $filter, paginationFactory) {
         var offlineRequisitions = localStorageFactory('requisitions'),
             offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions');
 
@@ -41,14 +41,46 @@
         this.getRequisition = getRequisition;
         this.getBatchRequisition = getBatchRequisition;
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionCacheService
+         * @name cacheRequisition
+         *
+         * @description
+         * Caches given requisition in the local storage.
+         *
+         * @param {Object} requisition  the requisition to be cached
+         */
         function cacheRequisition(requisition) {
             offlineRequisitions.put(requisition);
         }
 
-        function cacheBatchRequisition(requisition) {
-            offlineBatchRequisitions.put(requisition);
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionCacheService
+         * @name cacheBatchRequisition
+         *
+         * @description
+         * Caches given batch requisition in the local storage.
+         *
+         * @param {Object} batchRequisition  the batch requisition to be cached
+         */
+        function cacheBatchRequisition(batchRequisition) {
+            offlineBatchRequisitions.put(batchRequisition);
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionCacheService
+         * @name search
+         *
+         * @description
+         * Searched local storage and returns requisitions matching given parameters. In order to include batch
+         * requisitions the "showBatchRequisitions" flag inside search parameters must be set to true.
+         *
+         * @param {Object} searchParams  the search parameters
+         * @return {Array}               the array of matching requisitions
+         */
         function search(searchParams) {
             var requisitions = offlineRequisitions.search(searchParams, 'requisitionSearch'),
                 batchRequisitions = searchParams.showBatchRequisitions ?
@@ -67,23 +99,60 @@
 
             var items = paginationFactory.getPage(requisitions, page, size);
 
-            return $q.resolve({
-                content: items,
+            var totalPages = Math.ceil(requisitions.length / size);
+            return {
+                first: page === 0,
+                last: page + 1 === totalPages,
                 number: page,
-                totalElements: requisitions.length,
+                numberOfElements: items.length,
                 size: size,
-                sort: sort
-            });
+                sort: sort,
+                totalElements: requisitions.length,
+                totalPages: totalPages,
+                content: items
+            };
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionCacheService
+         * @name removeById
+         *
+         * @description
+         * Remove a non-batch requisition with the given ID.
+         *
+         * @param {string} requisitionId  the ID of the requisition to delete
+         */
         function removeById(requisitionId) {
             offlineRequisitions.removeBy('id', requisitionId);
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionCacheService
+         * @name getRequisition
+         *
+         * @description
+         * Fetches a non-batch requisition with the given ID.
+         *
+         * @param {string}  id  the requisition ID
+         * @return {Object}     the matching requisition
+         */
         function getRequisition(id) {
             return offlineRequisitions.getBy('id', id);
         }
 
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionCacheService
+         * @name getBatchRequisition
+         *
+         * @description
+         * Fetches a batch requisition with the given ID.
+         *
+         * @param {string}  id  the batch requisition ID
+         * @return {Object}     the matching batch requisition
+         */
         function getBatchRequisition(id) {
             return offlineBatchRequisitions.getBy('id', id);
         }

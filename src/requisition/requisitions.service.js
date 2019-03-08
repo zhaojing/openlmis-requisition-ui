@@ -211,7 +211,9 @@
          * @return {Array}               Array of requisitions for given criteria
          */
         function search(offline, searchParams) {
-            return offline ? requisitionCacheService.search(searchParams) : resource.search(searchParams).$promise;
+            return offline ?
+                $q.resolve(requisitionCacheService.search(searchParams)) :
+                resource.search(searchParams).$promise;
         }
 
         /**
