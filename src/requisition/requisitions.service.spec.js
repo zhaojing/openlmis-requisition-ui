@@ -68,6 +68,7 @@ describe('requisitionService', function() {
             this.$templateCache = $injector.get('$templateCache');
             this.PageDataBuilder = $injector.get('PageDataBuilder');
             this.requisitionCacheService = $injector.get('requisitionCacheService');
+            this.$q = $injector.get('$q');
         });
 
         this.formatDatesInRequisition = formatDatesInRequisition;
@@ -523,7 +524,7 @@ describe('requisitionService', function() {
             .withSort('createdDate,desc')
             .build();
 
-        this.requisitionCacheService.search.andReturn(expected);
+        this.requisitionCacheService.search.andReturn(this.$q.resolve(expected));
 
         this.requisitionService.search(true, params).then(function(response) {
             data = response;

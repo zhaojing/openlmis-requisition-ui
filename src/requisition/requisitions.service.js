@@ -212,7 +212,7 @@
          */
         function search(offline, searchParams) {
             return offline ?
-                $q.resolve(requisitionCacheService.search(searchParams)) :
+                requisitionCacheService.search(searchParams) :
                 resource.search(searchParams).$promise;
         }
 

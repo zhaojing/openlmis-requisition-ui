@@ -28,9 +28,14 @@
         .module('requisition')
         .service('requisitionCacheService', requisitionCacheService);
 
-    requisitionCacheService.$inject = ['localStorageFactory', '$filter', 'paginationFactory'];
+    requisitionCacheService.$inject = [
+        'localStorageFactory', '$filter', 'paginationFactory', '$q', 'permissionService', 'authorizationService',
+        'REQUISITION_RIGHTS'
+    ];
 
-    function requisitionCacheService(localStorageFactory, $filter, paginationFactory) {
+    function requisitionCacheService(localStorageFactory, $filter, paginationFactory, $q, permissionService,
+                                     authorizationService, REQUISITION_RIGHTS) {
+
         var offlineRequisitions = localStorageFactory('requisitions'),
             offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions');
 
@@ -76,18 +81,16 @@
          *
          * @description
          * Searched local storage and returns requisitions matching given parameters. In order to include batch
-         * requisitions the "showBatchRequisitions" flag inside search parameters must be set to true.
+         * requisitions the "showBatchRequisitions" flag inside search parameters must be set to true. This method
+         * will return requisitions that the user has access to.
          *
-         * @param {Object} searchParams  the search parameters
-         * @return {Array}               the array of matching requisitions
+         * @param {Object}   searchParams  the search parameters
+         * @return {Promise}               the promise resolving to a list of matching requisitions
          */
         function search(searchParams) {
             var requisitions = offlineRequisitions.search(searchParams, 'requisitionSearch'),
                 batchRequisitions = searchParams.showBatchRequisitions ?
-                    offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [],
-                page = searchParams.page,
-                size = searchParams.size,
-                sort = searchParams.sort;
+                    offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [];
 
             angular.forEach(batchRequisitions, function(batchRequisition) {
                 if ($filter('filter')(requisitions, {
@@ -97,20 +100,56 @@
                 }
             });
 
-            var items = paginationFactory.getPage(requisitions, page, size);
+            var user = authorizationService.getUser();
+            return $q
+                .all(requisitions.map(function(requisition) {
+                    return $q
+                        .all([
+                            permissionService
+                                .hasPermission(user.user_id, {
+                                    right: REQUISITION_RIGHTS.REQUISITION_VIEW,
+                                    programId: requisition.program.id,
+                                    facilityId: requisition.facility.id
+                                })
+                                .then(function() {
+                                    return true;
+                                })
+                                .catch(function() {
+                                    return false;
+                                }),
+                            permissionService.hasRoleWithRightForProgramAndSupervisoryNode(
+                                REQUISITION_RIGHTS.REQUISITION_VIEW,
+                                requisition.program.id,
+                                requisition.supervisoryNode
+                            )
+                        ])
+                        .then(function(responses) {
+                            return responses[0] || responses[1];
+                        });
+                }))
+                .then(function(hasAccessTo) {
+                    return requisitions.filter(function(requisition, index) {
+                        return hasAccessTo[index];
+                    });
+                })
+                .then(function(requisitions) {
+                    var page = searchParams.page,
+                        size = searchParams.size,
+                        items = paginationFactory.getPage(requisitions, page, size),
+                        totalPages = Math.ceil(requisitions.length / size);
 
-            var totalPages = Math.ceil(requisitions.length / size);
-            return {
-                first: page === 0,
-                last: page + 1 === totalPages,
-                number: page,
-                numberOfElements: items.length,
-                size: size,
-                sort: sort,
-                totalElements: requisitions.length,
-                totalPages: totalPages,
-                content: items
-            };
+                    return {
+                        first: page === 0,
+                        last: page + 1 === totalPages,
+                        number: page,
+                        numberOfElements: items.length,
+                        size: size,
+                        sort: searchParams.sort,
+                        totalElements: requisitions.length,
+                        totalPages: totalPages,
+                        content: items
+                    };
+                });
         }
 
         /**

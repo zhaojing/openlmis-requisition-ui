@@ -41,6 +41,13 @@ describe('requisitionCacheService', function() {
             this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
             this.requisitionCacheService = $injector.get('requisitionCacheService');
             this.PageDataBuilder = $injector.get('PageDataBuilder');
+            this.permissionService = $injector.get('permissionService');
+            this.authorizationService = $injector.get('authorizationService');
+            this.UserDataBuilder = $injector.get('UserDataBuilder');
+            this.$q = $injector.get('$q');
+            this.REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+            this.$rootScope = $injector.get('$rootScope');
+            this.AuthUser = $injector.get('AuthUser');
         });
 
         this.requisitionOne = new this.RequisitionDataBuilder().buildJson();
@@ -67,6 +74,12 @@ describe('requisitionCacheService', function() {
             page: 0,
             showBatchRequisitions: true
         };
+
+        this.user = new this.AuthUser('user-id');
+
+        spyOn(this.authorizationService, 'getUser').andReturn(this.user);
+        spyOn(this.permissionService, 'hasPermission').andReturn(this.$q.resolve(true));
+        spyOn(this.permissionService, 'hasRoleWithRightForProgramAndSupervisoryNode').andReturn(this.$q.resolve(true));
     });
 
     describe('cacheRequisition', function() {
@@ -105,7 +118,12 @@ describe('requisitionCacheService', function() {
 
                 this.batchRequisitionStorage.search.andReturn([]);
 
-                var result = this.requisitionCacheService.search(this.searchParams);
+                var result;
+                this.requisitionCacheService.search(this.searchParams)
+                    .then(function(requisitionPage) {
+                        result = requisitionPage;
+                    });
+                this.$rootScope.$apply();
 
                 expect(result).toEqual(expectedPage);
                 expect(this.requisitionStorage.search).toHaveBeenCalledWith(this.searchParams, 'requisitionSearch');
@@ -127,7 +145,12 @@ describe('requisitionCacheService', function() {
 
                 this.requisitionStorage.search.andReturn([]);
 
-                var result = this.requisitionCacheService.search(this.searchParams);
+                var result;
+                this.requisitionCacheService.search(this.searchParams)
+                    .then(function(requisitionPage) {
+                        result = requisitionPage;
+                    });
+                this.$rootScope.$apply();
 
                 expect(result).toEqual(expectedPage);
                 expect(this.requisitionStorage.search).toHaveBeenCalledWith(this.searchParams, 'requisitionSearch');
@@ -136,7 +159,12 @@ describe('requisitionCacheService', function() {
             });
 
         it('should return sum of requisitions and batch requisitions if showBatchRequisition flag is set', function() {
-            var result = this.requisitionCacheService.search(this.searchParams);
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
 
             expect(result).toEqual(
                 new this.PageDataBuilder()
@@ -182,7 +210,12 @@ describe('requisitionCacheService', function() {
                 this.duplicatedRequisition
             ]);
 
-            var result = this.requisitionCacheService.search(this.searchParams);
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
 
             expect(result).toEqual(expectedPage);
             expect(this.requisitionStorage.search).toHaveBeenCalledWith(this.searchParams, 'requisitionSearch');
@@ -193,7 +226,12 @@ describe('requisitionCacheService', function() {
         it('should not return batch requisitions if showBatchRequisition is not set', function() {
             this.searchParams.showBatchRequisitions = false;
 
-            var result = this.requisitionCacheService.search(this.searchParams);
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
 
             expect(result).toEqual(
                 new this.PageDataBuilder()
@@ -211,8 +249,118 @@ describe('requisitionCacheService', function() {
             expect(this.batchRequisitionStorage.search).not.toHaveBeenCalled();
         });
 
+        it('should not return requisition if user has no related permissions string and right', function() {
+            var context = this;
+            this.permissionService.hasPermission.andCallFake(function(userId, permission) {
+                if (context.user.user_id === userId &&
+                    permission.right === context.REQUISITION_RIGHTS.REQUISITION_VIEW &&
+                    permission.programId === context.batchRequisitionOne.program.id &&
+                    permission.facilityId === context.batchRequisitionOne.facility.id) {
+                    return context.$q.reject();
+                }
+                return context.$q.resolve();
+            });
+
+            this.permissionService.hasRoleWithRightForProgramAndSupervisoryNode
+                .andCallFake(function(right, program, supervisoryNode) {
+                    return context.$q.resolve(!(right === context.REQUISITION_RIGHTS.REQUISITION_VIEW
+                        && program === context.batchRequisitionOne.program.id
+                        && supervisoryNode === context.batchRequisitionOne.supervisoryNode));
+                });
+
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
+
+            expect(result).toEqual(
+                new this.PageDataBuilder()
+                    .withTotalElements(3)
+                    .withNumberOfElements(3)
+                    .withTotalPages(1)
+                    .withContent([
+                        this.requisitionOne,
+                        this.requisitionTwo,
+                        this.batchRequisitionTwo
+                    ])
+                    .build()
+            );
+        });
+
+        it('should return requisition if user has not related permission string but has right', function() {
+            var context = this;
+            this.permissionService.hasPermission.andCallFake(function(userId, permission) {
+                if (context.user.user_id === userId &&
+                    permission.right === context.REQUISITION_RIGHTS.REQUISITION_VIEW &&
+                    permission.programId === context.batchRequisitionOne.program.id &&
+                    permission.facilityId === context.batchRequisitionOne.facility.id) {
+                    return context.$q.reject();
+                }
+                return context.$q.resolve();
+            });
+
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
+
+            expect(result).toEqual(
+                new this.PageDataBuilder()
+                    .withTotalElements(4)
+                    .withNumberOfElements(4)
+                    .withTotalPages(1)
+                    .withContent([
+                        this.requisitionOne,
+                        this.requisitionTwo,
+                        this.batchRequisitionOne,
+                        this.batchRequisitionTwo
+                    ])
+                    .build()
+            );
+        });
+
+        it('should return requisition if user has not related right but has permission string', function() {
+            var context = this;
+            this.permissionService.hasRoleWithRightForProgramAndSupervisoryNode
+                .andCallFake(function(right, program, supervisoryNode) {
+                    return !(right === context.REQUISITION_RIGHTS.REQUISITION_VIEW &&
+                        program === context.batchRequisitionOne.program.id &&
+                        supervisoryNode === context.batchRequisitionOne.supervisoryNode);
+                });
+
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
+
+            expect(result).toEqual(
+                new this.PageDataBuilder()
+                    .withTotalElements(4)
+                    .withNumberOfElements(4)
+                    .withTotalPages(1)
+                    .withContent([
+                        this.requisitionOne,
+                        this.requisitionTwo,
+                        this.batchRequisitionOne,
+                        this.batchRequisitionTwo
+                    ])
+                    .build()
+            );
+        });
+
         it('should mark page as first if first page is returned', function() {
-            var result = this.requisitionCacheService.search(this.searchParams);
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
 
             expect(result.first).toEqual(true);
         });
@@ -221,13 +369,23 @@ describe('requisitionCacheService', function() {
             this.searchParams.page = 1;
             this.searchParams.size = 1;
 
-            var result = this.requisitionCacheService.search(this.searchParams);
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
 
             expect(result.first).toEqual(false);
         });
 
         it('should mark page as last if last page is returned', function() {
-            var result = this.requisitionCacheService.search(this.searchParams);
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
 
             expect(result.last).toEqual(true);
         });
@@ -235,7 +393,12 @@ describe('requisitionCacheService', function() {
         it('should mark page as not last if the page returned is not last ', function() {
             this.searchParams.size = 1;
 
-            var result = this.requisitionCacheService.search(this.searchParams);
+            var result;
+            this.requisitionCacheService.search(this.searchParams)
+                .then(function(requisitionPage) {
+                    result = requisitionPage;
+                });
+            this.$rootScope.$apply();
 
             expect(result.last).toEqual(false);
         });
