@@ -38,9 +38,6 @@
         RequisitionDataBuilder.prototype.withCreatedDate = withCreatedDate;
         RequisitionDataBuilder.prototype.withRequisitionLineItems = withRequisitionLineItems;
         RequisitionDataBuilder.prototype.withProgram = withProgram;
-        RequisitionDataBuilder.prototype.withProcessingPeriod = withProcessingPeriod;
-        RequisitionDataBuilder.prototype.withFacility = withFacility;
-        RequisitionDataBuilder.prototype.withStockAdjustmentReasons = withStockAdjustmentReasons;
         RequisitionDataBuilder.prototype.buildSubmitted = buildSubmitted;
         RequisitionDataBuilder.prototype.buildAuthorized = buildAuthorized;
         RequisitionDataBuilder.prototype.buildInApproval = buildInApproval;
@@ -60,7 +57,7 @@
 
             this.id = 'requisition-id-' + instanceNumber;
             this.createdDate = '2016-06-14T12:00:00Z';
-            this.modifiedDate = '2016-06-14T12:00:00.000Z';
+            this.modifiedDate = '2016-06-14T12:00:00Z';
             this.program = new ProgramDataBuilder().build();
             this.requisitionLineItems = [
                 new RequisitionLineItemDataBuilder()
@@ -228,21 +225,6 @@
 
         function withProgram(program) {
             this.program = program;
-            return this;
-        }
-
-        function withProcessingPeriod(processingPeriod) {
-            this.processingPeriod = processingPeriod;
-            return this;
-        }
-
-        function withFacility(facility) {
-            this.facility = facility;
-            return this;
-        }
-
-        function withStockAdjustmentReasons(stockAdjustmentReasons) {
-            this.stockAdjustmentReasons = stockAdjustmentReasons;
             return this;
         }
 
