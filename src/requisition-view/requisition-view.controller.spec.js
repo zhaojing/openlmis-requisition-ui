@@ -90,7 +90,6 @@ describe('RequisitionViewController', function() {
         spyOn(this.$state, 'go');
         spyOn(this.$state, 'reload');
         spyOn(this.loadingModalService, 'open');
-        spyOn(this.loadingModalService, 'close');
         spyOn(this.requisitionValidator, 'areLineItemsValid');
         spyOn(this.requisitionValidator, 'validateRequisition');
         spyOn(this.requisitionValidator, 'areAllLineItemsSkipped');
@@ -591,15 +590,6 @@ describe('RequisitionViewController', function() {
             this.$rootScope.$apply();
 
             expect(this.RequisitionWatcher.prototype.disableWatcher).toHaveBeenCalled();
-        });
-
-        it('should close loading modal on failure', function() {
-            this.requisition.$reject.andReturn(this.$q.reject());
-
-            this.vm.rejectRnr();
-            this.$rootScope.$apply();
-
-            expect(this.loadingModalService.close).toHaveBeenCalled();
         });
     });
 

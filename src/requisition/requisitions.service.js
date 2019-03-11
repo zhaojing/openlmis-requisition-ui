@@ -30,13 +30,15 @@
 
     service.$inject = [
         '$q', '$resource', 'requisitionUrlFactory', 'Requisition', 'dateUtils', 'localStorageFactory', 'offlineService',
-        '$filter', 'requisitionCacheService'
+        'paginationFactory', '$filter'
     ];
 
     function service($q, $resource, requisitionUrlFactory, Requisition, dateUtils, localStorageFactory, offlineService,
-                     $filter, requisitionCacheService) {
+                     paginationFactory, $filter) {
 
-        var onlineOnlyRequisitions = localStorageFactory('onlineOnly'),
+        var offlineRequisitions = localStorageFactory('requisitions'),
+            offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions'),
+            onlineOnlyRequisitions = localStorageFactory('onlineOnly'),
             offlineStatusMessages = localStorageFactory('statusMessages');
 
         var resource = $resource(requisitionUrlFactory('/api/requisitions/:id'), {}, {
@@ -140,7 +142,7 @@
                         resolve(requisition, response);
                     }, function() {
                         if (requisition.$availableOffline) {
-                            requisitionCacheService.cacheRequisition(requisition);
+                            offlineRequisitions.put(requisition);
                         }
                         resolve(requisition);
                     });
@@ -185,7 +187,7 @@
                     filterRequisitionStockAdjustmentReasons(requisition);
                     requisition.$modified = true;
                     requisition.$availableOffline = true;
-                    requisitionCacheService.cacheRequisition(requisition);
+                    offlineRequisitions.put(requisition);
                     return requisition;
                 });
         }
@@ -211,9 +213,38 @@
          * @return {Array}               Array of requisitions for given criteria
          */
         function search(offline, searchParams) {
-            return offline ?
-                requisitionCacheService.search(searchParams) :
-                resource.search(searchParams).$promise;
+            var deferred = $q.defer();
+
+            if (offline) {
+                var requisitions = offlineRequisitions.search(searchParams, 'requisitionSearch'),
+                    batchRequisitions = searchParams.showBatchRequisitions ?
+                        offlineBatchRequisitions.search(searchParams.program, 'requisitionSearch') : [],
+                    page = searchParams.page,
+                    size = searchParams.size,
+                    sort = searchParams.sort;
+
+                angular.forEach(batchRequisitions, function(batchRequisition) {
+                    if ($filter('filter')(requisitions, {
+                        id: batchRequisition.id
+                    }).length === 0) {
+                        requisitions.push(batchRequisition);
+                    }
+                });
+
+                var items = paginationFactory.getPage(requisitions, page, size);
+
+                deferred.resolve({
+                    content: items,
+                    number: page,
+                    totalElements: requisitions.length,
+                    size: size,
+                    sort: sort
+                });
+            } else {
+                return resource.search(searchParams).$promise;
+            }
+
+            return deferred.promise;
         }
 
         /**
@@ -267,7 +298,7 @@
             }).$promise
                 .then(function() {
                     requisitions.forEach(function(requisition) {
-                        requisitionCacheService.removeById(requisition.requisition.id);
+                        offlineRequisitions.removeBy('id', requisition.requisition.id);
                     });
                 });
         }
@@ -294,7 +325,7 @@
             }).$promise
                 .then(function() {
                     requisitions.forEach(function(requisition) {
-                        requisitionCacheService.removeById(requisition.requisition.id);
+                        offlineRequisitions.removeBy('id', requisition.requisition.id);
                     });
                 });
         }
@@ -310,7 +341,7 @@
          * @param {String} requisitionId Id of requisition to remove
          */
         function removeOfflineRequisition(requisitionId) {
-            requisitionCacheService.removeById(requisitionId);
+            offlineRequisitions.removeBy('id', requisitionId);
         }
 
         function getRequisition(id) {
@@ -320,7 +351,7 @@
         }
 
         function getOfflineRequisition(id) {
-            return requisitionCacheService.getRequisition(id);
+            return offlineRequisitions.getBy('id', id);
         }
 
         function getStatusMessages(requisition) {
@@ -331,7 +362,7 @@
 
         function storeResponses(requisition, statusMessages) {
             requisition.$modified = false;
-            requisitionCacheService.cacheRequisition(requisition);
+            offlineRequisitions.put(requisition);
 
             statusMessages.forEach(function(statusMessage) {
                 offlineStatusMessages.put(statusMessage);
@@ -427,8 +458,8 @@
         }
 
         function transformRequisitionOffline(requisition) {
-            var offlineRequisition = requisitionCacheService.getRequisition(requisition.id),
-                offlineBatchRequisition = requisitionCacheService.getBatchRequisition(requisition.id);
+            var offlineRequisition = offlineRequisitions.getBy('id', requisition.id),
+                offlineBatchRequisition = offlineBatchRequisitions.getBy('id', requisition.id);
 
             if (offlineRequisition || offlineBatchRequisition) {
                 requisition.$availableOffline = true;
@@ -438,12 +469,12 @@
 
                 if (offlineRequisition) {
                     markIfOutdated(requisition, offlineRequisition);
-                    requisitionCacheService.cacheRequisition(offlineRequisition);
+                    offlineRequisitions.put(offlineRequisition);
                 }
 
                 if (offlineBatchRequisition) {
                     markIfOutdated(requisition, offlineBatchRequisition);
-                    requisitionCacheService.cacheBatchRequisition(offlineBatchRequisition);
+                    offlineBatchRequisitions.put(offlineBatchRequisition);
                 }
             }
         }
