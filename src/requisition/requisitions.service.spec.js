@@ -15,59 +15,53 @@
 
 describe('requisitionService', function() {
 
-    var $rootScope, httpBackend, requisitionService, dateUtils, q, allStatuses, $templateCache, requisitionUrlFactory,
-        requisitionsStorage, batchRequisitionsStorage, onlineOnlyRequisitions, startDate, endDate, startDate1, endDate1,
-        modifiedDate, createdDate, processingSchedule, facility, program, period, emergency, requisition,
-        requisitionDto, requisitionDto2, createdDate2,  statusMessage, statusMessagesStorage, reasonWithoutHidden,
-        reasonNotHidden, reasonHidden, offlineService;
-
     beforeEach(function() {
         module('requisition');
 
-        startDate = [2016, 4, 30, 16, 21, 33];
-        endDate = [2016, 4, 30, 16, 21, 33];
-        startDate1 = new Date();
-        endDate1 = new Date();
-        modifiedDate = [2016, 4, 30, 16, 21, 33];
-        createdDate = [2016, 4, 30, 16, 21, 33];
-        createdDate2 = [2016, 10, 30, 16, 21, 33];
-        processingSchedule = {
-            modifiedDate: modifiedDate
+        this.startDate = [2016, 4, 30, 16, 21, 33];
+        this.endDate = [2016, 4, 30, 16, 21, 33];
+        this.startDate1 = new Date();
+        this.endDate1 = new Date();
+        this.modifiedDate = [2016, 4, 30, 16, 21, 33];
+        this.createdDate = [2016, 4, 30, 16, 21, 33];
+        this.createdDate2 = [2016, 10, 30, 16, 21, 33];
+        this.processingSchedule = {
+            modifiedDate: this.modifiedDate
         };
-        facility = {
+        this.facility = {
             id: '1',
             name: 'facility1'
         };
-        program = {
+        this.program = {
             id: '1',
             name: 'program1'
         };
-        period = {
+        this.period = {
             id: '1',
-            startDate: startDate,
-            endDate: endDate,
-            processingSchedule: processingSchedule
+            startDate: this.startDate,
+            endDate: this.endDate,
+            processingSchedule: this.processingSchedule
         };
-        emergency = false;
-        reasonNotHidden = {
+        this.emergency = false;
+        this.reasonNotHidden = {
             id: 'reason-id',
             hidden: false
         };
-        reasonHidden = {
+        this.reasonHidden = {
             id: 'hidden-id',
             hidden: true
         };
-        reasonWithoutHidden = {
+        this.reasonWithoutHidden = {
             id: 'without-hidden-id'
         };
-        requisition = {
+        this.requisition = {
             id: '1',
             name: 'requisition',
             status: 'INITIATED',
-            facilityId: facility.id,
-            programId: program.id,
-            processingPeriod: period,
-            createdDate: createdDate,
+            facilityId: this.facility.id,
+            programId: this.program.id,
+            processingPeriod: this.period,
+            createdDate: this.createdDate,
             supplyingFacility: '2',
             template: '1',
             program: {
@@ -76,30 +70,31 @@ describe('requisitionService', function() {
             facility: {
                 id: 'facility-id'
             },
-            stockAdjustmentReasons: [reasonNotHidden, reasonHidden, reasonWithoutHidden]
+            stockAdjustmentReasons: [this.reasonNotHidden, this.reasonHidden, this.reasonWithoutHidden]
         };
-        requisitionDto = {
+        this.requisitionDto = {
             id: '2',
             name: 'requisitionDto',
             status: 'INITIATED',
-            facility: facility,
-            program: program,
-            processingPeriod: period,
-            createdDate: createdDate
+            facility: this.facility,
+            program: this.program,
+            processingPeriod: this.period,
+            createdDate: this.createdDate
         };
-        requisitionDto2 = {
+        this.requisitionDto2 = {
             id: '3',
             name: 'requisitionDto',
             status: 'RELEASED',
-            facility: facility,
-            program: program,
-            processingPeriod: period,
-            createdDate: createdDate2
+            facility: this.facility,
+            program: this.program,
+            processingPeriod: this.period,
+            createdDate: this.createdDate2
         };
-        statusMessage = {
+        this.statusMessage = {
             id: '123'
         };
 
+        var context = this;
         module(function($provide) {
             var RequisitionSpy = jasmine.createSpy('Requisition').andCallFake(function(requisition) {
                     return requisition;
@@ -107,7 +102,7 @@ describe('requisitionService', function() {
                 confirmServiceMock = jasmine.createSpyObj('confirmService', ['confirm']);
 
             confirmServiceMock.confirm.andCallFake(function() {
-                return q.when(true);
+                return context.$q.when(true);
             });
 
             $provide.service('Requisition', function() {
@@ -118,29 +113,31 @@ describe('requisitionService', function() {
                 return confirmServiceMock;
             });
 
-            requisitionsStorage = jasmine.createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
-            batchRequisitionsStorage = jasmine
+            context.requisitionsStorage = jasmine
+                .createSpyObj('requisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
+
+            context.batchRequisitionsStorage = jasmine
                 .createSpyObj('batchRequisitionsStorage', ['search', 'put', 'getBy', 'removeBy']);
-            statusMessagesStorage = jasmine
+            context.statusMessagesStorage = jasmine
                 .createSpyObj('statusMessagesStorage', ['search', 'put', 'getBy', 'removeBy']);
 
             var offlineFlag = jasmine.createSpyObj('offlineRequisitions', ['getAll']);
             offlineFlag.getAll.andReturn([false]);
-            onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
+            context.onlineOnlyRequisitions = jasmine.createSpyObj('onlineOnly', ['contains']);
             var localStorageFactorySpy = jasmine.createSpy('localStorageFactory').andCallFake(function(resourceName) {
                 if (resourceName === 'offlineFlag') {
                     return offlineFlag;
                 }
                 if (resourceName === 'onlineOnly') {
-                    return onlineOnlyRequisitions;
+                    return context.onlineOnlyRequisitions;
                 }
                 if (resourceName === 'batchApproveRequisitions') {
-                    return batchRequisitionsStorage;
+                    return context.batchRequisitionsStorage;
                 }
                 if (resourceName === 'statusMessages') {
-                    return statusMessagesStorage;
+                    return context.statusMessagesStorage;
                 }
-                return requisitionsStorage;
+                return context.requisitionsStorage;
             });
 
             $provide.service('localStorageFactory', function() {
@@ -149,20 +146,21 @@ describe('requisitionService', function() {
         });
 
         inject(function($injector) {
-            httpBackend = $injector.get('$httpBackend');
-            $rootScope = $injector.get('$rootScope');
-            requisitionService = $injector.get('requisitionService');
-            allStatuses = $injector.get('REQUISITION_STATUS').$toList();
-            dateUtils = $injector.get('dateUtils');
-            q = $injector.get('$q');
-            requisitionUrlFactory = $injector.get('requisitionUrlFactory');
-            offlineService = $injector.get('offlineService');
-            $templateCache = $injector.get('$templateCache');
+            this.$httpBackend = $injector.get('$httpBackend');
+            this.$rootScope = $injector.get('$rootScope');
+            this.requisitionService = $injector.get('requisitionService');
+            this.allStatuses = $injector.get('REQUISITION_STATUS').$toList();
+            this.dateUtils = $injector.get('dateUtils');
+            this.requisitionUrlFactory = $injector.get('requisitionUrlFactory');
+            this.offlineService = $injector.get('offlineService');
+            this.$templateCache = $injector.get('$templateCache');
 
-            $templateCache.put('common/notification-modal.html', 'something');
+            this.$templateCache.put('common/notification-modal.html', 'something');
         });
 
-        spyOn(offlineService, 'isOffline').andReturn(false);
+        spyOn(this.offlineService, 'isOffline').andReturn(false);
+
+        this.formatDatesInRequisition = formatDatesInRequisition;
     });
 
     describe('get', function() {
@@ -174,48 +172,57 @@ describe('requisitionService', function() {
             };
 
         beforeEach(function() {
-            getStatusMessagesUrl = '/api/requisitions/' + requisition.id + '/statusMessages';
-            getRequisitionUrl = '/api/requisitions/' + requisition.id;
+            getStatusMessagesUrl = '/api/requisitions/' + this.requisition.id + '/statusMessages';
+            getRequisitionUrl = '/api/requisitions/' + this.requisition.id;
         });
 
         it('should return eTag for requisition', function() {
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
-            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getRequisitionUrl))
+                .respond(200, this.requisition, headers);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getStatusMessagesUrl))
+                .respond(200, [this.statusMessage]);
 
             var data = {};
-            requisitionService.get('1').then(function(response) {
+            this.requisitionService.get('1').then(function(response) {
                 data = response;
             });
 
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
-            expect(data.id).toBe(requisition.id);
+            expect(data.id).toBe(this.requisition.id);
             expect(data.eTag).toBe(headers['eTag']);
-            expect(requisitionsStorage.put).toHaveBeenCalled();
-            expect(statusMessagesStorage.put).toHaveBeenCalled();
+            expect(this.requisitionsStorage.put).toHaveBeenCalled();
+            expect(this.statusMessagesStorage.put).toHaveBeenCalled();
         });
 
         it('should get requisition by id', function() {
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
-            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getRequisitionUrl))
+                .respond(200, this.requisition, headers);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getStatusMessagesUrl))
+                .respond(200, [this.statusMessage]);
 
             var data = {};
-            requisitionService.get('1').then(function(response) {
+            this.requisitionService.get('1').then(function(response) {
                 data = response;
             });
 
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
-            expect(data.id).toBe(requisition.id);
-            expect(requisitionsStorage.put).toHaveBeenCalled();
-            expect(statusMessagesStorage.put).toHaveBeenCalled();
+            expect(data.id).toBe(this.requisition.id);
+            expect(this.requisitionsStorage.put).toHaveBeenCalled();
+            expect(this.statusMessagesStorage.put).toHaveBeenCalled();
         });
 
         it('should get requisition by id from offline resources', function() {
-            offlineService.isOffline.andReturn(true);
-            requisitionsStorage.getBy.andCallFake(function(param, value) {
+            this.offlineService.isOffline.andReturn(true);
+            var requisition = this.requisition;
+            this.requisitionsStorage.getBy.andCallFake(function(param, value) {
                 if (param === 'id' && value === requisition.id) {
                     return requisition;
                 }
@@ -224,115 +231,131 @@ describe('requisitionService', function() {
             });
 
             var data = {};
-            requisitionService.get('1').then(function(response) {
+            this.requisitionService.get('1').then(function(response) {
                 data = response;
             });
 
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(data.id).toBe(requisition.id);
-            expect(requisitionsStorage.put).not.toHaveBeenCalled();
-            expect(statusMessagesStorage.put).not.toHaveBeenCalled();
+            expect(data.id).toBe(this.requisition.id);
+            expect(this.requisitionsStorage.put).not.toHaveBeenCalled();
+            expect(this.statusMessagesStorage.put).not.toHaveBeenCalled();
         });
 
         it('should filter out hidden reasons', function() {
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
-            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getRequisitionUrl))
+                .respond(200, this.requisition, headers);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getStatusMessagesUrl))
+                .respond(200, [this.statusMessage]);
 
             var data = {};
-            requisitionService.get('1').then(function(response) {
+            this.requisitionService.get('1').then(function(response) {
                 data = response;
             });
 
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
-            expect(data.id).toBe(requisition.id);
-            expect(data.stockAdjustmentReasons).toEqual([reasonNotHidden, reasonWithoutHidden]);
+            expect(data.id).toBe(this.requisition.id);
+            expect(data.stockAdjustmentReasons).toEqual([this.reasonNotHidden, this.reasonWithoutHidden]);
         });
 
         it('should try to fetch requisition from the backend if it is not stored in the local storage', function() {
-            offlineService.isOffline.andReturn(true);
-            requisitionsStorage.getBy.andReturn(undefined);
-            httpBackend
-                .expectGET(requisitionUrlFactory(getRequisitionUrl))
-                .respond(418, requisition);
+            this.offlineService.isOffline.andReturn(true);
+            this.requisitionsStorage.getBy.andReturn(undefined);
+            this.$httpBackend
 
-            requisitionService.get(requisition.id);
-            $rootScope.$apply();
+                .expectGET(this.requisitionUrlFactory(getRequisitionUrl))
 
-            expect(offlineService.isOffline).toHaveBeenCalled();
-            expect(requisitionsStorage.getBy).toHaveBeenCalledWith('id', '1');
+                .respond(418, this.requisition);
+
+            this.requisitionService.get(this.requisition.id);
+            this.$rootScope.$apply();
+
+            expect(this.offlineService.isOffline).toHaveBeenCalled();
+            expect(this.requisitionsStorage.getBy).toHaveBeenCalledWith('id', '1');
         });
 
         it('should retrieve requisition from the local storage if it was modified locally', function() {
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getRequisitionUrl))
+                .respond(200, this.requisition, headers);
 
-            requisition.$modified = true;
-            requisitionsStorage.getBy.andReturn(requisition);
-            statusMessagesStorage.search.andReturn([statusMessage]);
+            this.requisition.$modified = true;
+            this.requisitionsStorage.getBy.andReturn(this.requisition);
+            this.statusMessagesStorage.search.andReturn([this.statusMessage]);
 
             var result;
-            requisitionService.get(requisition.id)
+            this.requisitionService.get(this.requisition.id)
                 .then(function(response) {
                     result = response;
                 });
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
-            expect(result.id).toEqual(requisition.id);
+            expect(result.id).toEqual(this.requisition.id);
         });
 
         //eslint-disable-next-line jasmine/missing-expect
         it('should retrieve requisition from the server if it is not modified', function() {
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
-            httpBackend.expect('GET', requisitionUrlFactory(getStatusMessagesUrl)).respond(200, [statusMessage]);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getRequisitionUrl))
+                .respond(200, this.requisition, headers);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getStatusMessagesUrl))
+                .respond(200, [this.statusMessage]);
 
-            requisition.$modified = false;
-            requisitionsStorage.getBy.andReturn(requisition);
+            this.requisition.$modified = false;
+            this.requisitionsStorage.getBy.andReturn(this.requisition);
 
-            requisitionService.get(requisition.id);
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.requisitionService.get(this.requisition.id);
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
         });
 
         it('should retrieve requisition from the server to check if the cached one is outdated', function() {
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getRequisitionUrl))
+                .respond(200, this.requisition, headers);
 
-            var offlineRequisition = angular.copy(requisition);
+            var offlineRequisition = angular.copy(this.requisition);
             offlineRequisition.modifiedDate = [2016, 4, 30, 15, 20, 33];
             offlineRequisition.$modified = true;
-            requisitionsStorage.getBy.andReturn(offlineRequisition);
+            this.requisitionsStorage.getBy.andReturn(offlineRequisition);
 
-            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+            this.requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
             var result;
-            requisitionService.get(requisition.id)
+            this.requisitionService.get(this.requisition.id)
                 .then(function(requisition) {
                     result = requisition;
                 });
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
             expect(result.$outdated).toBe(true);
         });
 
         it('should mark requisition as outdated if it does not have modified date', function() {
-            httpBackend.expect('GET', requisitionUrlFactory(getRequisitionUrl)).respond(200, requisition, headers);
+            this.$httpBackend
+                .expectGET(this.requisitionUrlFactory(getRequisitionUrl))
+                .respond(200, this.requisition, headers);
 
-            var offlineRequisition = angular.copy(requisition);
+            var offlineRequisition = angular.copy(this.requisition);
             offlineRequisition.$modified = true;
-            requisitionsStorage.getBy.andReturn(offlineRequisition);
+            this.requisitionsStorage.getBy.andReturn(offlineRequisition);
 
-            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+            this.requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
             var result;
-            requisitionService.get(requisition.id)
+            this.requisitionService.get(this.requisition.id)
                 .then(function(requisition) {
                     result = requisition;
                 });
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
             expect(result.$outdated).toBe(true);
         });
@@ -341,28 +364,36 @@ describe('requisitionService', function() {
     it('should initiate requisition', function() {
         var data;
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/initiate?emergency=' + emergency +
-            '&facility=' + facility.id + '&program=' + program.id + '&suggestedPeriod=' + period.id))
-            .respond(200, requisition);
+        this.$httpBackend
+            .whenPOST(this.requisitionUrlFactory(
+                '/api/requisitions/initiate'
+                + '?emergency=' + this.emergency
+                + '&facility=' + this.facility.id
+                + '&program=' + this.program.id
+                + '&suggestedPeriod=' + this.period.id
+            ))
+            .respond(200, this.requisition);
 
-        requisitionService.initiate(facility.id, program.id, period.id, emergency).then(function(response) {
-            data = response;
-        });
+        this.requisitionService
+            .initiate(this.facility.id, this.program.id, this.period.id, this.emergency)
+            .then(function(response) {
+                data = response;
+            });
 
-        httpBackend.flush();
-        $rootScope.$apply();
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
 
-        requisition.$modified = true;
-        requisition.$availableOffline = true;
+        this.requisition.$modified = true;
+        this.requisition.$availableOffline = true;
 
-        expect(angular.toJson(data.id)).toEqual(angular.toJson(requisition.id));
-        expect(requisitionsStorage.put).toHaveBeenCalled();
-        expect(data.stockAdjustmentReasons).toEqual([reasonNotHidden, reasonWithoutHidden]);
+        expect(angular.toJson(data.id)).toEqual(angular.toJson(this.requisition.id));
+        expect(this.requisitionsStorage.put).toHaveBeenCalled();
+        expect(data.stockAdjustmentReasons).toEqual([this.reasonNotHidden, this.reasonWithoutHidden]);
     });
 
     it('should get requisitions for convert', function() {
         var data,
-            requisitionCopy = formatDatesInRequisition(angular.copy(requisitionDto)),
+            requisitionCopy = this.formatDatesInRequisition(angular.copy(this.requisitionDto)),
             params = {
                 filterBy: 'filterBy',
                 filterValue: 'filterValue',
@@ -370,21 +401,22 @@ describe('requisitionService', function() {
                 descending: 'true'
             };
 
-        httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/requisitionsForConvert?descending=' +
+        this.$httpBackend.whenGET(this.requisitionUrlFactory('/api/requisitions/requisitionsForConvert?descending=' +
             params.descending + '&filterBy=' + params.filterBy + '&filterValue=' + params.filterValue + '&sortBy=' +
             params.sortBy))
+
             .respond(200, {
                 content: [{
-                    requisition: requisitionDto
+                    requisition: this.requisitionDto
                 }]
             });
 
-        requisitionService.forConvert(params).then(function(response) {
+        this.requisitionService.forConvert(params).then(function(response) {
             data = response;
         });
 
-        httpBackend.flush();
-        $rootScope.$apply();
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson({
             content: [{
@@ -396,73 +428,83 @@ describe('requisitionService', function() {
     it('should release a batch of requisitions with order', function() {
         var callback = jasmine.createSpy();
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/batchReleases'))
+        this.$httpBackend.whenPOST(this.requisitionUrlFactory('/api/requisitions/batchReleases'))
+
             .respond(function() {
                 return [200, angular.toJson({})];
             });
 
-        requisitionService.convertToOrder([{
-            requisition: requisition
+        this.requisitionService.convertToOrder([{
+            requisition: this.requisition
         }]).then(callback);
 
-        $rootScope.$apply();
-        httpBackend.flush();
-        $rootScope.$apply();
+        this.$rootScope.$apply();
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
 
         expect(callback).toHaveBeenCalled();
-        expect(requisitionsStorage.removeBy).toHaveBeenCalledWith('id', '1');
+        expect(this.requisitionsStorage.removeBy).toHaveBeenCalledWith('id', '1');
     });
 
     it('should release a batch of requisitions without order', function() {
         var callback = jasmine.createSpy();
 
-        httpBackend.when('POST', requisitionUrlFactory('/api/requisitions/batchReleases'))
+        this.$httpBackend.whenPOST(this.requisitionUrlFactory('/api/requisitions/batchReleases'))
+
             .respond(function() {
                 return [200, angular.toJson({})];
             });
 
-        requisitionService.releaseWithoutOrder([{
-            requisition: requisition
+        this.requisitionService.releaseWithoutOrder([{
+            requisition: this.requisition
         }]).then(callback);
 
-        $rootScope.$apply();
-        httpBackend.flush();
-        $rootScope.$apply();
+        this.$rootScope.$apply();
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
 
         expect(callback).toHaveBeenCalled();
-        expect(requisitionsStorage.removeBy).toHaveBeenCalledWith('id', '1');
+        expect(this.requisitionsStorage.removeBy).toHaveBeenCalledWith('id', '1');
     });
 
     it('should search requisitions with all params', function() {
         var data,
             params = {
-                facility: facility.id,
-                program: program.id,
-                initiatedDateFrom: startDate1.toISOString(),
-                initiatedDateTo: endDate1.toISOString(),
-                requisitionStatus: [allStatuses[0].label, allStatuses[1].label],
+                facility: this.facility.id,
+                program: this.program.id,
+                initiatedDateFrom: this.startDate1.toISOString(),
+                initiatedDateTo: this.endDate1.toISOString(),
+                requisitionStatus: [this.allStatuses[0].label, this.allStatuses[1].label],
                 emergency: true,
                 sort: 'createdDate,desc'
             },
-            requisitionCopy = formatDatesInRequisition(angular.copy(requisitionDto));
+            requisitionCopy = this.formatDatesInRequisition(angular.copy(this.requisitionDto));
 
-        httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/search?initiatedDateFrom=' +
-            startDate1.toISOString() + '&initiatedDateTo=' + endDate1.toISOString() + '&emergency=' + params.emergency +
-            '&facility=' + facility.id + '&program=' + program.id + '&requisitionStatus=' + allStatuses[0].label +
-            '&requisitionStatus=' + allStatuses[1].label + '&sort=' + params.sort))
+        this.$httpBackend
+            .whenGET(
+                this.requisitionUrlFactory('/api/requisitions/search'
+                + '?initiatedDateFrom=' + this.startDate1.toISOString()
+                + '&initiatedDateTo=' + this.endDate1.toISOString()
+                + '&emergency=' + params.emergency
+                + '&facility=' + this.facility.id
+                + '&program=' + this.program.id
+                + '&requisitionStatus=' + this.allStatuses[0].label
+                + '&requisitionStatus=' + this.allStatuses[1].label
+                + '&sort=' + params.sort)
+            )
             .respond(200, {
-                content: [requisitionDto]
+                content: [this.requisitionDto]
             });
 
-        requisitionsStorage.getBy.andReturn(false);
+        this.requisitionsStorage.getBy.andReturn(false);
 
-        requisitionService.search(false, params).then(function(response) {
+        this.requisitionService.search(false, params).then(function(response) {
             data = response;
         }, function() {
         });
 
-        httpBackend.flush();
-        $rootScope.$apply();
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson({
             content: [
@@ -471,26 +513,27 @@ describe('requisitionService', function() {
         }));
     });
 
-    it('should search requisitions only with facility paramter', function() {
+    it('should search requisitions only with this.facility paramter', function() {
         var data,
-            requisitionCopy = formatDatesInRequisition(angular.copy(requisitionDto2)),
+            requisitionCopy = this.formatDatesInRequisition(angular.copy(this.requisitionDto2)),
             params = {
-                facility: facility.id
+                facility: this.facility.id
             };
 
-        httpBackend.when('GET', requisitionUrlFactory('/api/requisitions/search?facility=' + facility.id))
+        this.$httpBackend.whenGET(this.requisitionUrlFactory('/api/requisitions/search?facility=' + this.facility.id))
+
             .respond(200, {
-                content: [requisitionDto2]
+                content: [this.requisitionDto2]
             });
 
-        requisitionsStorage.getBy.andReturn(false);
+        this.requisitionsStorage.getBy.andReturn(false);
 
-        requisitionService.search(false, params).then(function(response) {
+        this.requisitionService.search(false, params).then(function(response) {
             data = response;
         });
 
-        httpBackend.flush();
-        $rootScope.$apply();
+        this.$httpBackend.flush();
+        this.$rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson({
             content: [
@@ -502,135 +545,137 @@ describe('requisitionService', function() {
     it('should search requisitions offline', function() {
         var data,
             params = {
-                facility: facility.id,
+                facility: this.facility.id,
                 page: 0,
                 size: 10,
                 sort: 'createdDate,desc'
             };
 
-        requisitionsStorage.search.andReturn([requisitionDto2, requisitionDto]);
+        this.requisitionsStorage.search.andReturn([this.requisitionDto2, this.requisitionDto]);
 
-        requisitionService.search(true, params).then(function(response) {
+        this.requisitionService.search(true, params).then(function(response) {
             data = response;
         });
 
-        $rootScope.$apply();
+        this.$rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson({
-            content: [requisitionDto2, requisitionDto],
+            content: [this.requisitionDto2, this.requisitionDto],
             number: 0,
             totalElements: 2,
             size: 10,
             sort: 'createdDate,desc'
         }));
 
-        expect(requisitionsStorage.search).toHaveBeenCalledWith(params, 'requisitionSearch');
+        expect(this.requisitionsStorage.search).toHaveBeenCalledWith(params, 'requisitionSearch');
     });
 
     it('should count batch requisitions in search total elements if showBatchRequisitions is true', function() {
         var data,
             params = {
                 showBatchRequisitions: true,
-                program: program.id,
+                program: this.program.id,
                 page: 0,
                 size: 10
             };
 
-        requisitionsStorage.search.andReturn([requisitionDto]);
-        batchRequisitionsStorage.search.andReturn([requisitionDto, requisitionDto2]);
+        this.requisitionsStorage.search.andReturn([this.requisitionDto]);
+        this.batchRequisitionsStorage.search.andReturn([this.requisitionDto, this.requisitionDto2]);
 
-        requisitionService.search(true, params).then(function(response) {
+        this.requisitionService.search(true, params).then(function(response) {
             data = response;
         });
 
-        $rootScope.$apply();
+        this.$rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson({
-            content: [requisitionDto, requisitionDto2],
+            content: [this.requisitionDto, this.requisitionDto2],
             number: 0,
             totalElements: 2,
             size: 10
         }));
 
-        expect(batchRequisitionsStorage.search).toHaveBeenCalledWith(params.program, 'requisitionSearch');
+        expect(this.batchRequisitionsStorage.search).toHaveBeenCalledWith(params.program, 'requisitionSearch');
     });
 
     it('should not count batch requisitions in search total elements if showBatchRequisitions is false', function() {
         var data,
             params = {
                 showBatchRequisitions: false,
-                program: program.id,
+                program: this.program.id,
                 page: 0,
                 size: 10
             };
 
-        requisitionsStorage.search.andReturn([requisitionDto]);
-        batchRequisitionsStorage.search.andReturn([requisitionDto, requisitionDto2]);
+        this.requisitionsStorage.search.andReturn([this.requisitionDto]);
+        this.batchRequisitionsStorage.search.andReturn([this.requisitionDto, this.requisitionDto2]);
 
-        requisitionService.search(true, params).then(function(response) {
+        this.requisitionService.search(true, params).then(function(response) {
             data = response;
         });
 
-        $rootScope.$apply();
+        this.$rootScope.$apply();
 
         expect(angular.toJson(data)).toEqual(angular.toJson({
-            content: [requisitionDto],
+            content: [this.requisitionDto],
             number: 0,
             totalElements: 1,
             size: 10
         }));
 
-        expect(batchRequisitionsStorage.search).not.toHaveBeenCalled();
+        expect(this.batchRequisitionsStorage.search).not.toHaveBeenCalled();
     });
 
     describe('transformRequisition', function() {
 
-        it('should not require createdDate to be set', function() {
+        it('should not require this.createdDate to be set', function() {
             var data;
 
-            requisition.createdDate = null;
+            this.requisition.createdDate = null;
 
-            httpBackend.when(
-                'GET', requisitionUrlFactory('/api/requisitions/search?facility=' + facility.id)
-            ).respond(200, {
-                content: [
-                    requisition
-                ]
-            });
+            this.$httpBackend.when(
+                'GET', this.requisitionUrlFactory('/api/requisitions/search?facility=' + this.facility.id)
+            )
+                .respond(200, {
+                    content: [
+                        this.requisition
+                    ]
+                });
 
-            requisitionService.search(false, {
-                facility: facility.id
+            this.requisitionService.search(false, {
+                facility: this.facility.id
             }).then(function(response) {
                 data = response;
             });
 
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
             expect(data.content[0].createdDate).toEqual(null);
         });
 
-        it('should not require processingSchedule to be set', function() {
+        it('should not require this.processingSchedule to be set', function() {
             var data;
 
-            requisition.processingPeriod.processingSchedule = null;
+            this.requisition.processingPeriod.processingSchedule = null;
 
-            httpBackend.when(
-                'GET', requisitionUrlFactory('/api/requisitions/search?facility=' + facility.id)
-            ).respond(200, {
-                content: [
-                    requisition
-                ]
-            });
+            this.$httpBackend.when(
+                'GET', this.requisitionUrlFactory('/api/requisitions/search?facility=' + this.facility.id)
+            )
+                .respond(200, {
+                    content: [
+                        this.requisition
+                    ]
+                });
 
-            requisitionService.search(false, {
-                facility: facility.id
+            this.requisitionService.search(false, {
+                facility: this.facility.id
             }).then(function(response) {
                 data = response;
             });
 
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
             expect(data.content[0].processingPeriod.processingSchedule).toEqual(null);
         });
@@ -640,116 +685,116 @@ describe('requisitionService', function() {
                 id: '1',
                 modifiedDate: [2016, 4, 30, 16, 21, 33]
             };
-            requisitionsStorage.getBy.andReturn(offlineRequisition);
+            this.requisitionsStorage.getBy.andReturn(offlineRequisition);
 
-            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+            this.requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
-            httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
-                content: [
-                    requisition
-                ]
-            });
+            this.$httpBackend.whenGET(this.requisitionUrlFactory('/api/requisitions/search'))
+                .respond(200, {
+                    content: [
+                        this.requisition
+                    ]
+                });
 
-            requisitionService.search();
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.requisitionService.search();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
-            expect(requisitionsStorage.getBy).toHaveBeenCalled();
+            expect(this.requisitionsStorage.getBy).toHaveBeenCalled();
             expect(offlineRequisition.$outdated).toBeUndefined();
 
-            requisition.modifiedDate = [2000, 9, 1, 1, 1, 1];
+            this.requisition.modifiedDate = [2000, 9, 1, 1, 1, 1];
 
-            requisitionService.search();
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.requisitionService.search();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
             expect(offlineRequisition.$outdated).toBe(true);
 
             // The offline requisition should have been updated twice (once as $outdated, and once not)
-            expect(requisitionsStorage.put.calls.length).toBe(2);
+            expect(this.requisitionsStorage.put.calls.length).toBe(2);
         });
 
         it('will put requisition to the batch requisitions storage if modifiedDates do not match', function() {
-            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+            this.requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
-            batchRequisitionsStorage.getBy.andReturn(requisition);
+            this.batchRequisitionsStorage.getBy.andReturn(this.requisition);
 
-            httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
-                content: [
-                    requisition
-                ]
-            });
+            this.$httpBackend.whenGET(this.requisitionUrlFactory('/api/requisitions/search'))
+                .respond(200, {
+                    content: [
+                        this.requisition
+                    ]
+                });
 
-            requisitionService.search();
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.requisitionService.search();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
-            expect(batchRequisitionsStorage.put).toHaveBeenCalled();
-            expect(requisitionsStorage.put).not.toHaveBeenCalled();
+            expect(this.batchRequisitionsStorage.put).toHaveBeenCalled();
+            expect(this.requisitionsStorage.put).not.toHaveBeenCalled();
         });
 
         it('will put requisition to the requisitions storage if modifiedDates do not match', function() {
-            requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
+            this.requisition.modifiedDate = [2016, 4, 30, 16, 21, 33];
 
-            requisitionsStorage.getBy.andReturn(requisition);
+            this.requisitionsStorage.getBy.andReturn(this.requisition);
 
-            httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
-                content: [
-                    requisition
-                ]
-            });
+            this.$httpBackend.whenGET(this.requisitionUrlFactory('/api/requisitions/search'))
+                .respond(200, {
+                    content: [
+                        this.requisition
+                    ]
+                });
 
-            requisitionService.search();
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.requisitionService.search();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
-            expect(requisitionsStorage.put).toHaveBeenCalled();
-            expect(batchRequisitionsStorage.put).not.toHaveBeenCalled();
+            expect(this.requisitionsStorage.put).toHaveBeenCalled();
+            expect(this.batchRequisitionsStorage.put).not.toHaveBeenCalled();
         });
 
         it('will set requisition as available offline if was found the batch requisitions storage', function() {
-            batchRequisitionsStorage.getBy.andReturn(requisition);
+            this.batchRequisitionsStorage.getBy.andReturn(this.requisition);
 
             var data = {};
 
-            httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
-                content: [
-                    requisition
-                ]
-            });
+            this.$httpBackend.whenGET(this.requisitionUrlFactory('/api/requisitions/search'))
+                .respond(200, {
+                    content: [
+                        this.requisition
+                    ]
+                });
 
-            requisitionService.search().then(function(response) {
+            this.requisitionService.search().then(function(response) {
                 data = response;
             });
 
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
             expect(data.content[0].$availableOffline).toBe(true);
         });
 
         it('will set requisition as available offline if was found the requisitions storage', function() {
-            requisitionsStorage.getBy.andReturn(requisition);
+            this.requisitionsStorage.getBy.andReturn(this.requisition);
 
             var data = {};
 
-            httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
-                content: [
-                    requisition
-                ]
-            });
+            this.$httpBackend.whenGET(this.requisitionUrlFactory('/api/requisitions/search'))
+                .respond(200, {
+                    content: [
+                        this.requisition
+                    ]
+                });
 
-            requisitionService.search().then(function(response) {
+            this.requisitionService.search().then(function(response) {
                 data = response;
             });
 
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
             expect(data.content[0].$availableOffline).toBe(true);
         });
@@ -757,33 +802,33 @@ describe('requisitionService', function() {
         it('will not set requisition as available offline if was not found in any storage', function() {
             var data = {};
 
-            httpBackend.when('GET',
-                requisitionUrlFactory('/api/requisitions/search')).respond(200, {
-                content: [
-                    requisition
-                ]
-            });
+            this.$httpBackend.whenGET(this.requisitionUrlFactory('/api/requisitions/search'))
+                .respond(200, {
+                    content: [
+                        this.requisition
+                    ]
+                });
 
-            requisitionService.search().then(function(response) {
+            this.requisitionService.search().then(function(response) {
                 data = response;
             });
 
-            httpBackend.flush();
-            $rootScope.$apply();
+            this.$httpBackend.flush();
+            this.$rootScope.$apply();
 
-            expect(requisitionsStorage.getBy).toHaveBeenCalled();
-            expect(batchRequisitionsStorage.getBy).toHaveBeenCalled();
+            expect(this.requisitionsStorage.getBy).toHaveBeenCalled();
+            expect(this.batchRequisitionsStorage.getBy).toHaveBeenCalled();
             expect(data.content[0].$availableOffline).toBe(undefined);
         });
 
     });
 
     function formatDatesInRequisition(requisition) {
-        requisition.processingPeriod.processingSchedule.modifiedDate = dateUtils
+        requisition.processingPeriod.processingSchedule.modifiedDate = this.dateUtils
             .toDate(requisition.processingPeriod.processingSchedule.modifiedDate);
-        requisition.processingPeriod.endDate = dateUtils.toDate(requisition.processingPeriod.endDate);
-        requisition.processingPeriod.startDate = dateUtils.toDate(requisition.processingPeriod.startDate);
-        requisition.createdDate = dateUtils.toDate(requisition.createdDate);
+        requisition.processingPeriod.endDate = this.dateUtils.toDate(requisition.processingPeriod.endDate);
+        requisition.processingPeriod.startDate = this.dateUtils.toDate(requisition.processingPeriod.startDate);
+        requisition.createdDate = this.dateUtils.toDate(requisition.createdDate);
         return requisition;
     }
 
