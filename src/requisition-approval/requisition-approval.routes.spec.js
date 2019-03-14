@@ -15,164 +15,167 @@
 
 describe('openlmis.requisitions.approvalList', function() {
 
-    var $state, $q, $rootScope, $filter, REQUISITION_RIGHTS,
-        BATCH_APPROVE_SCREEN_FEATURE_FLAG, requisitionService, paginationService,
-        authorizationService, programService, alertService, featureFlagService,
-        state, requisitions, params, requisitionsPage, user, programs,
-        UserDataBuilder, ProgramDataBuilder;
-
     beforeEach(function() {
         module('requisition-approval');
-        module('openlmis-main-state');
 
         inject(function($injector) {
-            $state = $injector.get('$state');
-            $q = $injector.get('$q');
-            $rootScope = $injector.get('$rootScope');
-            $filter = $injector.get('$filter');
+            this.$state = $injector.get('$state');
+            this.$q = $injector.get('$q');
+            this.$rootScope = $injector.get('$rootScope');
+            this.$location = $injector.get('$location');
 
-            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
-            BATCH_APPROVE_SCREEN_FEATURE_FLAG = $injector.get('BATCH_APPROVE_SCREEN_FEATURE_FLAG');
+            this.REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+            this.BATCH_APPROVE_SCREEN_FEATURE_FLAG = $injector.get('BATCH_APPROVE_SCREEN_FEATURE_FLAG');
+            this.REQUISITION_STATUS = $injector.get('REQUISITION_STATUS');
 
-            requisitionService = $injector.get('requisitionService');
-            paginationService = $injector.get('paginationService');
-            authorizationService = $injector.get('authorizationService');
-            programService = $injector.get('programService');
-            alertService = $injector.get('alertService');
-            featureFlagService = $injector.get('featureFlagService');
+            this.requisitionService = $injector.get('requisitionService');
+            this.authorizationService = $injector.get('authorizationService');
+            this.programService = $injector.get('programService');
+            this.alertService = $injector.get('alertService');
+            this.featureFlagService = $injector.get('featureFlagService');
 
-            UserDataBuilder = $injector.get('UserDataBuilder');
-            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            this.UserDataBuilder = $injector.get('UserDataBuilder');
+            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            this.PageDataBuilder = $injector.get('PageDataBuilder');
         });
 
-        params = {
-            page: 0,
-            size: 10,
-            sort: [
-                'emergency,desc',
-                'authorizedDate,desc'
-            ]
-        };
+        this.goToUrl = goToUrl;
+        this.getResolvedValue = getResolvedValue;
 
-        requisitions = [
-            {
-                id: '1'
-            }, {
-                id: '2'
-            }
+        this.sort = ['emergency,desc', 'authorizedDate,desc'];
+
+        this.requisitions = [
+            new this.RequisitionDataBuilder().build(),
+            new this.RequisitionDataBuilder().build()
         ];
 
-        programs = [
-            new ProgramDataBuilder().build(),
-            new ProgramDataBuilder().build()
+        this.cachedRequisitions = [
+            new this.RequisitionDataBuilder().build(),
+            new this.RequisitionDataBuilder().build()
         ];
 
-        user = new UserDataBuilder().build();
+        this.programs = [
+            new this.ProgramDataBuilder().build(),
+            new this.ProgramDataBuilder().build()
+        ];
+
+        this.user = new this.UserDataBuilder().build();
         //eslint-disable-next-line camelcase
-        user.user_id = user.id;
+        this.user.user_id = this.user.id;
 
-        requisitionsPage = {
-            content: requisitions,
-            last: true,
-            totalElements: 2,
-            totalPages: 1,
-            sort: ['emergency,desc', 'authorizedDate,desc'],
-            first: true,
-            numberOfElements: 2,
-            size: 10,
-            number: 0
-        };
+        this.requisitionsPage = new this.PageDataBuilder()
+            .withContent(this.requisitions)
+            .build();
 
-        spyOn(requisitionService, 'forApproval').andReturn($q.when(requisitionsPage));
+        this.cachedRequisitionsPage = new this.PageDataBuilder()
+            .withContent(this.cachedRequisitions)
+            .build();
 
-        state = $state.get('openlmis.requisitions.approvalList');
+        spyOn(this.requisitionService, 'forApproval').andReturn(this.$q.resolve(this.requisitionsPage));
+        spyOn(this.requisitionService, 'search').andReturn(this.$q.resolve(this.cachedRequisitionsPage));
+        spyOn(this.authorizationService, 'getUser').andReturn(this.$q.resolve(this.user));
+        spyOn(this.featureFlagService, 'get').andReturn(true);
+        spyOn(this.programService, 'getUserPrograms').andReturn(this.$q.resolve(this.programs));
+        spyOn(this.alertService, 'error');
     });
 
-    it('should fetch a list of requisitions', function() {
-        var result;
+    it('should resolve user', function() {
+        this.goToUrl('/requisitions/approvalList');
 
-        spyOn(paginationService, 'registerUrl').andCallFake(function(givenParams, method) {
-            if (givenParams === params && angular.isFunction(method)) {
-                return method(givenParams);
-            }
+        expect(this.getResolvedValue('user')).toEqual(this.user);
+    });
+
+    it('should resolve isBatchApproveScreenActive', function() {
+        this.goToUrl('/requisitions/approvalList');
+
+        expect(this.getResolvedValue('isBatchApproveScreenActive')).toEqual(true);
+        expect(this.featureFlagService.get).toHaveBeenCalledWith(this.BATCH_APPROVE_SCREEN_FEATURE_FLAG);
+    });
+
+    describe('programs', function() {
+
+        it('should resolve programs', function() {
+            this.goToUrl('requisitions/approvalList');
+
+            expect(this.getResolvedValue('programs')).toEqual(this.programs);
         });
 
-        state.resolve.requisitions(paginationService, requisitionService, params).then(function(requisitionList) {
-            result = requisitionList;
+        it('should show alert if fetching programs fails', function() {
+            this.programService.getUserPrograms.andReturn(this.$q.reject());
+
+            this.goToUrl('requisitions/approvalList');
+
+            expect(this.alertService.error).toHaveBeenCalledWith('error.noOfflineData');
         });
 
-        $rootScope.$apply();
-
-        expect(result).toEqual(requisitionsPage);
-        expect(result.content).toEqual(requisitions);
-        expect(requisitionService.forApproval).toHaveBeenCalledWith(params);
-        expect(paginationService.registerUrl).toHaveBeenCalled();
     });
 
-    it('should fetch a user', function() {
-        var result;
+    it('should resolve selected program', function() {
+        this.goToUrl('requisitions/approvalList?program=' + this.programs[0].id);
 
-        spyOn(authorizationService, 'getUser').andReturn($q.when(user));
+        expect(this.getResolvedValue('selectedProgram')).toEqual(this.programs[0]);
+    });
 
-        state.resolve.user(authorizationService).then(function(user) {
-            result = user;
+    describe('requisitions', function() {
+
+        //This seems to be a bug breaking this functionality in offline...
+        it('should fetch requisitions online if no program filter is specified', function() {
+            this.goToUrl('requisitions/approvalList');
+
+            expect(this.getResolvedValue('requisitions')).toEqual(this.requisitions);
+            expect(this.requisitionService.search).not.toHaveBeenCalled();
+            expect(this.requisitionService.forApproval).toHaveBeenCalledWith({
+                page: 0,
+                size: 10,
+                program: undefined,
+                offline: undefined,
+                sort: this.sort
+            });
         });
 
-        $rootScope.$apply();
+        it('should fetch requisitions from cache if when offline', function() {
+            this.goToUrl('requisitions/approvalList?offline=true&program=' + this.programs[0].id);
 
-        expect(result).toEqual(user);
-        expect(authorizationService.getUser).toHaveBeenCalled();
-    });
-
-    it('should fetch a list of programs', function() {
-        var result;
-
-        spyOn(programService, 'getUserPrograms').andCallFake(function(givenParams) {
-            if (givenParams === user.id) {
-                return $q.when(programs);
-            }
+            expect(this.getResolvedValue('requisitions')).toEqual(this.cachedRequisitions);
+            expect(this.requisitionService.forApproval).not.toHaveBeenCalledWith();
+            expect(this.requisitionService.search).toHaveBeenCalledWith(true, {
+                page: 0,
+                size: 10,
+                program: this.programs[0].id,
+                offline: 'true',
+                sort: this.sort,
+                requisitionStatus: [
+                    this.REQUISITION_STATUS.AUTHORIZED,
+                    this.REQUISITION_STATUS.IN_APPROVAL
+                ],
+                showBatchRequisitions: true
+            });
         });
 
-        state.resolve.programs(programService, user, alertService, $q).then(function(programList) {
-            result = programList;
+        it('should fetch requisitions when offline and program filter is specified', function() {
+            this.goToUrl('requisitions/approvalList?program=' + this.programs[0].id);
+
+            expect(this.getResolvedValue('requisitions')).toEqual(this.requisitions);
+            expect(this.requisitionService.search).not.toHaveBeenCalled();
+            expect(this.requisitionService.forApproval).toHaveBeenCalledWith({
+                page: 0,
+                size: 10,
+                program: this.programs[0].id,
+                offline: undefined,
+                sort: this.sort
+            });
         });
 
-        $rootScope.$apply();
-
-        expect(result).toEqual(programs);
-        expect(programService.getUserPrograms).toHaveBeenCalledWith(user.user_id);
     });
 
-    it('should fetch a selected program', function() {
-        params.program = programs[0].id;
-        var result = state.resolve.selectedProgram(params, $filter, programs);
+    function goToUrl(url) {
+        this.$location.url(url);
+        this.$rootScope.$apply();
+    }
 
-        expect(result).toEqual(programs[0]);
-    });
-
-    it('should not fetch a selected program if user does not select any program', function() {
-        delete params.program;
-
-        var result = state.resolve.selectedProgram(params, $filter, programs);
-
-        expect(result).toBe(undefined);
-    });
-
-    it('should check if batch approve screen flag is active', function() {
-        spyOn(featureFlagService, 'get').andCallFake(function(givenParams) {
-            if (givenParams === BATCH_APPROVE_SCREEN_FEATURE_FLAG) {
-                return false;
-            }
-        });
-
-        var result = state.resolve.isBatchApproveScreenActive(BATCH_APPROVE_SCREEN_FEATURE_FLAG, featureFlagService);
-
-        expect(result).toEqual(false);
-        expect(featureFlagService.get).toHaveBeenCalledWith(BATCH_APPROVE_SCREEN_FEATURE_FLAG);
-    });
-
-    it('should require REQUISITION_APPROVE right to enter', function() {
-        expect(state.accessRights).toEqual([REQUISITION_RIGHTS.REQUISITION_APPROVE]);
-    });
+    function getResolvedValue(name) {
+        return this.$state.$current.locals.globals[name];
+    }
 
 });
