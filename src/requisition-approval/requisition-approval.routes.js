@@ -21,9 +21,9 @@
         .module('requisition-approval')
         .config(routes);
 
-    routes.$inject = ['$stateProvider', 'REQUISITION_RIGHTS', 'REQUISITION_STATUS'];
+    routes.$inject = ['$stateProvider'];
 
-    function routes($stateProvider, REQUISITION_RIGHTS, REQUISITION_STATUS) {
+    function routes($stateProvider) {
 
         $stateProvider.state('openlmis.requisitions.approvalList', {
             showInNavigation: true,
@@ -36,9 +36,11 @@
             controller: 'RequisitionApprovalListController',
             controllerAs: 'vm',
             templateUrl: 'requisition-approval/requisition-approval-list.html',
-            accessRights: [REQUISITION_RIGHTS.REQUISITION_APPROVE],
+            canAccess: function(permissionService, REQUISITION_RIGHTS) {
+                return permissionService.hasRoleWithRight(REQUISITION_RIGHTS.REQUISITION_APPROVE);
+            },
             resolve: {
-                requisitions: function(paginationService, requisitionService, $stateParams) {
+                requisitions: function(paginationService, requisitionService, $stateParams, REQUISITION_STATUS) {
                     return paginationService.registerUrl($stateParams, function(stateParams) {
                         if (stateParams.program) {
                             if (stateParams.offline === 'true') {
@@ -55,15 +57,8 @@
                         return requisitionService.forApproval(stateParams);
                     });
                 },
-                user: function(authorizationService) {
-                    return authorizationService.getUser();
-                },
-                programs: function(programService, user, alertService, $q) {
-                    return programService.getUserPrograms(user.user_id)
-                        .catch(function() {
-                            alertService.error('error.noOfflineData');
-                            return $q.reject();
-                        });
+                programs: function(requisitionApprovalService) {
+                    return requisitionApprovalService.getPrograms();
                 },
                 selectedProgram: function($stateParams, $filter, programs) {
                     if ($stateParams.program) {

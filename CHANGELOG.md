@@ -7,6 +7,7 @@ Breaking changes:
 New functionality added in a backwards-compatible manner:
 * [OLMIS-5837](https://openlmis.atlassian.net/browse/OLMIS-5837): Made View Requisitions screen accessible to partner users.
 * [OLMIS-5724](https://openlmis.atlassian.net/browse/OLMIS-5724): Made View Requisition screen accessible to partner users.
+* [OLMIS-6071](https://openlmis.atlassian.net/browse/OLMIS-6071): Made Approve Requisitions screen accessible to partner users.
 
 Bug fixes:
 * [OLMIS-5822](https://openlmis.atlassian.net/browse/OLMIS-5822): Fixed a bug with products not being sorted alphabetically on the product selection modal.

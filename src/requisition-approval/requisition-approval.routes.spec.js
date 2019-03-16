@@ -30,9 +30,10 @@ describe('openlmis.requisitions.approvalList', function() {
 
             this.requisitionService = $injector.get('requisitionService');
             this.authorizationService = $injector.get('authorizationService');
-            this.programService = $injector.get('programService');
             this.alertService = $injector.get('alertService');
             this.featureFlagService = $injector.get('featureFlagService');
+            this.requisitionApprovalService = $injector.get('requisitionApprovalService');
+            this.permissionService = $injector.get('permissionService');
 
             this.UserDataBuilder = $injector.get('UserDataBuilder');
             this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
@@ -76,14 +77,9 @@ describe('openlmis.requisitions.approvalList', function() {
         spyOn(this.requisitionService, 'search').andReturn(this.$q.resolve(this.cachedRequisitionsPage));
         spyOn(this.authorizationService, 'getUser').andReturn(this.$q.resolve(this.user));
         spyOn(this.featureFlagService, 'get').andReturn(true);
-        spyOn(this.programService, 'getUserPrograms').andReturn(this.$q.resolve(this.programs));
         spyOn(this.alertService, 'error');
-    });
-
-    it('should resolve user', function() {
-        this.goToUrl('/requisitions/approvalList');
-
-        expect(this.getResolvedValue('user')).toEqual(this.user);
+        spyOn(this.requisitionApprovalService, 'getPrograms').andReturn(this.$q.resolve(this.programs));
+        spyOn(this.permissionService, 'hasRoleWithRight').andReturn(this.$q.resolve(true));
     });
 
     it('should resolve isBatchApproveScreenActive', function() {
@@ -99,14 +95,7 @@ describe('openlmis.requisitions.approvalList', function() {
             this.goToUrl('requisitions/approvalList');
 
             expect(this.getResolvedValue('programs')).toEqual(this.programs);
-        });
-
-        it('should show alert if fetching programs fails', function() {
-            this.programService.getUserPrograms.andReturn(this.$q.reject());
-
-            this.goToUrl('requisitions/approvalList');
-
-            expect(this.alertService.error).toHaveBeenCalledWith('error.noOfflineData');
+            expect(this.requisitionApprovalService.getPrograms).toHaveBeenCalled();
         });
 
     });
