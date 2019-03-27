@@ -119,15 +119,7 @@
 
                 resolve(requisition, statusMessages);
             } else if (requisition && requisition.$modified) {
-                getRequisition(id).then(function() {
-                    requisition = getOfflineRequisition(id);
-
-                    statusMessages = offlineStatusMessages.search({
-                        requisitionId: requisition.id
-                    });
-
-                    resolve(requisition, statusMessages);
-                });
+                getRequisition(id).then(prepareRequisition(requisition, resolve));
             } else {
                 getRequisition(id).then(function(requisition) {
                     filterRequisitionStockAdjustmentReasons(requisition);
@@ -158,6 +150,19 @@
             }
         }
 
+        function prepareRequisition(requisition, resolve) {
+            return function(requisition) {
+                var rnr = getOfflineRequisition(requisition.id);
+                requisition = rnr ? rnr : requisition;
+
+                var statusMessages = offlineStatusMessages.search({
+                    requisitionId: requisition.id
+                });
+
+                resolve(requisition, statusMessages);
+            };
+        }
+
         /**
          * @ngdoc method
          * @methodOf requisition.requisitionService
@@ -186,7 +191,14 @@
                     requisition.$modified = true;
                     requisition.$availableOffline = true;
                     requisitionCacheService.cacheRequisition(requisition);
-                    return requisition;
+
+                    var deferred = $q.defer();
+                    prepareRequisition(requisition, resolve)(requisition);
+                    return deferred.promise;
+
+                    function resolve(requisition, statusMessages) {
+                        deferred.resolve(new Requisition(requisition, statusMessages));
+                    }
                 });
         }
 

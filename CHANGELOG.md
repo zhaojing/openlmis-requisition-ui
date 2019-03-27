@@ -17,7 +17,7 @@ Bug fixes:
 * [OLMIS-5848](https://openlmis.atlassian.net/browse/OLMIS-5848): Fixed a bug with facility type marked as required when creating a requisition template.
 * [OLMIS-5959](https://openlmis.atlassian.net/browse/OLMIS-5959): Enable facility type button and set facility type input required.
 * [OLMIS-5837](https://openlmis.atlassian.net/browse/OLMIS-5837): Fixed issue with endless loading when rejecting requisition fails.
-
+* [OLMIS-6077](https://openlmis.atlassian.net/browse/OLMIS-6077): Fixed issue with additional call to retrieve requisition after initiate.
 
 
 5.5.0 / 2018-12-12

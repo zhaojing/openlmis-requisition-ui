@@ -39,11 +39,17 @@
                 REQUISITION_RIGHTS.REQUISITION_APPROVE,
                 FULFILLMENT_RIGHTS.ORDERS_EDIT
             ],
+            params: {
+                requisition: undefined
+            },
             resolve: {
                 user: function(currentUserService) {
                     return currentUserService.getUserInfo();
                 },
                 requisition: function($stateParams, requisitionService) {
+                    if ($stateParams.requisition) {
+                        return $stateParams.requisition;
+                    }
                     return requisitionService.get($stateParams.rnr);
                 },
                 canSubmit: function(requisitionViewFactory, user, requisition) {
