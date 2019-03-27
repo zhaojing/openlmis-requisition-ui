@@ -153,7 +153,7 @@
         function prepareRequisition(requisition, resolve) {
             return function(requisition) {
                 var rnr = getOfflineRequisition(requisition.id);
-                requisition = rnr ? rnr : requisition;
+                requisition = rnr || requisition;
 
                 var statusMessages = offlineStatusMessages.search({
                     requisitionId: requisition.id
