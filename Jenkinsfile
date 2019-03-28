@@ -94,7 +94,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'SONAR_LOGIN', variable: 'SONAR_LOGIN'), string(credentialsId: 'SONAR_PASSWORD', variable: 'SONAR_PASSWORD')]) {
                         sh '''
                             set +x
-                            
+
                             sudo rm -f .env
                             touch .env
 
@@ -106,6 +106,7 @@ pipeline {
 
                             docker-compose run --entrypoint ./sonar.sh requisition-ui
                             docker-compose down --volumes
+                            sudo rm -rf node_modules/
                         '''
                         // workaround because sonar plugin retrieve the path directly from the output
                         sh 'echo "Working dir: ${WORKSPACE}/.sonar"'
