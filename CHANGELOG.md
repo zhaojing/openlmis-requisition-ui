@@ -1,3 +1,8 @@
+5.5.1 / 2019-05-05
+
+Improvements:
+* [OLMIS-6153](https://openlmis.atlassian.net/browse/OLMIS-6153): Made requisition statuses translateable.
+
 5.5.0 / 2018-12-12
 ==================
 
