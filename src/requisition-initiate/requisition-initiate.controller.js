@@ -144,7 +144,7 @@
                 .then(function() {
                     requisitionService.initiate(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency, key)
                         .then(function(data) {
-                            goToInitiatedRequisition(data);
+                            vm.goToRequisition(data.id);
                         })
                         .catch(function() {
                             notificationService.error('requisitionInitiate.couldNotInitiateRequisition');
@@ -190,13 +190,6 @@
         function goToRequisition(id) {
             $state.go('openlmis.requisitions.requisition.fullSupply', {
                 rnr: id
-            });
-        }
-
-        function goToInitiatedRequisition(requisition) {
-            $state.go('openlmis.requisitions.requisition.fullSupply', {
-                rnr: requisition.id,
-                requisition: requisition
             });
         }
     }
