@@ -23,5 +23,6 @@
     "requisitionApproval.viewSelectedRequisitions": "View Selected Requisitions",
     "requisitionApproval.dateAuthorized": "Date authorized",
     "requisitionApproval.newestAuthorized": "Newest authorized",
-    "requisitionApproval.oldestAuthorized": "Oldest authorized"
+    "requisitionApproval.oldestAuthorized": "Oldest authorized",
+    "requisitionApproval.notApplicable": "Not Applicable"
 }

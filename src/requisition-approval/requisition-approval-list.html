@@ -46,8 +46,13 @@
             <td>{{requisition.processingPeriod.name}}</td>
             <td>{{requisition.processingPeriod.startDate | openlmisDate}}</td>
             <td>{{requisition.processingPeriod.endDate | openlmisDate}}</td>
-            <td>{{requisition.statusChanges.SUBMITTED.changeDate | openlmisDate}}</td>
-            <td>{{requisition.statusChanges.AUTHORIZED.changeDate | openlmisDate}}</td>
+
+            <td ng-if="!requisition.extraData.originalRequisition">{{requisition.statusChanges.SUBMITTED.changeDate | openlmisDate}}</td>
+            <td ng-if="requisition.extraData.originalRequisition"></td>>{{ requisitionApproval.notApplicable | message }}</td>
+
+            <td ng-if="!requisition.extraData.originalRequisition">{{requisition.statusChanges.AUTHORIZED.changeDate | openlmisDate}}</td>
+            <td ng-if="requisition.extraData.originalRequisition"></td>>{{ requisitionApproval.notApplicable | message }}</td>
+
             <td class="col-emergency">
                 <span ng-if="requisition.emergency" class="icon-ok"></span>
             </td>
