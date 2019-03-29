@@ -15,193 +15,176 @@
 
 describe('RequisitionInitiateController', function() {
 
-    var vm, $q, programs, $rootScope, requisitionService, authorizationService, $state, facility,
-        REQUISITION_RIGHTS, loadingModalService, permissionService, periods, $stateParams,
-        canInitiateRnr, user, UuidGenerator, key;
-
     beforeEach(function() {
         module('requisition-initiate');
 
-        inject(function($injector) {
-            $rootScope = $injector.get('$rootScope');
-            $state = $injector.get('$state');
-            requisitionService = $injector.get('requisitionService');
-            authorizationService = $injector.get('authorizationService');
-            $q = $injector.get('$q');
-            REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
-            loadingModalService = $injector.get('loadingModalService');
-            UuidGenerator = $injector.get('UuidGenerator');
+        var FacilityDataBuilder, ProgramDataBuilder, PeriodDataBuilder, RequisitionDataBuilder;
 
-            user = {
+        inject(function($injector) {
+            FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            PeriodDataBuilder = $injector.get('PeriodDataBuilder');
+            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+
+            this.$rootScope = $injector.get('$rootScope');
+            this.$state = $injector.get('$state');
+            this.requisitionService = $injector.get('requisitionService');
+            this.authorizationService = $injector.get('authorizationService');
+            this.$q = $injector.get('$q');
+            this.REQUISITION_RIGHTS = $injector.get('REQUISITION_RIGHTS');
+            this.loadingModalService = $injector.get('loadingModalService');
+            this.UuidGenerator = $injector.get('UuidGenerator');
+
+            this.user = {
                 //eslint-disable-next-line camelcase
                 user_id: 'user_id'
             };
-            programs = [
-                {
-                    code: 'HIV',
-                    id: 1
-                },
-                {
-                    code: 'programCode',
-                    id: 2
-                }
+            this.programs = [
+                new ProgramDataBuilder().build(),
+                new ProgramDataBuilder().build()
             ];
-            facility = {
-                id: '10134',
-                name: 'National Warehouse',
-                description: null,
-                code: 'CODE',
-                supportedPrograms: programs
-            };
-            periods = [];
-            $stateParams = {
-                facility: facility.id
+            this.facility = new FacilityDataBuilder().build();
+            this.periods = [
+                new PeriodDataBuilder().build()
+            ];
+            this.$stateParams = {
+                facility: this.facility.id
             };
 
-            canInitiateRnr = true;
+            this.requisition = new RequisitionDataBuilder()
+                .withProcessingPeriod(this.periods[0])
+                .withProgram(this.programs[0])
+                .withFacility(this.facility)
+                .buildJson();
 
-            permissionService = $injector.get('permissionService');
-            spyOn(permissionService, 'hasPermission').andReturn($q.resolve());
+            this.canInitiateRnr = true;
 
-            spyOn(authorizationService, 'getUser').andReturn(user);
+            this.permissionService = $injector.get('permissionService');
+            spyOn(this.permissionService, 'hasPermission').andReturn(this.$q.resolve());
 
-            key = 'key';
-            spyOn(UuidGenerator.prototype, 'generate').andCallFake(function() {
-                return key;
+            spyOn(this.authorizationService, 'getUser').andReturn(this.user);
+
+            this.key = 'key';
+
+            var context = this;
+            spyOn(context.UuidGenerator.prototype, 'generate').andCallFake(function() {
+                return context.key;
             });
 
-            vm = $injector.get('$controller')('RequisitionInitiateController', {
-                periods: periods,
-                $stateParams: $stateParams,
-                canInitiateRnr: canInitiateRnr
+            this.vm = $injector.get('$controller')('RequisitionInitiateController', {
+                periods: this.periods,
+                $stateParams: this.$stateParams,
+                canInitiateRnr: this.canInitiateRnr
             });
         });
     });
 
     it('should change page to requisitions.requisition for with selected period with rnrId', function() {
-        spyOn($state, 'go');
+        spyOn(this.$state, 'go');
 
-        vm.goToRequisition(1);
+        this.vm.goToRequisition(1);
 
-        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
+        expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
             rnr: 1
         });
     });
 
     it('should change page to requisition full supply for newly initialized requisition in selected period',
         function() {
-            var selectedPeriod = {
-                id: 1
-            };
-            vm.$onInit();
-            spyOn($state, 'go');
-            spyOn(requisitionService, 'initiate').andReturn($q.when({
-                id: 1
-            }));
-            vm.program = programs[0];
-            vm.facility = facility;
+            this.vm.$onInit();
+            spyOn(this.$state, 'go');
+            spyOn(this.requisitionService, 'initiate').andReturn(this.$q.when(this.requisition));
+            this.vm.program = this.programs[0];
+            this.vm.facility = this.facility;
 
-            vm.initRnr(selectedPeriod);
-            $rootScope.$apply();
+            this.vm.initRnr(this.periods[0]);
+            this.$rootScope.$apply();
 
-            expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
-                rnr: 1
+            expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.requisition.fullSupply', {
+                rnr: this.requisition.id,
+                requisition: this.requisition
             });
 
-            expect(permissionService.hasPermission).toHaveBeenCalledWith('user_id', {
-                right: REQUISITION_RIGHTS.REQUISITION_CREATE,
-                programId: programs[0].id,
-                facilityId: facility.id
+            expect(this.permissionService.hasPermission).toHaveBeenCalledWith('user_id', {
+                right: this.REQUISITION_RIGHTS.REQUISITION_CREATE,
+                programId: this.programs[0].id,
+                facilityId: this.facility.id
             });
         });
 
     it('should initiate requisition with idempotency key', function() {
-        var selectedPeriod = {
-            id: 1
-        };
+        this.vm.$onInit();
+        spyOn(this.$state, 'go');
+        spyOn(this.requisitionService, 'initiate').andReturn(this.$q.when(this.requisition));
 
-        vm.$onInit();
-        spyOn($state, 'go');
-        spyOn(requisitionService, 'initiate').andReturn($q.when({
-            id: 1
-        }));
+        this.vm.program = this.programs[0];
+        this.vm.facility = this.facility;
 
-        vm.program = programs[0];
-        vm.facility = facility;
+        this.vm.initRnr(this.periods[0]);
+        this.$rootScope.$apply();
 
-        vm.initRnr(selectedPeriod);
-        $rootScope.$apply();
-
-        expect(requisitionService.initiate)
-            .toHaveBeenCalledWith(vm.facility.id, vm.program.id, selectedPeriod.id, vm.emergency, key);
+        expect(this.requisitionService.initiate)
+            .toHaveBeenCalledWith(this.vm.facility.id, this.vm.program.id, this.periods[0].id,
+                this.vm.emergency, this.key);
     });
 
     it('should display error when user has no right to init requisition', function() {
-        var selectedPeriod = {
-            id: 1
-        };
+        this.permissionService.hasPermission.andReturn(this.$q.reject());
 
-        permissionService.hasPermission.andReturn($q.reject());
+        this.vm.$onInit();
+        spyOn(this.$state, 'go');
+        spyOn(this.requisitionService, 'initiate');
+        this.vm.program = this.programs[0];
+        this.vm.facility = this.facility;
 
-        vm.$onInit();
-        spyOn($state, 'go');
-        spyOn(requisitionService, 'initiate');
-        vm.program = programs[0];
-        vm.facility = facility;
+        this.vm.initRnr(this.periods[0]);
+        this.$rootScope.$apply();
 
-        vm.initRnr(selectedPeriod);
-        $rootScope.$apply();
-
-        expect($state.go).not.toHaveBeenCalled();
-        expect(permissionService.hasPermission).toHaveBeenCalled();
-        expect(requisitionService.initiate).not.toHaveBeenCalled();
+        expect(this.$state.go).not.toHaveBeenCalled();
+        expect(this.permissionService.hasPermission).toHaveBeenCalled();
+        expect(this.requisitionService.initiate).not.toHaveBeenCalled();
     });
 
     it('should not change page to requisitions.requisition with selected period without rnrId and when invalid' +
         ' response from service', function() {
         var selectedPeriod = {};
-        spyOn(requisitionService, 'initiate').andReturn($q.reject({
-            id: 1
-        }));
-        spyOn($state, 'go');
-        vm.program = programs[0];
-        vm.facility = facility;
+        spyOn(this.requisitionService, 'initiate').andReturn(this.$q.reject(this.requisition));
+        spyOn(this.$state, 'go');
+        this.vm.program = this.programs[0];
+        this.vm.facility = this.facility;
 
-        vm.initRnr(selectedPeriod);
-        $rootScope.$apply();
+        this.vm.initRnr(selectedPeriod);
+        this.$rootScope.$apply();
 
-        expect($state.go).not.toHaveBeenCalled();
-        expect(UuidGenerator.prototype.generate.calls.length).toEqual(2);
+        expect(this.$state.go).not.toHaveBeenCalled();
+        expect(this.UuidGenerator.prototype.generate.calls.length).toEqual(2);
     });
 
     it('should open loading modal', function() {
-        var selectedPeriod = {
-            id: 1
-        };
-        spyOn(loadingModalService, 'open');
-        vm.program = programs[0];
-        vm.facility = facility;
+        spyOn(this.loadingModalService, 'open');
+        this.vm.program = this.programs[0];
+        this.vm.facility = this.facility;
 
-        vm.initRnr(selectedPeriod);
+        this.vm.initRnr(this.periods[0]);
 
-        expect(loadingModalService.open).toHaveBeenCalled();
+        expect(this.loadingModalService.open).toHaveBeenCalled();
     });
 
     it('should reload periods with proper data', function() {
-        spyOn($state, 'go');
-        vm.program = programs[0];
-        vm.facility = facility;
-        vm.isSupervised = false;
+        spyOn(this.$state, 'go');
+        this.vm.program = this.programs[0];
+        this.vm.facility = this.facility;
+        this.vm.isSupervised = false;
 
-        vm.$onInit();
-        vm.loadPeriods();
-        $rootScope.$apply();
+        this.vm.$onInit();
+        this.vm.loadPeriods();
+        this.$rootScope.$apply();
 
-        expect($state.go).toHaveBeenCalledWith('openlmis.requisitions.initRnr', {
+        expect(this.$state.go).toHaveBeenCalledWith('openlmis.requisitions.initRnr', {
             supervised: false,
             emergency: false,
-            program: vm.program.id,
-            facility: vm.facility.id
+            program: this.vm.program.id,
+            facility: this.vm.facility.id
         }, {
             reload: true
         });
