@@ -356,42 +356,6 @@ describe('requisitionService', function() {
         expect(data.stockAdjustmentReasons).toEqual([this.reasonNotHidden, this.reasonWithoutHidden]);
     });
 
-    it('should not send request to retrieve requisition after initiate', function() {
-        spyOn(this.requisitionService, 'get');
-
-        var data;
-
-        this.$httpBackend
-            .whenPOST(this.requisitionUrlFactory(
-                '/api/requisitions/initiate'
-                + '?emergency=' + this.emergency
-                + '&facility=' + this.facility.id
-                + '&program=' + this.program.id
-                + '&suggestedPeriod=' + this.period.id
-            ))
-            .respond(200, this.requisition);
-
-        this.requisitionService
-            .initiate(this.facility.id, this.program.id, this.period.id, this.emergency)
-            .then(function(response) {
-                data = response;
-            });
-
-        this.$httpBackend.flush();
-        this.$rootScope.$apply();
-
-        this.requisition.$modified = true;
-        this.requisition.$availableOffline = true;
-
-        expect(angular.toJson(data.id)).toEqual(angular.toJson(this.requisition.id));
-        expect(angular.toJson(data.statusMessages)).toEqual(angular.toJson(this.requisition.statusMessages));
-        expect(angular.toJson(data.template)).toEqual(angular.toJson(this.requisition.template));
-        expect(data.stockAdjustmentReasons).toEqual([this.reasonNotHidden, this.reasonWithoutHidden]);
-        expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalled();
-        expect(this.requisitionService.get).not.toHaveBeenCalled();
-        expect(this.statusMessagesStorage.search).toHaveBeenCalled();
-    });
-
     it('should get requisitions for convert', function() {
         var data,
             requisitionCopy = this.formatDatesInRequisition(angular.copy(this.requisitionDto)),

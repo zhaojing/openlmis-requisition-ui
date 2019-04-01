@@ -270,7 +270,12 @@
                 loadingPromise.then(function() {
                     notificationService.success('requisitionView.sync.success');
                 });
-                reloadState();
+                $state.go($state.current, {
+                    rnr: vm.requisition.id,
+                    requisition: undefined
+                }, {
+                    reload: true
+                });
             }, function(response) {
                 handleSaveError(response.status);
             });

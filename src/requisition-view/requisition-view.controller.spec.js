@@ -303,6 +303,22 @@ describe('RequisitionViewController', function() {
             expect(this.loadingModalService.open).toHaveBeenCalled();
         });
 
+        it('should reload state without requisition param', function() {
+            this.requisition.$save.andReturn(this.$q.resolve(true));
+            this.loadingModalService.open.andReturn(this.$q.resolve());
+
+            this.initController();
+            this.vm.syncRnr();
+            this.$rootScope.$apply();
+
+            expect(this.$state.go).toHaveBeenCalledWith(this.$state.current, {
+                rnr: this.requisition.id,
+                requisition: undefined
+            }, {
+                reload: true
+            });
+        });
+
     });
 
     describe('isFullSupplyTabValid', function() {

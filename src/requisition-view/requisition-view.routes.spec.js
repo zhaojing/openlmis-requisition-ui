@@ -63,7 +63,7 @@ describe('openlmis.requisitions.requisition state', function() {
         expect(this.getResolvedValue('requisition')).toEqual(this.requisition);
     });
 
-    it('should fetch requisition from state params', function() {
+    it('should fetch requisition from state params if is defined', function() {
         this.$state.go('openlmis.requisitions.requisition', {
             requisition: this.requisition
         });
