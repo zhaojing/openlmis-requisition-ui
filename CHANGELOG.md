@@ -21,6 +21,7 @@ Bug fixes:
 * [OLMIS-5959](https://openlmis.atlassian.net/browse/OLMIS-5959): Enable facility type button and set facility type input required.
 * [OLMIS-5837](https://openlmis.atlassian.net/browse/OLMIS-5837): Fixed issue with endless loading when rejecting requisition fails.
 * [OLMIS-6077](https://openlmis.atlassian.net/browse/OLMIS-6077): Fixed issue with additional call to retrieve requisition after initiate.
+* [OLMIS-6234](https://openlmis.atlassian.net/browse/OLMIS-6234): Fixed issue with error indicator not working on the non full supply tab of the requisition screen.
 
 5.5.0 / 2018-12-12
 ==================

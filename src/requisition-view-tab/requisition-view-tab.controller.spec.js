@@ -755,6 +755,7 @@ describe('ViewTabController', function() {
     function initController() {
         this.vm = this.$controller('ViewTabController', {
             lineItems: [],
+            items: [],
             columns: [],
             requisition: this.requisition,
             canSubmit: this.canSubmit,

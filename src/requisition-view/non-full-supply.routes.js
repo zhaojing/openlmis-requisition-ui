@@ -33,14 +33,17 @@
             isOffline: true,
             nonTrackable: true,
             resolve: {
-                lineItems: function(paginationService, requisition, $stateParams, $filter, requisitionValidator) {
+                lineItems: function($filter, requisition) {
+                    return $filter('filter')(requisition.requisitionLineItems, {
+                        $program: {
+                            fullSupply: false
+                        }
+                    });
+                },
+                items: function(paginationService, lineItems, $stateParams, requisitionValidator) {
                     return paginationService.registerList(
                         requisitionValidator.isLineItemValid, $stateParams, function() {
-                            return $filter('filter')(requisition.requisitionLineItems, {
-                                $program: {
-                                    fullSupply: false
-                                }
-                            });
+                            return lineItems;
                         }
                     );
                 },

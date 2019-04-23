@@ -31,12 +31,13 @@
     ViewTabController.$inject = [
         '$filter', 'selectProductsModalService', 'requisitionValidator', 'requisition', 'columns', 'messageService',
         'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'TEMPLATE_COLUMNS', '$q',
-        'OpenlmisArrayDecorator', 'canApproveAndReject'
+        'OpenlmisArrayDecorator', 'canApproveAndReject', 'items', 'paginationService', '$stateParams'
     ];
 
     function ViewTabController($filter, selectProductsModalService, requisitionValidator, requisition, columns,
                                messageService, lineItems, alertService, canSubmit, canAuthorize, fullSupply,
-                               TEMPLATE_COLUMNS, $q, OpenlmisArrayDecorator, canApproveAndReject) {
+                               TEMPLATE_COLUMNS, $q, OpenlmisArrayDecorator, canApproveAndReject, items,
+                               paginationService, $stateParams) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -141,6 +142,7 @@
 
         function onInit() {
             vm.lineItems = lineItems;
+            vm.items = items;
             vm.requisition = requisition;
             vm.columns = columns;
             vm.userCanEdit = canAuthorize || canSubmit;
@@ -305,12 +307,16 @@
 
             var lineItems = $filter('filter')(vm.requisition.requisitionLineItems, filterObject);
 
-            vm.lineItems = $filter('orderBy')(lineItems, [
-                '$program.orderableCategoryDisplayOrder',
-                '$program.orderableCategoryDisplayName',
-                '$program.displayOrder',
-                'orderable.fullProductName'
-            ]);
+            paginationService
+                .registerList(
+                    requisitionValidator.isLineItemValid, $stateParams, function() {
+                        return lineItems;
+                    }
+                )
+                .then(function(items) {
+                    vm.lineItems = lineItems;
+                    vm.items = items;
+                });
         }
 
         function showSkipControls() {
