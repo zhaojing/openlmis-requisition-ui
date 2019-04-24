@@ -53,10 +53,10 @@
                         'orderable.fullProductName'
                     ]);
                 },
-                items: function(paginationService, lineItems, $stateParams, requisitionValidator) {
+                items: function(paginationService, lineItems, $stateParams, requisitionValidator, paginationFactory) {
                     return paginationService.registerList(
-                        requisitionValidator.isLineItemValid, $stateParams, function() {
-                            return lineItems;
+                        requisitionValidator.isLineItemValid, $stateParams, function(params) {
+                            return paginationFactory.getPage(lineItems, parseInt(params.page), parseInt(params.size));
                         }
                     );
                 },
