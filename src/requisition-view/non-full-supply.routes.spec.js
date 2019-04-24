@@ -108,7 +108,7 @@ describe('openlmis.requisitions.requisition.nonFullSupply state', function() {
         this.goToUrl('/requisition/requisition-id/nonFullSupply?page=0&size=2');
 
         expect(this.getResolvedValue('columns')).toEqual(this.columns);
-        expect(this.requisition.template.getColumns).toHaveBeenCalledWith(false);
+        expect(this.requisition.template.getColumns).toHaveBeenCalledWith(true);
     });
 
     it('should set full supply flag to false', function() {

@@ -48,7 +48,7 @@
                     );
                 },
                 columns: function(requisition, fullSupply) {
-                    return requisition.template.getColumns(fullSupply);
+                    return requisition.template.getColumns(!fullSupply);
                 },
                 fullSupply: function() {
                     return false;
