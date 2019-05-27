@@ -1,5 +1,5 @@
-6.0.0 / 2019-05-27
-==================
+6.0.0 / Work in Progress
+========================
 
 Breaking changes:
 * [OLMIS-4373](https://openlmis.atlassian.net/browse/OLMIS-4373): Changed filtering on Convert to Order page to use facility and program dropdowns.
