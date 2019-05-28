@@ -1,3 +1,9 @@
+6.0.1 / WIP
+==================
+
+Improvements:
+* [OLMIS-6315](https://openlmis.atlassian.net/browse/OLMIS-6315): Added filtering by requisition status on Requisitions View page.
+
 6.0.0 / 2019-05-27
 ==================
 
