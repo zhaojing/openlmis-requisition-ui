@@ -94,7 +94,8 @@
                 validateCalculated(column, template) ||
                 validateUserInput(column) ||
                 validateColumn(column, template) ||
-                validateTag(column, template);
+                validateTag(column, template) ||
+                validateSelectedStockCard(column, template);
 
             return error;
         }
@@ -242,6 +243,12 @@
         function validateCalculatedOrderQuantityIsa(column, template) {
             if (column.isDisplayed && !template.populateStockOnHandFromStockCards) {
                 return messageService.get('adminProgramTemplate.calculatedOrderQuantityIsaCannotBeDisplayed');
+            }
+        }
+
+        function validateSelectedStockCard(column, template) {
+            if (!template.populateStockOnHandFromStockCards && column.source === COLUMN_SOURCES.STOCK_CARDS) {
+                return messageService.get('adminProgramTemplate.cannotSelectStockCard');
             }
         }
 
