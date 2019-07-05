@@ -3,7 +3,7 @@
 
 Improvements:
 * [OLMIS-6315](https://openlmis.atlassian.net/browse/OLMIS-6315): Added filtering by requisition status on Requisitions View page.
-* [OLMIS-4437](https://openlmis.atlassian.net/browse/OLMIS-4437): OLMIS-4437 Blocked selecting Stock Cards when 'Enable Stock on Hand to populate from Stock Cards' checkbox is not selected in Requisition Templates.
+* [OLMIS-4437](https://openlmis.atlassian.net/browse/OLMIS-4437): Blocked selecting Stock Cards when 'Enable Stock on Hand to populate from Stock Cards' checkbox is not selected in Requisition Templates.
 
 6.0.0 / 2019-05-27
 ==================
