@@ -93,6 +93,11 @@ pipeline {
         stage('Build reference-ui') {
             when {
                 expression {
+                    BRANCH = "${env.GIT_BRANCH}".trim()
+                    if (BRANCH.startsWith("rel-")) {
+                        currentBuild.result = 'SUCCESS'
+                        return
+                    }
                     return env.GIT_BRANCH == 'master'
                 }
             }
