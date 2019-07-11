@@ -510,13 +510,22 @@ describe('Requisition', function() {
             delete this.requisition.requisitionLineItems[2].$errors;
 
             expected.requisitionLineItems[0].orderable = {
-                id: expected.requisitionLineItems[0].orderable.id
+                id: expected.requisitionLineItems[0].orderable.id,
+                meta: {
+                    versionId: expected.requisitionLineItems[0].orderable.meta.versionId
+                }
             };
             expected.requisitionLineItems[1].orderable = {
-                id: expected.requisitionLineItems[1].orderable.id
+                id: expected.requisitionLineItems[1].orderable.id,
+                meta: {
+                    versionId: expected.requisitionLineItems[1].orderable.meta.versionId
+                }
             };
             expected.requisitionLineItems[2].orderable = {
-                id: expected.requisitionLineItems[2].orderable.id
+                id: expected.requisitionLineItems[2].orderable.id,
+                meta: {
+                    versionId: expected.requisitionLineItems[2].orderable.meta.versionId
+                }
             };
 
             expected.processingPeriod.startDate = '2017-01-01';

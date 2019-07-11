@@ -772,7 +772,10 @@
                 delete lineItem.$errors;
 
                 lineItem.orderable = {
-                    id: lineItem.orderable.id
+                    id: lineItem.orderable.id,
+                    meta: {
+                        versionId: lineItem.orderable.meta.versionId
+                    }
                 };
             });
 
