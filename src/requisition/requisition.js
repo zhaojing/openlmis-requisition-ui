@@ -774,7 +774,7 @@
                 lineItem.orderable = {
                     id: lineItem.orderable.id,
                     meta: {
-                        versionId: lineItem.orderable.meta.versionId
+                        versionNumber: lineItem.orderable.meta.versionNumber
                     }
                 };
             });

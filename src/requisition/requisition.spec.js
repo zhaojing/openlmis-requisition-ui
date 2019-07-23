@@ -512,19 +512,19 @@ describe('Requisition', function() {
             expected.requisitionLineItems[0].orderable = {
                 id: expected.requisitionLineItems[0].orderable.id,
                 meta: {
-                    versionId: expected.requisitionLineItems[0].orderable.meta.versionId
+                    versionNumber: expected.requisitionLineItems[0].orderable.meta.versionNumber
                 }
             };
             expected.requisitionLineItems[1].orderable = {
                 id: expected.requisitionLineItems[1].orderable.id,
                 meta: {
-                    versionId: expected.requisitionLineItems[1].orderable.meta.versionId
+                    versionNumber: expected.requisitionLineItems[1].orderable.meta.versionNumber
                 }
             };
             expected.requisitionLineItems[2].orderable = {
                 id: expected.requisitionLineItems[2].orderable.id,
                 meta: {
-                    versionId: expected.requisitionLineItems[2].orderable.meta.versionId
+                    versionNumber: expected.requisitionLineItems[2].orderable.meta.versionNumber
                 }
             };
 
