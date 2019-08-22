@@ -243,7 +243,9 @@
          * products to be added an alert will be shown.
          */
         function unskipFullSupplyProducts() {
-            selectProducts(vm.requisition.getSkippedFullSupplyProducts())
+            selectProducts({
+                products: vm.requisition.getSkippedFullSupplyProducts()
+            })
                 .then(function(selectedProducts) {
                     vm.requisition.unskipFullSupplyProducts(selectedProducts);
                     refreshLineItems();
@@ -266,7 +268,9 @@
         }
 
         function addProducts(availableProducts) {
-            selectProducts(availableProducts)
+            selectProducts({
+                products: availableProducts
+            })
                 .then(function(selectedProducts) {
                     vm.requisition.addLineItems(selectedProducts);
                     refreshLineItems();
@@ -276,10 +280,10 @@
         function selectProducts(availableProducts) {
             refreshLineItems();
 
-            var decoratedAvailableProducts = new OpenlmisArrayDecorator(availableProducts);
+            var decoratedAvailableProducts = new OpenlmisArrayDecorator(availableProducts.products);
             decoratedAvailableProducts.sortBy('fullProductName');
 
-            if (!availableProducts.length) {
+            if (!availableProducts.products.length) {
                 alertService.error(
                     'requisitionViewTab.noProductsToAdd.label',
                     'requisitionViewTab.noProductsToAdd.message'
@@ -287,7 +291,9 @@
                 return $q.reject();
             }
 
-            return selectProductsModalService.show(decoratedAvailableProducts);
+            return selectProductsModalService.show({
+                products: decoratedAvailableProducts
+            });
         }
 
         function refreshLineItems() {

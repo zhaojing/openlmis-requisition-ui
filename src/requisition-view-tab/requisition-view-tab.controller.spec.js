@@ -519,10 +519,10 @@ describe('ViewTabController', function() {
 
             var actualProducts = this.selectProductsModalService.show.calls[0].args[0];
 
-            expect(actualProducts.length).toEqual(3);
-            expect(actualProducts[0]).toEqual(this.availableFullSupplyProducts[1]);
-            expect(actualProducts[1]).toEqual(this.availableFullSupplyProducts[2]);
-            expect(actualProducts[2]).toEqual(this.availableFullSupplyProducts[0]);
+            expect(actualProducts.products.length).toEqual(3);
+            expect(actualProducts.products[0]).toEqual(this.availableFullSupplyProducts[1]);
+            expect(actualProducts.products[1]).toEqual(this.availableFullSupplyProducts[2]);
+            expect(actualProducts.products[2]).toEqual(this.availableFullSupplyProducts[0]);
         });
 
     });
@@ -586,10 +586,10 @@ describe('ViewTabController', function() {
 
             var actualProducts = this.selectProductsModalService.show.calls[0].args[0];
 
-            expect(actualProducts.length).toEqual(3);
-            expect(actualProducts[0]).toEqual(this.availableNonFullSupplyProducts[2]);
-            expect(actualProducts[1]).toEqual(this.availableNonFullSupplyProducts[1]);
-            expect(actualProducts[2]).toEqual(this.availableNonFullSupplyProducts[0]);
+            expect(actualProducts.products.length).toEqual(3);
+            expect(actualProducts.products[0]).toEqual(this.availableNonFullSupplyProducts[2]);
+            expect(actualProducts.products[1]).toEqual(this.availableNonFullSupplyProducts[1]);
+            expect(actualProducts.products[2]).toEqual(this.availableNonFullSupplyProducts[0]);
         });
 
     });
@@ -654,10 +654,10 @@ describe('ViewTabController', function() {
 
             var actualProducts = this.selectProductsModalService.show.calls[0].args[0];
 
-            expect(actualProducts.length).toEqual(3);
-            expect(actualProducts[0]).toEqual(this.skippedFullSupplyProducts[1]);
-            expect(actualProducts[1]).toEqual(this.skippedFullSupplyProducts[0]);
-            expect(actualProducts[2]).toEqual(this.skippedFullSupplyProducts[2]);
+            expect(actualProducts.products.length).toEqual(3);
+            expect(actualProducts.products[0]).toEqual(this.skippedFullSupplyProducts[1]);
+            expect(actualProducts.products[1]).toEqual(this.skippedFullSupplyProducts[0]);
+            expect(actualProducts.products[2]).toEqual(this.skippedFullSupplyProducts[2]);
         });
 
     });
