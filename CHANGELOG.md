@@ -7,6 +7,9 @@ Improvements:
 * [OLMIS-6330](https://openlmis.atlassian.net/browse/OLMIS-6330): fixed trigerring reference-ui build.
 * [OLMIS-6402](https://openlmis.atlassian.net/browse/OLMIS-6402): Renamed versionId field to versionNumber.
 
+Bug fixes:
+* [OLMIS-6530](https://openlmis.atlassian.net/browse/OLMIS-6530): Fixed problem with clearing freshly initiated requisition form after printing it.
+
 6.0.0 / 2019-05-27
 ==================
 

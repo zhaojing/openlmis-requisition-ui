@@ -270,12 +270,7 @@
                 loadingPromise.then(function() {
                     notificationService.success('requisitionView.sync.success');
                 });
-                $state.go($state.current, {
-                    rnr: vm.requisition.id,
-                    requisition: undefined
-                }, {
-                    reload: true
-                });
+                reloadAfterSync();
             }, function(response) {
                 handleSaveError(response.status);
             });
@@ -304,7 +299,7 @@
                         notificationService.success('requisitionView.sync.success');
                     });
                     popup.location.href = accessTokenFactory.addAccessToken(vm.getPrintUrl());
-                    reloadState();
+                    reloadAfterSync();
                 }, function(response) {
                     handleSaveError(response.status);
                     popup.close();
@@ -605,6 +600,15 @@
 
         function reloadState() {
             $state.reload();
+        }
+
+        function reloadAfterSync() {
+            $state.go($state.current, {
+                rnr: vm.requisition.id,
+                requisition: undefined
+            }, {
+                reload: true
+            });
         }
 
         function failWithMessage(message) {

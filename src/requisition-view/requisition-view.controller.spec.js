@@ -676,6 +676,20 @@ describe('RequisitionViewController', function() {
 
             expect(this.loadingModalService.open.callCount).toEqual(1);
         });
+
+        it('should reload state with proper parameters', function() {
+            this.requisition.$save.andReturn(this.$q.resolve(true));
+
+            this.vm.syncRnrAndPrint();
+            this.$rootScope.$apply();
+
+            expect(this.$state.go).toHaveBeenCalledWith(this.$state.current, {
+                rnr: this.vm.requisition.id,
+                requisition: undefined
+            }, {
+                reload: true
+            });
+        });
     });
 
     describe('updateRequisition', function() {
