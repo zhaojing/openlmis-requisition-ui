@@ -21,53 +21,58 @@
         .module('requisition-view')
         .config(routes);
 
-    routes.$inject = ['$stateProvider'];
+    routes.$inject = ['selectProductsModalStateProvider'];
 
-    function routes($stateProvider) {
-        $stateProvider.state('openlmis.requisitions.requisition.fullSupply', {
-            url: '/fullSupply?page&size',
-            templateUrl: 'requisition-view-tab/requisition-view-tab.html',
-            controller: 'ViewTabController',
-            controllerAs: 'vm',
-            isOffline: true,
-            nonTrackable: true,
-            resolve: {
-                lineItems: function($filter, requisition) {
-                    var filterObject = requisition.template.hideSkippedLineItems() ?
-                        {
-                            skipped: '!true',
-                            $program: {
-                                fullSupply: true
-                            }
-                        } : {
-                            $program: {
-                                fullSupply: true
-                            }
-                        };
-                    var fullSupplyLineItems = $filter('filter')(requisition.requisitionLineItems, filterObject);
+    function routes(selectProductsModalStateProvider) {
+        selectProductsModalStateProvider
+            .stateWithAddOrderablesChildState('openlmis.requisitions.requisition.fullSupply', {
+                url: '/fullSupply?fullSupplyListPage&fullSupplyListSize',
+                templateUrl: 'requisition-view-tab/requisition-view-tab.html',
+                controller: 'ViewTabController',
+                controllerAs: 'vm',
+                isOffline: true,
+                nonTrackable: true,
+                resolve: {
+                    lineItems: function($filter, requisition) {
+                        var filterObject = requisition.template.hideSkippedLineItems() ?
+                            {
+                                skipped: '!true',
+                                $program: {
+                                    fullSupply: true
+                                }
+                            } : {
+                                $program: {
+                                    fullSupply: true
+                                }
+                            };
+                        var fullSupplyLineItems = $filter('filter')(requisition.requisitionLineItems, filterObject);
 
-                    return $filter('orderBy')(fullSupplyLineItems, [
-                        '$program.orderableCategoryDisplayOrder',
-                        '$program.orderableCategoryDisplayName',
-                        '$program.displayOrder',
-                        'orderable.fullProductName'
-                    ]);
-                },
-                items: function(paginationService, lineItems, $stateParams, requisitionValidator, paginationFactory) {
-                    return paginationService.registerList(
-                        requisitionValidator.isLineItemValid, $stateParams, function(params) {
-                            return paginationFactory.getPage(lineItems, parseInt(params.page), parseInt(params.size));
-                        }
-                    );
-                },
-                columns: function(requisition) {
-                    return requisition.template.getColumns(requisition.emergency);
-                },
-                fullSupply: function() {
-                    return true;
+                        return $filter('orderBy')(fullSupplyLineItems, [
+                            '$program.orderableCategoryDisplayOrder',
+                            '$program.orderableCategoryDisplayName',
+                            '$program.displayOrder',
+                            'orderable.fullProductName'
+                        ]);
+                    },
+                    items: function(paginationService, lineItems, $stateParams, requisitionValidator,
+                        paginationFactory) {
+                        return paginationService.registerList(
+                            requisitionValidator.isLineItemValid, $stateParams, function(params) {
+                                return paginationFactory.getPage(lineItems, parseInt(params.page),
+                                    parseInt(params.size));
+                            }, {
+                                paginationId: 'fullSupplyList'
+                            }
+                        );
+                    },
+                    columns: function(requisition) {
+                        return requisition.template.getColumns(requisition.emergency);
+                    },
+                    fullSupply: function() {
+                        return true;
+                    }
                 }
-            }
-        });
+            });
     }
 
 })();

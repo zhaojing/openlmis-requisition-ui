@@ -138,6 +138,12 @@ describe('ViewTabController', function() {
             expect(this.vm.canApproveAndReject).toEqual(this.canApproveAndReject);
         });
 
+        it('should expose paginationId property', function() {
+            this.initController();
+
+            expect(this.vm.paginationId).toEqual('fullSupplyList');
+        });
+
         describe('Add (Full Supply) Products button', function() {
 
             beforeEach(function() {

@@ -152,6 +152,7 @@
             vm.showSkipControls = showSkipControls();
             vm.noProductsMessage = getNoProductsMessage();
             vm.canApproveAndReject = canApproveAndReject;
+            vm.paginationId = fullSupply ? 'fullSupplyList' : 'nonFullSupplyList';
         }
 
         /**

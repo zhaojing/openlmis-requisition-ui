@@ -90,13 +90,13 @@ describe('openlmis.requisitions.requisition.fullSupply state', function() {
     });
 
     it('should prepare full supply line items', function() {
-        this.goToUrl('/requisition/requisition-id/fullSupply?page=0&size=2');
+        this.goToUrl('/requisition/requisition-id/fullSupply?fullSupplyListPage=0&fullSupplyListSize=2');
 
         expect(this.getResolvedValue('lineItems')).toEqual(this.lineItems);
     });
 
     it('should prepare page items', function() {
-        this.goToUrl('/requisition/requisition-id/fullSupply?page=1&size=2');
+        this.goToUrl('/requisition/requisition-id/fullSupply?fullSupplyListPage=1&fullSupplyListSize=2');
 
         expect(this.getResolvedValue('items')).toEqual([
             this.lineItems[2],
@@ -105,14 +105,14 @@ describe('openlmis.requisitions.requisition.fullSupply state', function() {
     });
 
     it('should prepare columns', function() {
-        this.goToUrl('/requisition/requisition-id/fullSupply?page=0&size=2');
+        this.goToUrl('/requisition/requisition-id/fullSupply?fullSupplyListPage=0&fullSupplyListSize=2');
 
         expect(this.getResolvedValue('columns')).toEqual(this.columns);
         expect(this.requisition.template.getColumns).toHaveBeenCalledWith(this.requisition.emergency);
     });
 
     it('should set full supply flag to true', function() {
-        this.goToUrl('/requisition/requisition-id/fullSupply?page=0&size=2');
+        this.goToUrl('/requisition/requisition-id/fullSupply?fullSupplyListPage=0&fullSupplyListSize=2');
 
         expect(this.getResolvedValue('fullSupply')).toEqual(true);
     });

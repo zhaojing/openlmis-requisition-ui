@@ -6,6 +6,7 @@ Improvements:
 * [OLMIS-4437](https://openlmis.atlassian.net/browse/OLMIS-4437): Blocked selecting Stock Cards when 'Enable Stock on Hand to populate from Stock Cards' checkbox is not selected in Requisition Templates.
 * [OLMIS-6330](https://openlmis.atlassian.net/browse/OLMIS-6330): fixed trigerring reference-ui build.
 * [OLMIS-6402](https://openlmis.atlassian.net/browse/OLMIS-6402): Renamed versionId field to versionNumber.
+* [OLMIS-6222](https://openlmis.atlassian.net/browse/OLMIS-6222): Updated some pagination usages after changes in openlmis-pagination component.
 
 Bug fixes:
 * [OLMIS-6530](https://openlmis.atlassian.net/browse/OLMIS-6530): Fixed problem with clearing freshly initiated requisition form after printing it.

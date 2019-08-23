@@ -27,7 +27,7 @@
 
         selectProductsModalStateProvider
             .stateWithAddOrderablesChildState('openlmis.requisitions.requisition.nonFullSupply', {
-                url: '/nonFullSupply?page&size',
+                url: '/nonFullSupply?nonFullSupplyListPage&nonFullSupplyListSize',
                 templateUrl: 'requisition-view-tab/requisition-view-tab.html',
                 controller: 'ViewTabController',
                 controllerAs: 'vm',
@@ -47,6 +47,8 @@
                             requisitionValidator.isLineItemValid, $stateParams, function(params) {
                                 return paginationFactory.getPage(lineItems, parseInt(params.page),
                                     parseInt(params.size));
+                            }, {
+                                paginationId: 'nonFullSupplyList'
                             }
                         );
                     },
