@@ -33,7 +33,7 @@
         'notificationService', 'confirmService', 'offlineService', '$window', 'requisitionUrlFactory', '$filter',
         '$scope', 'RequisitionWatcher', 'accessTokenFactory', 'messageService', 'stateTrackerService',
         'RequisitionStockCountDateModal', 'localStorageFactory', 'canSubmit', 'canAuthorize', 'canApproveAndReject',
-        'canDelete', 'canSkip', 'canSync'
+        'canDelete', 'canSkip', 'canSync', 'program', 'facility', 'processingPeriod'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator, requisitionService,
@@ -41,7 +41,8 @@
                                        offlineService, $window, requisitionUrlFactory, $filter, $scope,
                                        RequisitionWatcher, accessTokenFactory, messageService, stateTrackerService,
                                        RequisitionStockCountDateModal, localStorageFactory, canSubmit, canAuthorize,
-                                       canApproveAndReject, canDelete, canSkip, canSync) {
+                                       canApproveAndReject, canDelete, canSkip, canSync,
+                                       program, facility, processingPeriod) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions'));
@@ -55,6 +56,39 @@
          * Holds requisition.
          */
         vm.requisition = requisition;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name program
+         * @type {Object}
+         *
+         * @description
+         * Holds requisition program.
+         */
+        vm.program = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name facility
+         * @type {Object}
+         *
+         * @description
+         * Holds requisition facility.
+         */
+        vm.facility = undefined;
+
+        /**
+         * @ngdoc property
+         * @propertyOf requisition-view.controller:RequisitionViewController
+         * @name processingPeriod
+         * @type {Object}
+         *
+         * @description
+         * Holds requisition processing period.
+         */
+        vm.processingPeriod = undefined;
 
         /**
          * @ngdoc property
@@ -203,8 +237,11 @@
          */
         function onInit() {
             setTypeAndClass();
-            vm.displaySubmitButton = canSubmit && !vm.requisition.program.skipAuthorization;
-            vm.displaySubmitAndAuthorizeButton = canSubmit && vm.requisition.program.skipAuthorization;
+            vm.program = program;
+            vm.facility = facility;
+            vm.processingPeriod = processingPeriod;
+            vm.displaySubmitButton = canSubmit && !vm.program.skipAuthorization;
+            vm.displaySubmitAndAuthorizeButton = canSubmit && vm.program.skipAuthorization;
             vm.displayAuthorizeButton = canAuthorize;
             vm.displayDeleteButton = canDelete;
             vm.displayApproveAndRejectButtons = canApproveAndReject;
@@ -330,7 +367,7 @@
                 if (requisitionValidator.validateRequisition(requisition)) {
                     if (requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
                         failWithMessage('requisitionView.allLineItemsSkipped')();
-                    } else if (vm.requisition.program.enableDatePhysicalStockCountCompleted) {
+                    } else if (vm.program.enableDatePhysicalStockCountCompleted) {
                         var modal = new RequisitionStockCountDateModal(vm.requisition);
                         modal.then(saveThenSubmit);
                     } else {
@@ -378,7 +415,7 @@
                 if (requisitionValidator.validateRequisition(requisition)) {
                     if (requisitionValidator.areAllLineItemsSkipped(requisition.requisitionLineItems)) {
                         failWithMessage('requisitionView.allLineItemsSkipped')();
-                    } else if (vm.requisition.program.enableDatePhysicalStockCountCompleted) {
+                    } else if (vm.program.enableDatePhysicalStockCountCompleted) {
                         var modal = new RequisitionStockCountDateModal(vm.requisition);
                         modal.then(saveThenAuthorize);
                     } else {

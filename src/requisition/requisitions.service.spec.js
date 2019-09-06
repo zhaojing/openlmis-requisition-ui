@@ -17,6 +17,7 @@ describe('requisitionService', function() {
 
     beforeEach(function() {
         module('requisition');
+        module('referencedata-facility-type-approved-product');
 
         var context = this;
         module(function($provide) {
@@ -49,14 +50,16 @@ describe('requisitionService', function() {
             });
         });
 
-        var FacilityDataBuilder, ProgramDataBuilder, PeriodDataBuilder, RequisitionDataBuilder,
-            StockAdjustmentReasonDataBuilder;
         inject(function($injector) {
-            FacilityDataBuilder = $injector.get('FacilityDataBuilder');
-            ProgramDataBuilder = $injector.get('ProgramDataBuilder');
-            PeriodDataBuilder = $injector.get('PeriodDataBuilder');
-            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
-            StockAdjustmentReasonDataBuilder = $injector.get('StockAdjustmentReasonDataBuilder');
+            this.FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            this.PeriodDataBuilder = $injector.get('PeriodDataBuilder');
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            this.StockAdjustmentReasonDataBuilder = $injector.get('StockAdjustmentReasonDataBuilder');
+            this.RequisitionLineItemV2DataBuilder = $injector.get('RequisitionLineItemV2DataBuilder');
+            this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
+            this.FacilityTypeApprovedProductDataBuilder = $injector.get('FacilityTypeApprovedProductDataBuilder');
+            this.VersionObjectReferenceDataBuilder =  $injector.get('VersionObjectReferenceDataBuilder');
 
             this.$httpBackend = $injector.get('$httpBackend');
             this.$rootScope = $injector.get('$rootScope');
@@ -69,6 +72,9 @@ describe('requisitionService', function() {
             this.PageDataBuilder = $injector.get('PageDataBuilder');
             this.requisitionCacheService = $injector.get('requisitionCacheService');
             this.$q = $injector.get('$q');
+            this.OrderableResource = $injector.get('OrderableResource');
+            this.FacilityTypeApprovedProductResource = $injector.get('FacilityTypeApprovedProductResource');
+            this.periodService = $injector.get('periodService');
         });
 
         this.formatDatesInRequisition = formatDatesInRequisition;
@@ -84,28 +90,77 @@ describe('requisitionService', function() {
         this.createdDate = [2016, 4, 30, 16, 21, 33];
         this.createdDate2 = [2016, 10, 30, 16, 21, 33];
 
-        this.facility = new FacilityDataBuilder().build();
+        this.facility = new this.FacilityDataBuilder().build();
 
-        this.program = new ProgramDataBuilder().build();
+        this.program = new this.ProgramDataBuilder().build();
 
-        this.period = new PeriodDataBuilder()
+        this.period = new this.PeriodDataBuilder()
             .withStartDate(this.startDate)
             .withEndDate(this.endDate)
             .build();
 
         this.emergency = false;
 
-        this.reasonNotHidden = new StockAdjustmentReasonDataBuilder().build();
-        this.reasonHidden = new StockAdjustmentReasonDataBuilder().buildHidden();
-        this.reasonWithoutHidden = new StockAdjustmentReasonDataBuilder()
+        this.reasonNotHidden = new this.StockAdjustmentReasonDataBuilder().build();
+        this.reasonHidden = new this.StockAdjustmentReasonDataBuilder().buildHidden();
+        this.reasonWithoutHidden = new this.StockAdjustmentReasonDataBuilder()
             .withHidden(undefined)
             .build();
 
-        this.requisition = new RequisitionDataBuilder()
+        this.fullSupplyLineItems = [
+            new this.RequisitionLineItemV2DataBuilder()
+                .fullSupplyForProgram(this.program)
+                .buildJson(),
+            new this.RequisitionLineItemV2DataBuilder()
+                .fullSupplyForProgram(this.program)
+                .buildJson()
+        ];
+
+        this.nonFullSupplyLineItems = [
+            new this.RequisitionLineItemV2DataBuilder()
+                .nonFullSupplyForProgram(this.program)
+                .buildJson(),
+            new this.RequisitionLineItemV2DataBuilder()
+                .nonFullSupplyForProgram(this.program)
+                .buildJson()
+        ];
+
+        this.lineItems = [
+            new this.RequisitionLineItemV2DataBuilder()
+                .fullSupplyForProgram(this.program)
+                .buildJson(),
+            new this.RequisitionLineItemV2DataBuilder()
+                .fullSupplyForProgram(this.program)
+                .buildJson()
+        ];
+
+        this.orderables = [
+            new this.OrderableDataBuilder()
+                .buildJson(),
+            new this.OrderableDataBuilder()
+                .buildJson()
+        ];
+
+        this.approvedProducts = [
+            new this.FacilityTypeApprovedProductDataBuilder()
+                .withOrderable(this.lineItems[0].orderable)
+                .buildJson(),
+            new this.FacilityTypeApprovedProductDataBuilder()
+                .withOrderable(this.lineItems[1].orderable)
+                .buildJson()
+        ];
+
+        this.fullSupplyLineItemsIdentities = convertResourceToIdentities(this.fullSupplyLineItems);
+        this.nonFullSupplyLineItemsIdentities = convertResourceToIdentities(this.nonFullSupplyLineItems);
+
+        this.requisition = new this.RequisitionDataBuilder()
             .withCreatedDate(this.createdDate)
             .withProcessingPeriod(this.period)
             .withFacility(this.facility)
             .withProgram(this.program)
+            .withAvailableFullSupplyProducts(this.fullSupplyLineItemsIdentities)
+            .withAvailableNonFullSupplyProducts(this.nonFullSupplyLineItemsIdentities)
+            .withRequisitionLineItems(this.lineItems)
             .withStockAdjustmentReasons([
                 this.reasonNotHidden,
                 this.reasonHidden,
@@ -113,14 +168,14 @@ describe('requisitionService', function() {
             ])
             .buildJson();
 
-        this.requisitionDto = new RequisitionDataBuilder()
+        this.requisitionDto = new this.RequisitionDataBuilder()
             .withCreatedDate(this.createdDate)
             .withProcessingPeriod(this.period)
             .withFacility(this.facility)
             .withProgram(this.program)
             .buildJson();
 
-        this.requisitionDto2 = new RequisitionDataBuilder()
+        this.requisitionDto2 = new this.RequisitionDataBuilder()
             .withCreatedDate(this.createdDate)
             .withProcessingPeriod(this.period)
             .withFacility(this.facility)
@@ -134,6 +189,23 @@ describe('requisitionService', function() {
         spyOn(this.requisitionCacheService, 'getBatchRequisition').andReturn();
         spyOn(this.requisitionCacheService, 'removeById').andReturn();
         spyOn(this.requisitionCacheService, 'search').andReturn();
+        spyOn(this.OrderableResource.prototype, 'getByVersionIdentities');
+        spyOn(this.FacilityTypeApprovedProductResource.prototype, 'getByVersionIdentities')
+            .andReturn(this.approvedProducts);
+        spyOn(this.periodService, 'get').andReturn(this.requisition.processingPeriod);
+
+        this.OrderableResource.prototype.getByVersionIdentities.andCallFake(function(identities) {
+            if (JSON.stringify(identities) === JSON.stringify(context.fullSupplyLineItemsIdentities)) {
+                return context.fullSupplyLineItems;
+            } else if (JSON.stringify(identities) === JSON.stringify(context.nonFullSupplyLineItemsIdentities)) {
+                return context.nonFullSupplyLineItems;
+            } else if (JSON.stringify(identities) === JSON.stringify(
+                convertResourceToIdentities(context.requisition.requisitionLineItems)
+            )) {
+                return context.requisition.requisitionLineItems;
+            }
+        });
+
     });
 
     describe('get', function() {
@@ -146,7 +218,7 @@ describe('requisitionService', function() {
 
         beforeEach(function() {
             getStatusMessagesUrl = '/api/requisitions/' + this.requisition.id + '/statusMessages';
-            getRequisitionUrl = '/api/requisitions/' + this.requisition.id;
+            getRequisitionUrl = '/api/v2/requisitions/' + this.requisition.id;
         });
 
         it('should return eTag for requisition', function() {
@@ -331,7 +403,7 @@ describe('requisitionService', function() {
 
         this.$httpBackend
             .whenPOST(this.requisitionUrlFactory(
-                '/api/requisitions/initiate'
+                '/api/v2/requisitions/initiate'
                 + '?emergency=' + this.emergency
                 + '&facility=' + this.facility.id
                 + '&program=' + this.program.id
@@ -448,14 +520,14 @@ describe('requisitionService', function() {
         this.$httpBackend
             .whenGET(
                 this.requisitionUrlFactory('/api/requisitions/search'
-                + '?initiatedDateFrom=' + this.startDate1.toISOString()
-                + '&initiatedDateTo=' + this.endDate1.toISOString()
-                + '&emergency=' + params.emergency
-                + '&facility=' + this.facility.id
-                + '&program=' + this.program.id
-                + '&requisitionStatus=' + this.allStatuses[0].label
-                + '&requisitionStatus=' + this.allStatuses[1].label
-                + '&sort=' + params.sort)
+                    + '?initiatedDateFrom=' + this.startDate1.toISOString()
+                    + '&initiatedDateTo=' + this.endDate1.toISOString()
+                    + '&emergency=' + params.emergency
+                    + '&facility=' + this.facility.id
+                    + '&program=' + this.program.id
+                    + '&requisitionStatus=' + this.allStatuses[0].label
+                    + '&requisitionStatus=' + this.allStatuses[1].label
+                    + '&sort=' + params.sort)
             )
             .respond(200, {
                 content: [this.requisitionDto]
@@ -740,6 +812,15 @@ describe('requisitionService', function() {
         requisition.processingPeriod.startDate = this.dateUtils.toDate(requisition.processingPeriod.startDate);
         requisition.createdDate = this.dateUtils.toDate(requisition.createdDate);
         return requisition;
+    }
+
+    function convertResourceToIdentities(array) {
+        var convertedArray = [];
+
+        array.forEach(function(resource) {
+            convertedArray.push(resource.orderable);
+        });
+        return convertedArray;
     }
 
 });

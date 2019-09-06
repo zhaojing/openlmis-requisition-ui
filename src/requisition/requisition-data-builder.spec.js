@@ -41,6 +41,8 @@
         RequisitionDataBuilder.prototype.withProcessingPeriod = withProcessingPeriod;
         RequisitionDataBuilder.prototype.withFacility = withFacility;
         RequisitionDataBuilder.prototype.withStockAdjustmentReasons = withStockAdjustmentReasons;
+        RequisitionDataBuilder.prototype.withAvailableFullSupplyProducts = withAvailableFullSupplyProducts;
+        RequisitionDataBuilder.prototype.withAvailableNonFullSupplyProducts = withAvailableNonFullSupplyProducts;
         RequisitionDataBuilder.prototype.buildSubmitted = buildSubmitted;
         RequisitionDataBuilder.prototype.buildAuthorized = buildAuthorized;
         RequisitionDataBuilder.prototype.buildInApproval = buildInApproval;
@@ -243,6 +245,16 @@
 
         function withStockAdjustmentReasons(stockAdjustmentReasons) {
             this.stockAdjustmentReasons = stockAdjustmentReasons;
+            return this;
+        }
+
+        function withAvailableFullSupplyProducts(availableFullSupplyProducts) {
+            this.availableFullSupplyProducts = availableFullSupplyProducts;
+            return this;
+        }
+
+        function withAvailableNonFullSupplyProducts(availableNonFullSupplyProducts) {
+            this.availableNonFullSupplyProducts = availableNonFullSupplyProducts;
             return this;
         }
 

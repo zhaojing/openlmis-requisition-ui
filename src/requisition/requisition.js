@@ -39,7 +39,7 @@
                                 authorizationService, REQUISITION_RIGHTS, UuidGenerator) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
-            resource = $resource(requisitionUrlFactory('/api/requisitions/:id'), {}, {
+            resource = $resource(requisitionUrlFactory('/api/v2/requisitions/:id'), {}, {
                 authorize: {
                     headers: {
                         'Idempotency-Key': getIdempotencyKey
@@ -773,9 +773,7 @@
 
                 lineItem.orderable = {
                     id: lineItem.orderable.id,
-                    meta: {
-                        versionNumber: lineItem.orderable.meta.versionNumber
-                    }
+                    versionNumber: lineItem.orderable.meta.versionNumber
                 };
             });
 

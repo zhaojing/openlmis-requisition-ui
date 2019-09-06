@@ -185,7 +185,7 @@
          */
         function calculateTotalCost(lineItem, requisition) {
             var packsToShip = this.packsToShip(lineItem, requisition);
-            var pricePerPack = lineItem[T];
+            var pricePerPack = lineItem.$program[T];
             if (pricePerPack === undefined) {
                 pricePerPack = 0;
             }
@@ -326,7 +326,7 @@
             }
 
             return hColumn && hColumn.option.optionName === 'default' ?
-                Math.round(pValue * lineItem.maxPeriodsOfStock) : 0;
+                Math.round(pValue * lineItem.approvedProduct.maxPeriodsOfStock) : 0;
         }
 
         /**

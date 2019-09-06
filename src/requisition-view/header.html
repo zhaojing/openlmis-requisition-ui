@@ -6,23 +6,23 @@
     <ul>
         <li>
             <strong>{{'requisitionView.facility'|message}}</strong>
-            {{vm.requisition.facility.code}} - {{vm.requisition.facility.name}}
+            {{vm.facility.code}} - {{vm.facility.name}}
         </li>
         <li>
             <strong>{{'requisitionView.operatedBy' | message}}</strong>
-            {{vm.requisition.facility.operator.name}}
+            {{vm.facility.operator.name}}
         </li>
         <li>
             <strong>{{'requisitionView.region' | message}}</strong>
-            {{vm.requisition.facility.geographicZone.name}}
+            {{vm.facility.geographicZone.name}}
         </li>
         <li ng-if="requisition.facility.geographicZone.parent.name">
             <strong>{{'requisitionView.province' | message}}</strong>
-            {{vm.requisition.facility.geographicZone.parent.name}}
+            {{vm.facility.geographicZone.parent.name}}
         </li>
         <li>
             <strong>{{'requisitionView.reportingPeriod' | message}}</strong>
-            {{vm.requisition.processingPeriod | period}}
+            {{vm.processingPeriod | period}}
         </li>
         <li ng-if="vm.requisition.datePhysicalStockCountCompleted">
             <strong>{{'requisitionView.datePhysicalStockCountCompleted' | message}}</strong>

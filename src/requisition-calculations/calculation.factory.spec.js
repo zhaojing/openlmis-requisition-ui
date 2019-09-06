@@ -17,7 +17,7 @@ describe('calculationFactory', function() {
 
     var calculationFactory, TEMPLATE_COLUMNS, COLUMN_SOURCES, lineItem, requisitionMock, RequisitionColumnDataBuilder,
         ReasonDataBuilder, StockAdjustmentDataBuilder, templateMock, stockOnHandColumn, requestedQuantityColumn,
-        isaColumn, maximumStockQuantityColumn, RequisitionLineItemDataBuilder, averageConsumptionColumn,
+        isaColumn, maximumStockQuantityColumn, averageConsumptionColumn,
         calculatedOrderQuantityColumn, additionalQuantityRequiredColumn, totalConsumedQuantityColumn,
         calculatedOrderQuantityIsaColumn;
 
@@ -25,6 +25,7 @@ describe('calculationFactory', function() {
         module('admin-template');
         module('stock-reason');
         module('requisition-calculations');
+        module('referencedata-facility-type-approved-product');
 
         inject(function($injector) {
             calculationFactory = $injector.get('calculationFactory');
@@ -33,7 +34,11 @@ describe('calculationFactory', function() {
             RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
             ReasonDataBuilder = $injector.get('ReasonDataBuilder');
             StockAdjustmentDataBuilder = $injector.get('StockAdjustmentDataBuilder');
-            RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
+            this.RequisitionLineItemV2DataBuilder = $injector.get('RequisitionLineItemV2DataBuilder');
+            this.ProgramOrderableDataBuilder = $injector.get('ProgramOrderableDataBuilder');
+            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            this.FacilityTypeApprovedProductDataBuilder = $injector.get('FacilityTypeApprovedProductDataBuilder');
+            this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
         });
 
         calculatedOrderQuantityIsaColumn = new RequisitionColumnDataBuilder().buildCalculatedOrderQuantityIsaColumn();
@@ -48,18 +53,25 @@ describe('calculationFactory', function() {
             .asUserInput()
             .build();
         isaColumn = new RequisitionColumnDataBuilder().buildIdealStockAmountColumn();
-        lineItem = new RequisitionLineItemDataBuilder()
+        this.programOrderable = new this.ProgramOrderableDataBuilder().buildJson();
+        lineItem = new this.RequisitionLineItemV2DataBuilder()
             .withTotalLossesAndAdjustments(25)
             .withBeginningBalance(20)
             .withTotalConsumedQuantity(15)
             .withTotalReceivedQuantity(10)
             .withStockOnHand(5)
+            .withOrderable(new this.OrderableDataBuilder()
+                .withPrograms([this.programOrderable])
+                .buildJson())
             .buildJson();
 
         lineItem.isNonFullSupply = jasmine.createSpy('isNonFullSupply');
         requisitionMock = jasmine.createSpyObj('requisition', ['$isAfterAuthorize']);
         templateMock = jasmine.createSpyObj('template', ['getColumn']);
         requisitionMock.template = templateMock;
+        lineItem.$program = new this.ProgramDataBuilder()
+            .withId(this.programOrderable.id)
+            .build();
 
         templateMock.getColumn.andCallFake(function(name) {
             if (name === TEMPLATE_COLUMNS.CALCULATED_ORDER_QUANTITY) {
@@ -170,7 +182,7 @@ describe('calculationFactory', function() {
         it('should calculate total cost', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
-            lineItem.pricePerPack = 30.20;
+            lineItem.$program.pricePerPack = 30.20;
             lineItem.requestedQuantity = 15;
             lineItem.orderable.netContent = 10;
             lineItem.orderable.packRoundingThreshold = 4;
@@ -181,7 +193,7 @@ describe('calculationFactory', function() {
         it('should calculate zero total cost if price per pack value missing', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
-            lineItem.pricePerPack = undefined;
+            lineItem.$program.pricePerPack = undefined;
             lineItem.requestedQuantity = 15;
             lineItem.orderable.netContent = 10;
             lineItem.orderable.packRoundingThreshold = 4;
@@ -194,7 +206,7 @@ describe('calculationFactory', function() {
 
             requestedQuantityColumn.$display = false;
             lineItem.stockOnHand = 10;
-            lineItem.pricePerPack = 30.20;
+            lineItem.$program.pricePerPack = 30.20;
             lineItem.requestedQuantity = null;
             lineItem.maximumStockQuantity = 100;
 
@@ -209,7 +221,7 @@ describe('calculationFactory', function() {
 
             lineItem.requestedQuantity = null;
             lineItem.stockOnHand = 10;
-            lineItem.pricePerPack = 30.20;
+            lineItem.$program.pricePerPack = 30.20;
             lineItem.maximumStockQuantity = 100;
 
             lineItem.orderable.netContent = 10;
@@ -224,7 +236,7 @@ describe('calculationFactory', function() {
 
             lineItem.requestedQuantity = null;
             lineItem.stockOnHand = 10;
-            lineItem.pricePerPack = 30.20;
+            lineItem.$program.pricePerPack = 30.20;
             lineItem.requestedQuantity = null;
             lineItem.maximumStockQuantity = 100;
 
@@ -371,7 +383,7 @@ describe('calculationFactory', function() {
         });
 
         it('should return maximum stock quantity when default option was selected', function() {
-            lineItem.maxPeriodsOfStock = 7.25;
+            lineItem.approvedProduct.maxPeriodsOfStock = 7.25;
             lineItem.averageConsumption = 2;
 
             maximumStockQuantityColumn.option.optionName = 'default';

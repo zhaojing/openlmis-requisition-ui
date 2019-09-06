@@ -24,12 +24,18 @@ describe('RequisitionViewController', function() {
                 return context.RequisitionStockCountDateModalMock;
             });
         });
+        module('referencedata-facility-type-approved-product');
+        module('referencedata-facility');
+        module('referencedata-program');
+        module('referencedata-period');
 
         var RequisitionDataBuilder, RequisitionLineItemDataBuilder, ProgramDataBuilder;
         inject(function($injector) {
             RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
             ProgramDataBuilder = $injector.get('ProgramDataBuilder');
             RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
+            this.FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            this.PeriodDataBuilder = $injector.get('PeriodDataBuilder');
 
             this.$rootScope = $injector.get('$rootScope');
             this.$scope = this.$rootScope.$new();
@@ -51,20 +57,25 @@ describe('RequisitionViewController', function() {
             this.accessTokenFactory = $injector.get('accessTokenFactory');
             this.requisitionService = $injector.get('requisitionService');
             this.offlineService = $injector.get('offlineService');
+            this.facilityService = $injector.get('facilityService');
+            this.programService = $injector.get('programService');
+            this.periodService = $injector.get('periodService');
         });
 
-        var program = new ProgramDataBuilder()
+        this.program = new ProgramDataBuilder()
             .withEnabledDatePhysicalStockCountCompleted()
             .build();
 
+        this.facility = new this.FacilityDataBuilder().build();
+        this.period = new this.PeriodDataBuilder().build();
         this.requisition = new RequisitionDataBuilder()
-            .withProgram(program)
+            .withProgram(this.program)
             .withRequisitionLineItems([
                 new RequisitionLineItemDataBuilder()
-                    .fullSupplyForProgram(program)
+                    .fullSupplyForProgram(this.program)
                     .buildJson(),
                 new RequisitionLineItemDataBuilder()
-                    .nonFullSupplyForProgram(program)
+                    .nonFullSupplyForProgram(this.program)
                     .buildJson()
             ])
             .build();
@@ -101,6 +112,9 @@ describe('RequisitionViewController', function() {
         spyOn(this.accessTokenFactory, 'addAccessToken');
         spyOn(this.offlineService, 'isOffline');
         spyOn(this.requisitionService, 'removeOfflineRequisition');
+        spyOn(this.programService, 'getUserPrograms').andReturn(this.$q.resolve(this.program));
+        spyOn(this.facilityService, 'get').andReturn(this.$q.resolve(this.facility));
+        spyOn(this.periodService, 'get').andReturn(this.$q.resolve(this.period));
 
         this.initController = initController;
     });
@@ -110,7 +124,7 @@ describe('RequisitionViewController', function() {
         it('should display submit button when user can submit requisition and skip authorization is not configured',
             function() {
                 this.canSubmit = true;
-                this.requisition.program.skipAuthorization = false;
+                this.program.skipAuthorization = false;
 
                 this.initController();
 
@@ -121,7 +135,7 @@ describe('RequisitionViewController', function() {
         it('should display submit and authorize button when user can submit requisition and skip authorization is' +
             ' configured', function() {
             this.canSubmit = true;
-            this.requisition.program.skipAuthorization = true;
+            this.program.skipAuthorization = true;
 
             this.initController();
 
@@ -431,7 +445,7 @@ describe('RequisitionViewController', function() {
         });
 
         it('should not call RequisitionStockCountDateModal if disabled', function() {
-            this.vm.requisition.program.enableDatePhysicalStockCountCompleted = false;
+            this.vm.program.enableDatePhysicalStockCountCompleted = false;
 
             this.vm.authorizeRnr();
             this.$rootScope.$apply();
@@ -478,7 +492,7 @@ describe('RequisitionViewController', function() {
         });
 
         it('should not call RequisitionStockCountDateModal if disabled', function() {
-            this.vm.requisition.program.enableDatePhysicalStockCountCompleted = false;
+            this.vm.program.enableDatePhysicalStockCountCompleted = false;
 
             this.vm.submitRnr();
             this.$rootScope.$apply();
@@ -745,6 +759,9 @@ describe('RequisitionViewController', function() {
     function initController() {
         this.vm = this.$controller('RequisitionViewController', {
             $scope: this.$scope,
+            program: this.program,
+            facility: this.facility,
+            processingPeriod: this.period,
             requisition: this.requisition,
             canSubmit: this.canSubmit,
             canAuthorize: this.canAuthorize,

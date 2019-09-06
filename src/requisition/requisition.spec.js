@@ -453,7 +453,7 @@ describe('Requisition', function() {
             var data;
 
             this.$httpBackend
-                .whenPUT(this.requisitionUrlFactory('/api/requisitions/' + this.requisition.id))
+                .whenPUT(this.requisitionUrlFactory('/api/v2/requisitions/' + this.requisition.id))
                 .respond(200, this.requisition);
 
             this.requisition.name = 'Saved requisition';
@@ -470,7 +470,7 @@ describe('Requisition', function() {
 
         it('should remove offline when 403', function() {
             this.$httpBackend
-                .whenPUT(this.requisitionUrlFactory('/api/requisitions/' + this.requisition.id))
+                .whenPUT(this.requisitionUrlFactory('/api/v2/requisitions/' + this.requisition.id))
                 .respond(403, this.requisition);
 
             this.requisition.$save();
@@ -483,7 +483,7 @@ describe('Requisition', function() {
 
         it('should remove offline when 409', function() {
             this.$httpBackend
-                .whenPUT(this.requisitionUrlFactory('/api/requisitions/' + this.requisition.id))
+                .whenPUT(this.requisitionUrlFactory('/api/v2/requisitions/' + this.requisition.id))
                 .respond(403, this.requisition);
 
             this.requisition.$save();
@@ -511,21 +511,16 @@ describe('Requisition', function() {
 
             expected.requisitionLineItems[0].orderable = {
                 id: expected.requisitionLineItems[0].orderable.id,
-                meta: {
-                    versionNumber: expected.requisitionLineItems[0].orderable.meta.versionNumber
-                }
+                versionNumber: expected.requisitionLineItems[0].orderable.meta.versionNumber
             };
             expected.requisitionLineItems[1].orderable = {
                 id: expected.requisitionLineItems[1].orderable.id,
-                meta: {
-                    versionNumber: expected.requisitionLineItems[1].orderable.meta.versionNumber
-                }
+                versionNumber: expected.requisitionLineItems[1].orderable.meta.versionNumber
+
             };
             expected.requisitionLineItems[2].orderable = {
                 id: expected.requisitionLineItems[2].orderable.id,
-                meta: {
-                    versionNumber: expected.requisitionLineItems[2].orderable.meta.versionNumber
-                }
+                versionNumber: expected.requisitionLineItems[2].orderable.meta.versionNumber
             };
 
             expected.processingPeriod.startDate = '2017-01-01';
@@ -546,7 +541,7 @@ describe('Requisition', function() {
 
             var $httpBackend = this.$httpBackend;
             $httpBackend
-                .expectPUT(this.requisitionUrlFactory('/api/requisitions/' + this.requisition.id), expected)
+                .expectPUT(this.requisitionUrlFactory('/api/v2/requisitions/' + this.requisition.id), expected)
                 .respond(200, this.requisition);
 
             this.requisition.$save();
@@ -1130,17 +1125,6 @@ describe('Requisition', function() {
             this.requisition.addLineItem(orderable, 16, 'explanation');
 
             expect(this.requisition.requisitionLineItems[2] instanceof this.LineItem).toBe(true);
-        });
-
-        it('should set correct pricePerPack based on program', function() {
-            this.requisition = new this.RequisitionDataBuilder().buildRejected();
-
-            var orderable = this.requisition.availableNonFullSupplyProducts[0];
-
-            this.requisition.addLineItem(orderable, 16, 'explanation');
-
-            expect(this.requisition.requisitionLineItems[2].pricePerPack)
-                .toBe(orderable.programs[1].pricePerPack);
         });
 
     });

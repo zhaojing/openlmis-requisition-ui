@@ -18,11 +18,18 @@ describe('openlmis.requisitions.requisition state', function() {
     beforeEach(function() {
         module('openlmis-main-state');
         module('requisition-view');
+        module('referencedata-facility-type-approved-product');
+        module('referencedata-facility');
+        module('referencedata-program');
+        module('referencedata-period');
 
-        var UserDataBuilder, RequisitionDataBuilder;
         inject(function($injector) {
-            UserDataBuilder = $injector.get('UserDataBuilder');
-            RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            this.UserDataBuilder = $injector.get('UserDataBuilder');
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            this.FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            this.PeriodDataBuilder = $injector.get('PeriodDataBuilder');
+            this.RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
 
             this.$state = $injector.get('$state');
             this.$rootScope = $injector.get('$rootScope');
@@ -30,18 +37,42 @@ describe('openlmis.requisitions.requisition state', function() {
             this.currentUserService = $injector.get('currentUserService');
             this.requisitionViewFactory = $injector.get('requisitionViewFactory');
             this.requisitionService = $injector.get('requisitionService');
+            this.facilityService = $injector.get('facilityService');
+            this.programService = $injector.get('programService');
+            this.periodService = $injector.get('periodService');
             this.$location = $injector.get('$location');
         });
 
         this.goToUrl = goToUrl;
         this.getResolvedValue = getResolvedValue;
 
-        this.user = new UserDataBuilder().build();
+        this.user = new this.UserDataBuilder().build();
         this.$stateParams = {};
-        this.requisition = new RequisitionDataBuilder().build();
+        this.program = new this.ProgramDataBuilder().build();
+        this.facility = new this.FacilityDataBuilder().build();
+        this.period = new this.PeriodDataBuilder().build();
+        this.requisition = new this.RequisitionDataBuilder()
+            .withProgram(this.program)
+            .withFacility(this.facility)
+            .withProcessingPeriod(this.period)
+            .withRequisitionLineItems([
+                new this.RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(this.program)
+                    .buildJson(),
+                new this.RequisitionLineItemDataBuilder()
+                    .nonFullSupplyForProgram(this.program)
+                    .buildJson(),
+                new this.RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(this.program)
+                    .buildJson()
+            ])
+            .buildJson();
 
         spyOn(this.currentUserService, 'getUserInfo').andReturn(this.$q.resolve(this.user));
         spyOn(this.requisitionService, 'get').andReturn(this.$q.resolve(this.requisition));
+        spyOn(this.programService, 'getUserPrograms').andReturn(this.$q.when([this.program]));
+        spyOn(this.facilityService, 'get').andReturn(this.$q.resolve(this.facility));
+        spyOn(this.periodService, 'get').andReturn(this.$q.resolve(this.period));
         spyOn(this.requisitionViewFactory, 'canSubmit').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canAuthorize').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canApproveAndReject').andReturn(this.$q.resolve(true));
@@ -71,6 +102,24 @@ describe('openlmis.requisitions.requisition state', function() {
 
         expect(this.getResolvedValue('requisition')).toEqual(this.requisition);
         expect(this.requisitionService.get).not.toHaveBeenCalled();
+    });
+
+    it('should fetch facility', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('facility')).toEqual(this.facility);
+    });
+
+    it('should fetch program', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('program')).toEqual(this.program);
+    });
+
+    it('should fetch period', function() {
+        this.goToUrl('/requisition/requisition-id');
+
+        expect(this.getResolvedValue('processingPeriod')).toEqual(this.period);
     });
 
     it('should resolve if user has right to submit', function() {

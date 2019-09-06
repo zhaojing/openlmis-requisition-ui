@@ -30,16 +30,18 @@
 
     service.$inject = [
         '$q', '$resource', 'requisitionUrlFactory', 'Requisition', 'dateUtils', 'localStorageFactory', 'offlineService',
-        '$filter', 'requisitionCacheService'
+        '$filter', 'requisitionCacheService', 'OrderableResource', 'FacilityTypeApprovedProductResource',
+        'periodService'
     ];
 
     function service($q, $resource, requisitionUrlFactory, Requisition, dateUtils, localStorageFactory, offlineService,
-                     $filter, requisitionCacheService) {
+                     $filter, requisitionCacheService, OrderableResource, FacilityTypeApprovedProductResource,
+                     periodService) {
 
         var onlineOnlyRequisitions = localStorageFactory('onlineOnly'),
             offlineStatusMessages = localStorageFactory('statusMessages');
 
-        var resource = $resource(requisitionUrlFactory('/api/requisitions/:id'), {}, {
+        var resource = $resource(requisitionUrlFactory('/api/v2/requisitions/:id'), {}, {
             get: {
                 method: 'GET',
                 transformResponse: transformGetResponse
@@ -48,7 +50,7 @@
                 headers: {
                     'Idempotency-Key': getIdempotencyKey
                 },
-                url: requisitionUrlFactory('/api/requisitions/initiate'),
+                url: requisitionUrlFactory('/api/v2/requisitions/initiate'),
                 method: 'POST'
             },
             search: {
@@ -115,8 +117,7 @@
                 statusMessages = offlineStatusMessages.search({
                     requisitionId: requisition.id
                 });
-
-                return $q.resolve(new Requisition(requisition, statusMessages));
+                return extendLineItemsWithOrderablesAndFtaps(requisition, statusMessages);
             } else if (requisition && requisition.$modified) {
                 return getRequisition(id).then(prepareRequisition);
             }
@@ -128,12 +129,12 @@
                     if (requisition.$availableOffline) {
                         storeResponses(requisition, response);
                     }
-                    return new Requisition(requisition, response);
+                    return extendLineItemsWithOrderablesAndFtaps(requisition, statusMessages);
                 }, function() {
                     if (requisition.$availableOffline) {
                         requisitionCacheService.cacheRequisition(requisition);
                     }
-                    return new Requisition(requisition);
+                    return extendLineItemsWithOrderablesAndFtaps(requisition);
                 });
             });
         }
@@ -465,7 +466,59 @@
                 requisitionId: requisition.id
             });
 
-            return new Requisition(requisition, statusMessages);
+            return extendLineItemsWithOrderablesAndFtaps(requisition, statusMessages);
+        }
+
+        function extendLineItemsWithOrderablesAndFtaps(requisition, statusMessages) {
+            return $q.all([getByVersionIdentities(requisition.availableFullSupplyProducts, new OrderableResource()),
+                getByVersionIdentities(requisition.availableNonFullSupplyProducts, new OrderableResource()),
+                periodService.get(requisition.processingPeriod.id)])
+                .then(function(result) {
+                    requisition.availableFullSupplyProducts = result[0];
+                    requisition.availableNonFullSupplyProducts = result[1];
+                    requisition.processingPeriod = result[2];
+                    return requisition;
+                })
+                .then(function(requisition) {
+                    var indentities = getResourcesFromLineItems(requisition.requisitionLineItems);
+                    return $q.all([
+                        getByVersionIdentities(indentities.orderables, new OrderableResource()),
+                        getByVersionIdentities(indentities.ftaps, new FacilityTypeApprovedProductResource())
+                    ])
+                        .then(function(result) {
+                            requisition.requisitionLineItems.forEach(function(lineItem) {
+                                result[0].forEach(function(orderable) {
+                                    if (lineItem.orderable.id === orderable.id) {
+                                        lineItem.orderable = orderable;
+                                    }
+                                });
+                                result[1].forEach(function(ftap) {
+                                    if (lineItem.approvedProduct.id === ftap.id) {
+                                        lineItem.approvedProduct = ftap;
+                                    }
+                                });
+                            });
+                            return new Requisition(requisition, statusMessages);
+                        });
+                });
+        }
+
+        function getResourcesFromLineItems(lineItems) {
+            var orderableIdentities = [],
+                ftapIdentities = [];
+            lineItems.forEach(function(item) {
+                orderableIdentities.push(item.orderable);
+                ftapIdentities.push(item.approvedProduct);
+            });
+
+            return {
+                ftaps: ftapIdentities,
+                orderables: orderableIdentities
+            };
+        }
+
+        function getByVersionIdentities(identities, resource) {
+            return resource.getByVersionIdentities(identities);
         }
     }
 })();

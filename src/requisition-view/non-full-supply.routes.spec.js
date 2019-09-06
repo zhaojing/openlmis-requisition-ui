@@ -17,12 +17,16 @@ describe('openlmis.requisitions.requisition.nonFullSupply state', function() {
 
     beforeEach(function() {
         module('requisition-view');
+        module('referencedata-facility-type-approved-product');
 
         inject(function($injector) {
             this.UserDataBuilder = $injector.get('UserDataBuilder');
             this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
             this.RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
             this.RequisitionColumnDataBuilder = $injector.get('RequisitionColumnDataBuilder');
+            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
+            this.FacilityDataBuilder = $injector.get('FacilityDataBuilder');
+            this.PeriodDataBuilder = $injector.get('PeriodDataBuilder');
             this.$state = $injector.get('$state');
             this.$rootScope = $injector.get('$rootScope');
             this.$q = $injector.get('$q');
@@ -30,6 +34,9 @@ describe('openlmis.requisitions.requisition.nonFullSupply state', function() {
             this.requisitionViewFactory = $injector.get('requisitionViewFactory');
             this.requisitionService = $injector.get('requisitionService');
             this.$location = $injector.get('$location');
+            this.facilityService = $injector.get('facilityService');
+            this.programService = $injector.get('programService');
+            this.periodService = $injector.get('periodService');
         });
 
         this.goToUrl = goToUrl;
@@ -37,10 +44,16 @@ describe('openlmis.requisitions.requisition.nonFullSupply state', function() {
 
         this.user = new this.UserDataBuilder().build();
         this.$stateParams = {};
+        this.program = new this.ProgramDataBuilder().build();
+        this.facility = new this.FacilityDataBuilder().build();
+        this.period = new this.PeriodDataBuilder().build();
 
         var requisitionDataBuilder = new this.RequisitionDataBuilder();
 
         requisitionDataBuilder
+            .withProgram(this.program)
+            .withFacility(this.facility)
+            .withProcessingPeriod(this.period)
             .withRequisitionLineItems([
                 new this.RequisitionLineItemDataBuilder()
                     .nonFullSupplyForProgram(requisitionDataBuilder.program)
@@ -85,6 +98,9 @@ describe('openlmis.requisitions.requisition.nonFullSupply state', function() {
         spyOn(this.requisitionViewFactory, 'canApproveAndReject').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canDelete').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canSkip').andReturn(this.$q.resolve(true));
+        spyOn(this.programService, 'getUserPrograms').andReturn(this.$q.when([this.program]));
+        spyOn(this.facilityService, 'get').andReturn(this.$q.resolve(this.facility));
+        spyOn(this.periodService, 'get').andReturn(this.$q.resolve(this.period));
 
         this.requisition.template.getColumns.andReturn(this.columns);
     });

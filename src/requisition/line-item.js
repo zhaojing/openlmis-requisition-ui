@@ -70,6 +70,9 @@
 
         function getFieldValue(name) {
             var value = this;
+            if (name === 'pricePerPack') {
+                name = '$program.pricePerPack';
+            }
             angular.forEach(name.split('.'), function(property) {
                 value = value[property];
             });

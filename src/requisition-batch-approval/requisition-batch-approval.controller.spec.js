@@ -16,78 +16,10 @@
 describe('RequisitionBatchApprovalController', function() {
 
     //injects
-    var vm, $stateParams, $rootScope, $q, confirmService, $controller, calculationFactory, confirmDeferred, $scope,
-        requisitionService, alertService, $state, requisitionsStorage, batchRequisitionsStorage, notificationService,
-        requisitionBatchSaveFactory, notificationServiceSpy, requisitionBatchApproveFactory, loadingModalService,
-        batchDeferred;
-
-    //variables
-    var requisitions, products, lineItems;
+    var confirmDeferred, requisitionsStorage, batchRequisitionsStorage, notificationServiceSpy, batchDeferred;
 
     beforeEach(function() {
         module('requisition-batch-approval');
-
-        var requisitionLineItems = [
-            {
-                id: 1,
-                skipped: false,
-                approvedQuantity: 10,
-                totalCost: 100,
-                orderable: {
-                    id: '1',
-                    productCode: 'Code 1',
-                    fullProductName: 'Product name 1'
-                }
-            },
-            {
-                id: 2,
-                skipped: false,
-                approvedQuantity: 1,
-                totalCost: 10,
-                orderable: {
-                    id: '2',
-                    productCode: 'Code 2',
-                    fullProductName: 'Product name 2'
-                }
-            }
-        ];
-
-        var requisition = {
-            id: 1,
-            status: 'AUTHORIZED',
-            requisitionLineItems: requisitionLineItems,
-            processingPeriod: {
-                name: 'Period name 1'
-            },
-            facility: {
-                name: 'Facility name 1'
-            }
-        };
-
-        requisitions = [requisition];
-
-        products = {};
-        products[requisitionLineItems[0].orderable.id] = {
-            code: requisitionLineItems[0].orderable.productCode,
-            name: requisitionLineItems[0].orderable.fullProductName,
-            totalCost: requisitionLineItems[0].totalCost,
-            totalQuantity: requisitionLineItems[0].approvedQuantity,
-            requisitions: [requisition.id],
-            productId: requisitionLineItems[0].orderable.id
-        };
-        products[requisitionLineItems[1].orderable.id] = {
-            code: requisitionLineItems[1].orderable.productCode,
-            name: requisitionLineItems[1].orderable.fullProductName,
-            totalCost: requisitionLineItems[1].totalCost,
-            totalQuantity: requisitionLineItems[1].approvedQuantity,
-            requisitions: [requisition.id],
-            productId: requisitionLineItems[1].orderable.id
-        };
-
-        lineItems = [];
-        lineItems[requisition.id] = [];
-        lineItems[requisition.id][requisitionLineItems[0].orderable.id] = requisitionLineItems[0];
-        lineItems[requisition.id][requisitionLineItems[1].orderable.id] = requisitionLineItems[1];
 
         var requisitionWatcherMock = jasmine.createSpy('RequisitionWatcher');
         module(function($provide) {
@@ -119,150 +51,209 @@ describe('RequisitionBatchApprovalController', function() {
         });
 
         inject(function($injector) {
-            $controller = $injector.get('$controller');
-            confirmService = $injector.get('confirmService');
-            $rootScope = $injector.get('$rootScope');
-            $q = $injector.get('$q');
-            $scope = $injector.get('$rootScope').$new();
-            requisitionService = $injector.get('requisitionService');
-            notificationService = $injector.get('notificationService');
-            $stateParams = $injector.get('$stateParams');
-            alertService = $injector.get('alertService');
-            $state = $injector.get('$state');
-            requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
-            requisitionBatchApproveFactory = $injector.get('requisitionBatchApproveFactory');
-            calculationFactory = $injector.get('calculationFactory');
-            loadingModalService = $injector.get('loadingModalService');
+            this.$controller = $injector.get('$controller');
+            this.confirmService = $injector.get('confirmService');
+            this.$rootScope = $injector.get('$rootScope');
+            this.$q = $injector.get('$q');
+            this.$scope = $injector.get('$rootScope').$new();
+            this.requisitionService = $injector.get('requisitionService');
+            this.notificationService = $injector.get('notificationService');
+            this.$stateParams = $injector.get('$stateParams');
+            this.alertService = $injector.get('alertService');
+            this.$state = $injector.get('$state');
+            this.requisitionBatchSaveFactory = $injector.get('requisitionBatchSaveFactory');
+            this.requisitionBatchApproveFactory = $injector.get('requisitionBatchApproveFactory');
+            this.calculationFactory = $injector.get('calculationFactory');
+            this.loadingModalService = $injector.get('loadingModalService');
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            this.RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
+            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
         });
 
-        $stateParams.errors = {};
-        spyOn(requisitionService, 'get').andReturn($q.when(requisition));
+        this.program = new this.ProgramDataBuilder().build();
+
+        this.requisition = new this.RequisitionDataBuilder()
+            .withProgram(this.program)
+            .withRequisitionLineItems([
+                new this.RequisitionLineItemDataBuilder()
+                    .fullSupplyForProgram(this.program)
+                    .buildJson(),
+                new this.RequisitionLineItemDataBuilder()
+                    .nonFullSupplyForProgram(this.program)
+                    .buildJson()
+            ])
+            .build();
+
+        this.requisition.requisitionLineItems[0].id = 1;
+        this.requisition.requisitionLineItems[0].totalCost = 100;
+        this.requisition.requisitionLineItems[1].id = 2;
+        this.requisition.requisitionLineItems[1].totalCost = 10;
+
+        this.requisition.requisitionLineItems[0].approvedQuantity = 10;
+        this.requisition.requisitionLineItems[1].approvedQuantity = 1;
+
+        this.requisitions = [this.requisition];
+
+        this.products = {};
+        this.products[this.requisition.requisitionLineItems[0].orderable.id] = {
+            code: this.requisition.requisitionLineItems[0].orderable.productCode,
+            name: this.requisition.requisitionLineItems[0].orderable.fullProductName,
+            totalCost: this.requisition.requisitionLineItems[0].totalCost,
+            totalQuantity: this.requisition.requisitionLineItems[0].approvedQuantity,
+            requisitions: [this.requisition.id],
+            productId: this.requisition.requisitionLineItems[0].orderable.id
+        };
+        this.products[this.requisition.requisitionLineItems[1].orderable.id] = {
+            code: this.requisition.requisitionLineItems[1].orderable.productCode,
+            name: this.requisition.requisitionLineItems[1].orderable.fullProductName,
+            totalCost: this.requisition.requisitionLineItems[1].totalCost,
+            totalQuantity: this.requisition.requisitionLineItems[1].approvedQuantity,
+            requisitions: [this.requisition.id],
+            productId: this.requisition.requisitionLineItems[1].orderable.id
+        };
+
+        this.lineItems = [];
+        this.lineItems[this.requisition.id] = [];
+        this.lineItems[this.requisition.id][this.requisition.requisitionLineItems[0]
+            .orderable.id] = this.requisition.requisitionLineItems[0];
+        this.lineItems[this.requisition.id][this.requisition.requisitionLineItems[1]
+            .orderable.id] = this.requisition.requisitionLineItems[1];
+
+        this.$stateParams.errors = {};
+        spyOn(this.requisitionService, 'get').andReturn(this.$q.when(this.requisition));
+
+        this.initController = initController;
     });
 
     describe('$onInit', function() {
 
         beforeEach(function() {
-            $stateParams.errors[requisitions[0].id] = 'There was an error';
+            this.$stateParams.errors[this.requisitions[0].id] = 'There was an error';
 
-            vm = $controller('RequisitionBatchApprovalController', {
-                requisitions: requisitions,
-                $scope: $scope,
-                $stateParams: $stateParams
+            this.vm = this.$controller('RequisitionBatchApprovalController', {
+                requisitions: this.requisitions,
+                $scope: this.$scope,
+                $stateParams: this.$stateParams
             });
 
-            spyOn(calculationFactory, 'totalCost').andCallFake(function(lineItem) {
+            var context = this;
+            spyOn(this.calculationFactory, 'totalCost').andCallFake(function(lineItem) {
                 if (lineItem.id === 1) {
-                    return requisitions[0].requisitionLineItems[0].totalCost;
+                    return context.requisitions[0].requisitionLineItems[0].totalCost;
                 }
                 if (lineItem.id === 2) {
-                    return requisitions[0].requisitionLineItems[1].totalCost;
+                    return context.requisitions[0].requisitionLineItems[1].totalCost;
                 }
                 return null;
             });
         });
 
         it('should expose requisitions', function() {
-            vm.$onInit();
-            $rootScope.$apply();
+            this.vm.$onInit();
+            this.$rootScope.$apply();
 
-            expect(vm.requisitions).toEqual(requisitions);
+            expect(this.vm.requisitions).toEqual(this.requisitions);
         });
 
         it('should assign errors to requisitions', function() {
-            vm.$onInit();
-            $rootScope.$apply();
+            this.vm.$onInit();
+            this.$rootScope.$apply();
 
-            expect(vm.requisitions[0].$error).toEqual('There was an error');
+            expect(this.vm.requisitions[0].$error).toEqual('There was an error');
         });
 
         it('should calculate total cost of requisition', function() {
-            vm.$onInit();
-            $rootScope.$apply();
+            this.vm.$onInit();
+            this.$rootScope.$apply();
 
-            expect(vm.requisitions[0].$totalCost).toEqual(110);
+            expect(this.vm.requisitions[0].$totalCost).toEqual(110);
         });
 
         it('should calculate total cost of all requisitions', function() {
-            vm.$onInit();
-            $rootScope.$apply();
+            this.vm.$onInit();
+            this.$rootScope.$apply();
 
-            expect(vm.totalCost).toEqual(110);
+            expect(this.vm.totalCost).toEqual(110);
         });
 
         it('should expose list of products', function() {
-            vm.$onInit();
-            $rootScope.$apply();
+            this.vm.$onInit();
+            this.$rootScope.$apply();
 
-            expect(vm.products).toEqual(products);
+            expect(this.vm.products).toEqual(this.products);
         });
 
         it('should expose list of line items', function() {
-            vm.$onInit();
-            $rootScope.$apply();
+            this.vm.$onInit();
+            this.$rootScope.$apply();
 
-            expect(vm.lineItems).toEqual(lineItems);
+            expect(this.vm.lineItems).toEqual(this.lineItems);
         });
     });
 
     describe('updateLineItem', function() {
 
+        var requisitionId, orderableId;
+
         beforeEach(function() {
-            initController();
-            spyOn(calculationFactory, 'totalCost').andReturn(100);
+            this.initController();
+            requisitionId = this.requisition.id;
+            orderableId = this.requisition.requisitionLineItems[0].orderable.id;
+            spyOn(this.calculationFactory, 'totalCost').andReturn(100);
         });
 
         it('should call calculation factory method', function() {
-            vm.updateLineItem(lineItems[1][1], requisitions[0]);
+            this.vm.updateLineItem(this.lineItems[requisitionId][orderableId], this.requisitions[0]);
 
-            expect(calculationFactory.totalCost).toHaveBeenCalled();
+            expect(this.calculationFactory.totalCost).toHaveBeenCalled();
         });
 
         it('should change total cost value', function() {
-            vm.updateLineItem(lineItems[1][1], requisitions[0]);
+            this.vm.updateLineItem(this.lineItems[requisitionId][orderableId], this.requisitions[0]);
 
-            expect(lineItems[1][1].totalCost).toBe(100);
+            expect(this.lineItems[requisitionId][orderableId].totalCost).toBe(100);
         });
     });
 
     describe('revert', function() {
 
         beforeEach(function() {
-            initController();
+            this.initController();
 
-            confirmDeferred = $q.defer();
-            spyOn(confirmService, 'confirm').andReturn(confirmDeferred.promise);
+            confirmDeferred = this.$q.defer();
+            spyOn(this.confirmService, 'confirm').andReturn(confirmDeferred.promise);
         });
 
         it('should ask user for confirmation', function() {
-            vm.revert();
+            this.vm.revert();
 
             confirmDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith(
+            expect(this.confirmService.confirm).toHaveBeenCalledWith(
                 'requisitionBatchApproval.revertConfirm', 'requisitionBatchApproval.revert'
             );
         });
 
         it('should revert requisitions to original state', function() {
-            vm.requisitions[0].requisitionLineItems[0].approvedQuantity = 1000;
+            this.vm.requisitions[0].requisitionLineItems[0].approvedQuantity = 1000;
 
-            vm.revert();
+            this.vm.revert();
             confirmDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(vm.requisitions[0].requisitionLineItems[0].approvedQuantity).toBe(10);
-            expect(vm.requisitions).toEqual(vm.requisitionsCopy);
+            expect(this.vm.requisitions[0].requisitionLineItems[0].approvedQuantity).toBe(10);
+            expect(this.vm.requisitions).toEqual(this.vm.requisitionsCopy);
         });
 
         it('should not revert requisitions if modal was dismissed', function() {
-            vm.requisitions[0].requisitionLineItems[0].approvedQuantity = 1000;
+            this.vm.requisitions[0].requisitionLineItems[0].approvedQuantity = 1000;
 
-            vm.revert();
+            this.vm.revert();
             confirmDeferred.reject();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(vm.requisitions[0].requisitionLineItems[0].approvedQuantity).toBe(1000);
+            expect(this.vm.requisitions[0].requisitionLineItems[0].approvedQuantity).toBe(1000);
         });
     });
 
@@ -271,70 +262,70 @@ describe('RequisitionBatchApprovalController', function() {
 
         beforeEach(function() {
             isOffline = false;
-            initController();
+            this.initController();
 
-            spyOn($state, 'reload');
-            spyOn(alertService, 'error');
+            spyOn(this.$state, 'reload');
+            spyOn(this.alertService, 'error');
 
-            spyOn(vm, 'isOffline').andCallFake(function() {
+            spyOn(this.vm, 'isOffline').andCallFake(function() {
                 return isOffline;
             });
 
-            confirmDeferred = $q.defer();
-            spyOn(confirmService, 'confirm').andReturn(confirmDeferred.promise);
+            confirmDeferred = this.$q.defer();
+            spyOn(this.confirmService, 'confirm').andReturn(confirmDeferred.promise);
         });
 
         it('should display alert if offline', function() {
             isOffline = true;
-            vm.updateRequisitions();
+            this.vm.updateRequisitions();
 
-            expect(alertService.error).toHaveBeenCalledWith('requisitionBatchApproval.updateOffline');
+            expect(this.alertService.error).toHaveBeenCalledWith('requisitionBatchApproval.updateOffline');
         });
 
         it('should ask user for confirmation to update', function() {
-            vm.updateRequisitions();
+            this.vm.updateRequisitions();
 
             confirmDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith(
+            expect(this.confirmService.confirm).toHaveBeenCalledWith(
                 'requisitionBatchApproval.updateWarning', 'requisitionBatchApproval.update'
             );
         });
 
         it('should reload current state', function() {
-            vm.updateRequisitions();
+            this.vm.updateRequisitions();
 
             confirmDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect($state.reload).toHaveBeenCalled();
+            expect(this.$state.reload).toHaveBeenCalled();
         });
 
         it('should not reload current state if modal was dismissed', function() {
-            vm.updateRequisitions();
+            this.vm.updateRequisitions();
 
             confirmDeferred.reject();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect($state.reload).not.toHaveBeenCalled();
+            expect(this.$state.reload).not.toHaveBeenCalled();
         });
 
         it('should clear local storage', function() {
-            vm.updateRequisitions();
+            this.vm.updateRequisitions();
 
             confirmDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(batchRequisitionsStorage.removeBy).toHaveBeenCalledWith('id', requisitions[0].id);
-            expect(requisitionsStorage.removeBy).toHaveBeenCalledWith('id', requisitions[0].id);
+            expect(batchRequisitionsStorage.removeBy).toHaveBeenCalledWith('id', this.requisitions[0].id);
+            expect(requisitionsStorage.removeBy).toHaveBeenCalledWith('id', this.requisitions[0].id);
         });
 
         it('should not clear local storage if modal was dismissed', function() {
-            vm.updateRequisitions();
+            this.vm.updateRequisitions();
 
             confirmDeferred.reject();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
             expect(batchRequisitionsStorage.removeBy).not.toHaveBeenCalled();
             expect(requisitionsStorage.removeBy).not.toHaveBeenCalled();
@@ -344,17 +335,17 @@ describe('RequisitionBatchApprovalController', function() {
     describe('areRequisitionsOutdated', function() {
 
         beforeEach(function() {
-            initController();
+            this.initController();
         });
 
         it('should return true if at least one requisition is marked as outdated', function() {
-            vm.requisitions[0].$outdated = true;
+            this.vm.requisitions[0].$outdated = true;
 
-            expect(vm.areRequisitionsOutdated()).toBeTruthy();
+            expect(this.vm.areRequisitionsOutdated()).toBeTruthy();
         });
 
         it('should return false if all requisitions are up to date', function() {
-            expect(vm.areRequisitionsOutdated()).toBeFalsy();
+            expect(this.vm.areRequisitionsOutdated()).toBeFalsy();
         });
 
     });
@@ -362,87 +353,87 @@ describe('RequisitionBatchApprovalController', function() {
     describe('sync', function() {
 
         beforeEach(function() {
-            initController();
+            this.initController();
 
-            confirmDeferred = $q.defer();
+            confirmDeferred = this.$q.defer();
             notificationServiceSpy = jasmine.createSpy();
 
-            spyOn($state, 'go').andReturn();
-            spyOn(requisitionBatchSaveFactory, 'saveRequisitions').andReturn(confirmDeferred.promise);
+            spyOn(this.$state, 'go').andReturn();
+            spyOn(this.requisitionBatchSaveFactory, 'saveRequisitions').andReturn(confirmDeferred.promise);
         });
 
         it('should show success notification if successfully save', function() {
-            spyOn(notificationService, 'success').andCallFake(notificationServiceSpy);
+            spyOn(this.notificationService, 'success').andCallFake(notificationServiceSpy);
 
-            vm.sync();
-            confirmDeferred.resolve(requisitions);
-            $rootScope.$apply();
+            this.vm.sync();
+            confirmDeferred.resolve(this.requisitions);
+            this.$rootScope.$apply();
 
             expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionBatchApproval.syncSuccess');
         });
 
         it('should show error notification if unsuccessfully save', function() {
-            spyOn(notificationService, 'error').andCallFake(notificationServiceSpy);
+            spyOn(this.notificationService, 'error').andCallFake(notificationServiceSpy);
 
-            vm.sync();
-            confirmDeferred.reject(requisitions);
-            $rootScope.$apply();
+            this.vm.sync();
+            confirmDeferred.reject(this.requisitions);
+            this.$rootScope.$apply();
 
             expect(notificationServiceSpy).toHaveBeenCalledWith('requisitionBatchApproval.syncError');
         });
 
         it('should reload current state', function() {
-            vm.sync();
-            confirmDeferred.reject(requisitions);
-            $rootScope.$apply();
+            this.vm.sync();
+            confirmDeferred.reject(this.requisitions);
+            this.$rootScope.$apply();
 
-            expect($state.go).toHaveBeenCalled();
+            expect(this.$state.go).toHaveBeenCalled();
         });
     });
 
     describe('approve', function() {
 
         beforeEach(function() {
-            initController();
+            this.initController();
 
-            confirmDeferred = $q.defer();
-            batchDeferred = $q.defer();
+            confirmDeferred = this.$q.defer();
+            batchDeferred = this.$q.defer();
 
-            spyOn($state, 'go').andReturn();
-            spyOn(confirmService, 'confirm').andReturn(confirmDeferred.promise);
-            spyOn(requisitionBatchApproveFactory, 'batchApprove').andReturn(batchDeferred.promise);
-            spyOn(loadingModalService, 'close').andReturn();
+            spyOn(this.$state, 'go').andReturn();
+            spyOn(this.confirmService, 'confirm').andReturn(confirmDeferred.promise);
+            spyOn(this.requisitionBatchApproveFactory, 'batchApprove').andReturn(batchDeferred.promise);
+            spyOn(this.loadingModalService, 'close').andReturn();
         });
 
         it('should ask user for confirmation to approve', function() {
-            vm.approve();
+            this.vm.approve();
 
             confirmDeferred.resolve();
             batchDeferred.resolve();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(confirmService.confirm).toHaveBeenCalledWith('requisitionBatchApproval.approvalConfirm');
+            expect(this.confirmService.confirm).toHaveBeenCalledWith('requisitionBatchApproval.approvalConfirm');
         });
 
         it('should close loading modal if an error occurs', function() {
-            vm.approve();
+            this.vm.approve();
 
             confirmDeferred.resolve();
             batchDeferred.reject();
-            $rootScope.$apply();
+            this.$rootScope.$apply();
 
-            expect(loadingModalService.close).toHaveBeenCalled();
+            expect(this.loadingModalService.close).toHaveBeenCalled();
         });
     });
 
     function initController() {
-        vm = $controller('RequisitionBatchApprovalController', {
-            requisitions: requisitions,
-            calculationFactory: calculationFactory,
-            $scope: $scope,
-            $stateParams: $stateParams
+        this.vm = this.$controller('RequisitionBatchApprovalController', {
+            requisitions: this.requisitions,
+            calculationFactory: this.calculationFactory,
+            $scope: this.$scope,
+            $stateParams: this.$stateParams
         });
-        vm.$onInit();
-        $rootScope.$apply();
+        this.vm.$onInit();
+        this.$rootScope.$apply();
     }
 });

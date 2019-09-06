@@ -54,6 +54,25 @@
                     }
                     return requisitionService.get($stateParams.rnr);
                 },
+                program: function($q, programService, user, requisition) {
+                    var deferred = $q.defer();
+
+                    programService.getUserPrograms(user.id)
+                        .then(function(programs) {
+                            programs.forEach(function(program) {
+                                if (program.id === requisition.program.id) {
+                                    return deferred.resolve(program);
+                                }
+                            });
+                        }, deferred.reject);
+                    return deferred.promise;
+                },
+                processingPeriod: function(periodService, requisition) {
+                    return periodService.get(requisition.processingPeriod.id);
+                },
+                facility: function(facilityService, requisition) {
+                    return facilityService.get(requisition.facility.id);
+                },
                 canSubmit: function(requisitionViewFactory, user, requisition) {
                     return requisitionViewFactory.canSubmit(user.id, requisition);
                 },

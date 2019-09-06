@@ -43,6 +43,7 @@
         'referencedata-program',
         'referencedata-period',
         'referencedata-orderable',
+        'referencedata-facility-type-approved-product',
         'referencedata',
         'ui.router',
         'openlmis-database'
