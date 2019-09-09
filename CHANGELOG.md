@@ -1,5 +1,8 @@
-6.0.1 / WIP
+7.0.0 / WIP
 ==================
+
+Breaking changes:
+* [OLMIS-6416](https://openlmis.atlassian.net/browse/OLMIS-6416): Switched to v2 requisition endpoints.
 
 Improvements:
 * [OLMIS-6315](https://openlmis.atlassian.net/browse/OLMIS-6315): Added filtering by requisition status on Requisitions View page.
