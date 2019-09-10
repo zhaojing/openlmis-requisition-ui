@@ -185,7 +185,8 @@
          */
         function calculateTotalCost(lineItem, requisition) {
             var packsToShip = this.packsToShip(lineItem, requisition);
-            var pricePerPack = lineItem.$program[T];
+            var pricePerPack = lineItem.$program ? lineItem.$program[T] :
+                getPricePerPackForV1Endpoints(lineItem.id, requisition);
             if (pricePerPack === undefined) {
                 pricePerPack = 0;
             }
@@ -413,6 +414,16 @@
 
         function isDisplayed(column) {
             return column && column.$display;
+        }
+
+        function getPricePerPackForV1Endpoints(lineItemId, requisition) {
+            var pricePerPack;
+            requisition.requisitionLineItems.forEach(function(lineItem) {
+                if (lineItem.id === lineItemId) {
+                    pricePerPack = lineItem.pricePerPack;
+                }
+            });
+            return pricePerPack;
         }
     }
 })();
