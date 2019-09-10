@@ -37,7 +37,10 @@
                                      authorizationService, REQUISITION_RIGHTS) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
-            offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions');
+            offlineBatchRequisitions = localStorageFactory('batchApproveRequisitions'),
+            offlineProcessingPeriods = localStorageFactory('processingPeriods'),
+            offlineUserPrograms = localStorageFactory('userPrograms'),
+            offlineFacilities = localStorageFactory('facilities');
 
         this.cacheRequisition = cacheRequisition;
         this.cacheBatchRequisition = cacheBatchRequisition;
@@ -152,6 +155,14 @@
                 }
             });
 
+            requisitions.forEach(function(requisition) {
+                var processingPeriod = offlineProcessingPeriods.getBy('id', requisition.processingPeriod.id);
+                var program = offlineUserPrograms.getBy('id', requisition.program.id);
+                var facilities = offlineFacilities.getBy('id', requisition.facility.id);
+                requisition.processingPeriod = processingPeriod;
+                requisition.program = program;
+                requisition.facility = facilities;
+            });
             return requisitions;
         }
 

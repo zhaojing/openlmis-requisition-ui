@@ -20,10 +20,19 @@ describe('requisitionCacheService', function() {
         this.requisitionStorage = jasmine.createSpyObj('requisitions', ['search', 'put', 'removeBy', 'getBy']);
         this.batchRequisitionStorage = jasmine
             .createSpyObj('batchRequisitions', ['search', 'put', 'removeBy', 'getBy']);
+        this.processingPeriodsStorage = jasmine
+            .createSpyObj('processingPeriod', ['getBy']);
+        this.userProgramsStorage = jasmine
+            .createSpyObj('userPrograms', ['getBy']);
+        this.facilitiesStorage = jasmine
+            .createSpyObj('facilities', ['getBy']);
 
         var localStorageMap = {
             requisitions: this.requisitionStorage,
-            batchApproveRequisitions: this.batchRequisitionStorage
+            batchApproveRequisitions: this.batchRequisitionStorage,
+            processingPeriods: this.processingPeriodsStorage,
+            userPrograms: this.userProgramsStorage,
+            facilities: this.facilitiesStorage
         };
         module('requisition', function($provide) {
             $provide.service('offlineService', function() {
@@ -67,6 +76,10 @@ describe('requisitionCacheService', function() {
             this.batchRequisitionOne,
             this.batchRequisitionTwo
         ]);
+
+        this.processingPeriodsStorage.getBy.andReturn(this.requisitionOne.processingPeriod);
+        this.userProgramsStorage.getBy.andReturn(this.requisitionOne.program);
+        this.facilitiesStorage.getBy.andReturn(this.requisitionOne.facility);
 
         this.searchParams = {
             program: this.requisitionOne.program.id,
