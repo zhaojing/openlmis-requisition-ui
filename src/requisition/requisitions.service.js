@@ -129,7 +129,7 @@
                     if (requisition.$availableOffline) {
                         storeResponses(requisition, response);
                     }
-                    return extendLineItemsWithOrderablesAndFtaps(requisition, statusMessages);
+                    return extendLineItemsWithOrderablesAndFtaps(requisition, response);
                 }, function() {
                     if (requisition.$availableOffline) {
                         requisitionCacheService.cacheRequisition(requisition);
