@@ -201,6 +201,19 @@ describe('calculationFactory', function() {
             expect(calculationFactory.totalCost(lineItem, requisitionMock)).toBe(0);
         });
 
+        it('should calculate total cost based on line item pricePerPack if $program value missing', function() {
+            requisitionMock.$isAfterAuthorize.andReturn(false);
+            requisitionMock.requisitionLineItems = [lineItem];
+
+            lineItem.$program = undefined;
+            lineItem.pricePerPack = 30.20;
+            lineItem.requestedQuantity = 15;
+            lineItem.orderable.netContent = 10;
+            lineItem.orderable.packRoundingThreshold = 4;
+
+            expect(calculationFactory.totalCost(lineItem, requisitionMock)).toBe(60.4);
+        });
+
         it('should use ordered quantity when requested quantity is no present', function() {
             requisitionMock.$isAfterAuthorize.andReturn(false);
 
