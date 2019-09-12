@@ -72,7 +72,7 @@
                     .nonFullSupplyForProgram(this.program)
                     .buildJson()
             ];
-            this.draftStatusMessage = 'Requisition ' + instanceNumber + 'status message draft';
+            this.draftStatusMessage = 'Requisition ' + instanceNumber + ' status message draft';
             this.facility = new FacilityDataBuilder().build();
             this.processingPeriod = new PeriodDataBuilder().build();
             this.status = REQUISITION_STATUS.INITIATED;

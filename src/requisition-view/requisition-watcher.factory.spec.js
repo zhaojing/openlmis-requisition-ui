@@ -15,7 +15,7 @@
 
 describe('RequisitionWatcher', function() {
 
-    var RequisitionWatcher, requisitionsStorage, scope, $timeout, $rootScope;
+    var requisitionsStorage;
 
     beforeEach(function() {
         module('requisition-view', function($provide) {
@@ -34,64 +34,75 @@ describe('RequisitionWatcher', function() {
         });
 
         inject(function($injector) {
-            RequisitionWatcher = $injector.get('RequisitionWatcher');
-            $rootScope = $injector.get('$rootScope');
-            $timeout = $injector.get('$timeout');
+            this.RequisitionWatcher = $injector.get('RequisitionWatcher');
+            this.$rootScope = $injector.get('$rootScope');
+            this.$timeout = $injector.get('$timeout');
+            this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
         });
 
-        scope = $rootScope.$new();
-        scope.requisition = {
-            requisitionLineItems: [
-                {
-                    value: 1
-                }
-            ],
-            draftStatusMessage: 'message'
-        };
+        this.scope = this.$rootScope.$new();
+        this.requisition = new this.RequisitionDataBuilder().buildJson();
 
-        new RequisitionWatcher(scope, scope.requisition, requisitionsStorage);
-        scope.$digest();
+        new this.RequisitionWatcher(this.scope, this.requisition, requisitionsStorage);
+        this.scope.$digest();
     });
 
     describe('line items watcher', function() {
 
         it('should save requisition after changes', function() {
-            scope.requisition.requisitionLineItems[0].value = 2;
-            scope.$digest();
-            $timeout.flush();
+            this.requisition.requisitionLineItems[0].beginningBalance = 20;
+            this.scope.$digest();
+            this.$timeout.flush();
 
-            expect(requisitionsStorage.put).toHaveBeenCalledWith(scope.requisition);
-            expect(scope.requisition.$modified).toBe(true);
+            expect(requisitionsStorage.put).toHaveBeenCalledWith(minimizedRequisition(this.requisition));
+            expect(this.requisition.$modified).toBe(true);
         });
 
-        it('should not save requisition if value has not changed', function() {
-            scope.requisition.requisitionLineItems[0].value = 1;
-            scope.$digest();
-            $timeout.flush();
+        it('should not save requisition if quantity has not changed', function() {
+            this.requisition.requisitionLineItems[0].beginningBalance = 50;
+            this.scope.$digest();
+            this.$timeout.flush();
 
             expect(requisitionsStorage.put).not.toHaveBeenCalled();
-            expect(scope.requisition.$modified).toBe(undefined);
+            expect(this.requisition.$modified).toBe(undefined);
         });
     });
 
     describe('comment watcher', function() {
 
         it('should save requisition after changes', function() {
-            scope.requisition.draftStatusMessage = 'newMessage';
-            scope.$digest();
-            $timeout.flush();
+            this.requisition.draftStatusMessage = 'newMessage';
+            this.scope.$digest();
+            this.$timeout.flush();
 
-            expect(requisitionsStorage.put).toHaveBeenCalledWith(scope.requisition);
-            expect(scope.requisition.$modified).toBe(true);
+            expect(requisitionsStorage.put).toHaveBeenCalledWith(minimizedRequisition(this.requisition));
+            expect(this.requisition.$modified).toBe(true);
         });
 
         it('should not save requisition if value has not changed', function() {
-            scope.requisition.draftStatusMessage = 'message';
-            scope.$digest();
-            $timeout.flush();
+            this.requisition.draftStatusMessage = 'Requisition 1 status message draft';
+            this.scope.$digest();
+            this.$timeout.flush();
 
             expect(requisitionsStorage.put).not.toHaveBeenCalled();
-            expect(scope.requisition.$modified).toBe(undefined);
+            expect(this.requisition.$modified).toBe(undefined);
         });
     });
+
+    function minimizedRequisition(requisition) {
+        var requisitionToSave = angular.copy(requisition);
+        requisitionToSave.requisitionLineItems.forEach(function(lineItem) {
+            lineItem.orderable = getVersionedObjectReference(lineItem.orderable);
+            lineItem.approvedProduct = lineItem.approvedProduct ?
+                getVersionedObjectReference(lineItem.approvedProduct) : undefined;
+        });
+        return requisitionToSave;
+    }
+
+    function getVersionedObjectReference(resource) {
+        return {
+            id: resource.id,
+            versionNumber: resource.meta.versionNumber
+        };
+    }
 });
