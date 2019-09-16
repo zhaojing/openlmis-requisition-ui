@@ -16,7 +16,7 @@
 describe('Requisition', function() {
 
     beforeEach(function() {
-        this.offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['put', 'remove', 'removeBy']);
+        this.offlineRequisitions = jasmine.createSpyObj('offlineRequisitions', ['remove', 'removeBy']);
 
         var context = this;
         module('requisition', function($provide) {
@@ -47,6 +47,9 @@ describe('Requisition', function() {
             this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             this.LineItem = $injector.get('LineItem');
             this.UuidGenerator = $injector.get('UuidGenerator');
+            this.requisitionCacheService = $injector.get('requisitionCacheService');
+            this.ProgramOrderableDataBuilder = $injector.get('ProgramOrderableDataBuilder');
+            this.ProgramDataBuilder = $injector.get('ProgramDataBuilder');
         });
 
         var requisitionDataBuilder = new this.RequisitionDataBuilder();
@@ -74,6 +77,7 @@ describe('Requisition', function() {
 
         spyOn(this.requisition.template, 'getColumn').andReturn(this.calculatedOrderQuantity);
         spyOn(this.authorizationService, 'isAuthenticated');
+        spyOn(this.requisitionCacheService, 'cacheRequisition').andCallThrough();
 
         var REQUISITION_RIGHTS = this.REQUISITION_RIGHTS;
         spyOn(this.authorizationService, 'hasRight').andCallFake(function(right) {
@@ -97,8 +101,7 @@ describe('Requisition', function() {
 
         it('should submit requisition that is available offline', function() {
             var storedRequisition;
-
-            this.offlineRequisitions.put.andCallFake(function(argument) {
+            this.requisitionCacheService.cacheRequisition.andCallFake(function(argument) {
                 storedRequisition = argument;
             });
 
@@ -119,7 +122,7 @@ describe('Requisition', function() {
             this.$rootScope.$apply();
 
             expect(this.requisition.$isSubmitted()).toBe(true);
-            expect(this.offlineRequisitions.put).toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalledWith(this.requisition);
             expect(storedRequisition.$modified).toBe(false);
             expect(storedRequisition.$availableOffline).toBe(true);
             expect(storedRequisition.id).toEqual(this.requisition.id);
@@ -128,8 +131,7 @@ describe('Requisition', function() {
 
         it('should update modifiedDate, status and statusChanges of a requisition', function() {
             var storedRequisition, updatedRequisition;
-
-            this.offlineRequisitions.put.andCallFake(function(argument) {
+            this.requisitionCacheService.cacheRequisition.andCallFake(function(argument) {
                 storedRequisition = argument;
             });
 
@@ -148,7 +150,7 @@ describe('Requisition', function() {
             this.$httpBackend.flush();
             this.$rootScope.$apply();
 
-            expect(this.offlineRequisitions.put).toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalledWith(this.requisition);
             expect(storedRequisition.modifiedDate).toEqual(updatedRequisition.modifiedDate);
             expect(storedRequisition.status).toEqual(updatedRequisition.status);
             expect(storedRequisition.statusChanges).toEqual(updatedRequisition.statusChanges);
@@ -156,8 +158,7 @@ describe('Requisition', function() {
 
         it('should save requisition to local storage after updating it', function() {
             var storedRequisition, updatedRequisition;
-
-            this.offlineRequisitions.put.andCallFake(function(argument) {
+            this.requisitionCacheService.cacheRequisition.andCallFake(function(argument) {
                 storedRequisition = argument;
             });
 
@@ -173,7 +174,7 @@ describe('Requisition', function() {
             this.$httpBackend.flush();
             this.$rootScope.$apply();
 
-            expect(this.offlineRequisitions.put).toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalledWith(this.requisition);
             expect(storedRequisition.id).toEqual(updatedRequisition.id);
         });
 
@@ -193,7 +194,7 @@ describe('Requisition', function() {
             this.$rootScope.$apply();
 
             expect(this.requisition.$isSubmitted()).toBe(true);
-            expect(this.offlineRequisitions.put).not.toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisition).not.toHaveBeenCalled();
         });
     });
 
@@ -201,7 +202,7 @@ describe('Requisition', function() {
 
         it('should authorize requisition that is available offline', function() {
             var storedRequisition;
-            this.offlineRequisitions.put.andCallFake(function(argument) {
+            this.requisitionCacheService.cacheRequisition.andCallFake(function(argument) {
                 storedRequisition = argument;
             });
 
@@ -222,7 +223,7 @@ describe('Requisition', function() {
             this.$rootScope.$apply();
 
             expect(this.requisition.$isAuthorized()).toBe(true);
-            expect(this.offlineRequisitions.put).toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalledWith(this.requisition);
             expect(storedRequisition.$modified).toBe(false);
             expect(storedRequisition.$availableOffline).toBe(true);
             expect(storedRequisition.id).toEqual(this.requisition.id);
@@ -245,7 +246,7 @@ describe('Requisition', function() {
             this.$rootScope.$apply();
 
             expect(this.requisition.$isAuthorized()).toBe(true);
-            expect(this.offlineRequisitions.put).not.toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisition).not.toHaveBeenCalled();
         });
 
         it('should set approved quantity to requested quantity when requested quantity is not empty', function() {
@@ -326,7 +327,7 @@ describe('Requisition', function() {
 
         it('should approve requisition that is available offline', function() {
             var storedRequisition;
-            this.offlineRequisitions.put.andCallFake(function(argument) {
+            this.requisitionCacheService.cacheRequisition.andCallFake(function(argument) {
                 storedRequisition = argument;
             });
 
@@ -345,7 +346,7 @@ describe('Requisition', function() {
             this.$rootScope.$apply();
 
             expect(this.requisition.$isApproved()).toBe(true);
-            expect(this.offlineRequisitions.put).toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalledWith(this.requisition);
             expect(storedRequisition.$modified).toBe(false);
             expect(storedRequisition.$availableOffline).toBe(true);
             expect(storedRequisition.id).toEqual(this.requisition.id);
@@ -368,7 +369,7 @@ describe('Requisition', function() {
             this.$rootScope.$apply();
 
             expect(this.requisition.$isApproved()).toBe(true);
-            expect(this.offlineRequisitions.put).not.toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisition).not.toHaveBeenCalled();
         });
     });
 
@@ -536,6 +537,7 @@ describe('Requisition', function() {
 
             delete expected.availableNonFullSupplyProducts;
             delete expected.availableFullSupplyProducts;
+            delete expected.availableProducts;
             delete expected.stockAdjustmentReasons;
             delete expected.template;
 
@@ -1062,6 +1064,10 @@ describe('Requisition', function() {
             var requisition = new this.RequisitionDataBuilder().buildSubmitted(),
                 orderable = this.orderable;
 
+            requisition.availableFullSupplyProducts = [
+                new this.OrderableDataBuilder().buildJson()
+            ];
+
             this.orderable = new this.OrderableDataBuilder()
                 .withPrograms(requisition.availableFullSupplyProducts[0].programs)
                 .buildJson();
@@ -1081,8 +1087,12 @@ describe('Requisition', function() {
         });
 
         it('should throw exception if trying to add full supply product to regular requisition', function() {
-            var requisition = new this.RequisitionDataBuilder().build(),
-                orderable = requisition.availableFullSupplyProducts[0];
+            var requisition = new this.RequisitionDataBuilder().build();
+            requisition.availableFullSupplyProducts = [
+                requisition.availableProducts[0]
+            ];
+
+            var orderable = requisition.availableFullSupplyProducts[0];
 
             expect(function() {
                 requisition.addLineItem(orderable, 10, 'explanation');
@@ -1091,6 +1101,9 @@ describe('Requisition', function() {
 
         it('should add new available full supply line item to emergency requisition', function() {
             this.requisition = new this.RequisitionDataBuilder().buildEmergency();
+            this.requisition.availableFullSupplyProducts = [
+                this.requisition.availableProducts[0]
+            ];
 
             var orderable = this.requisition.availableFullSupplyProducts[0];
 
@@ -1105,6 +1118,9 @@ describe('Requisition', function() {
 
         it('should add new available non full supply line item', function() {
             this.requisition = new this.RequisitionDataBuilder().build();
+            this.requisition.availableNonFullSupplyProducts = [
+                this.requisition.availableProducts[3]
+            ];
 
             var orderable = this.requisition.availableNonFullSupplyProducts[0];
 
@@ -1119,7 +1135,9 @@ describe('Requisition', function() {
 
         it('should add instance of the LineItem class', function() {
             this.requisition = new this.RequisitionDataBuilder().buildSubmitted();
-
+            this.requisition.availableNonFullSupplyProducts = [
+                this.requisition.availableProducts[3]
+            ];
             var orderable = this.requisition.availableNonFullSupplyProducts[0];
 
             this.requisition.addLineItem(orderable, 16, 'explanation');

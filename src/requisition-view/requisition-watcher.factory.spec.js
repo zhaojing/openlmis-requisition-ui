@@ -38,8 +38,10 @@ describe('RequisitionWatcher', function() {
             this.$rootScope = $injector.get('$rootScope');
             this.$timeout = $injector.get('$timeout');
             this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
+            this.requisitionCacheService = $injector.get('requisitionCacheService');
         });
 
+        spyOn(this.requisitionCacheService, 'cacheRequisitionToStorage').andCallThrough();
         this.scope = this.$rootScope.$new();
         this.requisition = new this.RequisitionDataBuilder().buildJson();
 
@@ -54,7 +56,10 @@ describe('RequisitionWatcher', function() {
             this.scope.$digest();
             this.$timeout.flush();
 
-            expect(requisitionsStorage.put).toHaveBeenCalledWith(minimizedRequisition(this.requisition));
+            expect(this.requisitionCacheService.cacheRequisitionToStorage).toHaveBeenCalledWith(
+                this.requisition, requisitionsStorage
+            );
+
             expect(this.requisition.$modified).toBe(true);
         });
 
@@ -63,7 +68,7 @@ describe('RequisitionWatcher', function() {
             this.scope.$digest();
             this.$timeout.flush();
 
-            expect(requisitionsStorage.put).not.toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisitionToStorage).not.toHaveBeenCalled();
             expect(this.requisition.$modified).toBe(undefined);
         });
     });
@@ -75,7 +80,10 @@ describe('RequisitionWatcher', function() {
             this.scope.$digest();
             this.$timeout.flush();
 
-            expect(requisitionsStorage.put).toHaveBeenCalledWith(minimizedRequisition(this.requisition));
+            expect(this.requisitionCacheService.cacheRequisitionToStorage).toHaveBeenCalledWith(
+                this.requisition, requisitionsStorage
+            );
+
             expect(this.requisition.$modified).toBe(true);
         });
 
@@ -84,25 +92,8 @@ describe('RequisitionWatcher', function() {
             this.scope.$digest();
             this.$timeout.flush();
 
-            expect(requisitionsStorage.put).not.toHaveBeenCalled();
+            expect(this.requisitionCacheService.cacheRequisitionToStorage).not.toHaveBeenCalled();
             expect(this.requisition.$modified).toBe(undefined);
         });
     });
-
-    function minimizedRequisition(requisition) {
-        var requisitionToSave = angular.copy(requisition);
-        requisitionToSave.requisitionLineItems.forEach(function(lineItem) {
-            lineItem.orderable = getVersionedObjectReference(lineItem.orderable);
-            lineItem.approvedProduct = lineItem.approvedProduct ?
-                getVersionedObjectReference(lineItem.approvedProduct) : undefined;
-        });
-        return requisitionToSave;
-    }
-
-    function getVersionedObjectReference(resource) {
-        return {
-            id: resource.id,
-            versionNumber: resource.meta.versionNumber
-        };
-    }
 });

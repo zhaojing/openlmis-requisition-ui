@@ -29,9 +29,9 @@
         .module('requisition-view')
         .factory('RequisitionWatcher', factory);
 
-    factory.$inject = ['$timeout'];
+    factory.$inject = ['$timeout', 'requisitionCacheService'];
 
-    function factory($timeout) {
+    function factory($timeout, requisitionCacheService) {
 
         RequisitionWatcher.prototype.disableWatcher = disableWatcher;
         RequisitionWatcher.prototype.enableWatcher = enableWatcher;
@@ -73,28 +73,11 @@
                     $timeout.cancel(watcher.syncTimeout);
                     watcher.syncTimeout = $timeout(function() {
                         requisition.$modified = true;
-                        saveMinimizedRequisition(requisition, storage);
+                        requisitionCacheService.cacheRequisitionToStorage(requisition, storage);
                         watcher.syncTimeout = undefined;
                     }, 500);
                 }
             }, true);
-        }
-
-        function saveMinimizedRequisition(requisition, storage) {
-            var requisitionToSave = angular.copy(requisition);
-            requisitionToSave.requisitionLineItems.forEach(function(lineItem) {
-                lineItem.orderable = getVersionedObjectReference(lineItem.orderable);
-                lineItem.approvedProduct = lineItem.approvedProduct ?
-                    getVersionedObjectReference(lineItem.approvedProduct) : undefined;
-            });
-            storage.put(requisitionToSave);
-        }
-
-        function getVersionedObjectReference(resource) {
-            return {
-                id: resource.id,
-                versionNumber: resource.meta.versionNumber
-            };
         }
     }
 

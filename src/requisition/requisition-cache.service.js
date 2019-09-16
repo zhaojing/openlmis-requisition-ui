@@ -43,6 +43,7 @@
             offlineFacilities = localStorageFactory('facilities');
 
         this.cacheRequisition = cacheRequisition;
+        this.cacheRequisitionToStorage = cacheRequisitionToStorage;
         this.cacheBatchRequisition = cacheBatchRequisition;
         this.search = search;
         this.removeById = removeById;
@@ -60,7 +61,22 @@
          * @param {Object} requisition  the requisition to be cached
          */
         function cacheRequisition(requisition) {
-            offlineRequisitions.put(requisition);
+            offlineRequisitions.put(minimizeRequisition(requisition));
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition.requisitionCacheService
+         * @name cacheRequisitionToStorage
+         *
+         * @description
+         * Caches given requisition in the proper storage.
+         *
+         * @param {Object} requisition  the requisition to be cached
+         * @param {Object} storage  the storage to save requisition
+         */
+        function cacheRequisitionToStorage(requisition, storage) {
+            storage.put(minimizeRequisition(requisition));
         }
 
         /**
@@ -228,6 +244,33 @@
                     content: items
                 };
             };
+        }
+
+        function minimizeRequisition(requisition) {
+            var requisitionToSave = angular.copy(requisition);
+            requisitionToSave.requisitionLineItems.forEach(function(lineItem) {
+                lineItem.orderable = getVersionedObjectReference(lineItem.orderable);
+                lineItem.approvedProduct = lineItem.approvedProduct ?
+                    getVersionedObjectReference(lineItem.approvedProduct) : undefined;
+            });
+            var availableProducts = [];
+            requisitionToSave.availableProducts.forEach(function(product) {
+                availableProducts.push(getVersionedObjectReference(product));
+            });
+            requisitionToSave.availableProducts = availableProducts;
+            requisitionToSave.availableFullSupplyProducts = undefined;
+            requisitionToSave.availableNonFullSupplyProducts = undefined;
+            return requisitionToSave;
+        }
+
+        function getVersionedObjectReference(resource) {
+            if (resource.meta) {
+                return {
+                    id: resource.id,
+                    versionNumber: resource.meta.versionNumber
+                };
+            }
+            return resource;
         }
     }
 })();

@@ -31,12 +31,12 @@
     requisitionFactory.$inject = [
         '$q', '$resource', 'requisitionUrlFactory', 'RequisitionTemplate', 'LineItem', 'REQUISITION_STATUS',
         'COLUMN_SOURCES', 'localStorageFactory', 'dateUtils', '$filter', 'TEMPLATE_COLUMNS', 'authorizationService',
-        'REQUISITION_RIGHTS', 'UuidGenerator'
+        'REQUISITION_RIGHTS', 'UuidGenerator', 'requisitionCacheService'
     ];
 
     function requisitionFactory($q, $resource, requisitionUrlFactory, RequisitionTemplate, LineItem, REQUISITION_STATUS,
                                 COLUMN_SOURCES, localStorageFactory, dateUtils, $filter, TEMPLATE_COLUMNS,
-                                authorizationService, REQUISITION_RIGHTS, UuidGenerator) {
+                                authorizationService, REQUISITION_RIGHTS, UuidGenerator, requisitionCacheService) {
 
         var offlineRequisitions = localStorageFactory('requisitions'),
             resource = $resource(requisitionUrlFactory('/api/v2/requisitions/:id'), {}, {
@@ -738,7 +738,7 @@
             if (shouldSave) {
                 requisition.$modified = false;
                 requisition.$availableOffline = true;
-                offlineRequisitions.put(requisition);
+                requisitionCacheService.cacheRequisition(requisition);
             }
         }
 
@@ -794,6 +794,7 @@
 
             delete requestBody.availableNonFullSupplyProducts;
             delete requestBody.availableFullSupplyProducts;
+            delete requestBody.availableProducts;
             delete requestBody.stockAdjustmentReasons;
             delete requestBody.template;
 

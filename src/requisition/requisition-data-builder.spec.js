@@ -41,8 +41,7 @@
         RequisitionDataBuilder.prototype.withProcessingPeriod = withProcessingPeriod;
         RequisitionDataBuilder.prototype.withFacility = withFacility;
         RequisitionDataBuilder.prototype.withStockAdjustmentReasons = withStockAdjustmentReasons;
-        RequisitionDataBuilder.prototype.withAvailableFullSupplyProducts = withAvailableFullSupplyProducts;
-        RequisitionDataBuilder.prototype.withAvailableNonFullSupplyProducts = withAvailableNonFullSupplyProducts;
+        RequisitionDataBuilder.prototype.withAvailableProducts = withAvailableProducts;
         RequisitionDataBuilder.prototype.buildSubmitted = buildSubmitted;
         RequisitionDataBuilder.prototype.buildAuthorized = buildAuthorized;
         RequisitionDataBuilder.prototype.buildInApproval = buildInApproval;
@@ -82,7 +81,7 @@
             this.template = new RequisitionTemplateDataBuilder().buildJson();
             this.eTag = 'W/1';
 
-            var programs = [
+            var programsForNonFullSupplyOrderables = [
                 new ProgramOrderableDataBuilder()
                     .withFullSupply()
                     .buildJson(),
@@ -93,16 +92,7 @@
                     .buildJson()
             ];
 
-            this.availableNonFullSupplyProducts = [
-                new OrderableDataBuilder().withPrograms(programs)
-                    .buildJson(),
-                new OrderableDataBuilder().withPrograms(programs)
-                    .buildJson(),
-                new OrderableDataBuilder().withPrograms(programs)
-                    .buildJson()
-            ];
-
-            programs = [
+            var programsForFullSupplyOrderables = [
                 new ProgramOrderableDataBuilder()
                     .withProgramId('program-id-1' + instanceNumber)
                     .withOrderableDisplayCategoryId('orderable-display-category-id-1' + instanceNumber)
@@ -118,14 +108,21 @@
                     .buildJson()
             ];
 
-            this.availableFullSupplyProducts = [
-                new OrderableDataBuilder().withPrograms(programs)
+            this.availableProducts = [
+                new OrderableDataBuilder().withPrograms(programsForFullSupplyOrderables)
                     .buildJson(),
-                new OrderableDataBuilder().withPrograms(programs)
+                new OrderableDataBuilder().withPrograms(programsForFullSupplyOrderables)
                     .buildJson(),
-                new OrderableDataBuilder().withPrograms(programs)
+                new OrderableDataBuilder().withPrograms(programsForFullSupplyOrderables)
+                    .buildJson(),
+                new OrderableDataBuilder().withPrograms(programsForNonFullSupplyOrderables)
+                    .buildJson(),
+                new OrderableDataBuilder().withPrograms(programsForNonFullSupplyOrderables)
+                    .buildJson(),
+                new OrderableDataBuilder().withPrograms(programsForNonFullSupplyOrderables)
                     .buildJson()
             ];
+
             this.statusChange = {
                 INITIATED: {
                     authorId: 'author-id-' + instanceNumber,
@@ -164,8 +161,7 @@
                 supplyingFacility: builder.supplyingFacility,
                 supervisoryNode: builder.supervisoryNode,
                 template: builder.template,
-                availableFullSupplyProducts: builder.availableFullSupplyProducts,
-                availableNonFullSupplyProducts: builder.availableNonFullSupplyProducts,
+                availableProducts: builder.availableProducts,
                 statusChange: builder.statusChange,
                 statusHistory: builder.statusHistory,
                 datePhysicalStockCountCompleted: builder.datePhysicalStockCountCompleted,
@@ -248,13 +244,8 @@
             return this;
         }
 
-        function withAvailableFullSupplyProducts(availableFullSupplyProducts) {
-            this.availableFullSupplyProducts = availableFullSupplyProducts;
-            return this;
-        }
-
-        function withAvailableNonFullSupplyProducts(availableNonFullSupplyProducts) {
-            this.availableNonFullSupplyProducts = availableNonFullSupplyProducts;
+        function withAvailableProducts(availableProducts) {
+            this.availableProducts = availableProducts;
             return this;
         }
 

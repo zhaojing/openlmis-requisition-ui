@@ -470,13 +470,11 @@
         }
 
         function extendLineItemsWithOrderablesAndFtaps(requisition, statusMessages) {
-            return $q.all([getByVersionIdentities(requisition.availableFullSupplyProducts, new OrderableResource()),
-                getByVersionIdentities(requisition.availableNonFullSupplyProducts, new OrderableResource()),
+            return $q.all([getByVersionIdentities(requisition.availableProducts, new OrderableResource()),
                 periodService.get(requisition.processingPeriod.id)])
                 .then(function(result) {
-                    requisition.availableFullSupplyProducts = result[0];
-                    requisition.availableNonFullSupplyProducts = result[1];
-                    requisition.processingPeriod = result[2];
+                    requisition.availableProducts = result[0];
+                    requisition.processingPeriod = result[1];
                     return requisition;
                 })
                 .then(function(requisition) {
@@ -493,11 +491,15 @@
                                     }
                                 });
                                 result[1].forEach(function(ftap) {
-                                    if (lineItem.approvedProduct.id === ftap.id) {
+                                    if (lineItem.approvedProduct && lineItem.approvedProduct.id === ftap.id) {
                                         lineItem.approvedProduct = ftap;
                                     }
                                 });
                             });
+                            requisition.availableFullSupplyProducts =
+                                filterOrderables(true, requisition.availableProducts, requisition.program.id);
+                            requisition.availableNonFullSupplyProducts =
+                                filterOrderables(false, requisition.availableProducts, requisition.program.id);
                             return new Requisition(requisition, statusMessages);
                         });
                 });
@@ -508,7 +510,9 @@
                 ftapIdentities = [];
             lineItems.forEach(function(item) {
                 orderableIdentities.push(item.orderable);
-                ftapIdentities.push(item.approvedProduct);
+                if (item.approvedProduct) {
+                    ftapIdentities.push(item.approvedProduct);
+                }
             });
 
             return {
@@ -519,6 +523,23 @@
 
         function getByVersionIdentities(identities, resource) {
             return resource.getByVersionIdentities(identities);
+        }
+
+        function filterOrderables(fullSupply, availableProducts, programId) {
+            return availableProducts.filter(function(product) {
+                var requisitionProgram = getProgramById(product.programs, programId);
+                return requisitionProgram && requisitionProgram.fullSupply === fullSupply;
+            });
+        }
+
+        function getProgramById(programs, programId) {
+            var match;
+            programs.forEach(function(program) {
+                if (program.programId === programId) {
+                    match = program;
+                }
+            });
+            return match;
         }
     }
 })();

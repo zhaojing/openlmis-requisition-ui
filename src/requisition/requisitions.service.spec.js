@@ -57,9 +57,11 @@ describe('requisitionService', function() {
             this.RequisitionDataBuilder = $injector.get('RequisitionDataBuilder');
             this.StockAdjustmentReasonDataBuilder = $injector.get('StockAdjustmentReasonDataBuilder');
             this.RequisitionLineItemV2DataBuilder = $injector.get('RequisitionLineItemV2DataBuilder');
+            this.RequisitionLineItemDataBuilder = $injector.get('RequisitionLineItemDataBuilder');
             this.OrderableDataBuilder = $injector.get('OrderableDataBuilder');
             this.FacilityTypeApprovedProductDataBuilder = $injector.get('FacilityTypeApprovedProductDataBuilder');
             this.VersionObjectReferenceDataBuilder =  $injector.get('VersionObjectReferenceDataBuilder');
+            this.ProgramOrderableDataBuilder =  $injector.get('ProgramOrderableDataBuilder');
 
             this.$httpBackend = $injector.get('$httpBackend');
             this.$rootScope = $injector.get('$rootScope');
@@ -107,22 +109,15 @@ describe('requisitionService', function() {
             .withHidden(undefined)
             .build();
 
-        this.fullSupplyLineItems = [
-            new this.RequisitionLineItemV2DataBuilder()
-                .fullSupplyForProgram(this.program)
-                .buildJson(),
-            new this.RequisitionLineItemV2DataBuilder()
-                .fullSupplyForProgram(this.program)
-                .buildJson()
-        ];
-
-        this.nonFullSupplyLineItems = [
-            new this.RequisitionLineItemV2DataBuilder()
-                .nonFullSupplyForProgram(this.program)
-                .buildJson(),
-            new this.RequisitionLineItemV2DataBuilder()
-                .nonFullSupplyForProgram(this.program)
-                .buildJson()
+        this.availableProductsIdentities = [
+            new this.VersionObjectReferenceDataBuilder()
+                .build(),
+            new this.VersionObjectReferenceDataBuilder()
+                .build(),
+            new this.VersionObjectReferenceDataBuilder()
+                .build(),
+            new this.VersionObjectReferenceDataBuilder()
+                .build()
         ];
 
         this.lineItems = [
@@ -134,10 +129,34 @@ describe('requisitionService', function() {
                 .buildJson()
         ];
 
+        this.programs = [
+            new this.ProgramOrderableDataBuilder()
+                .withFullSupply()
+                .buildJson(),
+            new this.ProgramOrderableDataBuilder()
+                .buildJson()
+        ];
+
         this.orderables = [
             new this.OrderableDataBuilder()
+                .withId(this.availableProductsIdentities[0].id)
+                .withVersionNumber(this.availableProductsIdentities[0].versionNumber)
+                .withPrograms([this.programs[0]])
                 .buildJson(),
             new this.OrderableDataBuilder()
+                .withId(this.availableProductsIdentities[0].id)
+                .withVersionNumber(this.availableProductsIdentities[0].versionNumber)
+                .withPrograms([this.programs[0]])
+                .buildJson(),
+            new this.OrderableDataBuilder()
+                .withId(this.availableProductsIdentities[0].id)
+                .withVersionNumber(this.availableProductsIdentities[0].versionNumber)
+                .withPrograms([this.programs[1]])
+                .buildJson(),
+            new this.OrderableDataBuilder()
+                .withId(this.availableProductsIdentities[0].id)
+                .withVersionNumber(this.availableProductsIdentities[0].versionNumber)
+                .withPrograms([this.programs[1]])
                 .buildJson()
         ];
 
@@ -150,16 +169,12 @@ describe('requisitionService', function() {
                 .buildJson()
         ];
 
-        this.fullSupplyLineItemsIdentities = convertResourceToIdentities(this.fullSupplyLineItems);
-        this.nonFullSupplyLineItemsIdentities = convertResourceToIdentities(this.nonFullSupplyLineItems);
-
         this.requisition = new this.RequisitionDataBuilder()
             .withCreatedDate(this.createdDate)
             .withProcessingPeriod(this.period)
             .withFacility(this.facility)
             .withProgram(this.program)
-            .withAvailableFullSupplyProducts(this.fullSupplyLineItemsIdentities)
-            .withAvailableNonFullSupplyProducts(this.nonFullSupplyLineItemsIdentities)
+            .withAvailableProducts(this.availableProductsIdentities)
             .withRequisitionLineItems(this.lineItems)
             .withStockAdjustmentReasons([
                 this.reasonNotHidden,
@@ -195,12 +210,10 @@ describe('requisitionService', function() {
         spyOn(this.periodService, 'get').andReturn(this.requisition.processingPeriod);
 
         this.OrderableResource.prototype.getByVersionIdentities.andCallFake(function(identities) {
-            if (JSON.stringify(identities) === JSON.stringify(context.fullSupplyLineItemsIdentities)) {
-                return context.fullSupplyLineItems;
-            } else if (JSON.stringify(identities) === JSON.stringify(context.nonFullSupplyLineItemsIdentities)) {
-                return context.nonFullSupplyLineItems;
+            if (JSON.stringify(identities) === JSON.stringify(context.availableProductsIdentities)) {
+                return context.orderables;
             } else if (JSON.stringify(identities) === JSON.stringify(
-                convertResourceToIdentities(context.requisition.requisitionLineItems)
+                convertLineItemsToIdentities(context.requisition.requisitionLineItems)
             )) {
                 return context.requisition.requisitionLineItems;
             }
@@ -814,7 +827,7 @@ describe('requisitionService', function() {
         return requisition;
     }
 
-    function convertResourceToIdentities(array) {
+    function convertLineItemsToIdentities(array) {
         var convertedArray = [];
 
         array.forEach(function(resource) {

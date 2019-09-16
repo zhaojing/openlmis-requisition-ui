@@ -3,6 +3,7 @@
 
 Breaking changes:
 * [OLMIS-6416](https://openlmis.atlassian.net/browse/OLMIS-6416): Switched to v2 requisition endpoints.
+* [OLMIS-6569](https://openlmis.atlassian.net/browse/OLMIS-6569): Refactored UI after merging availableFullSupplyProducts with availableNonFullSupplyProducts into availableProducts.
 
 Improvements:
 * [OLMIS-6315](https://openlmis.atlassian.net/browse/OLMIS-6315): Added filtering by requisition status on Requisitions View page.
