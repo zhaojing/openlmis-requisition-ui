@@ -38,7 +38,7 @@ describe('openlmis.requisitions.requisition state', function() {
             this.requisitionViewFactory = $injector.get('requisitionViewFactory');
             this.requisitionService = $injector.get('requisitionService');
             this.facilityService = $injector.get('facilityService');
-            this.programService = $injector.get('programService');
+            this.ProgramResource = $injector.get('ProgramResource');
             this.periodService = $injector.get('periodService');
             this.$location = $injector.get('$location');
         });
@@ -70,7 +70,7 @@ describe('openlmis.requisitions.requisition state', function() {
 
         spyOn(this.currentUserService, 'getUserInfo').andReturn(this.$q.resolve(this.user));
         spyOn(this.requisitionService, 'get').andReturn(this.$q.resolve(this.requisition));
-        spyOn(this.programService, 'getUserPrograms').andReturn(this.$q.when([this.program]));
+        spyOn(this.ProgramResource.prototype, 'get').andReturn(this.$q.when(this.program));
         spyOn(this.facilityService, 'get').andReturn(this.$q.resolve(this.facility));
         spyOn(this.periodService, 'get').andReturn(this.$q.resolve(this.period));
         spyOn(this.requisitionViewFactory, 'canSubmit').andReturn(this.$q.resolve(true));

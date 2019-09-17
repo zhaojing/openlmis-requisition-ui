@@ -54,18 +54,8 @@
                     }
                     return requisitionService.get($stateParams.rnr);
                 },
-                program: function($q, programService, user, requisition) {
-                    var deferred = $q.defer();
-
-                    programService.getUserPrograms(user.id)
-                        .then(function(programs) {
-                            programs.forEach(function(program) {
-                                if (program.id === requisition.program.id) {
-                                    return deferred.resolve(program);
-                                }
-                            });
-                        }, deferred.reject);
-                    return deferred.promise;
+                program: function(requisition, ProgramResource) {
+                    return new ProgramResource().get(requisition.program.id);
                 },
                 processingPeriod: function(periodService, requisition) {
                     return periodService.get(requisition.processingPeriod.id);
