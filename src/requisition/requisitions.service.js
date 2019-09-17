@@ -473,7 +473,11 @@
             return $q.all([getByVersionIdentities(requisition.availableProducts, new OrderableResource()),
                 periodService.get(requisition.processingPeriod.id)])
                 .then(function(result) {
-                    requisition.availableProducts = result[0];
+                    requisition.availableFullSupplyProducts =
+                        filterOrderables(true, result[0], requisition.program.id);
+                    requisition.availableNonFullSupplyProducts =
+                        filterOrderables(false, result[0], requisition.program.id);
+
                     requisition.processingPeriod = result[1];
                     return requisition;
                 })
@@ -496,10 +500,6 @@
                                     }
                                 });
                             });
-                            requisition.availableFullSupplyProducts =
-                                filterOrderables(true, requisition.availableProducts, requisition.program.id);
-                            requisition.availableNonFullSupplyProducts =
-                                filterOrderables(false, requisition.availableProducts, requisition.program.id);
                             return new Requisition(requisition, statusMessages);
                         });
                 });

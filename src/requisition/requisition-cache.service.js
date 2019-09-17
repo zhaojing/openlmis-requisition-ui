@@ -247,17 +247,12 @@
         }
 
         function minimizeRequisition(requisition) {
-            var requisitionToSave = angular.copy(requisition);
+            var requisitionToSave = JSON.parse(JSON.stringify(requisition));
             requisitionToSave.requisitionLineItems.forEach(function(lineItem) {
                 lineItem.orderable = getVersionedObjectReference(lineItem.orderable);
                 lineItem.approvedProduct = lineItem.approvedProduct ?
                     getVersionedObjectReference(lineItem.approvedProduct) : undefined;
             });
-            var availableProducts = [];
-            requisitionToSave.availableProducts.forEach(function(product) {
-                availableProducts.push(getVersionedObjectReference(product));
-            });
-            requisitionToSave.availableProducts = availableProducts;
             requisitionToSave.availableFullSupplyProducts = undefined;
             requisitionToSave.availableNonFullSupplyProducts = undefined;
             return requisitionToSave;
