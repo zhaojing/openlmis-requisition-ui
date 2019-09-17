@@ -135,7 +135,7 @@
         function Requisition(source, statusMessages) {
             var requisition = this;
 
-            angular.copy(source, this);
+            Object.assign(this, source);
 
             this.template = new RequisitionTemplate(this.template, this);
             this.$statusMessages = $filter('orderBy')(statusMessages, '-createdDate');

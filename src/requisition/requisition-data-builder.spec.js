@@ -123,7 +123,7 @@
                     .buildJson()
             ];
 
-            this.statusChange = {
+            this.statusChanges = {
                 INITIATED: {
                     authorId: 'author-id-' + instanceNumber,
                     changeDate: '2018-02-21T10:59:02.758Z'
