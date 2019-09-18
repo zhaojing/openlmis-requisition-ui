@@ -346,7 +346,7 @@ describe('requisitionViewFactory', function() {
             this.requisition.emergency = false;
 
             var result;
-            this.requisitionViewFactory.canSkip(this.user.id, this.requisition)
+            this.requisitionViewFactory.canSkip(this.user.id, this.requisition, this.requisition.program)
                 .then(function(response) {
                     result = response;
                 });
@@ -362,7 +362,7 @@ describe('requisitionViewFactory', function() {
             this.requisition.emergency = false;
 
             var result;
-            this.requisitionViewFactory.canSkip(this.user.id, this.requisition)
+            this.requisitionViewFactory.canSkip(this.user.id, this.requisition, this.requisition.program)
                 .then(function(response) {
                     result = response;
                 });
@@ -375,7 +375,7 @@ describe('requisitionViewFactory', function() {
             this.requisition.$isSubmitted.andReturn(true);
 
             var result;
-            this.requisitionViewFactory.canSkip(this.user.id, this.requisition)
+            this.requisitionViewFactory.canSkip(this.user.id, this.requisition, this.requisition.program)
                 .then(function(response) {
                     result = response;
                 });
@@ -389,7 +389,7 @@ describe('requisitionViewFactory', function() {
             this.requisition.program.periodsSkippable = false;
 
             var result;
-            this.requisitionViewFactory.canSkip(this.user.id, this.requisition)
+            this.requisitionViewFactory.canSkip(this.user.id, this.requisition, this.requisition.program)
                 .then(function(response) {
                     result = response;
                 });
@@ -404,7 +404,7 @@ describe('requisitionViewFactory', function() {
             this.requisition.emergency = true;
 
             var result;
-            this.requisitionViewFactory.canSkip(this.user.id, this.requisition)
+            this.requisitionViewFactory.canSkip(this.user.id, this.requisition, this.requisition.program)
                 .then(function(response) {
                     result = response;
                 });
@@ -420,7 +420,7 @@ describe('requisitionViewFactory', function() {
             });
 
             var result;
-            this.requisitionViewFactory.canSkip(this.user.id, this.requisition)
+            this.requisitionViewFactory.canSkip(this.user.id, this.requisition, this.requisition.program)
                 .then(function(response) {
                     result = response;
                 });

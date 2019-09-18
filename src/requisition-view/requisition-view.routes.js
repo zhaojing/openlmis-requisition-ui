@@ -75,8 +75,8 @@
                 canDelete: function(requisitionViewFactory, user, requisition) {
                     return requisitionViewFactory.canDelete(user.id, requisition);
                 },
-                canSkip: function(requisitionViewFactory, user, requisition) {
-                    return requisitionViewFactory.canSkip(user.id, requisition);
+                canSkip: function(requisitionViewFactory, user, requisition, program) {
+                    return requisitionViewFactory.canSkip(user.id, requisition, program);
                 },
                 canSync: function(canSubmit, canAuthorize, canApproveAndReject) {
                     return canSubmit || canAuthorize || canApproveAndReject;

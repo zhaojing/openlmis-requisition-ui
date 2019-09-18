@@ -166,10 +166,9 @@
          * @param  {Object} requisition requisition to check
          * @return {Boolean} can user skip this requisition
          */
-        function canSkip(userId, requisition) {
+        function canSkip(userId, requisition, program) {
             if ((requisition.$isInitiated() || requisition.$isRejected()) &&
-                requisition.program.periodsSkippable &&
-                !requisition.emergency) {
+                program.periodsSkippable && !requisition.emergency) {
                 return hasRightForProgramAndFacility(userId, REQUISITION_RIGHTS.REQUISITION_CREATE, requisition);
             }
             return $q.resolve(false);
