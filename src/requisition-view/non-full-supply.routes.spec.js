@@ -98,7 +98,7 @@ describe('openlmis.requisitions.requisition.nonFullSupply state', function() {
         spyOn(this.requisitionViewFactory, 'canApproveAndReject').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canDelete').andReturn(this.$q.resolve(true));
         spyOn(this.requisitionViewFactory, 'canSkip').andReturn(this.$q.resolve(true));
-        spyOn(this.programService, 'getUserPrograms').andReturn(this.$q.when([this.program]));
+        spyOn(this.programService, 'get').andReturn(this.$q.when(this.program));
         spyOn(this.facilityService, 'get').andReturn(this.$q.resolve(this.facility));
         spyOn(this.periodService, 'get').andReturn(this.$q.resolve(this.period));
 
