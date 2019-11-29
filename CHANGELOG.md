@@ -14,6 +14,7 @@ Improvements:
 
 Bug fixes:
 * [OLMIS-6530](https://openlmis.atlassian.net/browse/OLMIS-6530): Fixed problem with clearing freshly initiated requisition form after printing it.
+* [OLMIS-6592](https://openlmis.atlassian.net/browse/OLMIS-6592): Fixed bug with user being able to see Requisitions tab despite not having a Home Facility or a proper role with a Supervisory Node.
 
 6.0.0 / 2019-05-27
 ==================

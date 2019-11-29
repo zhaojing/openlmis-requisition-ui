@@ -37,7 +37,7 @@ describe('openlmis.requisitions.search', function() {
         this.getResolvedValue = getResolvedValue;
         this.goToThePage = goToThePage;
 
-        spyOn(this.permissionService, 'hasRoleWithRight').andReturn(this.$q.resolve(true));
+        spyOn(this.permissionService, 'hasRoleWithRightAndFacility').andReturn(this.$q.resolve(true));
 
         this.facilities = [
             new FacilityDataBuilder().build(),

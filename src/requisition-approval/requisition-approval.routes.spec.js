@@ -79,7 +79,7 @@ describe('openlmis.requisitions.approvalList', function() {
         spyOn(this.featureFlagService, 'get').andReturn(true);
         spyOn(this.alertService, 'error');
         spyOn(this.requisitionApprovalService, 'getPrograms').andReturn(this.$q.resolve(this.programs));
-        spyOn(this.permissionService, 'hasRoleWithRight').andReturn(this.$q.resolve(true));
+        spyOn(this.permissionService, 'hasRoleWithRightAndFacility').andReturn(this.$q.resolve(true));
     });
 
     it('should resolve isBatchApproveScreenActive', function() {

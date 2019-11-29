@@ -37,7 +37,7 @@
             controllerAs: 'vm',
             templateUrl: 'requisition-approval/requisition-approval-list.html',
             canAccess: function(permissionService, REQUISITION_RIGHTS) {
-                return permissionService.hasRoleWithRight(REQUISITION_RIGHTS.REQUISITION_APPROVE);
+                return permissionService.hasRoleWithRightAndFacility(REQUISITION_RIGHTS.REQUISITION_APPROVE);
             },
             resolve: {
                 requisitions: function(paginationService, requisitionService, $stateParams, REQUISITION_STATUS) {
