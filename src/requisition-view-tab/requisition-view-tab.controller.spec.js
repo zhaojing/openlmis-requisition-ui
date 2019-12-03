@@ -475,7 +475,7 @@ describe('ViewTabController', function() {
             spyOn(this.requisitionCacheService, 'cacheRequisition');
         });
 
-        it('should delete line item if it exist', function() {
+        it('should save requisition to the local storage', function() {
             this.vm.cacheRequisition();
 
             expect(this.requisitionCacheService.cacheRequisition).toHaveBeenCalledWith(this.requisition);
