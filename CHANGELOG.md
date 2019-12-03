@@ -1,3 +1,9 @@
+7.0.1-SNAPSHOT / WIP
+====================
+
+New functionality added in a backwards-compatible manner:
+* [OLMIS-6684](https://openlmis.atlassian.net/browse/OLMIS-6684): Added requisition caching on page change on requisition grid"
+
 7.0.0 / 2019-10-17
 ==================
 
