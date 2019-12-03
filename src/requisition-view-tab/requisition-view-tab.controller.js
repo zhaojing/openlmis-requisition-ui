@@ -31,13 +31,14 @@
     ViewTabController.$inject = [
         '$filter', 'selectProductsModalService', 'requisitionValidator', 'requisition', 'columns', 'messageService',
         'lineItems', 'alertService', 'canSubmit', 'canAuthorize', 'fullSupply', 'TEMPLATE_COLUMNS', '$q',
-        'OpenlmisArrayDecorator', 'canApproveAndReject', 'items', 'paginationService', '$stateParams'
+        'OpenlmisArrayDecorator', 'canApproveAndReject', 'items', 'paginationService', '$stateParams',
+        'requisitionCacheService'
     ];
 
     function ViewTabController($filter, selectProductsModalService, requisitionValidator, requisition, columns,
                                messageService, lineItems, alertService, canSubmit, canAuthorize, fullSupply,
                                TEMPLATE_COLUMNS, $q, OpenlmisArrayDecorator, canApproveAndReject, items,
-                               paginationService, $stateParams) {
+                               paginationService, $stateParams, requisitionCacheService) {
         var vm = this;
 
         vm.$onInit = onInit;
@@ -49,6 +50,7 @@
         vm.isLineItemValid = requisitionValidator.isLineItemValid;
         vm.getDescriptionForColumn = getDescriptionForColumn;
         vm.skippedFullSupplyProductCountMessage = skippedFullSupplyProductCountMessage;
+        vm.cacheRequisition = cacheRequisition;
 
         /**
          * @ngdoc property
@@ -186,6 +188,21 @@
             return !fullSupply &&
                 vm.userCanEdit &&
                 hasDeletableLineItems();
+        }
+
+        /**
+         * @ngdoc method
+         * @methodOf requisition-view-tab.controller:ViewTabController
+         * @name cacheRequisition
+         *
+         * @description
+         * Caches given requisition in the local storage.
+         * 
+         * @return {Promise} the promise resolved after adding requisition to the local storage
+         */
+        function cacheRequisition() {
+            requisitionCacheService.cacheRequisition(vm.requisition);
+            return $q.resolve();
         }
 
         /**
