@@ -25,6 +25,7 @@ describe('RequisitionSearchService', function() {
         this.prepareRights = prepareRights;
         this.prepareRoles = prepareRoles;
         this.prepareUser = prepareUser;
+        this.prepareUserWithoutHomeFacility = prepareUserWithoutHomeFacility;
 
         inject(function($injector) {
             this.SupervisoryNodeDataBuilder = $injector.get('SupervisoryNodeDataBuilder');
@@ -240,7 +241,10 @@ describe('RequisitionSearchService', function() {
         });
 
         it('should not call for supervisory nodes if user has no role with any', function() {
-            this.facilityFactory.getAllUserFacilities.andReturn([]);
+            this.prepareUserWithoutHomeFacility();
+            this.currentUserService.getUserInfo.andReturn(this.$q.resolve(this.user));
+
+            this.requisitionSearchService.getFacilities();
             this.$rootScope.$apply();
 
             expect(this.SupervisoryNodeResource.prototype.query).not.toHaveBeenCalled();
@@ -414,6 +418,16 @@ describe('RequisitionSearchService', function() {
             .withSupervisionRoleAssignment(this.roleB.id, this.partnerNodeC.id, this.programId)
             .withSupervisionRoleAssignment(this.roleA.id, this.supervisoryNodeC.id, this.programId)
             .withSupervisionRoleAssignment(this.roleA.id, null, this.programId)
+            .buildReferenceDataUserJson();
+    }
+
+    function prepareUserWithoutHomeFacility() {
+        this.programId = 'program-id';
+
+        this.user = new this.UserDataBuilder()
+            .withSupervisionRoleAssignment(this.roleA.id, null, this.programId)
+            .withSupervisionRoleAssignment(this.roleB.id, null, this.programId)
+            .withoutHomeFacilityId()
             .buildReferenceDataUserJson();
     }
 
