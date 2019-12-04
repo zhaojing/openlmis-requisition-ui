@@ -239,6 +239,13 @@ describe('RequisitionSearchService', function() {
             expect(this.SupervisoryNodeResource.prototype.query).not.toHaveBeenCalled();
         });
 
+        it('should not call for supervisory nodes if user has no role with any', function() {
+            this.facilityFactory.getAllUserFacilities.andReturn([]);
+            this.$rootScope.$apply();
+
+            expect(this.SupervisoryNodeResource.prototype.query).not.toHaveBeenCalled();
+        });
+
         it('should cache facilities in the local storage', function() {
             this.requisitionSearchService.getFacilities();
             this.$rootScope.$apply();

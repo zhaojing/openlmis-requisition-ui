@@ -131,13 +131,20 @@
         }
 
         function fetchSupervisoryNodesByIds(supervisoryNodeIds) {
-            return new SupervisoryNodeResource()
-                .query({
-                    id: supervisoryNodeIds
-                });
+            if (supervisoryNodeIds.length === 0) {
+                return [];
+            }
+
+            return new SupervisoryNodeResource().query({
+                id: supervisoryNodeIds
+            });
         }
 
         function fetchSupervisoryNodesForPartners(nodesPage) {
+            if (nodesPage.content === undefined || nodesPage.content.length === 0) {
+                return [];
+            }
+
             return new SupervisoryNodeResource().query({
                 id: getPartnerOfIdsFromNodes(nodesPage.content)
             });
@@ -152,9 +159,14 @@
 
         function fetchFacilitiesForRequsitionGroupsRelatedWithSupervisoryNodes(responses) {
             var nodes = responses[0].content,
-                groups = responses[1];
+                groups = responses[1],
+                requisitionGroupIds;
 
-            var requisitionGroupIds = getRequisitionGroupIdsFromNodes(nodes);
+            if (nodes === undefined) {
+                requisitionGroupIds = [];
+            } else {
+                requisitionGroupIds = getRequisitionGroupIdsFromNodes(nodes);
+            }
 
             return groups
                 .filter(filterOutNotInBy(requisitionGroupIds, 'id'))
