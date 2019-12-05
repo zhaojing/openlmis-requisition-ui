@@ -33,7 +33,8 @@
         'notificationService', 'confirmService', 'offlineService', '$window', 'requisitionUrlFactory', '$filter',
         '$scope', 'RequisitionWatcher', 'accessTokenFactory', 'messageService', 'stateTrackerService',
         'RequisitionStockCountDateModal', 'localStorageFactory', 'canSubmit', 'canAuthorize', 'canApproveAndReject',
-        'canDelete', 'canSkip', 'canSync', 'program', 'facility', 'processingPeriod'
+        'canDelete', 'canSkip', 'canSync', 'program', 'facility', 'processingPeriod', 'requisitionCacheService',
+        '$rootScope'
     ];
 
     function RequisitionViewController($state, requisition, requisitionValidator, requisitionService,
@@ -42,7 +43,7 @@
                                        RequisitionWatcher, accessTokenFactory, messageService, stateTrackerService,
                                        RequisitionStockCountDateModal, localStorageFactory, canSubmit, canAuthorize,
                                        canApproveAndReject, canDelete, canSkip, canSync,
-                                       program, facility, processingPeriod) {
+                                       program, facility, processingPeriod, requisitionCacheService, $rootScope) {
 
         var vm = this,
             watcher = new RequisitionWatcher($scope, requisition, localStorageFactory('requisitions'));
@@ -210,6 +211,21 @@
          * Flag defining whether current user should see the sync to server button.
          */
         vm.displaySyncButton = undefined;
+
+        $rootScope.$on('$stateChangeStart', cacheRequisition);
+
+        function cacheRequisition(event, toState, toParams, fromState) {
+            if (checkStateNames(toState, fromState)) {
+                requisitionCacheService.cacheRequisition(RequisitionViewController.requisition);
+            }
+
+            function checkStateNames(toState, fromState) {
+                return fromState.name === 'openlmis.requisitions.requisition.fullSupply'
+                    || fromState.name === 'openlmis.requisitions.requisition.nonFullSupply'
+                    && toState.name === 'openlmis.requisitions.requisition.nonFullSupply'
+                    || toState.name === 'openlmis.requisitions.requisition.fullSupply';
+            }
+        }
 
         // Functions
         vm.$onInit = onInit;
