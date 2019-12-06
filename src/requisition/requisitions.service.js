@@ -167,7 +167,6 @@
                     requisition.$modified = true;
                     requisition.$availableOffline = true;
                     requisitionCacheService.cacheRequisition(requisition);
-
                     return prepareRequisition(requisition);
                 });
         }

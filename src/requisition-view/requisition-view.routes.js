@@ -39,19 +39,11 @@
                 REQUISITION_RIGHTS.REQUISITION_APPROVE,
                 FULFILLMENT_RIGHTS.ORDERS_EDIT
             ],
-            params: {
-                requisition: undefined
-            },
             resolve: {
                 user: function(currentUserService) {
                     return currentUserService.getUserInfo();
                 },
                 requisition: function($stateParams, requisitionService) {
-                    if ($stateParams.requisition) {
-                        var rnr = angular.copy($stateParams.requisition);
-                        $stateParams.requisition = undefined;
-                        return rnr;
-                    }
                     return requisitionService.get($stateParams.rnr);
                 },
                 program: function(programService, requisition) {
