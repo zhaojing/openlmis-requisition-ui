@@ -3,6 +3,7 @@
 
 Improvements:
 * [OLMIS-6684](https://openlmis.atlassian.net/browse/OLMIS-6684): Added requisition caching on page change on requisition grid.
+* [OLMIS-6708](https://openlmis.atlassian.net/browse/OLMIS-6708): Refactored GET /requisitions to not fetch available products and ftaps if it's unnecessary.
 
 Bug fixes:
 * [OLMIS-6592](https://openlmis.atlassian.net/browse/OLMIS-6592): Fixed bug with user being able to see Requisitions tab despite not having a Home Facility or a proper role with a Supervisory Node.
