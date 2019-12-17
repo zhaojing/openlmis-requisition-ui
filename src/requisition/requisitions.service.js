@@ -486,8 +486,11 @@
                 })
                 .then(function(requisition) {
                     var identities = getResourcesFromLineItems(requisition, false);
-                    return $q.all([getByVersionIdentities(requisition.availableProducts, new OrderableResource()),
-                        getByVersionIdentities(identities, new FacilityTypeApprovedProductResource())])
+                    return $q.all([
+                        getByVersionIdentities(filterOutOrderablesFromLineItems(requisition),
+                            new OrderableResource()),
+                        getByVersionIdentities(identities, new FacilityTypeApprovedProductResource())
+                    ])
                         .then(function(result) {
                             requisition.availableFullSupplyProducts =
                                 filterOrderables(true, result[0], requisition.program.id);
@@ -513,7 +516,7 @@
                     identities.push(item.orderable);
                 } else {
                     var program = getProgramById(item.orderable.programs, requisition.program.id);
-                    if (item.approvedProduct && program.fullSupply) {
+                    if (item.approvedProduct && program.fullSupply && !requisition.emergency) {
                         identities.push(item.approvedProduct);
                     }
                 }
@@ -529,6 +532,19 @@
             return availableProducts.filter(function(product) {
                 var requisitionProgram = getProgramById(product.programs, programId);
                 return requisitionProgram && requisitionProgram.fullSupply === fullSupply;
+            });
+        }
+
+        function filterOutOrderablesFromLineItems(requisition) {
+            return requisition.availableProducts.filter(function(availableProduct) {
+                var shouldBeFetched = true;
+                requisition.requisitionLineItems.forEach(function(lineItem) {
+                    if (lineItem.orderable.id === availableProduct.id
+                        && lineItem.orderable.meta.versionNumber === availableProduct.versionNumber) {
+                        shouldBeFetched = false;
+                    }
+                });
+                return shouldBeFetched;
             });
         }
 
