@@ -485,11 +485,8 @@
                     return requisition;
                 })
                 .then(function(requisition) {
-                    var identities = getResourcesFromLineItems(requisition, false),
-                        fetchAvailableProducts = requisition.emergency ?
-                            getByVersionIdentities(requisition.availableProducts, new OrderableResource()) :
-                            $q.resolve([]);
-                    return $q.all([fetchAvailableProducts,
+                    var identities = getResourcesFromLineItems(requisition, false);
+                    return $q.all([getByVersionIdentities(requisition.availableProducts, new OrderableResource()),
                         getByVersionIdentities(identities, new FacilityTypeApprovedProductResource())])
                         .then(function(result) {
                             requisition.availableFullSupplyProducts =
