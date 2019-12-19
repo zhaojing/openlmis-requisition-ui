@@ -1,5 +1,5 @@
-7.0.1-SNAPSHOT / WIP
-====================
+7.0.1 / 2019-12-19
+==================
 
 Improvements:
 * [OLMIS-6684](https://openlmis.atlassian.net/browse/OLMIS-6684): Added requisition caching on page change on requisition grid.
