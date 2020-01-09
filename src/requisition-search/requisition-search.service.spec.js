@@ -26,6 +26,7 @@ describe('RequisitionSearchService', function() {
         this.prepareRoles = prepareRoles;
         this.prepareUser = prepareUser;
         this.prepareUserWithoutHomeFacility = prepareUserWithoutHomeFacility;
+        this.prepareUserWithoutPartnerNodes = prepareUserWithoutPartnerNodes;
 
         inject(function($injector) {
             this.SupervisoryNodeDataBuilder = $injector.get('SupervisoryNodeDataBuilder');
@@ -250,6 +251,19 @@ describe('RequisitionSearchService', function() {
             expect(this.SupervisoryNodeResource.prototype.query).not.toHaveBeenCalled();
         });
 
+        it('should not call for partner supervisory nodes if there is none for the facilities', function() {
+            this.prepareUserWithoutPartnerNodes();
+            this.currentUserService.getUserInfo.andReturn(this.$q.resolve(this.user));
+
+            this.requisitionSearchService.getFacilities();
+            this.$rootScope.$apply();
+
+            expect(this.SupervisoryNodeResource.prototype.query.callCount).toEqual(1);
+            expect(this.SupervisoryNodeResource.prototype.query).toHaveBeenCalledWith({
+                id: [ this.supervisoryNodeA.id, this.supervisoryNodeC.id ]
+            });
+        });
+
         it('should cache facilities in the local storage', function() {
             this.requisitionSearchService.getFacilities();
             this.$rootScope.$apply();
@@ -428,6 +442,15 @@ describe('RequisitionSearchService', function() {
             .withSupervisionRoleAssignment(this.roleA.id, null, this.programId)
             .withSupervisionRoleAssignment(this.roleB.id, null, this.programId)
             .withoutHomeFacilityId()
+            .buildReferenceDataUserJson();
+    }
+
+    function prepareUserWithoutPartnerNodes() {
+        this.programId = 'program-id';
+
+        this.user = new this.UserDataBuilder()
+            .withSupervisionRoleAssignment(this.roleA.id, this.supervisoryNodeA.id, this.programId)
+            .withSupervisionRoleAssignment(this.roleA.id, this.supervisoryNodeC.id, this.programId)
             .buildReferenceDataUserJson();
     }
 

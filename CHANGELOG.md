@@ -1,3 +1,9 @@
+7.0.2-SNAPSHOT / WIP
+====================
+
+Bug fixes:
+* [OLMIS-6698](https://openlmis.atlassian.net/browse/OLMIS-6698): Removed unnecessary call for supervisory nodes when there are no partner nodes assigned.
+
 7.0.1 / 2019-12-19
 ==================
 

@@ -145,8 +145,14 @@
                 return [];
             }
 
+            var partnerNodeIds = getPartnerOfIdsFromNodes(nodesPage.content);
+
+            if (partnerNodeIds.length === 0) {
+                return [];
+            }
+
             return new SupervisoryNodeResource().query({
-                id: getPartnerOfIdsFromNodes(nodesPage.content)
+                id: partnerNodeIds
             });
         }
 
