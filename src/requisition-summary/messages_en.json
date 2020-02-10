@@ -1,7 +1,7 @@
 {
-    "requisitionSummary.fullSupplyProducts": "Full supply product(s)",
-    "requisitionSummary.nonFullSupplyProducts": "Non full supply product(s)",
-    "requisitionSummary.requisitionCost": "Requisition cost",
-    "requisitionSummary.showDetails": "Show details",
-    "requisitionSummary.totalRequisitionCost": "Total requisition cost"
+    "requisitionSummary.fullSupplyProducts": "常备品",
+    "requisitionSummary.nonFullSupplyProducts": "按需供应品",
+    "requisitionSummary.requisitionCost": "申请成本",
+    "requisitionSummary.showDetails": "显示详情",
+    "requisitionSummary.totalRequisitionCost": "总申请成本"
 }

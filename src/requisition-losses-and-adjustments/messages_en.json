@@ -1,11 +1,11 @@
 {
-    "requisitionLossesAndAdjustments.add": "Add",
-    "requisitionLossesAndAdjustments.addNewLossOrAdjustment": "Add new loss or adjustment",
-    "requisitionLossesAndAdjustments.close": "Close",
-    "requisitionLossesAndAdjustments.lossesAndAdjustments": "Losses and adjustments",
-    "requisitionLossesAndAdjustments.noLossesOrAdjustments": "There are no losses or adjustments",
-    "requisitionLossesAndAdjustments.quantity": "Quantity",
-    "requisitionLossesAndAdjustments.reason": "Reason",
-    "requisitionLossesAndAdjustments.remove": "Remove",
-    "requisitionLossesAndAdjustments.total": "Total"
+    "requisitionLossesAndAdjustments.add": "添加",
+    "requisitionLossesAndAdjustments.addNewLossOrAdjustment": "添加新的损失或调整",
+    "requisitionLossesAndAdjustments.close": "关闭",
+    "requisitionLossesAndAdjustments.lossesAndAdjustments": "损失和调整",
+    "requisitionLossesAndAdjustments.noLossesOrAdjustments": "未找到损失或调整",
+    "requisitionLossesAndAdjustments.quantity": "数量",
+    "requisitionLossesAndAdjustments.reason": "原因",
+    "requisitionLossesAndAdjustments.remove": "删除",
+    "requisitionLossesAndAdjustments.total": "总共"
 }

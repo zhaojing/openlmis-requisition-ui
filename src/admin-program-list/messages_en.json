@@ -1,14 +1,14 @@
 {
-    "adminProgramList.configured": "Configured",
-    "adminProgramList.configureTemplate": "Configure Template",
-    "adminProgramList.create": "Create",
-    "adminProgramList.edit": "Edit",
-    "adminProgramList.program": "Program",
-    "adminProgramList.programs": "Programs",
-    "adminProgramList.requisitionTemplate": "Requisition Template",
-    "adminProgramList.actions": "Actions",
-    "adminProgramList.programSettings": "Program Settings",
-    "adminProgramList.active": "Active",
-    "adminProgramList.notActive": "Not Active",
-    "adminProgramList.addProgram": "Add Program"
+    "adminProgramList.configured": "已配置",
+    "adminProgramList.configureTemplate": "配置模板",
+    "adminProgramList.create": "创建",
+    "adminProgramList.edit": "编辑",
+    "adminProgramList.program": "方案",
+    "adminProgramList.programs": "方案",
+    "adminProgramList.requisitionTemplate": "申请模板",
+    "adminProgramList.actions": "操作",
+    "adminProgramList.programSettings": "方案设置",
+    "adminProgramList.active": "激活",
+    "adminProgramList.notActive": "未激活",
+    "adminProgramList.addProgram": "添加方案"
 }

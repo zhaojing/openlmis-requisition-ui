@@ -1,6 +1,6 @@
 {
-    "adminTemplateConfigure.label": "Configure Template",
-    "adminTemplateConfigure.configureColumns.title": "Configure ${template} for ${program}",
-    "adminTemplateConfigure.templateColumns": "Template Columns",
-    "adminTemplateConfigure.templateSettings": "Template Settings"
+    "adminTemplateConfigure.label": "配置模板",
+    "adminTemplateConfigure.configureColumns.title": "为${program}配置${template}模板",
+    "adminTemplateConfigure.templateColumns": "配置行",
+    "adminTemplateConfigure.templateSettings": "模板设置"
 }

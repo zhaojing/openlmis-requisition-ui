@@ -1,10 +1,10 @@
 {
-    "adminProgramSettings.settings": "Edit Program",
-    "adminProgramSettings.save": "Save",
-    "adminProgramSettings.cancel": "Cancel",
-    "adminProgramSettings.saveProgramSettingsConfirm": "Do you want to save changes to the Program Settings?",
-    "adminProgramSettings.programSettingsSavedSuccessfully": "Program Settings were saved successfully!",
-    "adminProgramSettings.programSettingsSaveFailed": "Program Settings save failed!",
-    "adminProgramSettings.enableDatePhysicalStockCountCompleted.label": "Enable field for Date Physical Stock Count Completed",
-    "adminProgramSettings.enableDatePhysicalStockCountCompleted.description": "Require users to enter this date when a requisition is Submitted; the date can be edited when a requisition is Authorized."
+    "adminProgramSettings.settings": "编辑方案",
+    "adminProgramSettings.save": "保存",
+    "adminProgramSettings.cancel": "取消",
+    "adminProgramSettings.saveProgramSettingsConfirm": "是否保存对方案设置的更改？",
+    "adminProgramSettings.programSettingsSavedSuccessfully": "方案设置保存成功！",
+    "adminProgramSettings.programSettingsSaveFailed": "方案设置保存失败！",
+    "adminProgramSettings.enableDatePhysicalStockCountCompleted.label": "允许用户在提交申请时选择实际盘点库存的日期",
+    "adminProgramSettings.enableDatePhysicalStockCountCompleted.description": "要求用户在提交申请时填写此日期；日期可在授权后被编辑。"
 }

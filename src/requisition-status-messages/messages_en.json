@@ -1,10 +1,10 @@
 {
-    "requisitionStatusMessages.addComment.label": "Add Comment",
-    "requisitionStatusMessages.addComment.message": "Add a comment about the changes you have made",
-    "requisitionStatusMessages.comments": "Comments",
-    "requisitionStatusMessages.noCommentsAdded": "No comments added",
-    "requisitionStatusMessages.removeComment": "Remove Comment",
-    "requisitionStatusMessages.requisitionHistory": "Requisition History",
-    "requisitionStatusMessages.viewHistory": "View History",
-    "requisitionStatusMessages.on": "on"
+    "requisitionStatusMessages.addComment.label": "添加备注",
+    "requisitionStatusMessages.addComment.message": "添加一条有关您所做更改的备注",
+    "requisitionStatusMessages.comments": "备注",
+    "requisitionStatusMessages.noCommentsAdded": "未添加备注",
+    "requisitionStatusMessages.removeComment": "删除备注",
+    "requisitionStatusMessages.requisitionHistory": "申请记录",
+    "requisitionStatusMessages.viewHistory": "查看历史记录",
+    "requisitionStatusMessages.on": ""
 }

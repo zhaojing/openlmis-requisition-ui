@@ -1,10 +1,10 @@
 {
-    "adminTemplateList.templates": "Requisition Templates",
-    "adminTemplateList.templateName": "Template Name",
-    "adminTemplateList.facilityType": "Facility Type",
-    "adminTemplateList.facilityTypes": "${number} Facility Types",
-    "adminTemplateList.action": "Action",
-    "adminTemplateList.configure": "Configure",
-    "adminTemplateList.addRequisitionTemplate": "Add Requisition Template",
-    "adminTemplateList.noRequisitionTemplates": "No requisition templates for ${program} program"
+    "adminTemplateList.templates": "申请模板",
+    "adminTemplateList.templateName": "模板名称",
+    "adminTemplateList.facilityType": "站点类型",
+    "adminTemplateList.facilityTypes": "${number}个站点类型",
+    "adminTemplateList.action": "操作",
+    "adminTemplateList.configure": "配置",
+    "adminTemplateList.addRequisitionTemplate": "添加申请模板",
+    "adminTemplateList.noRequisitionTemplates": "没有用于${program}方案的申请模板"
 }
