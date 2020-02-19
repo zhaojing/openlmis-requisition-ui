@@ -17,7 +17,7 @@
     "requisitionConstants.authorized": "已授权",
     "requisitionConstants.inApproval": "审批中",
     "requisitionConstants.approved": "已批准",
-    "requisitionConstants.released": "已撤销",
-    "requisitionConstants.releasedWithoutOrder": "已撤销该申请",
+    "requisitionConstants.released": "已批准",
+    "requisitionConstants.releasedWithoutOrder": "批准，但不创建订单",
     "requisitionConstants.skipped": "已跳过"
 }
